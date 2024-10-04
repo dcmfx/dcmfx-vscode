@@ -1,0 +1,60 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "DCMfx Print",
+  "patterns": [
+    {
+      "include": "#entry"
+    }
+  ],
+  "repository": {
+    "entry": {
+      "patterns": [
+        {
+          "match": "^\\s*(\\([0-9A-F]{4}\\,[0-9A-F]{4}\\)) ([A-Z]{2} |).* (\\[ *\\d+ bytes\\])(.*)",
+          "captures": {
+            "1": { "patterns": [{ "include": "#tag" }] },
+            "2": { "patterns": [{ "include": "#vr" }] },
+            "3": { "patterns": [{ "include": "#length" }] },
+            "4": { "patterns": [{ "include": "#value" }] }
+          }
+        },
+        {
+          "match": "^\\s*(\\([0-9A-F]{4}\\,[0-9A-F]{4}\\)) (.. )?.*",
+          "captures": {
+            "1": { "patterns": [{ "include": "#tag" }] },
+            "2": { "patterns": [{ "include": "#vr" }] }
+          }
+        },
+        {
+          "match": "^(\\[ERR\\] .*)$",
+          "captures": {
+            "1": { "patterns": [{ "include": "#error" }] }
+          }
+        }
+      ]
+    },
+    "tag": {
+      "patterns": [
+        { "name": "markup.bold.dcmfx-print", "match": ".+" },
+        { "name": "constant.numeric.dcmfx-print", "match": ".+" }
+      ]
+    },
+    "vr": {
+      "patterns": [{ "name": "support.type.dcmfx-print", "match": ".+" }]
+    },
+    "length": {
+      "patterns": [
+        { "name": "variable.other.constant.dcmfx-print", "match": ".+" }
+      ]
+    },
+    "value": {
+      "patterns": [
+        { "name": "comment.line.dcmfx-print", "match": "(?<=\") \\(.*\\)$" }
+      ]
+    },
+    "error": {
+      "patterns": [{ "name": "invalid.illegal.dcmfx-print", "match": ".+" }]
+    }
+  },
+  "scopeName": "text.dcmfx-print"
+}

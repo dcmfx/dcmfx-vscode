@@ -1,0 +1,8 @@
+**/*
+
+!LICENSE.md
+!README.md
+!icon.png
+!package.json
+!dist/**
+!syntaxes/**

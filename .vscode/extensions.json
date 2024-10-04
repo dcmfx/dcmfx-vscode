@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "github.vscode-github-actions",
+    "ms-vscode.hexeditor",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

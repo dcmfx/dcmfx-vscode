@@ -1,0 +1,143 @@
+{
+  "name": "dcmfx",
+  "displayName": "dcmfx",
+  "description": "View, convert, and rewrite DICOM and DICOM JSON files",
+  "version": "0.1.0",
+  "publisher": "dcmfx",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "license": "AGPL-3.0-only",
+  "homepage": "https://github.com/dcmfx/dcmfx-vscode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dcmfx/dcmfx-vscode"
+  },
+  "bugs": {
+    "url": "https://github.com/dcmfx/dcmfx-vscode/issues"
+  },
+  "categories": [
+    "Other"
+  ],
+  "icon": "icon.png",
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": [
+      {
+        "type": "object",
+        "properties": {
+          "dcmfx.alwaysShowContextMenuItems": {
+            "description": "Always show the DCMfx context menu items regardless of the file's extension.",
+            "type": "boolean"
+          }
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "dcmfx.print",
+        "title": "DCMfx: Print DICOM data set"
+      },
+      {
+        "command": "dcmfx.printJson",
+        "title": "DCMfx: Print DICOM data set as JSON"
+      },
+      {
+        "command": "dcmfx.rewriteP10",
+        "title": "DCMfx: Rewrite DICOM file"
+      },
+      {
+        "command": "dcmfx.convertJsonToP10",
+        "title": "DCMfx: Convert to DICOM file"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "dcmfx.print",
+          "group": "dcmfx",
+          "when": "resourceLangId == dicom || resourceLangId == json || config.dcmfx.alwaysShowContextMenuItems"
+        },
+        {
+          "command": "dcmfx.printJson",
+          "group": "dcmfx",
+          "when": "resourceLangId == dicom || config.dcmfx.alwaysShowContextMenuItems"
+        },
+        {
+          "command": "dcmfx.rewriteP10",
+          "group": "dcmfx",
+          "when": "resourceLangId == dicom || config.dcmfx.alwaysShowContextMenuItems"
+        },
+        {
+          "command": "dcmfx.convertJsonToP10",
+          "group": "dcmfx",
+          "when": "resourceLangId == json || config.dcmfx.alwaysShowContextMenuItems"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "id": "dicom",
+        "extensions": [
+          ".dcm",
+          ".dicom"
+        ],
+        "aliases": [
+          "DICOM",
+          "dcm"
+        ]
+      },
+      {
+        "id": "dcmfx-print",
+        "extensions": [
+          ".dcmfx-print"
+        ],
+        "aliases": [
+          "DCMfx Print"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "dcmfx-print",
+        "scopeName": "text.dcmfx-print",
+        "path": "./syntaxes/dcmfx-print.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run format:check && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile",
+    "check-types": "tsc --noEmit",
+    "test": "vscode-test",
+    "format": "prettier --write 'src/**/*.mts'",
+    "format:check": "prettier --check 'src/**/*.mts'",
+    "lint": "eslint 'src/**/*.mts'"
+  },
+  "dependencies": {
+    "effect": "^3.9.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.12.0",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "^20.16.11",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.12.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.3.3",
+    "semantic-release-vsce": "^5.7.4",
+    "typescript": "~5.5.4",
+    "typescript-eslint": "^8.8.1"
+  }
+}

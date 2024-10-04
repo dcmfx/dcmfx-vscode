@@ -1,0 +1,10 @@
+{
+  "files.exclude": {
+    "dist": true,
+    "node_modules": true
+  },
+
+  "editor.rulers": [80],
+
+  "typescript.tsc.autoDetect": "off"
+}
