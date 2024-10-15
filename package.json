@@ -2,7 +2,7 @@
   "name": "dcmfx",
   "displayName": "dcmfx",
   "description": "View, convert, and rewrite DICOM and DICOM JSON files",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "publisher": "dcmfx",
   "engines": {
     "vscode": "^1.90.0"

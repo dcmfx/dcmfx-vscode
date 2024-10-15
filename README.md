@@ -20,7 +20,7 @@ After installing the extension in VS Code, open a context menu on a DICOM (.dcm)
 or DICOM JSON file and select `DCMfx: Print DICOM data set`, or one of the other
 available options.
 
-This extension is also available on the Open VSX registry for users of Eclipse
+This extension is also available on the Open VSX Registry for users of Eclipse
 Theia, VSCodium, Gitpod, and other IDEs that use Open VSX.
 
 ## Features ✨
