@@ -9,9 +9,9 @@
     </strong>
   </p>
 
-  [<img src="https://img.shields.io/github/v/release/dcmfx/dcmfx-vscode">](https://github.com/dcmfx/dcmfx-vscode/releases/latest)
-  [<img src="https://img.shields.io/badge/License-AGPLv3-blue.svg">](https://www.gnu.org/licenses/agpl-3.0.en.html)
+  [<img src="https://img.shields.io/github/v/release/dcmfx/dcmfx-vscode">](https://marketplace.visualstudio.com/items?itemName=dcmfx.dcmfx)
   [<img src="https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release">](https://github.com/semantic-release/semantic-release)
+  [<img src="https://img.shields.io/badge/License-AGPLv3-blue.svg">](https://www.gnu.org/licenses/agpl-3.0.en.html)
 </div>
 
 ## Usage 👨‍💻
