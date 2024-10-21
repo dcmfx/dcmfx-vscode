@@ -14,6 +14,10 @@
   [<img src="https://img.shields.io/badge/License-AGPLv3-blue.svg">](https://www.gnu.org/licenses/agpl-3.0.en.html)
 </div>
 
+## Demo
+
+![Demo of the DCMfx VS Code extension](./demo.webp)
+
 ## Usage 👨‍💻
 
 After installing the extension in VS Code, open a context menu on a DICOM (.dcm)
