@@ -18,7 +18,7 @@
 
 ![Demo of the DCMfx VS Code extension](./demo.webp)
 
-## Usage 👨‍💻
+## Usage
 
 After installing the extension in VS Code, open a context menu on a DICOM (.dcm)
 or DICOM JSON file and select `DCMfx: Print DICOM data set`, or one of the other
@@ -27,7 +27,7 @@ available options.
 This extension is also available on the Open VSX Registry for users of Eclipse
 Theia, VSCodium, Gitpod, and other IDEs that use Open VSX.
 
-## Features ✨
+## Features
 
 1. Print the content of DICOM and DICOM JSON files.
 
@@ -36,7 +36,7 @@ Theia, VSCodium, Gitpod, and other IDEs that use Open VSX.
 3. Rewrite DICOM files to ensure they have correct headers, change their string
    encoding to UTF-8, and correct errors that may prevent use in other software.
 
-## Implementation Notes 📝
+## Implementation Notes
 
 1. Supports all valid DICOM files, including all DICOM transfer syntaxes and
    character sets. If you encounter a valid DICOM file that does not work then
@@ -61,22 +61,21 @@ Theia, VSCodium, Gitpod, and other IDEs that use Open VSX.
    as well as written files, regardless of the character set(s) the source DICOM
    used.
 
-The above behaviors result from how the [DCMfx](https://github.com/dcmfx)
-library works.
+The above behaviors result from how [DCMfx](https://github.com/dcmfx) works.
 
-## Settings ⚙️
+## Settings
 
 This extension has the following settings:
 
 1. `dcmfx.alwaysShowContextMenuItems`: Whether to always show the DCMfx context
    menu items regardless of the file's extension.
 
-## Acknowledgements 🙏
+## Acknowledgements
 
-The VS Code integration points used by this extension were inspired by
+This extension's VS Code integration points were inspired by
 [vscode-dicom-dump](https://github.com/smikitky/vscode-dicom-dump).
 
-## License 📋
+## License
 
 DCMfx is published under the GNU Affero General Public License Version 3
 (AGPLv3). This license permits commercial use; however, any software that
