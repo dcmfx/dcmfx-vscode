@@ -8,8 +8,6 @@ import type * as $p10_part from "../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 declare class DataSetBuilder extends _.CustomType {
-  private __gleam__dcmfx_p10__data_set_builder__DataSetBuilder: never;
-
   constructor(
     file_preamble: $option.Option$<_.BitArray>,
     file_meta_information: $option.Option$<
@@ -38,8 +36,6 @@ declare class DataSetBuilder extends _.CustomType {
 export type DataSetBuilder$ = DataSetBuilder;
 
 declare class RootDataSet extends _.CustomType {
-  private __gleam__dcmfx_p10__data_set_builder__RootDataSet: never;
-
   constructor(
     data_set: $dict.Dict$<
       $data_element_tag.DataElementTag$,
@@ -54,8 +50,6 @@ declare class RootDataSet extends _.CustomType {
 }
 
 declare class Sequence extends _.CustomType {
-  private __gleam__dcmfx_p10__data_set_builder__Sequence: never;
-
   constructor(
     tag: $data_element_tag.DataElementTag$,
     items: _.List<
@@ -76,8 +70,6 @@ declare class Sequence extends _.CustomType {
 }
 
 declare class SequenceItem extends _.CustomType {
-  private __gleam__dcmfx_p10__data_set_builder__SequenceItem: never;
-
   constructor(
     data_set: $dict.Dict$<
       $data_element_tag.DataElementTag$,
@@ -92,8 +84,6 @@ declare class SequenceItem extends _.CustomType {
 }
 
 declare class EncapsulatedPixelDataSequence extends _.CustomType {
-  private __gleam__dcmfx_p10__data_set_builder__EncapsulatedPixelDataSequence: never;
-
   constructor(
     vr: $value_representation.ValueRepresentation$,
     items: _.List<_.BitArray>
@@ -106,8 +96,6 @@ declare class EncapsulatedPixelDataSequence extends _.CustomType {
 declare type BuilderLocation$ = RootDataSet | Sequence | SequenceItem | EncapsulatedPixelDataSequence;
 
 declare class PendingDataElement extends _.CustomType {
-  private __gleam__dcmfx_p10__data_set_builder__PendingDataElement: never;
-
   constructor(
     tag: $data_element_tag.DataElementTag$,
     vr: $value_representation.ValueRepresentation$,

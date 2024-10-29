@@ -3,33 +3,23 @@ import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $string_builder from "../../gleam_stdlib/gleam/string_builder.d.mts";
 import type * as _ from "../gleam.d.mts";
 
-export type Json$ = {
-  __gleam__gleam__json__Json: never;
-};
+export type Json$ = unknown;
 
-export class UnexpectedEndOfInput extends _.CustomType {
-  private __gleam__gleam__json__UnexpectedEndOfInput: never;
-}
+export class UnexpectedEndOfInput extends _.CustomType {}
 
 export class UnexpectedByte extends _.CustomType {
-  private __gleam__gleam__json__UnexpectedByte: never;
-
   constructor(argument$0: string);
   
   0: string;
 }
 
 export class UnexpectedSequence extends _.CustomType {
-  private __gleam__gleam__json__UnexpectedSequence: never;
-
   constructor(argument$0: string);
   
   0: string;
 }
 
 export class UnexpectedFormat extends _.CustomType {
-  private __gleam__gleam__json__UnexpectedFormat: never;
-
   constructor(argument$0: _.List<$dynamic.DecodeError$>);
   
   0: _.List<$dynamic.DecodeError$>;
@@ -37,21 +27,21 @@ export class UnexpectedFormat extends _.CustomType {
 
 export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnexpectedFormat;
 
-export function decode<CCPJ>(
+export function decode<CCRG>(
   json: string,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCPJ,
+    CCRG,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCPJ, DecodeError$>;
+): _.Result<CCRG, DecodeError$>;
 
-export function decode_bits<CCPT>(
+export function decode_bits<CCRQ>(
   json: _.BitArray,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCPT,
+    CCRQ,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCPT, DecodeError$>;
+): _.Result<CCRQ, DecodeError$>;
 
 export function to_string(json: Json$): string;
 
@@ -67,16 +57,16 @@ export function float(input: number): Json$;
 
 export function null$(): Json$;
 
-export function nullable<CCPZ>(
-  input: $option.Option$<CCPZ>,
-  inner_type: (x0: CCPZ) => Json$
+export function nullable<CCRW>(
+  input: $option.Option$<CCRW>,
+  inner_type: (x0: CCRW) => Json$
 ): Json$;
 
 export function object(entries: _.List<[string, Json$]>): Json$;
 
 export function preprocessed_array(from: _.List<Json$>): Json$;
 
-export function array<CCQD>(
-  entries: _.List<CCQD>,
-  inner_type: (x0: CCQD) => Json$
+export function array<CCSA>(
+  entries: _.List<CCSA>,
+  inner_type: (x0: CCSA) => Json$
 ): Json$;

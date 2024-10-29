@@ -1,6 +1,4 @@
-export type Charlist$ = {
-  __gleam__gleam__erlang__charlist__Charlist: never;
-};
+export type Charlist$ = unknown;
 
 export function to_string(a: Charlist$): string;
 

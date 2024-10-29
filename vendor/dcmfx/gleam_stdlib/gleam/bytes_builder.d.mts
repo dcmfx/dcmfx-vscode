@@ -2,24 +2,18 @@ import type * as _ from "../gleam.d.mts";
 import type * as $string_builder from "../gleam/string_builder.d.mts";
 
 declare class Bytes extends _.CustomType {
-  private __gleam__gleam__bytes_builder__Bytes: never;
-
   constructor(argument$0: _.BitArray);
   
   0: _.BitArray;
 }
 
 declare class Text extends _.CustomType {
-  private __gleam__gleam__bytes_builder__Text: never;
-
   constructor(argument$0: $string_builder.StringBuilder$);
   
   0: $string_builder.StringBuilder$;
 }
 
 declare class Many extends _.CustomType {
-  private __gleam__gleam__bytes_builder__Many: never;
-
   constructor(argument$0: _.List<BytesBuilder$>);
   
   0: _.List<BytesBuilder$>;

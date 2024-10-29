@@ -7,8 +7,6 @@ import type * as $p10_part from "../../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 export class P10PrintTransform extends _.CustomType {
-  private __gleam__dcmfx_p10__transforms__p10_print_transform__P10PrintTransform: never;
-
   constructor(
     print_options: $data_set_print.DataSetPrintOptions$,
     indent: number,

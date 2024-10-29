@@ -1,19 +1,11 @@
 import type * as _ from "../../../gleam.d.mts";
 
-export class None extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__flush_command__None: never;
-}
+export class None extends _.CustomType {}
 
-export class Sync extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__flush_command__Sync: never;
-}
+export class Sync extends _.CustomType {}
 
-export class Full extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__flush_command__Full: never;
-}
+export class Full extends _.CustomType {}
 
-export class Finish extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__flush_command__Finish: never;
-}
+export class Finish extends _.CustomType {}
 
 export type FlushCommand$ = None | Sync | Full | Finish;

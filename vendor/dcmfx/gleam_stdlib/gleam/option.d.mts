@@ -1,16 +1,12 @@
 import type * as _ from "../gleam.d.mts";
 
 export class Some<I> extends _.CustomType {
-  private __gleam__gleam__option__Some: never;
-
   constructor(argument$0: I);
   
   0: I;
 }
 
-export class None extends _.CustomType {
-  private __gleam__gleam__option__None: never;
-}
+export class None extends _.CustomType {}
 
 export type Option$<I> = Some<I> | None;
 

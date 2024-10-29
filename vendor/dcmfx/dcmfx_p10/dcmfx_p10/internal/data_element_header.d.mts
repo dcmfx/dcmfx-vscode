@@ -4,8 +4,6 @@ import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 export class DataElementHeader extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__data_element_header__DataElementHeader: never;
-
   constructor(
     tag: $data_element_tag.DataElementTag$,
     vr: $option.Option$<$value_representation.ValueRepresentation$>,
@@ -19,13 +17,9 @@ export class DataElementHeader extends _.CustomType {
 
 export type DataElementHeader$ = DataElementHeader;
 
-export class ValueLengthU16 extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__data_element_header__ValueLengthU16: never;
-}
+export class ValueLengthU16 extends _.CustomType {}
 
-export class ValueLengthU32 extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__data_element_header__ValueLengthU32: never;
-}
+export class ValueLengthU32 extends _.CustomType {}
 
 export type ValueLengthSize$ = ValueLengthU16 | ValueLengthU32;
 

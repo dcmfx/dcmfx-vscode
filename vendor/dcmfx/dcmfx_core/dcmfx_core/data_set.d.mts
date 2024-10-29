@@ -1,7 +1,6 @@
 import type * as $bigi from "../../bigi/bigi.d.mts";
 import type * as $dict from "../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $list from "../../gleam_stdlib/gleam/list.d.mts";
-import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $ieee_float from "../../ieee_float/ieee_float.d.mts";
 import type * as $data_element_tag from "../dcmfx_core/data_element_tag.d.mts";
 import type * as $data_element_value from "../dcmfx_core/data_element_value.d.mts";
@@ -19,16 +18,12 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 export class LookupResultDataElementValue extends _.CustomType {
-  private __gleam__dcmfx_core__data_set__LookupResultDataElementValue: never;
-
   constructor(argument$0: $data_element_value.DataElementValue$);
   
   0: $data_element_value.DataElementValue$;
 }
 
 export class LookupResultDataSet extends _.CustomType {
-  private __gleam__dcmfx_core__data_set__LookupResultDataSet: never;
-
   constructor(
     argument$0: $dict.Dict$<
       $data_element_tag.DataElementTag$,
@@ -154,7 +149,7 @@ export function to_list(
   [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
 >;
 
-export function map<BYHP>(
+export function map<BYJQ>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -162,8 +157,8 @@ export function map<BYHP>(
   callback: (
     x0: $data_element_tag.DataElementTag$,
     x1: $data_element_value.DataElementValue$
-  ) => BYHP
-): _.List<BYHP>;
+  ) => BYJQ
+): _.List<BYJQ>;
 
 export function map_values(
   data_set: $dict.Dict$<
@@ -193,44 +188,44 @@ export function filter(
   $data_element_value.DataElementValue$
 >;
 
-export function fold<BYHR>(
+export function fold<BYJS>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYHR,
+  initial: BYJS,
   callback: (
-    x0: BYHR,
+    x0: BYJS,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => BYHR
-): BYHR;
+  ) => BYJS
+): BYJS;
 
-export function try_fold<BYHS, BYHT>(
+export function try_fold<BYJT, BYJU>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYHS,
+  initial: BYJT,
   callback: (
-    x0: BYHS,
+    x0: BYJT,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => _.Result<BYHS, BYHT>
-): _.Result<BYHS, BYHT>;
+  ) => _.Result<BYJT, BYJU>
+): _.Result<BYJT, BYJU>;
 
-export function fold_until<BYHY>(
+export function fold_until<BYJZ>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYHY,
+  initial: BYJZ,
   callback: (
-    x0: BYHY,
+    x0: BYJZ,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => $list.ContinueOrStop$<BYHY>
-): BYHY;
+  ) => $list.ContinueOrStop$<BYJZ>
+): BYJZ;
 
 export function partition(
   data_set: $dict.Dict$<
@@ -440,22 +435,29 @@ export function tag_name(
   tag: $data_element_tag.DataElementTag$
 ): string;
 
-export function to_lines<BYIC>(
+export function to_lines<BYKB>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  print_options: $option.Option$<$data_set_print.DataSetPrintOptions$>,
-  context: BYIC,
-  callback: (x0: BYIC, x1: string) => BYIC
-): BYIC;
+  print_options: $data_set_print.DataSetPrintOptions$,
+  context: BYKB,
+  callback: (x0: BYKB, x1: string) => BYKB
+): BYKB;
+
+export function print_with_options(
+  data_set: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+  print_options: $data_set_print.DataSetPrintOptions$
+): undefined;
 
 export function print(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
-  >,
-  print_options: $option.Option$<$data_set_print.DataSetPrintOptions$>
+  >
 ): undefined;
 
 export function tag_with_name(

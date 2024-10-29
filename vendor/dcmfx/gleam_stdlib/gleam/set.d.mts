@@ -2,8 +2,6 @@ import type * as _ from "../gleam.d.mts";
 import type * as $dict from "../gleam/dict.d.mts";
 
 declare class Set<FDI> extends _.CustomType {
-  private __gleam__gleam__set__Set: never;
-
   constructor(dict: $dict.Dict$<any, undefined>);
   
   dict: $dict.Dict$<any, undefined>;

@@ -6,8 +6,6 @@ import type * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filt
 import type * as _ from "../../gleam.d.mts";
 
 declare class P10InsertTransform extends _.CustomType {
-  private __gleam__dcmfx_p10__transforms__p10_insert_transform__P10InsertTransform: never;
-
   constructor(
     data_elements_to_insert: _.List<
       [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]

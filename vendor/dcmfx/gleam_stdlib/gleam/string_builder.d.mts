@@ -1,12 +1,8 @@
 import type * as _ from "../gleam.d.mts";
 
-export type StringBuilder$ = {
-  __gleam__gleam__string_builder__StringBuilder: never;
-};
+export type StringBuilder$ = unknown;
 
-declare class All extends _.CustomType {
-  private __gleam__gleam__string_builder__All: never;
-}
+declare class All extends _.CustomType {}
 
 declare type Direction$ = All;
 

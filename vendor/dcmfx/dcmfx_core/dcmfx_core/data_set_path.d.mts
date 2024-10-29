@@ -2,8 +2,6 @@ import type * as $data_element_tag from "../dcmfx_core/data_element_tag.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 declare class DataSetPath extends _.CustomType {
-  private __gleam__dcmfx_core__data_set_path__DataSetPath: never;
-
   constructor(entries: _.List<DataSetPathEntry$>);
   
   entries: _.List<DataSetPathEntry$>;
@@ -12,16 +10,12 @@ declare class DataSetPath extends _.CustomType {
 export type DataSetPath$ = DataSetPath;
 
 export class DataElement extends _.CustomType {
-  private __gleam__dcmfx_core__data_set_path__DataElement: never;
-
   constructor(tag: $data_element_tag.DataElementTag$);
   
   tag: $data_element_tag.DataElementTag$;
 }
 
 export class SequenceItem extends _.CustomType {
-  private __gleam__dcmfx_core__data_set_path__SequenceItem: never;
-
   constructor(index: number);
   
   index: number;

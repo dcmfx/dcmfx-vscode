@@ -1,201 +1,103 @@
 import type * as $set from "../gleam_stdlib/gleam/set.d.mts";
 import type * as _ from "./gleam.d.mts";
 
-export class Eacces extends _.CustomType {
-  private __gleam__simplifile__Eacces: never;
-}
+export class Eacces extends _.CustomType {}
 
-export class Eagain extends _.CustomType {
-  private __gleam__simplifile__Eagain: never;
-}
+export class Eagain extends _.CustomType {}
 
-export class Ebadf extends _.CustomType {
-  private __gleam__simplifile__Ebadf: never;
-}
+export class Ebadf extends _.CustomType {}
 
-export class Ebadmsg extends _.CustomType {
-  private __gleam__simplifile__Ebadmsg: never;
-}
+export class Ebadmsg extends _.CustomType {}
 
-export class Ebusy extends _.CustomType {
-  private __gleam__simplifile__Ebusy: never;
-}
+export class Ebusy extends _.CustomType {}
 
-export class Edeadlk extends _.CustomType {
-  private __gleam__simplifile__Edeadlk: never;
-}
+export class Edeadlk extends _.CustomType {}
 
-export class Edeadlock extends _.CustomType {
-  private __gleam__simplifile__Edeadlock: never;
-}
+export class Edeadlock extends _.CustomType {}
 
-export class Edquot extends _.CustomType {
-  private __gleam__simplifile__Edquot: never;
-}
+export class Edquot extends _.CustomType {}
 
-export class Eexist extends _.CustomType {
-  private __gleam__simplifile__Eexist: never;
-}
+export class Eexist extends _.CustomType {}
 
-export class Efault extends _.CustomType {
-  private __gleam__simplifile__Efault: never;
-}
+export class Efault extends _.CustomType {}
 
-export class Efbig extends _.CustomType {
-  private __gleam__simplifile__Efbig: never;
-}
+export class Efbig extends _.CustomType {}
 
-export class Eftype extends _.CustomType {
-  private __gleam__simplifile__Eftype: never;
-}
+export class Eftype extends _.CustomType {}
 
-export class Eintr extends _.CustomType {
-  private __gleam__simplifile__Eintr: never;
-}
+export class Eintr extends _.CustomType {}
 
-export class Einval extends _.CustomType {
-  private __gleam__simplifile__Einval: never;
-}
+export class Einval extends _.CustomType {}
 
-export class Eio extends _.CustomType {
-  private __gleam__simplifile__Eio: never;
-}
+export class Eio extends _.CustomType {}
 
-export class Eisdir extends _.CustomType {
-  private __gleam__simplifile__Eisdir: never;
-}
+export class Eisdir extends _.CustomType {}
 
-export class Eloop extends _.CustomType {
-  private __gleam__simplifile__Eloop: never;
-}
+export class Eloop extends _.CustomType {}
 
-export class Emfile extends _.CustomType {
-  private __gleam__simplifile__Emfile: never;
-}
+export class Emfile extends _.CustomType {}
 
-export class Emlink extends _.CustomType {
-  private __gleam__simplifile__Emlink: never;
-}
+export class Emlink extends _.CustomType {}
 
-export class Emultihop extends _.CustomType {
-  private __gleam__simplifile__Emultihop: never;
-}
+export class Emultihop extends _.CustomType {}
 
-export class Enametoolong extends _.CustomType {
-  private __gleam__simplifile__Enametoolong: never;
-}
+export class Enametoolong extends _.CustomType {}
 
-export class Enfile extends _.CustomType {
-  private __gleam__simplifile__Enfile: never;
-}
+export class Enfile extends _.CustomType {}
 
-export class Enobufs extends _.CustomType {
-  private __gleam__simplifile__Enobufs: never;
-}
+export class Enobufs extends _.CustomType {}
 
-export class Enodev extends _.CustomType {
-  private __gleam__simplifile__Enodev: never;
-}
+export class Enodev extends _.CustomType {}
 
-export class Enolck extends _.CustomType {
-  private __gleam__simplifile__Enolck: never;
-}
+export class Enolck extends _.CustomType {}
 
-export class Enolink extends _.CustomType {
-  private __gleam__simplifile__Enolink: never;
-}
+export class Enolink extends _.CustomType {}
 
-export class Enoent extends _.CustomType {
-  private __gleam__simplifile__Enoent: never;
-}
+export class Enoent extends _.CustomType {}
 
-export class Enomem extends _.CustomType {
-  private __gleam__simplifile__Enomem: never;
-}
+export class Enomem extends _.CustomType {}
 
-export class Enospc extends _.CustomType {
-  private __gleam__simplifile__Enospc: never;
-}
+export class Enospc extends _.CustomType {}
 
-export class Enosr extends _.CustomType {
-  private __gleam__simplifile__Enosr: never;
-}
+export class Enosr extends _.CustomType {}
 
-export class Enostr extends _.CustomType {
-  private __gleam__simplifile__Enostr: never;
-}
+export class Enostr extends _.CustomType {}
 
-export class Enosys extends _.CustomType {
-  private __gleam__simplifile__Enosys: never;
-}
+export class Enosys extends _.CustomType {}
 
-export class Enotblk extends _.CustomType {
-  private __gleam__simplifile__Enotblk: never;
-}
+export class Enotblk extends _.CustomType {}
 
-export class Enotdir extends _.CustomType {
-  private __gleam__simplifile__Enotdir: never;
-}
+export class Enotdir extends _.CustomType {}
 
-export class Enotsup extends _.CustomType {
-  private __gleam__simplifile__Enotsup: never;
-}
+export class Enotsup extends _.CustomType {}
 
-export class Enxio extends _.CustomType {
-  private __gleam__simplifile__Enxio: never;
-}
+export class Enxio extends _.CustomType {}
 
-export class Eopnotsupp extends _.CustomType {
-  private __gleam__simplifile__Eopnotsupp: never;
-}
+export class Eopnotsupp extends _.CustomType {}
 
-export class Eoverflow extends _.CustomType {
-  private __gleam__simplifile__Eoverflow: never;
-}
+export class Eoverflow extends _.CustomType {}
 
-export class Eperm extends _.CustomType {
-  private __gleam__simplifile__Eperm: never;
-}
+export class Eperm extends _.CustomType {}
 
-export class Epipe extends _.CustomType {
-  private __gleam__simplifile__Epipe: never;
-}
+export class Epipe extends _.CustomType {}
 
-export class Erange extends _.CustomType {
-  private __gleam__simplifile__Erange: never;
-}
+export class Erange extends _.CustomType {}
 
-export class Erofs extends _.CustomType {
-  private __gleam__simplifile__Erofs: never;
-}
+export class Erofs extends _.CustomType {}
 
-export class Espipe extends _.CustomType {
-  private __gleam__simplifile__Espipe: never;
-}
+export class Espipe extends _.CustomType {}
 
-export class Esrch extends _.CustomType {
-  private __gleam__simplifile__Esrch: never;
-}
+export class Esrch extends _.CustomType {}
 
-export class Estale extends _.CustomType {
-  private __gleam__simplifile__Estale: never;
-}
+export class Estale extends _.CustomType {}
 
-export class Etxtbsy extends _.CustomType {
-  private __gleam__simplifile__Etxtbsy: never;
-}
+export class Etxtbsy extends _.CustomType {}
 
-export class Exdev extends _.CustomType {
-  private __gleam__simplifile__Exdev: never;
-}
+export class Exdev extends _.CustomType {}
 
-export class NotUtf8 extends _.CustomType {
-  private __gleam__simplifile__NotUtf8: never;
-}
+export class NotUtf8 extends _.CustomType {}
 
 export class Unknown extends _.CustomType {
-  private __gleam__simplifile__Unknown: never;
-
   constructor(inner: string);
   
   inner: string;
@@ -204,8 +106,6 @@ export class Unknown extends _.CustomType {
 export type FileError$ = Eacces | Eagain | Ebadf | Ebadmsg | Ebusy | Edeadlk | Edeadlock | Edquot | Eexist | Efault | Efbig | Eftype | Eintr | Einval | Eio | Eisdir | Eloop | Emfile | Emlink | Emultihop | Enametoolong | Enfile | Enobufs | Enodev | Enolck | Enolink | Enoent | Enomem | Enospc | Enosr | Enostr | Enosys | Enotblk | Enotdir | Enotsup | Enxio | Eopnotsupp | Eoverflow | Eperm | Epipe | Erange | Erofs | Espipe | Esrch | Estale | Etxtbsy | Exdev | NotUtf8 | Unknown;
 
 export class FileInfo extends _.CustomType {
-  private __gleam__simplifile__FileInfo: never;
-
   constructor(
     size: number,
     mode: number,
@@ -233,41 +133,25 @@ export class FileInfo extends _.CustomType {
 
 export type FileInfo$ = FileInfo;
 
-export class File extends _.CustomType {
-  private __gleam__simplifile__File: never;
-}
+export class File extends _.CustomType {}
 
-export class Directory extends _.CustomType {
-  private __gleam__simplifile__Directory: never;
-}
+export class Directory extends _.CustomType {}
 
-export class Symlink extends _.CustomType {
-  private __gleam__simplifile__Symlink: never;
-}
+export class Symlink extends _.CustomType {}
 
-export class Other extends _.CustomType {
-  private __gleam__simplifile__Other: never;
-}
+export class Other extends _.CustomType {}
 
 export type FileType$ = File | Directory | Symlink | Other;
 
-export class Read extends _.CustomType {
-  private __gleam__simplifile__Read: never;
-}
+export class Read extends _.CustomType {}
 
-export class Write extends _.CustomType {
-  private __gleam__simplifile__Write: never;
-}
+export class Write extends _.CustomType {}
 
-export class Execute extends _.CustomType {
-  private __gleam__simplifile__Execute: never;
-}
+export class Execute extends _.CustomType {}
 
 export type Permission$ = Read | Write | Execute;
 
 export class FilePermissions extends _.CustomType {
-  private __gleam__simplifile__FilePermissions: never;
-
   constructor(
     user: $set.Set$<Permission$>,
     group: $set.Set$<Permission$>,

@@ -9,8 +9,6 @@ import type * as $p10_part from "../../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class P10FilterTransform extends _.CustomType {
-  private __gleam__dcmfx_p10__transforms__p10_filter_transform__P10FilterTransform: never;
-
   constructor(
     predicate: (
       x0: $data_element_tag.DataElementTag$,
@@ -37,8 +35,6 @@ declare class P10FilterTransform extends _.CustomType {
 export type P10FilterTransform$ = P10FilterTransform;
 
 export class LocationEntry extends _.CustomType {
-  private __gleam__dcmfx_p10__transforms__p10_filter_transform__LocationEntry: never;
-
   constructor(tag: $data_element_tag.DataElementTag$, filter_result: boolean);
   
   tag: $data_element_tag.DataElementTag$;

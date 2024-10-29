@@ -4,17 +4,11 @@ import type * as $option from "../gleam/option.d.mts";
 import type * as $order from "../gleam/order.d.mts";
 import type * as $string_builder from "../gleam/string_builder.d.mts";
 
-declare class Leading extends _.CustomType {
-  private __gleam__gleam__string__Leading: never;
-}
+declare class Leading extends _.CustomType {}
 
-declare class Trailing extends _.CustomType {
-  private __gleam__gleam__string__Trailing: never;
-}
+declare class Trailing extends _.CustomType {}
 
-declare class Both extends _.CustomType {
-  private __gleam__gleam__string__Both: never;
-}
+declare class Both extends _.CustomType {}
 
 declare type Direction$ = Leading | Trailing | Both;
 

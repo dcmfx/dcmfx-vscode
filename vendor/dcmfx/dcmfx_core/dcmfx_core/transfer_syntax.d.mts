@@ -1,28 +1,18 @@
 import type * as _ from "../gleam.d.mts";
 
-export class VrImplicit extends _.CustomType {
-  private __gleam__dcmfx_core__transfer_syntax__VrImplicit: never;
-}
+export class VrImplicit extends _.CustomType {}
 
-export class VrExplicit extends _.CustomType {
-  private __gleam__dcmfx_core__transfer_syntax__VrExplicit: never;
-}
+export class VrExplicit extends _.CustomType {}
 
 export type VrSerialization$ = VrImplicit | VrExplicit;
 
-export class LittleEndian extends _.CustomType {
-  private __gleam__dcmfx_core__transfer_syntax__LittleEndian: never;
-}
+export class LittleEndian extends _.CustomType {}
 
-export class BigEndian extends _.CustomType {
-  private __gleam__dcmfx_core__transfer_syntax__BigEndian: never;
-}
+export class BigEndian extends _.CustomType {}
 
 export type Endianness$ = LittleEndian | BigEndian;
 
 export class TransferSyntax extends _.CustomType {
-  private __gleam__dcmfx_core__transfer_syntax__TransferSyntax: never;
-
   constructor(
     name: string,
     uid: string,

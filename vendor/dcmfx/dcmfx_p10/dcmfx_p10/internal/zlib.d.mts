@@ -2,31 +2,19 @@ import type * as $flush_command from "../../dcmfx_p10/internal/zlib/flush_comman
 import type * as $inflate_result from "../../dcmfx_p10/internal/zlib/inflate_result.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
-export type ZlibStream$ = {
-  __gleam__dcmfx_p10__internal__zlib__ZlibStream: never;
-};
+export type ZlibStream$ = unknown;
 
-export class Deflated extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__Deflated: never;
-}
+export class Deflated extends _.CustomType {}
 
 export type Zmethod$ = Deflated;
 
-export class Default extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__Default: never;
-}
+export class Default extends _.CustomType {}
 
-export class Filtered extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__Filtered: never;
-}
+export class Filtered extends _.CustomType {}
 
-export class HuffmanOnly extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__HuffmanOnly: never;
-}
+export class HuffmanOnly extends _.CustomType {}
 
-export class Rle extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__zlib__Rle: never;
-}
+export class Rle extends _.CustomType {}
 
 export type Zstrategy$ = Default | Filtered | HuffmanOnly | Rle;
 

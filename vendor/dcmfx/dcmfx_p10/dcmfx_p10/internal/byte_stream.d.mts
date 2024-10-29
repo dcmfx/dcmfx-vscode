@@ -4,8 +4,6 @@ import type * as $zlib from "../../dcmfx_p10/internal/zlib.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class ByteStream extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__byte_stream__ByteStream: never;
-
   constructor(
     bytes_queue: $queue.Queue$<_.BitArray>,
     bytes_queue_size: number,
@@ -25,25 +23,15 @@ declare class ByteStream extends _.CustomType {
 
 export type ByteStream$ = ByteStream;
 
-export class ReadOversized extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__byte_stream__ReadOversized: never;
-}
+export class ReadOversized extends _.CustomType {}
 
-export class DataRequired extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__byte_stream__DataRequired: never;
-}
+export class DataRequired extends _.CustomType {}
 
-export class DataEnd extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__byte_stream__DataEnd: never;
-}
+export class DataEnd extends _.CustomType {}
 
-export class ZlibDataError extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__byte_stream__ZlibDataError: never;
-}
+export class ZlibDataError extends _.CustomType {}
 
-export class WriteAfterCompletion extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__byte_stream__WriteAfterCompletion: never;
-}
+export class WriteAfterCompletion extends _.CustomType {}
 
 export type ByteStreamError$ = ReadOversized | DataRequired | DataEnd | ZlibDataError | WriteAfterCompletion;
 

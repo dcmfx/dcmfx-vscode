@@ -52,7 +52,7 @@ export function add_part(context, part) {
       context,
       $data_set.to_lines(
         data_set,
-        new Some(context.print_options),
+        context.print_options,
         "",
         (s, line) => { return (s + line) + "\n"; },
       ),

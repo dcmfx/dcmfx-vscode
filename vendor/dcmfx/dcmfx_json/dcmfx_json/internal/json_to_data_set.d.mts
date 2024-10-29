@@ -11,8 +11,6 @@ import type * as $json_error from "../../dcmfx_json/json_error.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class PersonNameVariants extends _.CustomType {
-  private __gleam__dcmfx_json__internal__json_to_data_set__PersonNameVariants: never;
-
   constructor(
     alphabetic: $option.Option$<string>,
     ideographic: $option.Option$<string>,

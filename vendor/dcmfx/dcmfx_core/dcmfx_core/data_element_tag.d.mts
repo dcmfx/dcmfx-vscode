@@ -1,8 +1,6 @@
 import type * as _ from "../gleam.d.mts";
 
 export class DataElementTag extends _.CustomType {
-  private __gleam__dcmfx_core__data_element_tag__DataElementTag: never;
-
   constructor(group: number, element: number);
   
   group: number;

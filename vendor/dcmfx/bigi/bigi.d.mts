@@ -2,27 +2,17 @@ import type * as $dynamic from "../gleam_stdlib/gleam/dynamic.d.mts";
 import type * as $order from "../gleam_stdlib/gleam/order.d.mts";
 import type * as _ from "./gleam.d.mts";
 
-export type BigInt$ = {
-  __gleam__bigi__BigInt: never;
-};
+export type BigInt$ = unknown;
 
-export class LittleEndian extends _.CustomType {
-  private __gleam__bigi__LittleEndian: never;
-}
+export class LittleEndian extends _.CustomType {}
 
-export class BigEndian extends _.CustomType {
-  private __gleam__bigi__BigEndian: never;
-}
+export class BigEndian extends _.CustomType {}
 
 export type Endianness$ = LittleEndian | BigEndian;
 
-export class Signed extends _.CustomType {
-  private __gleam__bigi__Signed: never;
-}
+export class Signed extends _.CustomType {}
 
-export class Unsigned extends _.CustomType {
-  private __gleam__bigi__Unsigned: never;
-}
+export class Unsigned extends _.CustomType {}
 
 export type Signedness$ = Signed | Unsigned;
 
@@ -53,6 +43,8 @@ export function compare(a: BigInt$, b: BigInt$): $order.Order$;
 
 export function absolute(bigint: BigInt$): BigInt$;
 
+export function negate(bigint: BigInt$): BigInt$;
+
 export function add(a: BigInt$, b: BigInt$): BigInt$;
 
 export function subtract(a: BigInt$, b: BigInt$): BigInt$;
@@ -67,6 +59,11 @@ export function divide_no_zero(a: BigInt$, b: BigInt$): _.Result<
 >;
 
 export function remainder(a: BigInt$, b: BigInt$): BigInt$;
+
+export function floor_divide(dividend: BigInt$, divisor: BigInt$): _.Result<
+  BigInt$,
+  undefined
+>;
 
 export function remainder_no_zero(a: BigInt$, b: BigInt$): _.Result<
   BigInt$,
@@ -85,6 +82,35 @@ export function power(a: BigInt$, b: BigInt$): _.Result<BigInt$, undefined>;
 export function decode(dyn: $dynamic.Dynamic$): _.Result<
   BigInt$,
   _.List<$dynamic.DecodeError$>
+>;
+
+export function bitwise_and(a: BigInt$, b: BigInt$): BigInt$;
+
+export function bitwise_exclusive_or(a: BigInt$, b: BigInt$): BigInt$;
+
+export function bitwise_not(bigint: BigInt$): BigInt$;
+
+export function bitwise_or(a: BigInt$, b: BigInt$): BigInt$;
+
+export function bitwise_shift_left(bigint: BigInt$, amount: number): BigInt$;
+
+export function bitwise_shift_right(bigint: BigInt$, amount: number): BigInt$;
+
+export function is_odd(bigint: BigInt$): boolean;
+
+export function max(a: BigInt$, b: BigInt$): BigInt$;
+
+export function min(a: BigInt$, b: BigInt$): BigInt$;
+
+export function clamp(bigint: BigInt$, min_bound: BigInt$, max_bound: BigInt$): BigInt$;
+
+export function sum(bigints: _.List<BigInt$>): BigInt$;
+
+export function product(bigints: _.List<BigInt$>): BigInt$;
+
+export function undigits(digits: _.List<number>, base: number): _.Result<
+  BigInt$,
+  undefined
 >;
 
 export function digits(bigint: BigInt$): _.List<number>;

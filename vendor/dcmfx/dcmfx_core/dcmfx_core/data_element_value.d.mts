@@ -12,8 +12,6 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 declare class BinaryValue extends _.CustomType {
-  private __gleam__dcmfx_core__data_element_value__BinaryValue: never;
-
   constructor(vr: $value_representation.ValueRepresentation$, bytes: _.BitArray);
   
   vr: $value_representation.ValueRepresentation$;
@@ -21,8 +19,6 @@ declare class BinaryValue extends _.CustomType {
 }
 
 declare class LookupTableDescriptorValue extends _.CustomType {
-  private __gleam__dcmfx_core__data_element_value__LookupTableDescriptorValue: never;
-
   constructor(vr: $value_representation.ValueRepresentation$, bytes: _.BitArray);
   
   vr: $value_representation.ValueRepresentation$;
@@ -30,8 +26,6 @@ declare class LookupTableDescriptorValue extends _.CustomType {
 }
 
 declare class EncapsulatedPixelDataValue extends _.CustomType {
-  private __gleam__dcmfx_core__data_element_value__EncapsulatedPixelDataValue: never;
-
   constructor(
     vr: $value_representation.ValueRepresentation$,
     items: _.List<_.BitArray>
@@ -42,8 +36,6 @@ declare class EncapsulatedPixelDataValue extends _.CustomType {
 }
 
 declare class SequenceValue extends _.CustomType {
-  private __gleam__dcmfx_core__data_element_value__SequenceValue: never;
-
   constructor(
     items: _.List<
       $dict.Dict$<$data_element_tag.DataElementTag$, DataElementValue$>

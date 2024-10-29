@@ -4,8 +4,6 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 export class DataSetPrintOptions extends _.CustomType {
-  private __gleam__dcmfx_core__data_set_print__DataSetPrintOptions: never;
-
   constructor(styled: boolean, max_width: number);
   
   styled: boolean;

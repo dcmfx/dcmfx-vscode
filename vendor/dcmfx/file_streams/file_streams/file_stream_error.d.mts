@@ -1,201 +1,103 @@
 import type * as $text_encoding from "../file_streams/text_encoding.d.mts";
 import type * as _ from "../gleam.d.mts";
 
-export class Eacces extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eacces: never;
-}
+export class Eacces extends _.CustomType {}
 
-export class Eagain extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eagain: never;
-}
+export class Eagain extends _.CustomType {}
 
-export class Ebadf extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Ebadf: never;
-}
+export class Ebadf extends _.CustomType {}
 
-export class Ebadmsg extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Ebadmsg: never;
-}
+export class Ebadmsg extends _.CustomType {}
 
-export class Ebusy extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Ebusy: never;
-}
+export class Ebusy extends _.CustomType {}
 
-export class Edeadlk extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Edeadlk: never;
-}
+export class Edeadlk extends _.CustomType {}
 
-export class Edeadlock extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Edeadlock: never;
-}
+export class Edeadlock extends _.CustomType {}
 
-export class Edquot extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Edquot: never;
-}
+export class Edquot extends _.CustomType {}
 
-export class Eexist extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eexist: never;
-}
+export class Eexist extends _.CustomType {}
 
-export class Efault extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Efault: never;
-}
+export class Efault extends _.CustomType {}
 
-export class Efbig extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Efbig: never;
-}
+export class Efbig extends _.CustomType {}
 
-export class Eftype extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eftype: never;
-}
+export class Eftype extends _.CustomType {}
 
-export class Eintr extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eintr: never;
-}
+export class Eintr extends _.CustomType {}
 
-export class Einval extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Einval: never;
-}
+export class Einval extends _.CustomType {}
 
-export class Eio extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eio: never;
-}
+export class Eio extends _.CustomType {}
 
-export class Eisdir extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eisdir: never;
-}
+export class Eisdir extends _.CustomType {}
 
-export class Eloop extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eloop: never;
-}
+export class Eloop extends _.CustomType {}
 
-export class Emfile extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Emfile: never;
-}
+export class Emfile extends _.CustomType {}
 
-export class Emlink extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Emlink: never;
-}
+export class Emlink extends _.CustomType {}
 
-export class Emultihop extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Emultihop: never;
-}
+export class Emultihop extends _.CustomType {}
 
-export class Enametoolong extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enametoolong: never;
-}
+export class Enametoolong extends _.CustomType {}
 
-export class Enfile extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enfile: never;
-}
+export class Enfile extends _.CustomType {}
 
-export class Enobufs extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enobufs: never;
-}
+export class Enobufs extends _.CustomType {}
 
-export class Enodev extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enodev: never;
-}
+export class Enodev extends _.CustomType {}
 
-export class Enolck extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enolck: never;
-}
+export class Enolck extends _.CustomType {}
 
-export class Enolink extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enolink: never;
-}
+export class Enolink extends _.CustomType {}
 
-export class Enoent extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enoent: never;
-}
+export class Enoent extends _.CustomType {}
 
-export class Enomem extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enomem: never;
-}
+export class Enomem extends _.CustomType {}
 
-export class Enospc extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enospc: never;
-}
+export class Enospc extends _.CustomType {}
 
-export class Enosr extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enosr: never;
-}
+export class Enosr extends _.CustomType {}
 
-export class Enostr extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enostr: never;
-}
+export class Enostr extends _.CustomType {}
 
-export class Enosys extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enosys: never;
-}
+export class Enosys extends _.CustomType {}
 
-export class Enotblk extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enotblk: never;
-}
+export class Enotblk extends _.CustomType {}
 
-export class Enotdir extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enotdir: never;
-}
+export class Enotdir extends _.CustomType {}
 
-export class Enotsup extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enotsup: never;
-}
+export class Enotsup extends _.CustomType {}
 
-export class Enxio extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Enxio: never;
-}
+export class Enxio extends _.CustomType {}
 
-export class Eopnotsupp extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eopnotsupp: never;
-}
+export class Eopnotsupp extends _.CustomType {}
 
-export class Eoverflow extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eoverflow: never;
-}
+export class Eoverflow extends _.CustomType {}
 
-export class Eperm extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eperm: never;
-}
+export class Eperm extends _.CustomType {}
 
-export class Epipe extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Epipe: never;
-}
+export class Epipe extends _.CustomType {}
 
-export class Erange extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Erange: never;
-}
+export class Erange extends _.CustomType {}
 
-export class Erofs extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Erofs: never;
-}
+export class Erofs extends _.CustomType {}
 
-export class Espipe extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Espipe: never;
-}
+export class Espipe extends _.CustomType {}
 
-export class Esrch extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Esrch: never;
-}
+export class Esrch extends _.CustomType {}
 
-export class Estale extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Estale: never;
-}
+export class Estale extends _.CustomType {}
 
-export class Etxtbsy extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Etxtbsy: never;
-}
+export class Etxtbsy extends _.CustomType {}
 
-export class Exdev extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Exdev: never;
-}
+export class Exdev extends _.CustomType {}
 
-export class Eof extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__Eof: never;
-}
+export class Eof extends _.CustomType {}
 
 export class NoTranslation extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__NoTranslation: never;
-
   constructor(
     from: $text_encoding.TextEncoding$,
     to: $text_encoding.TextEncoding$
@@ -205,9 +107,7 @@ export class NoTranslation extends _.CustomType {
   to: $text_encoding.TextEncoding$;
 }
 
-export class InvalidUnicode extends _.CustomType {
-  private __gleam__file_streams__file_stream_error__InvalidUnicode: never;
-}
+export class InvalidUnicode extends _.CustomType {}
 
 export type FileStreamError$ = Eacces | Eagain | Ebadf | Ebadmsg | Ebusy | Edeadlk | Edeadlock | Edquot | Eexist | Efault | Efbig | Eftype | Eintr | Einval | Eio | Eisdir | Eloop | Emfile | Emlink | Emultihop | Enametoolong | Enfile | Enobufs | Enodev | Enolck | Enolink | Enoent | Enomem | Enospc | Enosr | Enostr | Enosys | Enotblk | Enotdir | Enotsup | Enxio | Eopnotsupp | Eoverflow | Eperm | Epipe | Erange | Erofs | Espipe | Esrch | Estale | Etxtbsy | Exdev | Eof | NoTranslation | InvalidUnicode;
 

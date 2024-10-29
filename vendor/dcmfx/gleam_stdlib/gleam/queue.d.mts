@@ -1,8 +1,6 @@
 import type * as _ from "../gleam.d.mts";
 
 declare class Queue<EYA> extends _.CustomType {
-  private __gleam__gleam__queue__Queue: never;
-
   constructor(in$: _.List<any>, out: _.List<any>);
   
   in$: _.List<any>;

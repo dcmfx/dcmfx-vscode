@@ -1,16 +1,10 @@
 import type * as _ from "../gleam.d.mts";
 
-export class Lt extends _.CustomType {
-  private __gleam__gleam__order__Lt: never;
-}
+export class Lt extends _.CustomType {}
 
-export class Eq extends _.CustomType {
-  private __gleam__gleam__order__Eq: never;
-}
+export class Eq extends _.CustomType {}
 
-export class Gt extends _.CustomType {
-  private __gleam__gleam__order__Gt: never;
-}
+export class Gt extends _.CustomType {}
 
 export type Order$ = Lt | Eq | Gt;
 

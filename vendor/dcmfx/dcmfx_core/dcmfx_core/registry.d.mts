@@ -5,8 +5,6 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 export class Item extends _.CustomType {
-  private __gleam__dcmfx_core__registry__Item: never;
-
   constructor(
     tag: $data_element_tag.DataElementTag$,
     name: string,

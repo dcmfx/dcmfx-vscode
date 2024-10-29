@@ -8,16 +8,12 @@ import type * as $p10_part from "../../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class RootDataSet extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__p10_location__RootDataSet: never;
-
   constructor(clarifying_data_elements: ClarifyingDataElements$);
   
   clarifying_data_elements: ClarifyingDataElements$;
 }
 
 declare class Sequence extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__p10_location__Sequence: never;
-
   constructor(
     is_implicit_vr: boolean,
     ends_at: $option.Option$<number>,
@@ -30,8 +26,6 @@ declare class Sequence extends _.CustomType {
 }
 
 declare class Item extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__p10_location__Item: never;
-
   constructor(
     clarifying_data_elements: ClarifyingDataElements$,
     ends_at: $option.Option$<number>
@@ -44,8 +38,6 @@ declare class Item extends _.CustomType {
 export type LocationEntry$ = RootDataSet | Sequence | Item;
 
 declare class ClarifyingDataElements extends _.CustomType {
-  private __gleam__dcmfx_p10__internal__p10_location__ClarifyingDataElements: never;
-
   constructor(
     specific_character_set: $dcmfx_character_set.SpecificCharacterSet$,
     bits_allocated: $option.Option$<number>,

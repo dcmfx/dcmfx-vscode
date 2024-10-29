@@ -2,34 +2,24 @@ import type * as $order from "../gleam_stdlib/gleam/order.d.mts";
 import type * as _ from "./gleam.d.mts";
 
 declare class Finite extends _.CustomType {
-  private __gleam__ieee_float__Finite: never;
-
   constructor(value: number);
   
   value: number;
 }
 
 declare class Infinite extends _.CustomType {
-  private __gleam__ieee_float__Infinite: never;
-
   constructor(sign: Sign$);
   
   sign: Sign$;
 }
 
-declare class NaN extends _.CustomType {
-  private __gleam__ieee_float__NaN: never;
-}
+declare class NaN extends _.CustomType {}
 
 export type IEEEFloat$ = Finite | Infinite | NaN;
 
-declare class Positive extends _.CustomType {
-  private __gleam__ieee_float__Positive: never;
-}
+declare class Positive extends _.CustomType {}
 
-declare class Negative extends _.CustomType {
-  private __gleam__ieee_float__Negative: never;
-}
+declare class Negative extends _.CustomType {}
 
 declare type Sign$ = Positive | Negative;
 

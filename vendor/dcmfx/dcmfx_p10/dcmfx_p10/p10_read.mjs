@@ -263,7 +263,7 @@ function read_file_preamble_and_dicm_prefix_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            366,
+            363,
             "read_file_preamble_and_dicm_prefix_part",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -336,7 +336,7 @@ function read_file_meta_information_data_set(
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              481,
+              478,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -404,7 +404,7 @@ function read_file_meta_information_data_set(
                                 throw makeError(
                                   "let_assert",
                                   "dcmfx_p10/p10_read",
-                                  539,
+                                  536,
                                   "",
                                   "Pattern match failed, no pattern matched the value.",
                                   { value: data }
@@ -420,7 +420,7 @@ function read_file_meta_information_data_set(
                                   throw makeError(
                                     "let_assert",
                                     "dcmfx_p10/p10_read",
-                                    547,
+                                    544,
                                     "",
                                     "Pattern match failed, no pattern matched the value.",
                                     { value: data$1 }
@@ -491,7 +491,7 @@ function read_file_meta_information_data_set(
                                         throw makeError(
                                           "let_assert",
                                           "dcmfx_p10/p10_read",
-                                          591,
+                                          588,
                                           "",
                                           "Pattern match failed, no pattern matched the value.",
                                           { value: $ }
@@ -708,7 +708,7 @@ function read_file_meta_information_part(context, starts_at) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  438,
+                  435,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $1 }
@@ -741,7 +741,7 @@ function read_implicit_vr_and_length(context, tag) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            1044,
+            1041,
             "read_implicit_vr_and_length",
             "Pattern match failed, no pattern matched the value.",
             { value: data }
@@ -754,7 +754,7 @@ function read_implicit_vr_and_length(context, tag) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            1048,
+            1045,
             "read_implicit_vr_and_length",
             "Pattern match failed, no pattern matched the value.",
             { value: data }
@@ -794,7 +794,7 @@ function read_explicit_vr_and_length(context, tag) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1085,
+          1082,
           "read_explicit_vr_and_length",
           "Pattern match failed, no pattern matched the value.",
           { value: data }
@@ -858,7 +858,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1139,
+                  1136,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -871,7 +871,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1143,
+                  1140,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -887,7 +887,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1150,
+                  1147,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -900,7 +900,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1154,
+                  1151,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -940,7 +940,7 @@ function read_data_element_header(context) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              985,
+              982,
               "read_data_element_header",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -954,7 +954,7 @@ function read_data_element_header(context) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              990,
+              987,
               "read_data_element_header",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -1079,7 +1079,7 @@ function read_data_element_header_part(context) {
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    726,
+                    723,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $2 }
@@ -1161,7 +1161,7 @@ function read_data_element_header_part(context) {
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    726,
+                    723,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $2 }
@@ -1224,7 +1224,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                765,
+                762,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }
@@ -1248,7 +1248,7 @@ function read_data_element_header_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            785,
+            782,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: vr }
@@ -1295,7 +1295,7 @@ function read_data_element_header_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            785,
+            782,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: vr }
@@ -1468,7 +1468,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                947,
+                944,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }

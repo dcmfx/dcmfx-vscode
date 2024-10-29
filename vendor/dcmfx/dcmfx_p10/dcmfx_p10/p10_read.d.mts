@@ -13,8 +13,6 @@ import type * as $p10_part from "../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 export class P10ReadConfig extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_read__P10ReadConfig: never;
-
   constructor(
     max_part_size: number,
     max_string_size: number,
@@ -29,8 +27,6 @@ export class P10ReadConfig extends _.CustomType {
 export type P10ReadConfig$ = P10ReadConfig;
 
 declare class P10ReadContext extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_read__P10ReadContext: never;
-
   constructor(
     config: P10ReadConfig$,
     stream: $byte_stream.ByteStream$,
@@ -52,25 +48,17 @@ declare class P10ReadContext extends _.CustomType {
 
 export type P10ReadContext$ = P10ReadContext;
 
-declare class ReadFilePreambleAndDICMPrefix extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_read__ReadFilePreambleAndDICMPrefix: never;
-}
+declare class ReadFilePreambleAndDICMPrefix extends _.CustomType {}
 
 declare class ReadFileMetaInformation extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_read__ReadFileMetaInformation: never;
-
   constructor(starts_at: number);
   
   starts_at: number;
 }
 
-declare class ReadDataElementHeader extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_read__ReadDataElementHeader: never;
-}
+declare class ReadDataElementHeader extends _.CustomType {}
 
 declare class ReadDataElementValueBytes extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_read__ReadDataElementValueBytes: never;
-
   constructor(
     tag: $data_element_tag.DataElementTag$,
     vr: $value_representation.ValueRepresentation$,
@@ -87,8 +75,6 @@ declare class ReadDataElementValueBytes extends _.CustomType {
 }
 
 declare class ReadPixelDataItem extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_read__ReadPixelDataItem: never;
-
   constructor(vr: $value_representation.ValueRepresentation$);
   
   vr: $value_representation.ValueRepresentation$;

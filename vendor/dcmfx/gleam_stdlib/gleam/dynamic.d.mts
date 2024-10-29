@@ -2,13 +2,9 @@ import type * as _ from "../gleam.d.mts";
 import type * as $dict from "../gleam/dict.d.mts";
 import type * as $option from "../gleam/option.d.mts";
 
-export type Dynamic$ = {
-  __gleam__gleam__dynamic__Dynamic: never;
-};
+export type Dynamic$ = unknown;
 
 export class DecodeError extends _.CustomType {
-  private __gleam__gleam__dynamic__DecodeError: never;
-
   constructor(expected: string, found: string, path: _.List<string>);
   
   expected: string;
@@ -18,9 +14,7 @@ export class DecodeError extends _.CustomType {
 
 export type DecodeError$ = DecodeError;
 
-declare type UnknownTuple$ = {
-  __gleam__gleam__dynamic__UnknownTuple: never;
-};
+declare type UnknownTuple$ = unknown;
 
 export type DecodeErrors = _.List<DecodeError$>;
 

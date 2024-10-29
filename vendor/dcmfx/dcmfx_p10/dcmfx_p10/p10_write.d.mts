@@ -11,8 +11,6 @@ import type * as $p10_part from "../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 export class P10WriteConfig extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_write__P10WriteConfig: never;
-
   constructor(zlib_compression_level: number);
   
   zlib_compression_level: number;
@@ -21,8 +19,6 @@ export class P10WriteConfig extends _.CustomType {
 export type P10WriteConfig$ = P10WriteConfig;
 
 declare class P10WriteContext extends _.CustomType {
-  private __gleam__dcmfx_p10__p10_write__P10WriteContext: never;
-
   constructor(
     config: P10WriteConfig$,
     p10_bytes: _.List<_.BitArray>,
@@ -57,14 +53,14 @@ export function read_bytes(context: P10WriteContext$): [
   _.List<_.BitArray>
 ];
 
-export function data_set_to_parts<CBZO, CBZP>(
+export function data_set_to_parts<CCBM, CCBN>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  callback_context: CBZO,
-  part_callback: (x0: CBZO, x1: $p10_part.P10Part$) => _.Result<CBZO, CBZP>
-): _.Result<CBZO, CBZP>;
+  callback_context: CCBM,
+  part_callback: (x0: CCBM, x1: $p10_part.P10Part$) => _.Result<CCBM, CCBN>
+): _.Result<CCBM, CCBN>;
 
 export function data_element_header_to_bytes(
   header: $data_element_header.DataElementHeader$,
@@ -76,15 +72,15 @@ export function write_part(context: P10WriteContext$, part: $p10_part.P10Part$):
   $p10_error.P10Error$
 >;
 
-export function data_set_to_bytes<CBZU>(
+export function data_set_to_bytes<CCBS>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: CBZU,
-  bytes_callback: (x0: CBZU, x1: _.BitArray) => _.Result<
-    CBZU,
+  context: CCBS,
+  bytes_callback: (x0: CCBS, x1: _.BitArray) => _.Result<
+    CCBS,
     $p10_error.P10Error$
   >,
   config: P10WriteConfig$
-): _.Result<CBZU, $p10_error.P10Error$>;
+): _.Result<CCBS, $p10_error.P10Error$>;

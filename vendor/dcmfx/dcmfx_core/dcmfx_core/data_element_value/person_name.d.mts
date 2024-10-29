@@ -3,8 +3,6 @@ import type * as $data_error from "../../dcmfx_core/data_error.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 export class PersonNameComponents extends _.CustomType {
-  private __gleam__dcmfx_core__data_element_value__person_name__PersonNameComponents: never;
-
   constructor(
     last_name: string,
     first_name: string,
@@ -23,8 +21,6 @@ export class PersonNameComponents extends _.CustomType {
 export type PersonNameComponents$ = PersonNameComponents;
 
 export class StructuredPersonName extends _.CustomType {
-  private __gleam__dcmfx_core__data_element_value__person_name__StructuredPersonName: never;
-
   constructor(
     alphabetic: $option.Option$<PersonNameComponents$>,
     ideographic: $option.Option$<PersonNameComponents$>,

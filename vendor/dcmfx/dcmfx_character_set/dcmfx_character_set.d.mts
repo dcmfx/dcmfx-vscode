@@ -4,8 +4,6 @@ import type * as $string_type from "./dcmfx_character_set/string_type.d.mts";
 import type * as _ from "./gleam.d.mts";
 
 declare class SpecificCharacterSet extends _.CustomType {
-  private __gleam__dcmfx_character_set__SpecificCharacterSet: never;
-
   constructor(charsets: _.List<$character_set.CharacterSet$>);
   
   charsets: _.List<$character_set.CharacterSet$>;

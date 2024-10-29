@@ -3,13 +3,9 @@ import type * as $dict from "../gleam/dict.d.mts";
 import type * as $list from "../gleam/list.d.mts";
 import type * as $option from "../gleam/option.d.mts";
 
-declare class Stop extends _.CustomType {
-  private __gleam__gleam__iterator__Stop: never;
-}
+declare class Stop extends _.CustomType {}
 
 declare class Continue<BXE> extends _.CustomType {
-  private __gleam__gleam__iterator__Continue: never;
-
   constructor(argument$0: BXE, argument$1: () => Action$<any>);
   
   0: BXE;
@@ -19,8 +15,6 @@ declare class Continue<BXE> extends _.CustomType {
 declare type Action$<BXE> = Stop | Continue<BXE>;
 
 declare class Iterator<BXF> extends _.CustomType {
-  private __gleam__gleam__iterator__Iterator: never;
-
   constructor(continuation: () => Action$<any>);
   
   continuation: () => Action$<any>;
@@ -29,23 +23,17 @@ declare class Iterator<BXF> extends _.CustomType {
 export type Iterator$<BXF> = Iterator<BXF>;
 
 export class Next<BXG, BXH> extends _.CustomType {
-  private __gleam__gleam__iterator__Next: never;
-
   constructor(element: BXG, accumulator: BXH);
   
   element: BXG;
   accumulator: BXH;
 }
 
-export class Done extends _.CustomType {
-  private __gleam__gleam__iterator__Done: never;
-}
+export class Done extends _.CustomType {}
 
 export type Step$<BXG, BXH> = Next<BXG, BXH> | Done;
 
 declare class AnotherBy<BXI, BXJ> extends _.CustomType {
-  private __gleam__gleam__iterator__AnotherBy: never;
-
   constructor(
     argument$0: _.List<any>,
     argument$1: BXJ,
@@ -60,18 +48,14 @@ declare class AnotherBy<BXI, BXJ> extends _.CustomType {
 }
 
 declare class LastBy<BXI> extends _.CustomType {
-  private __gleam__gleam__iterator__LastBy: never;
-
   constructor(argument$0: _.List<any>);
   
   0: _.List<any>;
 }
 
-declare type Chunk$<BXI, BXJ> = AnotherBy<BXI, BXJ> | LastBy<BXI>;
+declare type Chunk$<BXJ, BXI> = AnotherBy<BXJ, BXI> | LastBy<BXI>;
 
 declare class Another<BXK> extends _.CustomType {
-  private __gleam__gleam__iterator__Another: never;
-
   constructor(argument$0: _.List<any>, argument$1: () => Action$<any>);
   
   0: _.List<any>;
@@ -79,16 +63,12 @@ declare class Another<BXK> extends _.CustomType {
 }
 
 declare class Last<BXK> extends _.CustomType {
-  private __gleam__gleam__iterator__Last: never;
-
   constructor(argument$0: _.List<any>);
   
   0: _.List<any>;
 }
 
-declare class NoMore extends _.CustomType {
-  private __gleam__gleam__iterator__NoMore: never;
-}
+declare class NoMore extends _.CustomType {}
 
 declare type SizedChunk$<BXK> = Another<BXK> | Last<BXK> | NoMore;
 

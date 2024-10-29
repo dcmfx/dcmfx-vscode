@@ -2,8 +2,6 @@ import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 export class SingleByteWithoutExtensions extends _.CustomType {
-  private __gleam__dcmfx_character_set__internal__character_set__SingleByteWithoutExtensions: never;
-
   constructor(
     defined_term: string,
     description: string,
@@ -19,8 +17,6 @@ export class SingleByteWithoutExtensions extends _.CustomType {
 }
 
 export class SingleByteWithExtensions extends _.CustomType {
-  private __gleam__dcmfx_character_set__internal__character_set__SingleByteWithExtensions: never;
-
   constructor(
     defined_term: string,
     description: string,
@@ -35,8 +31,6 @@ export class SingleByteWithExtensions extends _.CustomType {
 }
 
 export class MultiByteWithExtensions extends _.CustomType {
-  private __gleam__dcmfx_character_set__internal__character_set__MultiByteWithExtensions: never;
-
   constructor(
     defined_term: string,
     description: string,
@@ -51,8 +45,6 @@ export class MultiByteWithExtensions extends _.CustomType {
 }
 
 export class MultiByteWithoutExtensions extends _.CustomType {
-  private __gleam__dcmfx_character_set__internal__character_set__MultiByteWithoutExtensions: never;
-
   constructor(
     defined_term: string,
     description: string,
@@ -70,8 +62,6 @@ export class MultiByteWithoutExtensions extends _.CustomType {
 export type CharacterSet$ = SingleByteWithoutExtensions | SingleByteWithExtensions | MultiByteWithExtensions | MultiByteWithoutExtensions;
 
 export class CodeElement extends _.CustomType {
-  private __gleam__dcmfx_character_set__internal__character_set__CodeElement: never;
-
   constructor(
     escape_sequence: _.BitArray,
     decoder: (x0: _.BitArray) => _.Result<

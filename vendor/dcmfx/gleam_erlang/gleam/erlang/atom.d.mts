@@ -1,13 +1,9 @@
 import type * as $dynamic from "../../../gleam_stdlib/gleam/dynamic.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
-export type Atom$ = {
-  __gleam__gleam__erlang__atom__Atom: never;
-};
+export type Atom$ = unknown;
 
-export class AtomNotLoaded extends _.CustomType {
-  private __gleam__gleam__erlang__atom__AtomNotLoaded: never;
-}
+export class AtomNotLoaded extends _.CustomType {}
 
 export type FromStringError$ = AtomNotLoaded;
 

@@ -11,8 +11,6 @@ import type * as $json_error from "../../dcmfx_json/json_error.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 export class P10JsonTransform extends _.CustomType {
-  private __gleam__dcmfx_json__transforms__p10_json_transform__P10JsonTransform: never;
-
   constructor(
     config: $json_config.DicomJsonConfig$,
     insert_comma: boolean,

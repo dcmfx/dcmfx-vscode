@@ -3,59 +3,39 @@ import type * as _ from "../gleam.d.mts";
 import type * as $atom from "../gleam/erlang/atom.d.mts";
 import type * as $charlist from "../gleam/erlang/charlist.d.mts";
 
-declare class Safe extends _.CustomType {
-  private __gleam__gleam__erlang__Safe: never;
-}
+declare class Safe extends _.CustomType {}
 
 declare type Safe$ = Safe;
 
-export class Eof extends _.CustomType {
-  private __gleam__gleam__erlang__Eof: never;
-}
+export class Eof extends _.CustomType {}
 
-export class NoData extends _.CustomType {
-  private __gleam__gleam__erlang__NoData: never;
-}
+export class NoData extends _.CustomType {}
 
 export type GetLineError$ = Eof | NoData;
 
-export class Second extends _.CustomType {
-  private __gleam__gleam__erlang__Second: never;
-}
+export class Second extends _.CustomType {}
 
-export class Millisecond extends _.CustomType {
-  private __gleam__gleam__erlang__Millisecond: never;
-}
+export class Millisecond extends _.CustomType {}
 
-export class Microsecond extends _.CustomType {
-  private __gleam__gleam__erlang__Microsecond: never;
-}
+export class Microsecond extends _.CustomType {}
 
-export class Nanosecond extends _.CustomType {
-  private __gleam__gleam__erlang__Nanosecond: never;
-}
+export class Nanosecond extends _.CustomType {}
 
 export type TimeUnit$ = Second | Millisecond | Microsecond | Nanosecond;
 
 export class Exited extends _.CustomType {
-  private __gleam__gleam__erlang__Exited: never;
-
   constructor(argument$0: $dynamic.Dynamic$);
   
   0: $dynamic.Dynamic$;
 }
 
 export class Thrown extends _.CustomType {
-  private __gleam__gleam__erlang__Thrown: never;
-
   constructor(argument$0: $dynamic.Dynamic$);
   
   0: $dynamic.Dynamic$;
 }
 
 export class Errored extends _.CustomType {
-  private __gleam__gleam__erlang__Errored: never;
-
   constructor(argument$0: $dynamic.Dynamic$);
   
   0: $dynamic.Dynamic$;
@@ -64,16 +44,12 @@ export class Errored extends _.CustomType {
 export type Crash$ = Exited | Thrown | Errored;
 
 export class UnknownApplication extends _.CustomType {
-  private __gleam__gleam__erlang__UnknownApplication: never;
-
   constructor(name: $atom.Atom$);
   
   name: $atom.Atom$;
 }
 
 export class ApplicationFailedToStart extends _.CustomType {
-  private __gleam__gleam__erlang__ApplicationFailedToStart: never;
-
   constructor(name: $atom.Atom$, reason: $dynamic.Dynamic$);
   
   name: $atom.Atom$;
@@ -82,9 +58,7 @@ export class ApplicationFailedToStart extends _.CustomType {
 
 export type EnsureAllStartedError$ = UnknownApplication | ApplicationFailedToStart;
 
-export type Reference$ = {
-  __gleam__gleam__erlang__Reference: never;
-};
+export type Reference$ = unknown;
 
 export function format(term: any): string;
 
@@ -96,7 +70,7 @@ export function system_time(a: TimeUnit$): number;
 
 export function erlang_timestamp(): [number, number, number];
 
-export function rescue<GJT>(a: () => GJT): _.Result<GJT, Crash$>;
+export function rescue<GLR>(a: () => GLR): _.Result<GLR, Crash$>;
 
 export function binary_to_term(binary: _.BitArray): _.Result<
   $dynamic.Dynamic$,
@@ -116,5 +90,10 @@ export function ensure_all_started(application: $atom.Atom$): _.Result<
 >;
 
 export function make_reference(): Reference$;
+
+export function reference_from_dynamic(from: $dynamic.Dynamic$): _.Result<
+  Reference$,
+  _.List<$dynamic.DecodeError$>
+>;
 
 export function priv_directory(name: string): _.Result<string, undefined>;

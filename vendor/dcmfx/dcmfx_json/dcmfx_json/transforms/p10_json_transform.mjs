@@ -243,7 +243,7 @@ function write_base64(transform, input, finish) {
         throw makeError(
           "let_assert",
           "dcmfx_json/transforms/p10_json_transform",
-          531,
+          533,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -484,7 +484,7 @@ function convert_binary_value_to_json(value, bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            644,
+            646,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -496,7 +496,7 @@ function convert_binary_value_to_json(value, bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            645,
+            647,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -517,7 +517,7 @@ function convert_binary_value_to_json(value, bytes) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_json/transforms/p10_json_transform",
-                  654,
+                  656,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $4 }
@@ -542,7 +542,7 @@ function convert_binary_value_to_json(value, bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            644,
+            646,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -554,7 +554,7 @@ function convert_binary_value_to_json(value, bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            645,
+            647,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -575,7 +575,7 @@ function convert_binary_value_to_json(value, bytes) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_json/transforms/p10_json_transform",
-                  654,
+                  656,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $4 }

@@ -3,8 +3,6 @@ import type * as $data_set_path from "../../dcmfx_core/dcmfx_core/data_set_path.
 import type * as _ from "../gleam.d.mts";
 
 export class DataError extends _.CustomType {
-  private __gleam__dcmfx_json__json_error__DataError: never;
-
   constructor(data_error: $data_error.DataError$);
   
   data_error: $data_error.DataError$;
@@ -13,8 +11,6 @@ export class DataError extends _.CustomType {
 export type JsonSerializeError$ = DataError;
 
 export class JsonInvalid extends _.CustomType {
-  private __gleam__dcmfx_json__json_error__JsonInvalid: never;
-
   constructor(details: string, path: $data_set_path.DataSetPath$);
   
   details: string;

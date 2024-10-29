@@ -4,32 +4,24 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 declare class TagNotPresent extends _.CustomType {
-  private __gleam__dcmfx_core__data_error__TagNotPresent: never;
-
   constructor(path: $data_set_path.DataSetPath$);
   
   path: $data_set_path.DataSetPath$;
 }
 
 declare class ValueNotPresent extends _.CustomType {
-  private __gleam__dcmfx_core__data_error__ValueNotPresent: never;
-
   constructor(path: $option.Option$<$data_set_path.DataSetPath$>);
   
   path: $option.Option$<$data_set_path.DataSetPath$>;
 }
 
 declare class MultiplicityMismatch extends _.CustomType {
-  private __gleam__dcmfx_core__data_error__MultiplicityMismatch: never;
-
   constructor(path: $option.Option$<$data_set_path.DataSetPath$>);
   
   path: $option.Option$<$data_set_path.DataSetPath$>;
 }
 
 declare class ValueInvalid extends _.CustomType {
-  private __gleam__dcmfx_core__data_error__ValueInvalid: never;
-
   constructor(
     details: string,
     path: $option.Option$<$data_set_path.DataSetPath$>
@@ -40,8 +32,6 @@ declare class ValueInvalid extends _.CustomType {
 }
 
 declare class ValueLengthInvalid extends _.CustomType {
-  private __gleam__dcmfx_core__data_error__ValueLengthInvalid: never;
-
   constructor(
     vr: $value_representation.ValueRepresentation$,
     length: number,

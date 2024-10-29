@@ -124,6 +124,10 @@ export function absolute(bigint) {
   }
 }
 
+export function negate(bigint) {
+  return -bigint;
+}
+
 export function add(a, b) {
   return a + b;
 }
@@ -199,4 +203,28 @@ export function decode(dyn) {
   } else {
     return new Error(toList([new DecodeError("bigint", dynType, toList([]))]));
   }
+}
+
+export function bitwise_and(a, b) {
+  return a & b;
+}
+
+export function bitwise_exclusive_or(a, b) {
+  return a ^ b;
+}
+
+export function bitwise_not(a) {
+  return ~a;
+}
+
+export function bitwise_or(a, b) {
+  return a | b;
+}
+
+export function bitwise_shift_left(a, b) {
+  return a << BigInt(b);
+}
+
+export function bitwise_shift_right(a, b) {
+  return a >> BigInt(b);
 }

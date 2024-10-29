@@ -3,8 +3,6 @@ import type * as $data_error from "../../dcmfx_core/data_error.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 export class StructuredTime extends _.CustomType {
-  private __gleam__dcmfx_core__data_element_value__time__StructuredTime: never;
-
   constructor(
     hour: number,
     minute: $option.Option$<number>,

@@ -14,8 +14,8 @@ export function trim_right(s: string, chars: string): string;
 
 export function trim_right_whitespace(s: string): string;
 
-export function list_at<HDA>(list: _.List<HDA>, index: number): _.Result<
-  HDA,
+export function list_at<HFB>(list: _.List<HFB>, index: number): _.Result<
+  HFB,
   undefined
 >;
 

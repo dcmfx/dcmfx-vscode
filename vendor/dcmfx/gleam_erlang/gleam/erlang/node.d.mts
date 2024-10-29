@@ -1,21 +1,13 @@
 import type * as _ from "../../gleam.d.mts";
 import type * as $atom from "../../gleam/erlang/atom.d.mts";
 
-export type Node$ = {
-  __gleam__gleam__erlang__node__Node: never;
-};
+export type Node$ = unknown;
 
-declare type DoNotLeak$ = {
-  __gleam__gleam__erlang__node__DoNotLeak: never;
-};
+declare type DoNotLeak$ = unknown;
 
-export class FailedToConnect extends _.CustomType {
-  private __gleam__gleam__erlang__node__FailedToConnect: never;
-}
+export class FailedToConnect extends _.CustomType {}
 
-export class LocalNodeIsNotAlive extends _.CustomType {
-  private __gleam__gleam__erlang__node__LocalNodeIsNotAlive: never;
-}
+export class LocalNodeIsNotAlive extends _.CustomType {}
 
 export type ConnectError$ = FailedToConnect | LocalNodeIsNotAlive;
 

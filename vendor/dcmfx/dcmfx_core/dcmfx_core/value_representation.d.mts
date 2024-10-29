@@ -1,147 +1,77 @@
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as _ from "../gleam.d.mts";
 
-export class AgeString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__AgeString: never;
-}
+export class AgeString extends _.CustomType {}
 
-export class ApplicationEntity extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__ApplicationEntity: never;
-}
+export class ApplicationEntity extends _.CustomType {}
 
-export class AttributeTag extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__AttributeTag: never;
-}
+export class AttributeTag extends _.CustomType {}
 
-export class CodeString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__CodeString: never;
-}
+export class CodeString extends _.CustomType {}
 
-export class Date extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__Date: never;
-}
+export class Date extends _.CustomType {}
 
-export class DateTime extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__DateTime: never;
-}
+export class DateTime extends _.CustomType {}
 
-export class DecimalString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__DecimalString: never;
-}
+export class DecimalString extends _.CustomType {}
 
-export class FloatingPointDouble extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__FloatingPointDouble: never;
-}
+export class FloatingPointDouble extends _.CustomType {}
 
-export class FloatingPointSingle extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__FloatingPointSingle: never;
-}
+export class FloatingPointSingle extends _.CustomType {}
 
-export class IntegerString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__IntegerString: never;
-}
+export class IntegerString extends _.CustomType {}
 
-export class LongString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__LongString: never;
-}
+export class LongString extends _.CustomType {}
 
-export class LongText extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__LongText: never;
-}
+export class LongText extends _.CustomType {}
 
-export class OtherByteString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__OtherByteString: never;
-}
+export class OtherByteString extends _.CustomType {}
 
-export class OtherDoubleString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__OtherDoubleString: never;
-}
+export class OtherDoubleString extends _.CustomType {}
 
-export class OtherFloatString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__OtherFloatString: never;
-}
+export class OtherFloatString extends _.CustomType {}
 
-export class OtherLongString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__OtherLongString: never;
-}
+export class OtherLongString extends _.CustomType {}
 
-export class OtherVeryLongString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__OtherVeryLongString: never;
-}
+export class OtherVeryLongString extends _.CustomType {}
 
-export class OtherWordString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__OtherWordString: never;
-}
+export class OtherWordString extends _.CustomType {}
 
-export class PersonName extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__PersonName: never;
-}
+export class PersonName extends _.CustomType {}
 
-export class Sequence extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__Sequence: never;
-}
+export class Sequence extends _.CustomType {}
 
-export class ShortString extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__ShortString: never;
-}
+export class ShortString extends _.CustomType {}
 
-export class ShortText extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__ShortText: never;
-}
+export class ShortText extends _.CustomType {}
 
-export class SignedLong extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__SignedLong: never;
-}
+export class SignedLong extends _.CustomType {}
 
-export class SignedShort extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__SignedShort: never;
-}
+export class SignedShort extends _.CustomType {}
 
-export class SignedVeryLong extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__SignedVeryLong: never;
-}
+export class SignedVeryLong extends _.CustomType {}
 
-export class Time extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__Time: never;
-}
+export class Time extends _.CustomType {}
 
-export class UniqueIdentifier extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__UniqueIdentifier: never;
-}
+export class UniqueIdentifier extends _.CustomType {}
 
-export class UniversalResourceIdentifier extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__UniversalResourceIdentifier: never;
-}
+export class UniversalResourceIdentifier extends _.CustomType {}
 
-export class Unknown extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__Unknown: never;
-}
+export class Unknown extends _.CustomType {}
 
-export class UnlimitedCharacters extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__UnlimitedCharacters: never;
-}
+export class UnlimitedCharacters extends _.CustomType {}
 
-export class UnlimitedText extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__UnlimitedText: never;
-}
+export class UnlimitedText extends _.CustomType {}
 
-export class UnsignedLong extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__UnsignedLong: never;
-}
+export class UnsignedLong extends _.CustomType {}
 
-export class UnsignedShort extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__UnsignedShort: never;
-}
+export class UnsignedShort extends _.CustomType {}
 
-export class UnsignedVeryLong extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__UnsignedVeryLong: never;
-}
+export class UnsignedVeryLong extends _.CustomType {}
 
 export type ValueRepresentation$ = AgeString | ApplicationEntity | AttributeTag | CodeString | Date | DateTime | DecimalString | FloatingPointDouble | FloatingPointSingle | IntegerString | LongString | LongText | OtherByteString | OtherDoubleString | OtherFloatString | OtherLongString | OtherVeryLongString | OtherWordString | PersonName | Sequence | ShortString | ShortText | SignedLong | SignedShort | SignedVeryLong | Time | UniqueIdentifier | UniversalResourceIdentifier | Unknown | UnlimitedCharacters | UnlimitedText | UnsignedLong | UnsignedShort | UnsignedVeryLong;
 
 export class LengthRequirements extends _.CustomType {
-  private __gleam__dcmfx_core__value_representation__LengthRequirements: never;
-
   constructor(
     bytes_max: number,
     bytes_multiple_of: $option.Option$<number>,

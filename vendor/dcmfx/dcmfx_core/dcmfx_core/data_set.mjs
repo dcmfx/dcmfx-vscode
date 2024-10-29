@@ -700,7 +700,7 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          561,
+          563,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -824,21 +824,20 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
 }
 
 export function to_lines(data_set, print_options, context, callback) {
-  let print_options$1 = (() => {
-    let _pipe = print_options;
-    return $option.unwrap(_pipe, $data_set_print.new_print_options());
-  })();
-  let _pipe = data_set;
-  return do_to_lines(_pipe, print_options$1, context, callback, 0);
+  return do_to_lines(data_set, print_options, context, callback, 0);
 }
 
-export function print(data_set, print_options) {
+export function print_with_options(data_set, print_options) {
   return to_lines(
     data_set,
     print_options,
     undefined,
     (_, s) => { return $io.println(s); },
   );
+}
+
+export function print(data_set) {
+  return print_with_options(data_set, $data_set_print.new_print_options());
 }
 
 export function tag_with_name(data_set, tag) {

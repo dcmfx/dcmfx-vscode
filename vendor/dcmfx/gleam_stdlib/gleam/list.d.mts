@@ -3,16 +3,12 @@ import type * as $dict from "../gleam/dict.d.mts";
 import type * as $order from "../gleam/order.d.mts";
 
 export class Continue<AAN> extends _.CustomType {
-  private __gleam__gleam__list__Continue: never;
-
   constructor(argument$0: AAN);
   
   0: AAN;
 }
 
 export class Stop<AAN> extends _.CustomType {
-  private __gleam__gleam__list__Stop: never;
-
   constructor(argument$0: AAN);
   
   0: AAN;
@@ -20,13 +16,9 @@ export class Stop<AAN> extends _.CustomType {
 
 export type ContinueOrStop$<AAN> = Continue<AAN> | Stop<AAN>;
 
-declare class Ascending extends _.CustomType {
-  private __gleam__gleam__list__Ascending: never;
-}
+declare class Ascending extends _.CustomType {}
 
-declare class Descending extends _.CustomType {
-  private __gleam__gleam__list__Descending: never;
-}
+declare class Descending extends _.CustomType {}
 
 declare type Sorting$ = Ascending | Descending;
 

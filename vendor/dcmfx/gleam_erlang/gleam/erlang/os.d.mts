@@ -1,25 +1,15 @@
 import type * as $dict from "../../../gleam_stdlib/gleam/dict.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
-export class WindowsNt extends _.CustomType {
-  private __gleam__gleam__erlang__os__WindowsNt: never;
-}
+export class WindowsNt extends _.CustomType {}
 
-export class Linux extends _.CustomType {
-  private __gleam__gleam__erlang__os__Linux: never;
-}
+export class Linux extends _.CustomType {}
 
-export class Darwin extends _.CustomType {
-  private __gleam__gleam__erlang__os__Darwin: never;
-}
+export class Darwin extends _.CustomType {}
 
-export class FreeBsd extends _.CustomType {
-  private __gleam__gleam__erlang__os__FreeBsd: never;
-}
+export class FreeBsd extends _.CustomType {}
 
 export class Other extends _.CustomType {
-  private __gleam__gleam__erlang__os__Other: never;
-
   constructor(argument$0: string);
   
   0: string;

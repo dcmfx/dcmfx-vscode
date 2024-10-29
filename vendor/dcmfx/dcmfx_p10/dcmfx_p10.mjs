@@ -64,7 +64,7 @@ function do_read_bytes(loop$context, loop$builder) {
             throw makeError(
               "let_assert",
               "dcmfx_p10",
-              217,
+              220,
               "do_read_bytes",
               "Pattern match failed, no pattern matched the value.",
               { value: $2 }
@@ -96,7 +96,7 @@ export function read_bytes(bytes) {
     throw makeError(
       "let_assert",
       "dcmfx_p10",
-      188,
+      191,
       "read_bytes",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }

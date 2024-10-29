@@ -1,13 +1,9 @@
 import type * as _ from "../gleam.d.mts";
 import type * as $option from "../gleam/option.d.mts";
 
-export type Regex$ = {
-  __gleam__gleam__regex__Regex: never;
-};
+export type Regex$ = unknown;
 
 export class Match extends _.CustomType {
-  private __gleam__gleam__regex__Match: never;
-
   constructor(content: string, submatches: _.List<$option.Option$<string>>);
   
   content: string;
@@ -17,8 +13,6 @@ export class Match extends _.CustomType {
 export type Match$ = Match;
 
 export class CompileError extends _.CustomType {
-  private __gleam__gleam__regex__CompileError: never;
-
   constructor(error: string, byte_index: number);
   
   error: string;
@@ -28,8 +22,6 @@ export class CompileError extends _.CustomType {
 export type CompileError$ = CompileError;
 
 export class Options extends _.CustomType {
-  private __gleam__gleam__regex__Options: never;
-
   constructor(case_insensitive: boolean, multi_line: boolean);
   
   case_insensitive: boolean;

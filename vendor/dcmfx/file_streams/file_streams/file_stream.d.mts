@@ -6,13 +6,9 @@ import type * as $raw_result from "../file_streams/internal/raw_result.d.mts";
 import type * as $text_encoding from "../file_streams/text_encoding.d.mts";
 import type * as _ from "../gleam.d.mts";
 
-declare type IoDevice$ = {
-  __gleam__file_streams__file_stream__IoDevice: never;
-};
+declare type IoDevice$ = unknown;
 
 declare class FileStream extends _.CustomType {
-  private __gleam__file_streams__file_stream__FileStream: never;
-
   constructor(
     io_device: IoDevice$,
     encoding: $option.Option$<$text_encoding.TextEncoding$>
@@ -25,24 +21,18 @@ declare class FileStream extends _.CustomType {
 export type FileStream$ = FileStream;
 
 export class BeginningOfFile extends _.CustomType {
-  private __gleam__file_streams__file_stream__BeginningOfFile: never;
-
   constructor(offset: number);
   
   offset: number;
 }
 
 export class CurrentLocation extends _.CustomType {
-  private __gleam__file_streams__file_stream__CurrentLocation: never;
-
   constructor(offset: number);
   
   offset: number;
 }
 
 export class EndOfFile extends _.CustomType {
-  private __gleam__file_streams__file_stream__EndOfFile: never;
-
   constructor(offset: number);
   
   offset: number;
@@ -51,24 +41,18 @@ export class EndOfFile extends _.CustomType {
 export type FileStreamLocation$ = BeginningOfFile | CurrentLocation | EndOfFile;
 
 declare class Bof extends _.CustomType {
-  private __gleam__file_streams__file_stream__Bof: never;
-
   constructor(offset: number);
   
   offset: number;
 }
 
 declare class Cur extends _.CustomType {
-  private __gleam__file_streams__file_stream__Cur: never;
-
   constructor(offset: number);
   
   offset: number;
 }
 
 declare class Eof extends _.CustomType {
-  private __gleam__file_streams__file_stream__Eof: never;
-
   constructor(offset: number);
   
   offset: number;
@@ -246,11 +230,11 @@ export function read_float64_be(stream: FileStream$): _.Result<
   $file_stream_error.FileStreamError$
 >;
 
-export function read_list<BZHG>(
+export function read_list<BZJE>(
   stream: FileStream$,
   item_read_fn: (x0: FileStream$) => _.Result<
-    BZHG,
+    BZJE,
     $file_stream_error.FileStreamError$
   >,
   item_count: number
-): _.Result<_.List<BZHG>, $file_stream_error.FileStreamError$>;
+): _.Result<_.List<BZJE>, $file_stream_error.FileStreamError$>;

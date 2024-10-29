@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { Effect, pipe } from "effect";
 import type { Readable } from "stream";
 import * as gleam from "../../vendor/dcmfx/prelude.mjs";
-import { Some, None } from "../../vendor/dcmfx/gleam_stdlib/gleam/option.mjs";
+import { None } from "../../vendor/dcmfx/gleam_stdlib/gleam/option.mjs";
 import * as data_error from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_error.mjs";
 import * as data_element_tag from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as registry from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/registry.mjs";
@@ -121,7 +121,7 @@ function* printDicomJson(uri: vscode.Uri) {
 
   return data_set.to_lines(
     dataSet,
-    new Some(getPrintOptions()),
+    getPrintOptions(),
     "",
     (lines, line) => lines + line + "\n",
   );

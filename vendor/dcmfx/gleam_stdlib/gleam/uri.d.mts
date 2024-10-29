@@ -3,8 +3,6 @@ import type * as $option from "../gleam/option.d.mts";
 import type * as $string_builder from "../gleam/string_builder.d.mts";
 
 export class Uri extends _.CustomType {
-  private __gleam__gleam__uri__Uri: never;
-
   constructor(
     scheme: $option.Option$<string>,
     userinfo: $option.Option$<string>,
