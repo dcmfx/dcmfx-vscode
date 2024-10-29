@@ -31,6 +31,8 @@ jobs:
       - name: Semantic release
         id: semantic-release
         uses: cycjimmy/semantic-release-action@v4
+        with:
+          extra_plugins: conventional-changelog-conventionalcommits
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
