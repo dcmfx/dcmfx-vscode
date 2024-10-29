@@ -41,7 +41,10 @@ export function rewriteP10(): (uri: vscode.Uri) => Promise<void> {
 
     await Effect.runPromise(
       pipe(
-        Effect.gen(() => doRewriteP10(uri, dstUri)),
+        Effect.gen(() => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+          return doRewriteP10(uri, dstUri);
+        }),
         Effect.match({
           onSuccess: () =>
             vscode.window.showInformationMessage(

@@ -74,7 +74,10 @@ export class DcmfxPrintContentProvider
         return output;
       });
     } else {
-      print = Effect.gen(() => printDicomJson(uri.with({ scheme, path })));
+      print = Effect.gen(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return printDicomJson(uri.with({ scheme, path }));
+      });
     }
 
     const startAt = performance.now();
