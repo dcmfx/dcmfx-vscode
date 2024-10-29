@@ -36,4 +36,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-          OSVX_PAT: ${{ secrets.OSVX_PAT }}
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
