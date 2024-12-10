@@ -29,7 +29,13 @@
         "properties": {
           "dcmfx.alwaysShowContextMenuItems": {
             "description": "Always show the DCMfx context menu items regardless of the file's extension.",
-            "type": "boolean"
+            "type": "boolean",
+            "default": false
+          },
+          "dcmfx.dicomJsonPrettyPrint": {
+            "description": "Whether to pretty print DICOM JSON output with whitespace and newlines.",
+            "type": "boolean",
+            "default": true
           }
         }
       }

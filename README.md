@@ -68,7 +68,10 @@ The above behaviors result from how [DCMfx](https://github.com/dcmfx) works.
 This extension has the following settings:
 
 1. `dcmfx.alwaysShowContextMenuItems`: Whether to always show the DCMfx context
-   menu items regardless of the file's extension.
+   menu items regardless of the file's extension. Defaults to false.
+
+2. `dcmfx.dicomJsonPrettyPrint`: Whether to pretty print DICOM JSON output with
+   whitespace and newlines. Defaults to true.
 
 ## Acknowledgements
 

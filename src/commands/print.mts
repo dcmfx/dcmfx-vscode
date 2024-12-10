@@ -151,7 +151,9 @@ function* printDicom(
 
   // Construct print transform to convert the stream of DICOM P10 parts into a
   // human-readable DICOM data set
-  const jsonConfig = new json_config.DicomJsonConfig(true, false);
+  const config = vscode.workspace.getConfiguration("dcmfx");
+  const prettyPrint = config.get<boolean>("dicomJsonPrettyPrint") ?? true;
+  const jsonConfig = new json_config.DicomJsonConfig(true, prettyPrint);
   let p10JsonTransform = p10_json_transform.new$(jsonConfig);
 
   let output = "";
