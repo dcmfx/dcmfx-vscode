@@ -14,10 +14,7 @@ export function to_int(order: Order$): number;
 
 export function compare(a: Order$, b: Order$): Order$;
 
-export function reverse<SM>(orderer: (x0: SM, x1: SM) => Order$): (
-  x0: SM,
-  x1: SM
-) => Order$;
+export function reverse<I>(orderer: (x0: I, x1: I) => Order$): (x0: I, x1: I) => Order$;
 
 export function break_tie(order: Order$, other: Order$): Order$;
 

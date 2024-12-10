@@ -2,19 +2,19 @@ import type * as _ from "../gleam.d.mts";
 import type * as $dict from "../gleam/dict.d.mts";
 import type * as $order from "../gleam/order.d.mts";
 
-export class Continue<AAN> extends _.CustomType {
-  constructor(argument$0: AAN);
+export class Continue<XW> extends _.CustomType {
+  constructor(argument$0: XW);
   
-  0: AAN;
+  0: XW;
 }
 
-export class Stop<AAN> extends _.CustomType {
-  constructor(argument$0: AAN);
+export class Stop<XW> extends _.CustomType {
+  constructor(argument$0: XW);
   
-  0: AAN;
+  0: XW;
 }
 
-export type ContinueOrStop$<AAN> = Continue<AAN> | Stop<AAN>;
+export type ContinueOrStop$<XW> = Continue<XW> | Stop<XW>;
 
 declare class Ascending extends _.CustomType {}
 
@@ -24,252 +24,252 @@ declare type Sorting$ = Ascending | Descending;
 
 export function length(list: _.List<any>): number;
 
-export function reverse<AAU>(xs: _.List<AAU>): _.List<AAU>;
+export function reverse<YD>(list: _.List<YD>): _.List<YD>;
 
 export function is_empty(list: _.List<any>): boolean;
 
-export function contains<ABC>(list: _.List<ABC>, elem: ABC): boolean;
+export function contains<YM>(list: _.List<YM>, elem: YM): boolean;
 
-export function first<ABE>(list: _.List<ABE>): _.Result<ABE, undefined>;
+export function first<YO>(list: _.List<YO>): _.Result<YO, undefined>;
 
-export function rest<ABI>(list: _.List<ABI>): _.Result<_.List<ABI>, undefined>;
+export function rest<YS>(list: _.List<YS>): _.Result<_.List<YS>, undefined>;
 
-export function filter<ACF>(list: _.List<ACF>, predicate: (x0: ACF) => boolean): _.List<
-  ACF
+export function filter<AAL>(list: _.List<AAL>, predicate: (x0: AAL) => boolean): _.List<
+  AAL
 >;
 
-export function filter_map<ACQ, ACS>(
-  list: _.List<ACQ>,
-  fun: (x0: ACQ) => _.Result<ACS, any>
-): _.List<ACS>;
+export function filter_map<AAS, AAU>(
+  list: _.List<AAS>,
+  fun: (x0: AAS) => _.Result<AAU, any>
+): _.List<AAU>;
 
-export function map<ADC, ADE>(list: _.List<ADC>, fun: (x0: ADC) => ADE): _.List<
-  ADE
+export function map<ABH, ABJ>(list: _.List<ABH>, fun: (x0: ABH) => ABJ): _.List<
+  ABJ
 >;
 
-export function map2<ADG, ADI, ADK>(
-  list1: _.List<ADG>,
-  list2: _.List<ADI>,
-  fun: (x0: ADG, x1: ADI) => ADK
-): _.List<ADK>;
+export function map2<ABQ, ABS, ABU>(
+  list1: _.List<ABQ>,
+  list2: _.List<ABS>,
+  fun: (x0: ABQ, x1: ABS) => ABU
+): _.List<ABU>;
 
-export function index_map<AED, AEF>(
-  list: _.List<AED>,
-  fun: (x0: AED, x1: number) => AEF
-): _.List<AEF>;
+export function index_map<ACI, ACK>(
+  list: _.List<ACI>,
+  fun: (x0: ACI, x1: number) => ACK
+): _.List<ACK>;
 
-export function try_map<AER, AET, AEU>(
-  list: _.List<AER>,
-  fun: (x0: AER) => _.Result<AET, AEU>
-): _.Result<_.List<AET>, AEU>;
+export function try_map<ACR, ACT, ACU>(
+  list: _.List<ACR>,
+  fun: (x0: ACR) => _.Result<ACT, ACU>
+): _.Result<_.List<ACT>, ACU>;
 
-export function drop<AFA>(list: _.List<AFA>, n: number): _.List<AFA>;
+export function drop<ADK>(list: _.List<ADK>, n: number): _.List<ADK>;
 
-export function take<AFH>(list: _.List<AFH>, n: number): _.List<AFH>;
+export function take<ADN>(list: _.List<ADN>, n: number): _.List<ADN>;
 
 export function new$(): _.List<any>;
 
-export function wrap<AFM>(item: AFM): _.List<AFM>;
+export function wrap<ADW>(item: ADW): _.List<ADW>;
 
-export function append<AFO>(first: _.List<AFO>, second: _.List<AFO>): _.List<
-  AFO
+export function append<ADY>(first: _.List<ADY>, second: _.List<ADY>): _.List<
+  ADY
 >;
 
-export function prepend<AFW>(list: _.List<AFW>, item: AFW): _.List<AFW>;
+export function prepend<AEG>(list: _.List<AEG>, item: AEG): _.List<AEG>;
 
-export function concat<AGI>(lists: _.List<_.List<AGI>>): _.List<AGI>;
+export function concat<AEN>(lists: _.List<_.List<AEN>>): _.List<AEN>;
 
-export function flatten<AGM>(lists: _.List<_.List<AGM>>): _.List<AGM>;
+export function flatten<AEW>(lists: _.List<_.List<AEW>>): _.List<AEW>;
 
-export function flat_map<AGQ, AGS>(
-  list: _.List<AGQ>,
-  fun: (x0: AGQ) => _.List<AGS>
-): _.List<AGS>;
+export function flat_map<AFA, AFC>(
+  list: _.List<AFA>,
+  fun: (x0: AFA) => _.List<AFC>
+): _.List<AFC>;
 
-export function fold<AGV, AGX>(
-  list: _.List<AGV>,
-  initial: AGX,
-  fun: (x0: AGX, x1: AGV) => AGX
-): AGX;
+export function fold<AFF, AFH>(
+  list: _.List<AFF>,
+  initial: AFH,
+  fun: (x0: AFH, x1: AFF) => AFH
+): AFH;
 
-export function count<AAS>(list: _.List<AAS>, predicate: (x0: AAS) => boolean): number;
+export function count<YB>(list: _.List<YB>, predicate: (x0: YB) => boolean): number;
 
-export function group<ABV, ABX>(list: _.List<ABV>, key: (x0: ABV) => ABX): $dict.Dict$<
-  ABX,
-  _.List<ABV>
+export function group<YX, YZ>(list: _.List<YX>, key: (x0: YX) => YZ): $dict.Dict$<
+  YZ,
+  _.List<YX>
 >;
 
-export function map_fold<ADT, ADV, ADW>(
-  list: _.List<ADT>,
-  acc: ADV,
-  fun: (x0: ADV, x1: ADT) => [ADV, ADW]
-): [ADV, _.List<ADW>];
+export function map_fold<ACD, ACF, ACG>(
+  list: _.List<ACD>,
+  initial: ACF,
+  fun: (x0: ACF, x1: ACD) => [ACF, ACG]
+): [ACF, _.List<ACG>];
 
-export function fold_right<AGY, AHA>(
-  list: _.List<AGY>,
-  initial: AHA,
-  fun: (x0: AHA, x1: AGY) => AHA
-): AHA;
+export function fold_right<AFI, AFK>(
+  list: _.List<AFI>,
+  initial: AFK,
+  fun: (x0: AFK, x1: AFI) => AFK
+): AFK;
 
-export function index_fold<AHE, AHG>(
-  over: _.List<AHE>,
-  initial: AHG,
-  fun: (x0: AHG, x1: AHE, x2: number) => AHG
-): AHG;
+export function index_fold<AFL, AFN>(
+  list: _.List<AFL>,
+  initial: AFN,
+  fun: (x0: AFN, x1: AFL, x2: number) => AFN
+): AFN;
 
-export function try_fold<AHH, AHJ, AHK>(
-  collection: _.List<AHH>,
-  accumulator: AHJ,
-  fun: (x0: AHJ, x1: AHH) => _.Result<AHJ, AHK>
-): _.Result<AHJ, AHK>;
+export function try_fold<AFR, AFT, AFU>(
+  list: _.List<AFR>,
+  initial: AFT,
+  fun: (x0: AFT, x1: AFR) => _.Result<AFT, AFU>
+): _.Result<AFT, AFU>;
 
-export function fold_until<AHP, AHR>(
-  collection: _.List<AHP>,
-  accumulator: AHR,
-  fun: (x0: AHR, x1: AHP) => ContinueOrStop$<AHR>
-): AHR;
+export function fold_until<AFZ, AGB>(
+  list: _.List<AFZ>,
+  initial: AGB,
+  fun: (x0: AGB, x1: AFZ) => ContinueOrStop$<AGB>
+): AGB;
 
-export function find<AHT>(
-  haystack: _.List<AHT>,
-  is_desired: (x0: AHT) => boolean
-): _.Result<AHT, undefined>;
-
-export function find_map<AHX, AHZ>(
-  haystack: _.List<AHX>,
-  fun: (x0: AHX) => _.Result<AHZ, any>
-): _.Result<AHZ, undefined>;
-
-export function all<AIF>(list: _.List<AIF>, predicate: (x0: AIF) => boolean): boolean;
-
-export function any<AIH>(list: _.List<AIH>, predicate: (x0: AIH) => boolean): boolean;
-
-export function zip<AIP, AIR>(list: _.List<AIP>, other: _.List<AIR>): _.List<
-  [AIP, AIR]
->;
-
-export function strict_zip<AIU, AIW>(list: _.List<AIU>, other: _.List<AIW>): _.Result<
-  _.List<[AIU, AIW]>,
+export function find<AGD>(list: _.List<AGD>, is_desired: (x0: AGD) => boolean): _.Result<
+  AGD,
   undefined
 >;
 
-export function unzip<AJF, AJG>(input: _.List<[AJF, AJG]>): [
-  _.List<AJF>,
-  _.List<AJG>
+export function find_map<AGH, AGJ>(
+  list: _.List<AGH>,
+  fun: (x0: AGH) => _.Result<AGJ, any>
+): _.Result<AGJ, undefined>;
+
+export function all<AGP>(list: _.List<AGP>, predicate: (x0: AGP) => boolean): boolean;
+
+export function any<AGR>(list: _.List<AGR>, predicate: (x0: AGR) => boolean): boolean;
+
+export function zip<AGT, AGV>(list: _.List<AGT>, other: _.List<AGV>): _.List<
+  [AGT, AGV]
+>;
+
+export function strict_zip<AHE, AHG>(list: _.List<AHE>, other: _.List<AHG>): _.Result<
+  _.List<[AHE, AHG]>,
+  undefined
+>;
+
+export function unzip<AHT, AHU>(input: _.List<[AHT, AHU]>): [
+  _.List<AHT>,
+  _.List<AHU>
 ];
 
-export function intersperse<AJO>(list: _.List<AJO>, elem: AJO): _.List<AJO>;
+export function intersperse<AIF>(list: _.List<AIF>, elem: AIF): _.List<AIF>;
 
-export function unique<AJR>(list: _.List<AJR>): _.List<AJR>;
+export function unique<AIM>(list: _.List<AIM>): _.List<AIM>;
 
-export function sort<AJU>(
-  list: _.List<AJU>,
-  compare: (x0: AJU, x1: AJU) => $order.Order$
-): _.List<AJU>;
+export function sort<AIP>(
+  list: _.List<AIP>,
+  compare: (x0: AIP, x1: AIP) => $order.Order$
+): _.List<AIP>;
 
 export function range(start: number, stop: number): _.List<number>;
 
-export function repeat<ALK>(a: ALK, times: number): _.List<ALK>;
+export function repeat<AKC>(a: AKC, times: number): _.List<AKC>;
 
-export function split<ALR>(list: _.List<ALR>, index: number): [
-  _.List<ALR>,
-  _.List<ALR>
+export function split<AKH>(list: _.List<AKH>, index: number): [
+  _.List<AKH>,
+  _.List<AKH>
 ];
 
-export function split_while<AMA>(
-  list: _.List<AMA>,
-  predicate: (x0: AMA) => boolean
-): [_.List<AMA>, _.List<AMA>];
+export function split_while<AKQ>(
+  list: _.List<AKQ>,
+  predicate: (x0: AKQ) => boolean
+): [_.List<AKQ>, _.List<AKQ>];
 
-export function key_find<AME, AMF>(
-  keyword_list: _.List<[AME, AMF]>,
-  desired_key: AME
-): _.Result<AMF, undefined>;
+export function key_find<AKZ, ALA>(
+  keyword_list: _.List<[AKZ, ALA]>,
+  desired_key: AKZ
+): _.Result<ALA, undefined>;
 
-export function key_filter<AMJ, AMK>(
-  keyword_list: _.List<[AMJ, AMK]>,
-  desired_key: AMJ
-): _.List<AMK>;
+export function key_filter<ALE, ALF>(
+  keyword_list: _.List<[ALE, ALF]>,
+  desired_key: ALE
+): _.List<ALF>;
 
-export function pop<AMR>(
-  haystack: _.List<AMR>,
-  is_desired: (x0: AMR) => boolean
-): _.Result<[AMR, _.List<AMR>], undefined>;
-
-export function pop_map<ANA, ANC>(
-  haystack: _.List<ANA>,
-  is_desired: (x0: ANA) => _.Result<ANC, any>
-): _.Result<[ANC, _.List<ANA>], undefined>;
-
-export function key_pop<ANJ, ANK>(haystack: _.List<[ANJ, ANK]>, key: ANJ): _.Result<
-  [ANK, _.List<[ANJ, ANK]>],
+export function pop<ALI>(list: _.List<ALI>, is_desired: (x0: ALI) => boolean): _.Result<
+  [ALI, _.List<ALI>],
   undefined
 >;
 
-export function key_set<ANP, ANQ>(
-  list: _.List<[ANP, ANQ]>,
-  key: ANP,
-  value: ANQ
-): _.List<[ANP, ANQ]>;
+export function pop_map<ALR, ALT>(
+  haystack: _.List<ALR>,
+  is_desired: (x0: ALR) => _.Result<ALT, any>
+): _.Result<[ALT, _.List<ALR>], undefined>;
 
-export function each<ANT>(list: _.List<ANT>, f: (x0: ANT) => any): undefined;
-
-export function try_each<ANW, ANZ>(
-  list: _.List<ANW>,
-  fun: (x0: ANW) => _.Result<any, ANZ>
-): _.Result<undefined, ANZ>;
-
-export function partition<AOJ>(
-  list: _.List<AOJ>,
-  categorise: (x0: AOJ) => boolean
-): [_.List<AOJ>, _.List<AOJ>];
-
-export function permutations<AON>(l: _.List<AON>): _.List<_.List<AON>>;
-
-export function window<AOX>(l: _.List<AOX>, n: number): _.List<_.List<AOX>>;
-
-export function window_by_2<APB>(l: _.List<APB>): _.List<[APB, APB]>;
-
-export function drop_while<APE>(
-  list: _.List<APE>,
-  predicate: (x0: APE) => boolean
-): _.List<APE>;
-
-export function take_while<APL>(
-  list: _.List<APL>,
-  predicate: (x0: APL) => boolean
-): _.List<APL>;
-
-export function chunk<APW>(list: _.List<APW>, f: (x0: APW) => any): _.List<
-  _.List<APW>
->;
-
-export function sized_chunk<AQI>(list: _.List<AQI>, count: number): _.List<
-  _.List<AQI>
->;
-
-export function reduce<AQM>(list: _.List<AQM>, fun: (x0: AQM, x1: AQM) => AQM): _.Result<
-  AQM,
+export function key_pop<AMK, AML>(list: _.List<[AMK, AML]>, key: AMK): _.Result<
+  [AML, _.List<[AMK, AML]>],
   undefined
 >;
 
-export function scan<AQV, AQX>(
-  list: _.List<AQV>,
-  initial: AQX,
-  fun: (x0: AQX, x1: AQV) => AQX
-): _.List<AQX>;
+export function key_set<AMQ, AMR>(
+  list: _.List<[AMQ, AMR]>,
+  key: AMQ,
+  value: AMR
+): _.List<[AMQ, AMR]>;
 
-export function last<AQZ>(list: _.List<AQZ>): _.Result<AQZ, undefined>;
+export function each<AMU>(list: _.List<AMU>, f: (x0: AMU) => any): undefined;
 
-export function combinations<ARD>(items: _.List<ARD>, n: number): _.List<
-  _.List<ARD>
+export function try_each<AMX, ANA>(
+  list: _.List<AMX>,
+  fun: (x0: AMX) => _.Result<any, ANA>
+): _.Result<undefined, ANA>;
+
+export function partition<ANF>(
+  list: _.List<ANF>,
+  categorise: (x0: ANF) => boolean
+): [_.List<ANF>, _.List<ANF>];
+
+export function permutations<ANO>(list: _.List<ANO>): _.List<_.List<ANO>>;
+
+export function window<ANS>(list: _.List<ANS>, n: number): _.List<_.List<ANS>>;
+
+export function window_by_2<AOC>(list: _.List<AOC>): _.List<[AOC, AOC]>;
+
+export function drop_while<AOF>(
+  list: _.List<AOF>,
+  predicate: (x0: AOF) => boolean
+): _.List<AOF>;
+
+export function take_while<AOI>(
+  list: _.List<AOI>,
+  predicate: (x0: AOI) => boolean
+): _.List<AOI>;
+
+export function chunk<AOP>(list: _.List<AOP>, f: (x0: AOP) => any): _.List<
+  _.List<AOP>
 >;
 
-export function combination_pairs<ARL>(items: _.List<ARL>): _.List<[ARL, ARL]>;
-
-export function transpose<ARS>(list_of_list: _.List<_.List<ARS>>): _.List<
-  _.List<ARS>
+export function sized_chunk<APC>(list: _.List<APC>, count: number): _.List<
+  _.List<APC>
 >;
 
-export function interleave<ARO>(list: _.List<_.List<ARO>>): _.List<ARO>;
+export function reduce<APN>(list: _.List<APN>, fun: (x0: APN, x1: APN) => APN): _.Result<
+  APN,
+  undefined
+>;
 
-export function shuffle<ASE>(list: _.List<ASE>): _.List<ASE>;
+export function scan<APR, APT>(
+  list: _.List<APR>,
+  initial: APT,
+  fun: (x0: APT, x1: APR) => APT
+): _.List<APT>;
+
+export function last<AQA>(list: _.List<AQA>): _.Result<AQA, undefined>;
+
+export function combinations<AQE>(items: _.List<AQE>, n: number): _.List<
+  _.List<AQE>
+>;
+
+export function combination_pairs<AQI>(items: _.List<AQI>): _.List<[AQI, AQI]>;
+
+export function transpose<AQT>(list_of_list: _.List<_.List<AQT>>): _.List<
+  _.List<AQT>
+>;
+
+export function interleave<AQP>(list: _.List<_.List<AQP>>): _.List<AQP>;
+
+export function shuffle<AQY>(list: _.List<AQY>): _.List<AQY>;

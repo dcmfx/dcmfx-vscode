@@ -1,7 +1,6 @@
 import type * as $data_set_path from "../../dcmfx_core/dcmfx_core/data_set_path.d.mts";
 import type * as $file_stream_error from "../../file_streams/file_streams/file_stream_error.d.mts";
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
-import type * as $simplifile from "../../simplifile/simplifile.d.mts";
 import type * as $p10_part from "../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../gleam.d.mts";
 
@@ -68,13 +67,6 @@ export class PartStreamInvalid extends _.CustomType {
 
 export class WriteAfterCompletion extends _.CustomType {}
 
-export class FileError extends _.CustomType {
-  constructor(when: string, error: $simplifile.FileError$);
-  
-  when: string;
-  error: $simplifile.FileError$;
-}
-
 export class FileStreamError extends _.CustomType {
   constructor(when: string, error: $file_stream_error.FileStreamError$);
   
@@ -89,7 +81,7 @@ export class OtherError extends _.CustomType {
   details: string;
 }
 
-export type P10Error$ = TransferSyntaxNotSupported | SpecificCharacterSetInvalid | DataRequired | DataEndedUnexpectedly | DataInvalid | MaximumExceeded | PartStreamInvalid | WriteAfterCompletion | FileError | FileStreamError | OtherError;
+export type P10Error$ = TransferSyntaxNotSupported | SpecificCharacterSetInvalid | DataRequired | DataEndedUnexpectedly | DataInvalid | MaximumExceeded | PartStreamInvalid | WriteAfterCompletion | FileStreamError | OtherError;
 
 export function name(error: P10Error$): string;
 

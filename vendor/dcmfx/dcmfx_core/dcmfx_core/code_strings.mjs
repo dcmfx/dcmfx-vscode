@@ -1,10 +1,10 @@
 /// <reference types="./code_strings.d.mts" />
 import * as $data_element_tag from "../dcmfx_core/data_element_tag.mjs";
-import * as $registry from "../dcmfx_core/registry.mjs";
+import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import { Ok, Error, isEqual } from "../gleam.mjs";
 
 export function describe(value, tag) {
-  if (isEqual(tag, $registry.modality.tag)) {
+  if (isEqual(tag, $dictionary.modality.tag)) {
     let tag$1 = tag;
     if (value === "ANN") {
       return new Ok("Annotation");
@@ -167,7 +167,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.patient_sex.tag)) {
+  } else if (isEqual(tag, $dictionary.patient_sex.tag)) {
     let tag$1 = tag;
     if (value === "M") {
       return new Ok("Male");
@@ -178,7 +178,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.conversion_type.tag)) {
+  } else if (isEqual(tag, $dictionary.conversion_type.tag)) {
     let tag$1 = tag;
     if (value === "DV") {
       return new Ok("Digitized Video");
@@ -199,7 +199,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.scanning_sequence.tag)) {
+  } else if (isEqual(tag, $dictionary.scanning_sequence.tag)) {
     let tag$1 = tag;
     if (value === "SE") {
       return new Ok("Spin Echo");
@@ -214,7 +214,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.sequence_variant.tag)) {
+  } else if (isEqual(tag, $dictionary.sequence_variant.tag)) {
     let tag$1 = tag;
     if (value === "SK") {
       return new Ok("Segmented k-space");
@@ -235,7 +235,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.scan_options.tag)) {
+  } else if (isEqual(tag, $dictionary.scan_options.tag)) {
     let tag$1 = tag;
     if (value === "PER") {
       return new Ok("Phase Encode Reordering");
@@ -258,7 +258,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.acquisition_termination_condition.tag)) {
+  } else if (isEqual(tag, $dictionary.acquisition_termination_condition.tag)) {
     let tag$1 = tag;
     if (value === "CNTS") {
       return new Ok("Preset counts was reached");
@@ -280,7 +280,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.rotation_direction.tag)) {
+  } else if (isEqual(tag, $dictionary.rotation_direction.tag)) {
     let tag$1 = tag;
     if (value === "CW") {
       return new Ok("Clockwise");
@@ -289,7 +289,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.radiation_setting.tag)) {
+  } else if (isEqual(tag, $dictionary.radiation_setting.tag)) {
     let tag$1 = tag;
     if (value === "SC") {
       let _pipe = "Low dose exposure generally corresponding to fluoroscopic settings";
@@ -299,7 +299,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.collimator_type.tag)) {
+  } else if (isEqual(tag, $dictionary.collimator_type.tag)) {
     let tag$1 = tag;
     if (value === "PARA") {
       return new Ok("Parallel (default)");
@@ -322,7 +322,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.whole_body_technique.tag)) {
+  } else if (isEqual(tag, $dictionary.whole_body_technique.tag)) {
     let tag$1 = tag;
     if (value === "1PS") {
       return new Ok("One pass");
@@ -335,7 +335,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.patient_position.tag)) {
+  } else if (isEqual(tag, $dictionary.patient_position.tag)) {
     let tag$1 = tag;
     if (value === "HFP") {
       return new Ok("Head First-Prone");
@@ -372,7 +372,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.view_position.tag)) {
+  } else if (isEqual(tag, $dictionary.view_position.tag)) {
     let tag$1 = tag;
     if (value === "AP") {
       return new Ok("Anterior/Posterior");
@@ -393,7 +393,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.image_laterality.tag)) {
+  } else if (isEqual(tag, $dictionary.image_laterality.tag)) {
     let tag$1 = tag;
     if (value === "R") {
       return new Ok("Right");
@@ -406,7 +406,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.multienergy_detector_type.tag)) {
+  } else if (isEqual(tag, $dictionary.multienergy_detector_type.tag)) {
     let tag$1 = tag;
     if (value === "INTEGRATING") {
       return new Ok("Physical detector integrates the full X-Ray spectrum");
@@ -419,7 +419,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.corrected_image.tag)) {
+  } else if (isEqual(tag, $dictionary.corrected_image.tag)) {
     let tag$1 = tag;
     if (value === "UNIF") {
       return new Ok("Flood corrected");
@@ -446,7 +446,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.pixel_intensity_relationship.tag)) {
+  } else if (isEqual(tag, $dictionary.pixel_intensity_relationship.tag)) {
     let tag$1 = tag;
     if (value === "LIN") {
       return new Ok("Approximately proportional to X-Ray beam intensity");
@@ -457,7 +457,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.lossy_image_compression.tag)) {
+  } else if (isEqual(tag, $dictionary.lossy_image_compression.tag)) {
     let tag$1 = tag;
     if (value === "00") {
       return new Ok("Image has not been subjected to lossy compression");
@@ -466,7 +466,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.lossy_image_compression_method.tag)) {
+  } else if (isEqual(tag, $dictionary.lossy_image_compression_method.tag)) {
     let tag$1 = tag;
     if (value === "ISO_10918_1") {
       return new Ok("JPEG Lossy Compression [ISO/IEC 10918-1]");
@@ -486,7 +486,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.universal_entity_id_type.tag)) {
+  } else if (isEqual(tag, $dictionary.universal_entity_id_type.tag)) {
     let tag$1 = tag;
     if (value === "DNS") {
       return new Ok("An Internet dotted name. Either in ASCII or as integers");
@@ -505,7 +505,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $registry.slice_progression_direction.tag)) {
+  } else if (isEqual(tag, $dictionary.slice_progression_direction.tag)) {
     let tag$1 = tag;
     if (value === "APEX_TO_BASE") {
       return new Ok("Apex to base");
@@ -522,7 +522,7 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (((tag.group >= $registry.overlay_type.tag.group) && (tag.group <= ($registry.overlay_type.tag.group + 0xFF))) && (tag.element === $registry.overlay_type.tag.element)) {
+  } else if (((tag.group >= $dictionary.overlay_type.tag.group) && (tag.group <= ($dictionary.overlay_type.tag.group + 0xFF))) && (tag.element === $dictionary.overlay_type.tag.element)) {
     let tag$1 = tag;
     if (value === "G") {
       return new Ok("Graphics");

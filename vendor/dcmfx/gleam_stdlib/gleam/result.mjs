@@ -99,10 +99,6 @@ export function unwrap_both(result) {
   }
 }
 
-export function nil_error(result) {
-  return map_error(result, (_) => { return undefined; });
-}
-
 export function or(first, second) {
   if (first.isOk()) {
     return first;
@@ -123,7 +119,7 @@ export function all(results) {
   return $list.try_map(results, (x) => { return x; });
 }
 
-function do_partition(loop$results, loop$oks, loop$errors) {
+function partition_loop(loop$results, loop$oks, loop$errors) {
   while (true) {
     let results = loop$results;
     let oks = loop$oks;
@@ -147,7 +143,7 @@ function do_partition(loop$results, loop$oks, loop$errors) {
 }
 
 export function partition(results) {
-  return do_partition(results, toList([]), toList([]));
+  return partition_loop(results, toList([]), toList([]));
 }
 
 export function replace(result, value) {
@@ -166,6 +162,10 @@ export function replace_error(result, error) {
   } else {
     return new Error(error);
   }
+}
+
+export function nil_error(result) {
+  return replace_error(result, undefined);
 }
 
 export function values(results) {

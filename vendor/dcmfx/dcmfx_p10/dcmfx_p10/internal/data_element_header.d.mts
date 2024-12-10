@@ -1,18 +1,19 @@
 import type * as $data_element_tag from "../../../dcmfx_core/dcmfx_core/data_element_tag.d.mts";
 import type * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.d.mts";
 import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
+import type * as $value_length from "../../dcmfx_p10/internal/value_length.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 export class DataElementHeader extends _.CustomType {
   constructor(
     tag: $data_element_tag.DataElementTag$,
     vr: $option.Option$<$value_representation.ValueRepresentation$>,
-    length: number
+    length: $value_length.ValueLength$
   );
   
   tag: $data_element_tag.DataElementTag$;
   vr: $option.Option$<$value_representation.ValueRepresentation$>;
-  length: number;
+  length: $value_length.ValueLength$;
 }
 
 export type DataElementHeader$ = DataElementHeader;

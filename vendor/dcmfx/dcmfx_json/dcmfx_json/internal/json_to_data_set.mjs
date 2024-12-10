@@ -6,9 +6,9 @@ import * as $decimal_string from "../../../dcmfx_core/dcmfx_core/data_element_va
 import * as $integer_string from "../../../dcmfx_core/dcmfx_core/data_element_value/integer_string.mjs";
 import * as $data_set from "../../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $data_set_path from "../../../dcmfx_core/dcmfx_core/data_set_path.mjs";
+import * as $dictionary from "../../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $bit_array_utils from "../../../dcmfx_core/dcmfx_core/internal/bit_array_utils.mjs";
 import * as $utils from "../../../dcmfx_core/dcmfx_core/internal/utils.mjs";
-import * as $registry from "../../../dcmfx_core/dcmfx_core/registry.mjs";
 import * as $transfer_syntax from "../../../dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
@@ -147,7 +147,7 @@ function read_dicom_json_person_name_value(value, path) {
             $option.unwrap(raw_person_name.phonetic, ""),
           ]);
           let _pipe$2 = $string.join(_pipe$1, "=");
-          return $utils.trim_right(_pipe$2, "=");
+          return $utils.trim_end(_pipe$2, "=");
         },
       );
       let _pipe$2 = $string.join(_pipe$1, "\\");
@@ -229,7 +229,7 @@ function read_dicom_json_inline_binary_value(
       return $result.try$(
         bytes,
         (bytes) => {
-          let $ = (isEqual(tag, $registry.pixel_data.tag)) && (isEqual(
+          let $ = (isEqual(tag, $dictionary.pixel_data.tag)) && (isEqual(
             $option.map(transfer_syntax, (ts) => { return ts.is_encapsulated; }),
             new Some(true)
           ));
@@ -803,7 +803,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
     return $result.try$(
       ints,
       (ints) => {
-        let $ = $registry.is_lut_descriptor_tag(tag);
+        let $ = $dictionary.is_lut_descriptor_tag(tag);
         if ($ && ints.hasLength(3)) {
           let entry_count = ints.head;
           let first_input_value = ints.tail.head;
@@ -867,7 +867,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
     return $result.try$(
       ints,
       (ints) => {
-        let $ = $registry.is_lut_descriptor_tag(tag);
+        let $ = $dictionary.is_lut_descriptor_tag(tag);
         if ($ && ints.hasLength(3)) {
           let entry_count = ints.head;
           let first_input_value = ints.tail.head;
@@ -1308,7 +1308,10 @@ export function convert_json_to_data_set(in$, path) {
                     (value) => {
                       let data_set$1 = $data_set.insert(data_set, tag, value);
                       let transfer_syntax$1 = (() => {
-                        let $1 = isEqual(tag, $registry.transfer_syntax_uid.tag);
+                        let $1 = isEqual(
+                          tag,
+                          $dictionary.transfer_syntax_uid.tag
+                        );
                         if ($1) {
                           let $2 = $data_set.get_transfer_syntax(data_set$1);
                           if ($2.isOk()) {

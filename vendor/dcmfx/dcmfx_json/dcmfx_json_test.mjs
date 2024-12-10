@@ -3,7 +3,7 @@ import * as $data_element_value from "../dcmfx_core/dcmfx_core/data_element_valu
 import * as $person_name from "../dcmfx_core/dcmfx_core/data_element_value/person_name.mjs";
 import { PersonNameComponents, StructuredPersonName } from "../dcmfx_core/dcmfx_core/data_element_value/person_name.mjs";
 import * as $data_set from "../dcmfx_core/dcmfx_core/data_set.mjs";
-import * as $registry from "../dcmfx_core/dcmfx_core/registry.mjs";
+import * as $dictionary from "../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $transfer_syntax from "../dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import * as $value_representation from "../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $list from "../gleam_stdlib/gleam/list.mjs";
@@ -26,11 +26,11 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.manufacturer.tag,
+          $dictionary.manufacturer.tag,
           $data_element_value.new_long_string(toList(["123"])),
         ],
         [
-          $registry.patient_name.tag,
+          $dictionary.patient_name.tag,
           $data_element_value.new_person_name(
             toList([
               new StructuredPersonName(
@@ -42,7 +42,7 @@ function test_data_sets() {
           ),
         ],
         [
-          $registry.patient_sex.tag,
+          $dictionary.patient_sex.tag,
           $data_element_value.new_code_string(toList(["O"])),
         ],
       ]),
@@ -51,7 +51,7 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.manufacturer.tag,
+          $dictionary.manufacturer.tag,
           $data_element_value.new_long_string(toList([""])),
         ],
       ]),
@@ -60,7 +60,7 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.manufacturer.tag,
+          $dictionary.manufacturer.tag,
           $data_element_value.new_long_string(toList(["", ""])),
         ],
       ]),
@@ -69,7 +69,7 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.stage_number.tag,
+          $dictionary.stage_number.tag,
           $data_element_value.new_integer_string(toList([1])),
         ],
       ]),
@@ -78,7 +78,7 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.patient_size.tag,
+          $dictionary.patient_size.tag,
           $data_element_value.new_decimal_string(toList([1.2])),
         ],
       ]),
@@ -87,7 +87,7 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.pixel_data.tag,
+          $dictionary.pixel_data.tag,
           $data_element_value.new_other_byte_string(toBitArray([1, 2])),
         ],
       ]),
@@ -96,7 +96,7 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.pixel_data.tag,
+          $dictionary.pixel_data.tag,
           $data_element_value.new_other_word_string(toBitArray([0x3, 0x4])),
         ],
       ]),
@@ -105,7 +105,7 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.transfer_syntax_uid.tag,
+          $dictionary.transfer_syntax_uid.tag,
           $data_element_value.new_unique_identifier(
             toList([
               $transfer_syntax.encapsulated_uncompressed_explicit_vr_little_endian.uid,
@@ -113,7 +113,7 @@ function test_data_sets() {
           ),
         ],
         [
-          $registry.pixel_data.tag,
+          $dictionary.pixel_data.tag,
           $data_element_value.new_encapsulated_pixel_data(
             new $value_representation.OtherByteString(),
             toList([toBitArray([]), toBitArray([1, 2])]),
@@ -125,19 +125,19 @@ function test_data_sets() {
     [
       toList([
         [
-          $registry.energy_weighting_factor.tag,
+          $dictionary.energy_weighting_factor.tag,
           $data_element_value.new_floating_point_single(
             toList([$ieee_float.positive_infinity()]),
           ),
         ],
         [
-          $registry.distance_source_to_isocenter.tag,
+          $dictionary.distance_source_to_isocenter.tag,
           $data_element_value.new_floating_point_single(
             toList([$ieee_float.negative_infinity()]),
           ),
         ],
         [
-          $registry.distance_object_to_table_top.tag,
+          $dictionary.distance_object_to_table_top.tag,
           $data_element_value.new_floating_point_single(
             toList([$ieee_float.nan()]),
           ),
@@ -159,7 +159,7 @@ function test_data_sets() {
             throw makeError(
               "let_assert",
               "dcmfx_json_test",
-              146,
+              151,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: $ }
@@ -182,11 +182,9 @@ export function data_set_to_json_test() {
       let tags = x[0];
       let expected_json = x[1];
       let ds = $data_set.from_list(tags);
+      let config = new DicomJsonConfig(true, false);
       let _pipe$1 = ds;
-      let _pipe$2 = $dcmfx_json.data_set_to_json(
-        _pipe$1,
-        new DicomJsonConfig(true),
-      );
+      let _pipe$2 = $dcmfx_json.data_set_to_json(_pipe$1, config);
       return $should.equal(_pipe$2, new Ok(expected_json));
     },
   );

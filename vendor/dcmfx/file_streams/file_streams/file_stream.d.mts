@@ -1,6 +1,7 @@
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $file_open_mode from "../file_streams/file_open_mode.d.mts";
 import type * as $file_stream_error from "../file_streams/file_stream_error.d.mts";
+import type * as $raw_location from "../file_streams/internal/raw_location.d.mts";
 import type * as $raw_read_result from "../file_streams/internal/raw_read_result.d.mts";
 import type * as $raw_result from "../file_streams/internal/raw_result.d.mts";
 import type * as $text_encoding from "../file_streams/text_encoding.d.mts";
@@ -39,26 +40,6 @@ export class EndOfFile extends _.CustomType {
 }
 
 export type FileStreamLocation$ = BeginningOfFile | CurrentLocation | EndOfFile;
-
-declare class Bof extends _.CustomType {
-  constructor(offset: number);
-  
-  offset: number;
-}
-
-declare class Cur extends _.CustomType {
-  constructor(offset: number);
-  
-  offset: number;
-}
-
-declare class Eof extends _.CustomType {
-  constructor(offset: number);
-  
-  offset: number;
-}
-
-declare type ErlLocation$ = Bof | Cur | Eof;
 
 export function open(
   filename: string,
@@ -230,11 +211,11 @@ export function read_float64_be(stream: FileStream$): _.Result<
   $file_stream_error.FileStreamError$
 >;
 
-export function read_list<BZJE>(
+export function read_list<BZMQ>(
   stream: FileStream$,
   item_read_fn: (x0: FileStream$) => _.Result<
-    BZJE,
+    BZMQ,
     $file_stream_error.FileStreamError$
   >,
   item_count: number
-): _.Result<_.List<BZJE>, $file_stream_error.FileStreamError$>;
+): _.Result<_.List<BZMQ>, $file_stream_error.FileStreamError$>;

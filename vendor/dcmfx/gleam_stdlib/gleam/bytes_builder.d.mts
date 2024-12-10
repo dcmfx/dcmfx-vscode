@@ -1,50 +1,39 @@
 import type * as _ from "../gleam.d.mts";
-import type * as $string_builder from "../gleam/string_builder.d.mts";
+import type * as $bytes_tree from "../gleam/bytes_tree.d.mts";
+import type * as $string_tree from "../gleam/string_tree.d.mts";
 
-declare class Bytes extends _.CustomType {
-  constructor(argument$0: _.BitArray);
-  
-  0: _.BitArray;
-}
+export type BytesBuilder = $bytes_tree.BytesTree$;
 
-declare class Text extends _.CustomType {
-  constructor(argument$0: $string_builder.StringBuilder$);
-  
-  0: $string_builder.StringBuilder$;
-}
+export function new$(): $bytes_tree.BytesTree$;
 
-declare class Many extends _.CustomType {
-  constructor(argument$0: _.List<BytesBuilder$>);
-  
-  0: _.List<BytesBuilder$>;
-}
+export function prepend(second: $bytes_tree.BytesTree$, first: _.BitArray): $bytes_tree.BytesTree$;
 
-export type BytesBuilder$ = Bytes | Text | Many;
+export function append(first: $bytes_tree.BytesTree$, second: _.BitArray): $bytes_tree.BytesTree$;
 
-export function append_builder(first: BytesBuilder$, second: BytesBuilder$): BytesBuilder$;
+export function prepend_builder(
+  second: $bytes_tree.BytesTree$,
+  first: $bytes_tree.BytesTree$
+): $bytes_tree.BytesTree$;
 
-export function prepend_builder(second: BytesBuilder$, first: BytesBuilder$): BytesBuilder$;
+export function append_builder(
+  first: $bytes_tree.BytesTree$,
+  second: $bytes_tree.BytesTree$
+): $bytes_tree.BytesTree$;
 
-export function concat(builders: _.List<BytesBuilder$>): BytesBuilder$;
+export function prepend_string(second: $bytes_tree.BytesTree$, first: string): $bytes_tree.BytesTree$;
 
-export function new$(): BytesBuilder$;
+export function append_string(first: $bytes_tree.BytesTree$, second: string): $bytes_tree.BytesTree$;
 
-export function from_string(string: string): BytesBuilder$;
+export function concat(builders: _.List<$bytes_tree.BytesTree$>): $bytes_tree.BytesTree$;
 
-export function prepend_string(second: BytesBuilder$, first: string): BytesBuilder$;
+export function concat_bit_arrays(bits: _.List<_.BitArray>): $bytes_tree.BytesTree$;
 
-export function append_string(first: BytesBuilder$, second: string): BytesBuilder$;
+export function from_string(string: string): $bytes_tree.BytesTree$;
 
-export function from_string_builder(builder: $string_builder.StringBuilder$): BytesBuilder$;
+export function from_string_builder(builder: $string_tree.StringTree$): $bytes_tree.BytesTree$;
 
-export function from_bit_array(bits: _.BitArray): BytesBuilder$;
+export function from_bit_array(bits: _.BitArray): $bytes_tree.BytesTree$;
 
-export function prepend(second: BytesBuilder$, first: _.BitArray): BytesBuilder$;
+export function to_bit_array(builder: $bytes_tree.BytesTree$): _.BitArray;
 
-export function append(first: BytesBuilder$, second: _.BitArray): BytesBuilder$;
-
-export function concat_bit_arrays(bits: _.List<_.BitArray>): BytesBuilder$;
-
-export function to_bit_array(builder: BytesBuilder$): _.BitArray;
-
-export function byte_size(builder: BytesBuilder$): number;
+export function byte_size(builder: $bytes_tree.BytesTree$): number;

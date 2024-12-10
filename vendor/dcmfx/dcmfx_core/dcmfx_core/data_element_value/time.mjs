@@ -1,11 +1,11 @@
 /// <reference types="./time.d.mts" />
+import * as $regexp from "../../../gleam_regexp/gleam/regexp.mjs";
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
 import * as $float from "../../../gleam_stdlib/gleam/float.mjs";
 import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
-import * as $regex from "../../../gleam_stdlib/gleam/regex.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
@@ -24,7 +24,7 @@ export function from_bytes(bytes) {
   let time_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_right_whitespace);
+    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
       _pipe$2,
       $data_error.new_value_invalid("Time is invalid UTF-8"),
@@ -33,7 +33,7 @@ export function from_bytes(bytes) {
   return $result.try$(
     time_string,
     (time_string) => {
-      let $ = $regex.from_string(
+      let $ = $regexp.from_string(
         "^(\\d\\d)((\\d\\d)((\\d\\d)(\\.\\d{1,6})?)?)?$",
       );
       if (!$.isOk()) {
@@ -47,7 +47,7 @@ export function from_bytes(bytes) {
         )
       }
       let re = $[0];
-      let $1 = $regex.scan(re, time_string);
+      let $1 = $regexp.scan(re, time_string);
       if ($1.hasLength(1)) {
         let match = $1.head;
         let $2 = (() => {
@@ -131,7 +131,7 @@ function format_second(seconds) {
     let fractional_seconds$1 = (() => {
       let _pipe = fractional_seconds;
       let _pipe$1 = $int.to_string(_pipe);
-      return $utils.trim_right(_pipe$1, "0");
+      return $utils.trim_end(_pipe$1, "0");
     })();
     return (whole_seconds + ".") + fractional_seconds$1;
   }

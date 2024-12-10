@@ -1,5 +1,7 @@
 /// <reference types="./bit_array.d.mts" />
 import { toList, remainderInt } from "../gleam.mjs";
+import * as $int from "../gleam/int.mjs";
+import * as $order from "../gleam/order.mjs";
 import * as $string from "../gleam/string.mjs";
 import {
   bit_array_from_string as from_string,
@@ -10,8 +12,10 @@ import {
   decode64,
   base16_encode,
   base16_decode,
-  bit_array_inspect as inspect,
-  bit_array_to_string as do_to_string,
+  bit_array_inspect as inspect_loop,
+  bit_array_compare as compare,
+  bit_array_starts_with as starts_with,
+  bit_array_to_string as to_string,
 } from "../gleam_stdlib.mjs";
 
 export {
@@ -19,11 +23,21 @@ export {
   base16_encode,
   base64_encode,
   byte_size,
+  compare,
   concat,
   from_string,
-  inspect,
   slice,
+  starts_with,
+  to_string,
 };
+
+export function bit_size(x) {
+  return byte_size(x) * 8;
+}
+
+export function pad_to_bytes(x) {
+  return x;
+}
 
 export function append(first, second) {
   return concat(toList([first, second]));
@@ -55,19 +69,19 @@ export function base64_url_decode(encoded) {
   return base64_decode(_pipe$2);
 }
 
-export function is_utf8(bits) {
-  return do_is_utf8(bits);
+export function inspect(input) {
+  return inspect_loop(input, "<<") + ">>";
 }
 
-function do_is_utf8(bits) {
+export function is_utf8(bits) {
+  return is_utf8_loop(bits);
+}
+
+function is_utf8_loop(bits) {
   let $ = to_string(bits);
   if ($.isOk()) {
     return true;
   } else {
     return false;
   }
-}
-
-export function to_string(bits) {
-  return do_to_string(bits);
 }

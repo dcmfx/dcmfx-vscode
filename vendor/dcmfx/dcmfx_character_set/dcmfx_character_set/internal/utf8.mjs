@@ -12,7 +12,7 @@ export function decode_next_codepoint(bytes) {
       throw makeError(
         "let_assert",
         "dcmfx_character_set/internal/utf8",
-        21,
+        35,
         "decode_next_codepoint",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
@@ -31,7 +31,7 @@ export function decode_next_codepoint(bytes) {
       throw makeError(
         "let_assert",
         "dcmfx_character_set/internal/utf8",
-        31,
+        45,
         "decode_next_codepoint",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
@@ -54,7 +54,7 @@ export function decode_next_codepoint(bytes) {
       throw makeError(
         "let_assert",
         "dcmfx_character_set/internal/utf8",
-        52,
+        66,
         "decode_next_codepoint",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
@@ -78,7 +78,7 @@ export function decode_next_codepoint(bytes) {
       throw makeError(
         "let_assert",
         "dcmfx_character_set/internal/utf8",
-        77,
+        91,
         "decode_next_codepoint",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
@@ -93,7 +93,7 @@ export function decode_next_codepoint(bytes) {
       throw makeError(
         "let_assert",
         "dcmfx_character_set/internal/utf8",
-        85,
+        99,
         "decode_next_codepoint",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }

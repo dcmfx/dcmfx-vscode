@@ -1,17 +1,17 @@
-export function first<YY>(pair: [YY, any]): YY;
+export function first<XH>(pair: [XH, any]): XH;
 
-export function second<AAB>(pair: [any, AAB]): AAB;
+export function second<XK>(pair: [any, XK]): XK;
 
-export function swap<AAC, AAD>(pair: [AAC, AAD]): [AAD, AAC];
+export function swap<XL, XM>(pair: [XL, XM]): [XM, XL];
 
-export function map_first<AAE, AAF, AAG>(
-  pair: [AAE, AAF],
-  fun: (x0: AAE) => AAG
-): [AAG, AAF];
+export function map_first<XN, XO, XP>(pair: [XN, XO], fun: (x0: XN) => XP): [
+  XP,
+  XO
+];
 
-export function map_second<AAH, AAI, AAJ>(
-  pair: [AAH, AAI],
-  fun: (x0: AAI) => AAJ
-): [AAH, AAJ];
+export function map_second<XQ, XR, XS>(pair: [XQ, XR], fun: (x0: XR) => XS): [
+  XQ,
+  XS
+];
 
-export function new$<AAK, AAL>(first: AAK, second: AAL): [AAK, AAL];
+export function new$<XT, XU>(first: XT, second: XU): [XT, XU];

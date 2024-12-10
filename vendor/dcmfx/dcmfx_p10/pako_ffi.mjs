@@ -75,19 +75,23 @@ export function deflate(stream, data, flush) {
 }
 
 export function safeInflate(stream, input_bytes) {
-  if (input_bytes.buffer.length > 0) {
-    // This push() call fully deflates the provided input bytes, which means it
-    // is not resilient to zlib inflate bombs. pako.js does not appear to
-    // natively support a safe inflate, though it is likely possible to extend
-    // it to do so if desired. This issue only exists on the JavaScript target
-    // as Erlang's zlib module provides a true safe inflate function.
-    if (!stream.inflate.push(input_bytes.buffer)) {
+  // Bytes written after the inflate is complete are ignored. This matches the
+  // behavior of Erlang's zlib module.
+  if (!stream.inflate.ended) {
+    if (input_bytes.buffer.length > 0) {
+      // This push() call fully deflates the provided input bytes, which means
+      // it is not resilient to zlib inflate bombs. pako.js does not appear to
+      // natively support a safe inflate, though it is likely possible to extend
+      // it to do so if desired. This issue only exists on the JavaScript target
+      // as Erlang's zlib module provides a true safe inflate function.
+      if (!stream.inflate.push(input_bytes.buffer)) {
+        return new Error(Nil);
+      }
+    }
+
+    if (stream.inflate.err !== 0) {
       return new Error(Nil);
     }
-  }
-
-  if (stream.inflate.err !== 0) {
-    return new Error(Nil);
   }
 
   const chunk = stream.inflate.chunks.shift() ?? new Uint8Array();

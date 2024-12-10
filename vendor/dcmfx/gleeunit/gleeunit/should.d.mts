@@ -1,15 +1,15 @@
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as _ from "../gleam.d.mts";
 
-export function equal<CCUB>(a: CCUB, b: CCUB): undefined;
+export function equal<CCWT>(a: CCWT, b: CCWT): undefined;
 
-export function not_equal<CCUC>(a: CCUC, b: CCUC): undefined;
+export function not_equal<CCWU>(a: CCWU, b: CCWU): undefined;
 
-export function be_ok<CCUD>(a: _.Result<CCUD, any>): CCUD;
+export function be_ok<CCWV>(a: _.Result<CCWV, any>): CCWV;
 
-export function be_error<CCUI>(a: _.Result<any, CCUI>): CCUI;
+export function be_error<CCXA>(a: _.Result<any, CCXA>): CCXA;
 
-export function be_some<CCUL>(a: $option.Option$<CCUL>): CCUL;
+export function be_some<CCXD>(a: $option.Option$<CCXD>): CCXD;
 
 export function be_none(a: $option.Option$<any>): undefined;
 

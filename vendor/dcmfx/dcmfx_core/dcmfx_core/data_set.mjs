@@ -23,8 +23,8 @@ import * as $time from "../dcmfx_core/data_element_value/time.mjs";
 import * as $data_error from "../dcmfx_core/data_error.mjs";
 import * as $data_set_path from "../dcmfx_core/data_set_path.mjs";
 import * as $data_set_print from "../dcmfx_core/data_set_print.mjs";
+import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import * as $utils from "../dcmfx_core/internal/utils.mjs";
-import * as $registry from "../dcmfx_core/registry.mjs";
 import * as $transfer_syntax from "../dcmfx_core/transfer_syntax.mjs";
 import * as $value_multiplicity from "../dcmfx_core/value_multiplicity.mjs";
 import * as $value_representation from "../dcmfx_core/value_representation.mjs";
@@ -330,12 +330,12 @@ export function file_meta_information(data_set) {
     return $dict.filter(_pipe, (tag, _) => { return tag.group === 2; });
   })();
   let file_meta_information$2 = (() => {
-    let $ = get_value(data_set, $registry.sop_class_uid.tag);
+    let $ = get_value(data_set, $dictionary.sop_class_uid.tag);
     if ($.isOk()) {
       let value = $[0];
       return $dict.insert(
         file_meta_information$1,
-        $registry.media_storage_sop_class_uid.tag,
+        $dictionary.media_storage_sop_class_uid.tag,
         value,
       );
     } else {
@@ -343,12 +343,12 @@ export function file_meta_information(data_set) {
     }
   })();
   let file_meta_information$3 = (() => {
-    let $ = get_value(data_set, $registry.sop_instance_uid.tag);
+    let $ = get_value(data_set, $dictionary.sop_instance_uid.tag);
     if ($.isOk()) {
       let value = $[0];
       return $dict.insert(
         file_meta_information$2,
-        $registry.media_storage_sop_instance_uid.tag,
+        $dictionary.media_storage_sop_instance_uid.tag,
         value,
       );
     } else {
@@ -624,7 +624,7 @@ export function get_person_names(data_set, tag) {
 export function get_transfer_syntax(data_set) {
   let transfer_syntax_uid = get_string(
     data_set,
-    $registry.transfer_syntax_uid.tag,
+    $dictionary.transfer_syntax_uid.tag,
   );
   return $result.try$(
     transfer_syntax_uid,
@@ -685,7 +685,7 @@ export function tag_name(data_set, tag) {
     let _pipe$1 = private_creator_for_tag(_pipe, tag);
     return $option.from_result(_pipe$1);
   })();
-  return $registry.tag_name(tag, private_creator);
+  return $dictionary.tag_name(tag, private_creator);
 }
 
 function do_to_lines(data_set, print_options, context, callback, indent) {
@@ -735,8 +735,8 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
               let context$1 = callback(
                 context,
                 $data_set_print.format_data_element_prefix(
-                  $registry.item.tag,
-                  $registry.item.name,
+                  $dictionary.item.tag,
+                  $dictionary.item.name,
                   new None(),
                   new None(),
                   indent + 1,
@@ -753,8 +753,8 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
               return callback(
                 context$2,
                 $data_set_print.format_data_element_prefix(
-                  $registry.item_delimitation_item.tag,
-                  $registry.item_delimitation_item.name,
+                  $dictionary.item_delimitation_item.tag,
+                  $dictionary.item_delimitation_item.name,
                   new None(),
                   new None(),
                   indent + 1,
@@ -767,8 +767,8 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
         return callback(
           context$2,
           $data_set_print.format_data_element_prefix(
-            $registry.sequence_delimitation_item.tag,
-            $registry.sequence_delimitation_item.name,
+            $dictionary.sequence_delimitation_item.tag,
+            $dictionary.sequence_delimitation_item.name,
             new None(),
             new None(),
             indent,
@@ -787,8 +787,8 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
               return callback(
                 context,
                 $data_set_print.format_data_element_prefix(
-                  $registry.item.tag,
-                  $registry.item.name,
+                  $dictionary.item.tag,
+                  $dictionary.item.name,
                   new None(),
                   new Some($bit_array.byte_size(item)),
                   indent + 1,
@@ -801,8 +801,8 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
         return callback(
           context$2,
           $data_set_print.format_data_element_prefix(
-            $registry.sequence_delimitation_item.tag,
-            $registry.sequence_delimitation_item.name,
+            $dictionary.sequence_delimitation_item.tag,
+            $dictionary.sequence_delimitation_item.name,
             new None(),
             new None(),
             indent,
@@ -846,7 +846,7 @@ export function tag_with_name(data_set, tag) {
     let _pipe$1 = private_creator_for_tag(_pipe, tag);
     return $option.from_result(_pipe$1);
   })();
-  return $registry.tag_with_name(tag, private_creator);
+  return $dictionary.tag_with_name(tag, private_creator);
 }
 
 export function delete_private_elements(data_set) {

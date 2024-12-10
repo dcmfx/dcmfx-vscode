@@ -1,4 +1,4 @@
-/// <reference types="./registry.d.mts" />
+/// <reference types="./dictionary.d.mts" />
 import * as $bool from "../../gleam_stdlib/gleam/bool.mjs";
 import * as $int from "../../gleam_stdlib/gleam/int.mjs";
 import * as $option from "../../gleam_stdlib/gleam/option.mjs";
@@ -53,18 +53,6 @@ export class Item extends $CustomType {
     this.name = name;
     this.vrs = vrs;
     this.multiplicity = multiplicity;
-  }
-}
-
-function find_element_in_group_1000(element) {
-  {
-    return new Error(undefined);
-  }
-}
-
-function find_element_in_group_1010(element) {
-  {
-    return new Error(undefined);
   }
 }
 
@@ -64858,9 +64846,9 @@ export const gray_lookup_table_data = /* @__PURE__ */ new Item(
   /* @__PURE__ */ new DataElementTag(0x28, 0x1200),
   "Gray Lookup Table Data",
   /* @__PURE__ */ toList([
-    /* @__PURE__ */ new $value_representation.UnsignedShort(),
-    /* @__PURE__ */ new $value_representation.SignedShort(),
-    /* @__PURE__ */ new $value_representation.OtherWordString(),
+    /* @__PURE__ */ new UnsignedShort(),
+    /* @__PURE__ */ new SignedShort(),
+    /* @__PURE__ */ new OtherWordString(),
   ]),
   vm_1_to_n,
 );
@@ -65190,8 +65178,8 @@ export const lut_data = /* @__PURE__ */ new Item(
   /* @__PURE__ */ new DataElementTag(0x28, 0x3006),
   "LUT Data",
   /* @__PURE__ */ toList([
-    /* @__PURE__ */ new $value_representation.UnsignedShort(),
-    /* @__PURE__ */ new $value_representation.OtherWordString(),
+    /* @__PURE__ */ new UnsignedShort(),
+    /* @__PURE__ */ new OtherWordString(),
   ]),
   vm_1_to_n,
 );
@@ -92363,10 +92351,6 @@ export function find(tag, private_creator) {
     return find_element_in_group_0100(tag.element);
   } else if ($ === 0x400) {
     return find_element_in_group_0400(tag.element);
-  } else if ($ === 0x1000) {
-    return find_element_in_group_1000(tag.element);
-  } else if ($ === 0x1010) {
-    return find_element_in_group_1010(tag.element);
   } else if ($ === 0x2000) {
     return find_element_in_group_2000(tag.element);
   } else if ($ === 0x2010) {

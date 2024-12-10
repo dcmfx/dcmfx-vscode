@@ -1,6 +1,6 @@
 import type * as _ from "../gleam.d.mts";
 import type * as $option from "../gleam/option.d.mts";
-import type * as $string_builder from "../gleam/string_builder.d.mts";
+import type * as $string_tree from "../gleam/string_tree.d.mts";
 
 export class Uri extends _.CustomType {
   constructor(

@@ -7,7 +7,6 @@ import * as $list from "../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $string from "../../gleam_stdlib/gleam/string.mjs";
-import * as $simplifile from "../../simplifile/simplifile.mjs";
 import * as $p10_part from "../dcmfx_p10/p10_part.mjs";
 import { toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
 
@@ -72,14 +71,6 @@ export class PartStreamInvalid extends $CustomType {
 
 export class WriteAfterCompletion extends $CustomType {}
 
-export class FileError extends $CustomType {
-  constructor(when, error) {
-    super();
-    this.when = when;
-    this.error = error;
-  }
-}
-
 export class FileStreamError extends $CustomType {
   constructor(when, error) {
     super();
@@ -113,8 +104,6 @@ export function name(error) {
     return "P10 part stream invalid";
   } else if (error instanceof WriteAfterCompletion) {
     return "Write after completion";
-  } else if (error instanceof FileError) {
-    return "File I/O failure";
   } else if (error instanceof FileStreamError) {
     return "File stream I/O failure";
   } else {
@@ -137,9 +126,6 @@ export function to_lines(error, task_description) {
       let when = error.when;
       return listPrepend("  When: " + when, lines$1);
     } else if (error instanceof PartStreamInvalid) {
-      let when = error.when;
-      return listPrepend("  When: " + when, lines$1);
-    } else if (error instanceof FileError) {
       let when = error.when;
       return listPrepend("  When: " + when, lines$1);
     } else if (error instanceof FileStreamError) {
@@ -167,9 +153,6 @@ export function to_lines(error, task_description) {
         "  Part: " + $p10_part.to_string(part),
         listPrepend("  Details: " + details, lines$2),
       );
-    } else if (error instanceof FileError) {
-      let error$1 = error.error;
-      return listPrepend("  Details: " + $string.inspect(error$1), lines$2);
     } else if (error instanceof FileStreamError) {
       let error$1 = error.error;
       return listPrepend("  Details: " + $string.inspect(error$1), lines$2);

@@ -4,7 +4,7 @@ import { DataElementTag } from "../../../dcmfx_core/dcmfx_core/data_element_tag.
 import * as $data_element_value from "../../../dcmfx_core/dcmfx_core/data_element_value.mjs";
 import * as $data_set from "../../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $data_set_print from "../../../dcmfx_core/dcmfx_core/data_set_print.mjs";
-import * as $registry from "../../../dcmfx_core/dcmfx_core/registry.mjs";
+import * as $dictionary from "../../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
@@ -167,8 +167,8 @@ export function add_part(context, part) {
     return [new_context, s + "\n"];
   } else if (part instanceof $p10_part.SequenceDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
-      $registry.sequence_delimitation_item.tag,
-      $registry.sequence_delimitation_item.name,
+      $dictionary.sequence_delimitation_item.tag,
+      $dictionary.sequence_delimitation_item.name,
       new None(),
       new None(),
       context.indent - 1,
@@ -178,8 +178,8 @@ export function add_part(context, part) {
     return [new_context, s + "\n"];
   } else if (part instanceof $p10_part.SequenceItemStart) {
     let s = $data_set_print.format_data_element_prefix(
-      $registry.item.tag,
-      $registry.item.name,
+      $dictionary.item.tag,
+      $dictionary.item.name,
       new None(),
       new None(),
       context.indent,
@@ -192,8 +192,8 @@ export function add_part(context, part) {
     return [new_context, s + "\n"];
   } else if (part instanceof $p10_part.SequenceItemDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
-      $registry.item_delimitation_item.tag,
-      $registry.item_delimitation_item.name,
+      $dictionary.item_delimitation_item.tag,
+      $dictionary.item_delimitation_item.name,
       new None(),
       new None(),
       context.indent - 1,
@@ -210,8 +210,8 @@ export function add_part(context, part) {
   } else if (part instanceof $p10_part.PixelDataItem) {
     let length = part.length;
     let $ = $data_set_print.format_data_element_prefix(
-      $registry.item.tag,
-      $registry.item.name,
+      $dictionary.item.tag,
+      $dictionary.item.name,
       new None(),
       new Some(length),
       context.indent,

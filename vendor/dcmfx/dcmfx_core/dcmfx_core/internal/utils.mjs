@@ -8,13 +8,12 @@ import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import {
   utils__string_fast_length as string_fast_length,
   utils__pad_start as pad_start,
-  utils__spaces as spaces,
 } from "../../dcmfx_core_ffi.mjs";
 import { Ok, Error, toList, makeError } from "../../gleam.mjs";
 
-export { pad_start, spaces, string_fast_length };
+export { pad_start, string_fast_length };
 
-function do_trim_right_codepoints(loop$s, loop$length, loop$codepoints) {
+function do_trim_end_codepoints(loop$s, loop$length, loop$codepoints) {
   while (true) {
     let s = loop$s;
     let length = loop$length;
@@ -27,8 +26,8 @@ function do_trim_right_codepoints(loop$s, loop$length, loop$codepoints) {
         throw makeError(
           "let_assert",
           "dcmfx_core/internal/utils",
-          97,
-          "do_trim_right_codepoints",
+          86,
+          "do_trim_end_codepoints",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
         )
@@ -45,8 +44,8 @@ function do_trim_right_codepoints(loop$s, loop$length, loop$codepoints) {
           throw makeError(
             "let_assert",
             "dcmfx_core/internal/utils",
-            102,
-            "do_trim_right_codepoints",
+            91,
+            "do_trim_end_codepoints",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
           )
@@ -57,8 +56,8 @@ function do_trim_right_codepoints(loop$s, loop$length, loop$codepoints) {
           throw makeError(
             "let_assert",
             "dcmfx_core/internal/utils",
-            103,
-            "do_trim_right_codepoints",
+            92,
+            "do_trim_end_codepoints",
             "Pattern match failed, no pattern matched the value.",
             { value: $3 }
           )
@@ -70,14 +69,14 @@ function do_trim_right_codepoints(loop$s, loop$length, loop$codepoints) {
   }
 }
 
-export function trim_right_codepoints(s, codepoints) {
+export function trim_end_codepoints(s, codepoints) {
   let s$1 = $bit_array.from_string(s);
   let len = $bit_array.byte_size(s$1);
-  return do_trim_right_codepoints(s$1, len, codepoints);
+  return do_trim_end_codepoints(s$1, len, codepoints);
 }
 
 export function smart_parse_float(input) {
-  let input$1 = trim_right_codepoints(input, toList([0x2E]));
+  let input$1 = trim_end_codepoints(input, toList([0x2E]));
   let _pipe = input$1;
   let _pipe$1 = $float.parse(_pipe);
   return $result.lazy_or(
@@ -86,17 +85,17 @@ export function smart_parse_float(input) {
   );
 }
 
-export function trim_right(s, chars) {
+export function trim_end(s, chars) {
   let codepoints = (() => {
     let _pipe = chars;
     let _pipe$1 = $string.to_utf_codepoints(_pipe);
     return $list.map(_pipe$1, $string.utf_codepoint_to_int);
   })();
-  return trim_right_codepoints(s, codepoints);
+  return trim_end_codepoints(s, codepoints);
 }
 
-export function trim_right_whitespace(s) {
-  return trim_right_codepoints(s, toList([0x0, 0x9, 0xA, 0xD, 0x20]));
+export function trim_end_whitespace(s) {
+  return trim_end_codepoints(s, toList([0x0, 0x9, 0xA, 0xD, 0x20]));
 }
 
 function list_drop(loop$list, loop$n) {
@@ -150,7 +149,7 @@ function do_inspect_bit_array(loop$input, loop$accumulator) {
       let accumulator$1 = (accumulator + (() => {
         let _pipe = x;
         let _pipe$1 = $int.to_base16(_pipe);
-        return $string.pad_left(_pipe$1, 2, "0");
+        return pad_start(_pipe$1, 2, "0");
       })()) + suffix;
       loop$input = rest;
       loop$accumulator = accumulator$1;

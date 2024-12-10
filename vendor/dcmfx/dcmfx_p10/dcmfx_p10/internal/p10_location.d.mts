@@ -3,6 +3,7 @@ import type * as $data_element_tag from "../../../dcmfx_core/dcmfx_core/data_ele
 import type * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.d.mts";
 import type * as $dict from "../../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
+import type * as $value_length from "../../dcmfx_p10/internal/value_length.d.mts";
 import type * as $p10_error from "../../dcmfx_p10/p10_error.d.mts";
 import type * as $p10_part from "../../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../../gleam.d.mts";
@@ -101,7 +102,7 @@ export function add_sequence(
 export function add_item(
   location: _.List<LocationEntry$>,
   ends_at: $option.Option$<number>,
-  length: number
+  length: $value_length.ValueLength$
 ): _.Result<_.List<LocationEntry$>, string>;
 
 export function add_clarifying_data_element(

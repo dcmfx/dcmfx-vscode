@@ -12,7 +12,7 @@ import type * as $time from "../dcmfx_core/data_element_value/time.d.mts";
 import type * as $data_error from "../dcmfx_core/data_error.d.mts";
 import type * as $data_set_path from "../dcmfx_core/data_set_path.d.mts";
 import type * as $data_set_print from "../dcmfx_core/data_set_print.d.mts";
-import type * as $registry from "../dcmfx_core/registry.d.mts";
+import type * as $dictionary from "../dcmfx_core/dictionary.d.mts";
 import type * as $transfer_syntax from "../dcmfx_core/transfer_syntax.d.mts";
 import type * as $value_representation from "../dcmfx_core/value_representation.d.mts";
 import type * as _ from "../gleam.d.mts";
@@ -149,7 +149,7 @@ export function to_list(
   [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
 >;
 
-export function map<BYJQ>(
+export function map<BYNB>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -157,8 +157,8 @@ export function map<BYJQ>(
   callback: (
     x0: $data_element_tag.DataElementTag$,
     x1: $data_element_value.DataElementValue$
-  ) => BYJQ
-): _.List<BYJQ>;
+  ) => BYNB
+): _.List<BYNB>;
 
 export function map_values(
   data_set: $dict.Dict$<
@@ -188,44 +188,44 @@ export function filter(
   $data_element_value.DataElementValue$
 >;
 
-export function fold<BYJS>(
+export function fold<BYND>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYJS,
+  initial: BYND,
   callback: (
-    x0: BYJS,
+    x0: BYND,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => BYJS
-): BYJS;
+  ) => BYND
+): BYND;
 
-export function try_fold<BYJT, BYJU>(
+export function try_fold<BYNE, BYNF>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYJT,
+  initial: BYNE,
   callback: (
-    x0: BYJT,
+    x0: BYNE,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => _.Result<BYJT, BYJU>
-): _.Result<BYJT, BYJU>;
+  ) => _.Result<BYNE, BYNF>
+): _.Result<BYNE, BYNF>;
 
-export function fold_until<BYJZ>(
+export function fold_until<BYNK>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYJZ,
+  initial: BYNK,
   callback: (
-    x0: BYJZ,
+    x0: BYNK,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => $list.ContinueOrStop$<BYJZ>
-): BYJZ;
+  ) => $list.ContinueOrStop$<BYNK>
+): BYNK;
 
 export function partition(
   data_set: $dict.Dict$<
@@ -435,15 +435,15 @@ export function tag_name(
   tag: $data_element_tag.DataElementTag$
 ): string;
 
-export function to_lines<BYKB>(
+export function to_lines<BYNM>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   print_options: $data_set_print.DataSetPrintOptions$,
-  context: BYKB,
-  callback: (x0: BYKB, x1: string) => BYKB
-): BYKB;
+  context: BYNM,
+  callback: (x0: BYNM, x1: string) => BYNM
+): BYNM;
 
 export function print_with_options(
   data_set: $dict.Dict$<
@@ -498,7 +498,7 @@ export function insert_age_string(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: $age_string.StructuredAge$
 ): _.Result<
   $dict.Dict$<
@@ -513,7 +513,7 @@ export function insert_attribute_tag_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: _.List<$data_element_tag.DataElementTag$>
 ): _.Result<
   $dict.Dict$<
@@ -528,7 +528,7 @@ export function insert_date_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: $date.StructuredDate$
 ): _.Result<
   $dict.Dict$<
@@ -543,7 +543,7 @@ export function insert_date_time_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: $date_time.StructuredDateTime$
 ): _.Result<
   $dict.Dict$<
@@ -558,7 +558,7 @@ export function insert_float_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: _.List<$ieee_float.IEEEFloat$>
 ): _.Result<
   $dict.Dict$<
@@ -573,7 +573,7 @@ export function insert_int_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: _.List<number>
 ): _.Result<
   $dict.Dict$<
@@ -588,7 +588,7 @@ export function insert_big_int_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: _.List<$bigi.BigInt$>
 ): _.Result<
   $dict.Dict$<
@@ -603,7 +603,7 @@ export function insert_person_name_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: _.List<$person_name.StructuredPersonName$>
 ): _.Result<
   $dict.Dict$<
@@ -618,7 +618,7 @@ export function insert_sequence(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: _.List<
     $dict.Dict$<
       $data_element_tag.DataElementTag$,
@@ -638,7 +638,7 @@ export function insert_string_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: _.List<string>
 ): _.Result<
   $dict.Dict$<
@@ -653,7 +653,7 @@ export function insert_time_value(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  item: $registry.Item$,
+  item: $dictionary.Item$,
   value: $time.StructuredTime$
 ): _.Result<
   $dict.Dict$<

@@ -4,6 +4,7 @@ import * as $int from "../../gleam_stdlib/gleam/int.mjs";
 import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
+import * as $string from "../../gleam_stdlib/gleam/string.mjs";
 import * as $term_size from "../../term_size/term_size.mjs";
 import * as $data_element_tag from "../dcmfx_core/data_element_tag.mjs";
 import * as $utils from "../dcmfx_core/internal/utils.mjs";
@@ -121,11 +122,18 @@ export function format_data_element_prefix(
   let length$1 = (() => {
     if (length instanceof Some) {
       let length$1 = length[0];
-      return ("[" + (() => {
+      return (("[" + (() => {
         let _pipe = length$1;
         let _pipe$1 = $int.to_string(_pipe);
         return $utils.pad_start(_pipe$1, 6, " ");
-      })()) + " bytes] ";
+      })()) + " bytes]") + (() => {
+        let $ = $option.is_some(vr);
+        if ($) {
+          return " ";
+        } else {
+          return "";
+        }
+      })();
     } else {
       return "";
     }
@@ -149,7 +157,10 @@ export function format_data_element_prefix(
       return 0;
     }
   })();
-  let s = (($utils.spaces(indent * 2) + output) + $utils.spaces(padding)) + length$2;
+  let s = (($string.repeat(" ", indent * 2) + output) + $string.repeat(
+    " ",
+    padding,
+  )) + length$2;
   let width = (((indent * 2 + tag_and_vr_width) + tag_name_len) + padding) + length_width;
   return [s, width];
 }

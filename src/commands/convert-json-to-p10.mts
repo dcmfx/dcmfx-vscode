@@ -5,7 +5,7 @@ import * as data_set from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set.mjs
 import * as dcmfx_p10 from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10.mjs";
 import * as option from "../../vendor/dcmfx/gleam_stdlib/gleam/option.mjs";
 import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
-import * as registry from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/registry.mjs";
+import * as dictionary from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as transfer_syntax from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import { gleamResultToEffect, readDicomJsonDataSet } from "./utils.mjs";
 
@@ -51,12 +51,12 @@ function* doConvertJsonToP10(src: vscode.Uri, dst: vscode.Uri) {
 
   // If no transfer syntax was specified in the DICOM JSON then default to
   // 'Explicit VR Little Endian'
-  if (!data_set.has(dataSet, registry.transfer_syntax_uid.tag)) {
+  if (!data_set.has(dataSet, dictionary.transfer_syntax_uid.tag)) {
     dataSet = yield* pipe(
       gleamResultToEffect(
         data_set.insert_string_value(
           dataSet,
-          registry.transfer_syntax_uid,
+          dictionary.transfer_syntax_uid,
           gleam.List.fromArray([transfer_syntax.explicit_vr_little_endian.uid]),
         ),
       ),

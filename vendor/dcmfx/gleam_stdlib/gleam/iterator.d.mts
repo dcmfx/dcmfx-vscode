@@ -5,64 +5,64 @@ import type * as $option from "../gleam/option.d.mts";
 
 declare class Stop extends _.CustomType {}
 
-declare class Continue<BXE> extends _.CustomType {
-  constructor(argument$0: BXE, argument$1: () => Action$<any>);
+declare class Continue<DRT> extends _.CustomType {
+  constructor(argument$0: DRT, argument$1: () => Action$<any>);
   
-  0: BXE;
+  0: DRT;
   1: () => Action$<any>;
 }
 
-declare type Action$<BXE> = Stop | Continue<BXE>;
+declare type Action$<DRT> = Stop | Continue<DRT>;
 
-declare class Iterator<BXF> extends _.CustomType {
+declare class Iterator<DRU> extends _.CustomType {
   constructor(continuation: () => Action$<any>);
   
   continuation: () => Action$<any>;
 }
 
-export type Iterator$<BXF> = Iterator<BXF>;
+export type Iterator$<DRU> = Iterator<DRU>;
 
-export class Next<BXG, BXH> extends _.CustomType {
-  constructor(element: BXG, accumulator: BXH);
+export class Next<DRW, DRV> extends _.CustomType {
+  constructor(element: DRV, accumulator: DRW);
   
-  element: BXG;
-  accumulator: BXH;
+  element: DRV;
+  accumulator: DRW;
 }
 
 export class Done extends _.CustomType {}
 
-export type Step$<BXG, BXH> = Next<BXG, BXH> | Done;
+export type Step$<DRV, DRW> = Next<DRV, DRW> | Done;
 
-declare class AnotherBy<BXI, BXJ> extends _.CustomType {
+declare class AnotherBy<DRX, DRY> extends _.CustomType {
   constructor(
     argument$0: _.List<any>,
-    argument$1: BXJ,
-    argument$2: BXI,
+    argument$1: DRY,
+    argument$2: DRX,
     argument$3: () => Action$<any>
   );
   
   0: _.List<any>;
-  1: BXJ;
-  2: BXI;
+  1: DRY;
+  2: DRX;
   3: () => Action$<any>;
 }
 
-declare class LastBy<BXI> extends _.CustomType {
+declare class LastBy<DRX> extends _.CustomType {
   constructor(argument$0: _.List<any>);
   
   0: _.List<any>;
 }
 
-declare type Chunk$<BXJ, BXI> = AnotherBy<BXJ, BXI> | LastBy<BXI>;
+declare type Chunk$<DRX, DRY> = AnotherBy<DRX, DRY> | LastBy<DRX>;
 
-declare class Another<BXK> extends _.CustomType {
+declare class Another<DRZ> extends _.CustomType {
   constructor(argument$0: _.List<any>, argument$1: () => Action$<any>);
   
   0: _.List<any>;
   1: () => Action$<any>;
 }
 
-declare class Last<BXK> extends _.CustomType {
+declare class Last<DRZ> extends _.CustomType {
   constructor(argument$0: _.List<any>);
   
   0: _.List<any>;
@@ -70,184 +70,184 @@ declare class Last<BXK> extends _.CustomType {
 
 declare class NoMore extends _.CustomType {}
 
-declare type SizedChunk$<BXK> = Another<BXK> | Last<BXK> | NoMore;
+declare type SizedChunk$<DRZ> = Another<DRZ> | Last<DRZ> | NoMore;
 
-export function unfold<BXS, BXT>(initial: BXS, f: (x0: BXS) => Step$<BXT, BXS>): Iterator$<
-  BXT
+export function unfold<DSC, DSD>(initial: DSC, f: (x0: DSC) => Step$<DSD, DSC>): Iterator$<
+  DSD
 >;
 
-export function repeatedly<BXX>(f: () => BXX): Iterator$<BXX>;
+export function repeatedly<DSM>(f: () => DSM): Iterator$<DSM>;
 
-export function repeat<BXZ>(x: BXZ): Iterator$<BXZ>;
+export function repeat<DSO>(x: DSO): Iterator$<DSO>;
 
-export function from_list<BYB>(list: _.List<BYB>): Iterator$<BYB>;
+export function from_list<DSQ>(list: _.List<DSQ>): Iterator$<DSQ>;
 
-export function transform<BYL, BYN, BYO>(
-  iterator: Iterator$<BYL>,
-  initial: BYN,
-  f: (x0: BYN, x1: BYL) => Step$<BYO, BYN>
-): Iterator$<BYO>;
+export function transform<DTA, DTC, DTD>(
+  iterator: Iterator$<DTA>,
+  initial: DTC,
+  f: (x0: DTC, x1: DTA) => Step$<DTD, DTC>
+): Iterator$<DTD>;
 
-export function fold<BYV, BYX>(
-  iterator: Iterator$<BYV>,
-  initial: BYX,
-  f: (x0: BYX, x1: BYV) => BYX
-): BYX;
+export function fold<DTH, DTJ>(
+  iterator: Iterator$<DTH>,
+  initial: DTJ,
+  f: (x0: DTJ, x1: DTH) => DTJ
+): DTJ;
 
 export function run(iterator: Iterator$<any>): undefined;
 
-export function to_list<BZA>(iterator: Iterator$<BZA>): _.List<BZA>;
+export function to_list<DTP>(iterator: Iterator$<DTP>): _.List<DTP>;
 
-export function step<BZD>(iterator: Iterator$<BZD>): Step$<BZD, Iterator$<BZD>>;
+export function step<DTS>(iterator: Iterator$<DTS>): Step$<DTS, Iterator$<DTS>>;
 
-export function take<BZL>(iterator: Iterator$<BZL>, desired: number): Iterator$<
-  BZL
+export function take<DTX>(iterator: Iterator$<DTX>, desired: number): Iterator$<
+  DTX
 >;
 
-export function drop<BZR>(iterator: Iterator$<BZR>, desired: number): Iterator$<
-  BZR
+export function drop<DUD>(iterator: Iterator$<DUD>, desired: number): Iterator$<
+  DUD
 >;
 
-export function map<BZY, CAA>(iterator: Iterator$<BZY>, f: (x0: BZY) => CAA): Iterator$<
-  CAA
+export function map<DUJ, DUL>(iterator: Iterator$<DUJ>, f: (x0: DUJ) => DUL): Iterator$<
+  DUL
 >;
 
-export function map2<CAI, CAK, CAM>(
-  iterator1: Iterator$<CAI>,
-  iterator2: Iterator$<CAK>,
-  fun: (x0: CAI, x1: CAK) => CAM
-): Iterator$<CAM>;
+export function map2<DUR, DUT, DUV>(
+  iterator1: Iterator$<DUR>,
+  iterator2: Iterator$<DUT>,
+  fun: (x0: DUR, x1: DUT) => DUV
+): Iterator$<DUV>;
 
-export function append<CAS>(first: Iterator$<CAS>, second: Iterator$<CAS>): Iterator$<
-  CAS
+export function append<DVD>(first: Iterator$<DVD>, second: Iterator$<DVD>): Iterator$<
+  DVD
 >;
 
-export function flatten<CBA>(iterator: Iterator$<Iterator$<CBA>>): Iterator$<
-  CBA
+export function flatten<DVL>(iterator: Iterator$<Iterator$<DVL>>): Iterator$<
+  DVL
 >;
 
-export function concat<CBE>(iterators: _.List<Iterator$<CBE>>): Iterator$<CBE>;
+export function concat<DVT>(iterators: _.List<Iterator$<DVT>>): Iterator$<DVT>;
 
-export function flat_map<CBI, CBK>(
-  iterator: Iterator$<CBI>,
-  f: (x0: CBI) => Iterator$<CBK>
-): Iterator$<CBK>;
+export function flat_map<DVX, DVZ>(
+  iterator: Iterator$<DVX>,
+  f: (x0: DVX) => Iterator$<DVZ>
+): Iterator$<DVZ>;
 
-export function filter<CBQ>(
-  iterator: Iterator$<CBQ>,
-  predicate: (x0: CBQ) => boolean
-): Iterator$<CBQ>;
+export function filter<DWC>(
+  iterator: Iterator$<DWC>,
+  predicate: (x0: DWC) => boolean
+): Iterator$<DWC>;
 
-export function filter_map<CCA, CCC>(
-  iterator: Iterator$<CCA>,
-  f: (x0: CCA) => _.Result<CCC, any>
-): Iterator$<CCC>;
+export function filter_map<DWI, DWK>(
+  iterator: Iterator$<DWI>,
+  f: (x0: DWI) => _.Result<DWK, any>
+): Iterator$<DWK>;
 
-export function cycle<CCH>(iterator: Iterator$<CCH>): Iterator$<CCH>;
+export function cycle<DWW>(iterator: Iterator$<DWW>): Iterator$<DWW>;
 
-export function find<CCP>(
-  haystack: Iterator$<CCP>,
-  is_desired: (x0: CCP) => boolean
-): _.Result<CCP, undefined>;
+export function find<DXA>(
+  haystack: Iterator$<DXA>,
+  is_desired: (x0: DXA) => boolean
+): _.Result<DXA, undefined>;
 
-export function find_map<CDB, CDD>(
-  haystack: Iterator$<CDB>,
-  is_desired: (x0: CDB) => _.Result<CDD, any>
-): _.Result<CDD, undefined>;
+export function find_map<DXI, DXK>(
+  haystack: Iterator$<DXI>,
+  is_desired: (x0: DXI) => _.Result<DXK, any>
+): _.Result<DXK, undefined>;
 
-export function index<CDM>(iterator: Iterator$<CDM>): Iterator$<[CDM, number]>;
+export function index<DXY>(iterator: Iterator$<DXY>): Iterator$<[DXY, number]>;
 
-export function iterate<CDP>(initial: CDP, f: (x0: CDP) => CDP): Iterator$<CDP>;
+export function iterate<DYE>(initial: DYE, f: (x0: DYE) => DYE): Iterator$<DYE>;
 
-export function take_while<CDU>(
-  iterator: Iterator$<CDU>,
-  predicate: (x0: CDU) => boolean
-): Iterator$<CDU>;
+export function take_while<DYG>(
+  iterator: Iterator$<DYG>,
+  predicate: (x0: DYG) => boolean
+): Iterator$<DYG>;
 
-export function drop_while<CEA>(
-  iterator: Iterator$<CEA>,
-  predicate: (x0: CEA) => boolean
-): Iterator$<CEA>;
+export function drop_while<DYM>(
+  iterator: Iterator$<DYM>,
+  predicate: (x0: DYM) => boolean
+): Iterator$<DYM>;
 
-export function scan<CEH, CEJ>(
-  iterator: Iterator$<CEH>,
-  initial: CEJ,
-  f: (x0: CEJ, x1: CEH) => CEJ
-): Iterator$<CEJ>;
+export function scan<DYS, DYU>(
+  iterator: Iterator$<DYS>,
+  initial: DYU,
+  f: (x0: DYU, x1: DYS) => DYU
+): Iterator$<DYU>;
 
-export function zip<CEQ, CES>(left: Iterator$<CEQ>, right: Iterator$<CES>): Iterator$<
-  [CEQ, CES]
+export function zip<DZA, DZC>(left: Iterator$<DZA>, right: Iterator$<DZC>): Iterator$<
+  [DZA, DZC]
 >;
 
-export function chunk<CFG>(iterator: Iterator$<CFG>, f: (x0: CFG) => any): Iterator$<
-  _.List<CFG>
+export function chunk<DZK>(iterator: Iterator$<DZK>, f: (x0: DZK) => any): Iterator$<
+  _.List<DZK>
 >;
 
-export function sized_chunk<CFT>(iterator: Iterator$<CFT>, count: number): Iterator$<
-  _.List<CFT>
+export function sized_chunk<EAA>(iterator: Iterator$<EAA>, count: number): Iterator$<
+  _.List<EAA>
 >;
 
-export function intersperse<CGA>(iterator: Iterator$<CGA>, elem: CGA): Iterator$<
-  CGA
+export function intersperse<EAM>(iterator: Iterator$<EAM>, elem: EAM): Iterator$<
+  EAM
 >;
 
-export function any<CGF>(
-  iterator: Iterator$<CGF>,
-  predicate: (x0: CGF) => boolean
+export function any<EAS>(
+  iterator: Iterator$<EAS>,
+  predicate: (x0: EAS) => boolean
 ): boolean;
 
-export function all<CGJ>(
-  iterator: Iterator$<CGJ>,
-  predicate: (x0: CGJ) => boolean
+export function all<EAW>(
+  iterator: Iterator$<EAW>,
+  predicate: (x0: EAW) => boolean
 ): boolean;
 
-export function group<CGX, CGZ>(iterator: Iterator$<CGX>, key: (x0: CGX) => CGZ): $dict.Dict$<
-  CGZ,
-  _.List<CGX>
+export function group<EBA, EBC>(iterator: Iterator$<EBA>, key: (x0: EBA) => EBC): $dict.Dict$<
+  EBC,
+  _.List<EBA>
 >;
 
-export function reduce<CHD>(
-  iterator: Iterator$<CHD>,
-  f: (x0: CHD, x1: CHD) => CHD
-): _.Result<CHD, undefined>;
+export function reduce<EBS>(
+  iterator: Iterator$<EBS>,
+  f: (x0: EBS, x1: EBS) => EBS
+): _.Result<EBS, undefined>;
 
-export function last<CHH>(iterator: Iterator$<CHH>): _.Result<CHH, undefined>;
+export function last<EBW>(iterator: Iterator$<EBW>): _.Result<EBW, undefined>;
 
 export function empty(): Iterator$<any>;
 
-export function once<CHN>(f: () => CHN): Iterator$<CHN>;
+export function once<ECC>(f: () => ECC): Iterator$<ECC>;
 
 export function range(start: number, stop: number): Iterator$<number>;
 
-export function single<CHP>(elem: CHP): Iterator$<CHP>;
+export function single<ECE>(elem: ECE): Iterator$<ECE>;
 
-export function interleave<CHV>(left: Iterator$<CHV>, right: Iterator$<CHV>): Iterator$<
-  CHV
+export function interleave<ECG>(left: Iterator$<ECG>, right: Iterator$<ECG>): Iterator$<
+  ECG
 >;
 
-export function fold_until<CID, CIF>(
-  iterator: Iterator$<CID>,
-  initial: CIF,
-  f: (x0: CIF, x1: CID) => $list.ContinueOrStop$<CIF>
-): CIF;
+export function fold_until<ECO, ECQ>(
+  iterator: Iterator$<ECO>,
+  initial: ECQ,
+  f: (x0: ECQ, x1: ECO) => $list.ContinueOrStop$<ECQ>
+): ECQ;
 
-export function try_fold<CIP, CIR, CIS>(
-  iterator: Iterator$<CIP>,
-  initial: CIR,
-  f: (x0: CIR, x1: CIP) => _.Result<CIR, CIS>
-): _.Result<CIR, CIS>;
+export function try_fold<ECW, ECY, ECZ>(
+  iterator: Iterator$<ECW>,
+  initial: ECY,
+  f: (x0: ECY, x1: ECW) => _.Result<ECY, ECZ>
+): _.Result<ECY, ECZ>;
 
-export function first<CIX>(iterator: Iterator$<CIX>): _.Result<CIX, undefined>;
+export function first<EDM>(iterator: Iterator$<EDM>): _.Result<EDM, undefined>;
 
-export function at<CJB>(iterator: Iterator$<CJB>, index: number): _.Result<
-  CJB,
+export function at<EDQ>(iterator: Iterator$<EDQ>, index: number): _.Result<
+  EDQ,
   undefined
 >;
 
 export function length(iterator: Iterator$<any>): number;
 
-export function each<CJJ>(iterator: Iterator$<CJJ>, f: (x0: CJJ) => any): undefined;
+export function each<EDY>(iterator: Iterator$<EDY>, f: (x0: EDY) => any): undefined;
 
-export function yield$<CJM>(element: CJM, next: () => Iterator$<CJM>): Iterator$<
-  CJM
+export function yield$<EEB>(element: EEB, next: () => Iterator$<EEB>): Iterator$<
+  EEB
 >;

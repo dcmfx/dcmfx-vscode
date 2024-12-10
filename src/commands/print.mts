@@ -3,12 +3,12 @@ import { Effect, pipe } from "effect";
 import type { Readable } from "stream";
 import * as gleam from "../../vendor/dcmfx/prelude.mjs";
 import { None } from "../../vendor/dcmfx/gleam_stdlib/gleam/option.mjs";
-import * as data_error from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_error.mjs";
 import * as data_element_tag from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_element_tag.mjs";
-import * as registry from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/registry.mjs";
+import * as dictionary from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as data_set from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set.mjs";
 import * as data_set_print from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set_print.mjs";
 import * as json_config from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/json_config.mjs";
+import * as json_error from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/json_error.mjs";
 import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
 import * as p10_json_transform from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/transforms/p10_json_transform.mjs";
 import * as p10_part from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_part.mjs";
@@ -151,7 +151,7 @@ function* printDicom(
 
   // Construct print transform to convert the stream of DICOM P10 parts into a
   // human-readable DICOM data set
-  const jsonConfig = new json_config.DicomJsonConfig(true);
+  const jsonConfig = new json_config.DicomJsonConfig(true, false);
   let p10JsonTransform = p10_json_transform.new$(jsonConfig);
 
   let output = "";
@@ -182,7 +182,7 @@ function* printDicom(
                   p10_json_transform.add_part(p10JsonTransform, part),
                 ),
                 Effect.mapError((e) =>
-                  data_error.to_lines(e.data_error, "").toArray(),
+                  json_error.serialize_error_to_lines(e, "").toArray(),
                 ),
               );
 
@@ -273,10 +273,10 @@ export class DcmfxPrintHoverProvider implements vscode.HoverProvider {
 
       let itemDetails = "Unrecognized data element";
 
-      // Look up the tag in the registry
-      const registryItem = registry.find(tag, new None());
-      if (registryItem.isOk()) {
-        const item = gleamResultUnwrap(registryItem);
+      // Look up the tag in the dictionary
+      const dictionaryItem = dictionary.find(tag, new None());
+      if (dictionaryItem.isOk()) {
+        const item = gleamResultUnwrap(dictionaryItem);
 
         itemDetails =
           `### ${item.name}\n` +

@@ -70,7 +70,7 @@ export function system_time(a: TimeUnit$): number;
 
 export function erlang_timestamp(): [number, number, number];
 
-export function rescue<GLR>(a: () => GLR): _.Result<GLR, Crash$>;
+export function rescue<GMA>(a: () => GMA): _.Result<GMA, Crash$>;
 
 export function binary_to_term(binary: _.BitArray): _.Result<
   $dynamic.Dynamic$,
@@ -97,3 +97,7 @@ export function reference_from_dynamic(from: $dynamic.Dynamic$): _.Result<
 >;
 
 export function priv_directory(name: string): _.Result<string, undefined>;
+
+export function bounded_phash2(term: any, limit: number): number;
+
+export function phash2(term: any): number;

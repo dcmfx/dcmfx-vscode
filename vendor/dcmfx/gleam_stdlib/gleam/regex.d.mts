@@ -37,7 +37,7 @@ export function compile(pattern: string, options: Options$): _.Result<
 
 export function from_string(pattern: string): _.Result<Regex$, CompileError$>;
 
-export function check(regex: Regex$, content: string): boolean;
+export function check(regex: Regex$, string: string): boolean;
 
 export function split(regex: Regex$, string: string): _.List<string>;
 

@@ -1,12 +1,18 @@
 /// <reference types="./bit_array_utils.d.mts" />
 import * as $bigi from "../../../bigi/bigi.mjs";
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
-import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
 import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
-import * as $iterator from "../../../gleam_stdlib/gleam/iterator.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $ieee_float from "../../../ieee_float/ieee_float.mjs";
-import { Ok, Error, toList, remainderInt, divideInt, toBitArray } from "../../gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  prepend as listPrepend,
+  remainderInt,
+  divideInt,
+  toBitArray,
+} from "../../gleam.mjs";
 
 export function to_int16(bytes) {
   if (bytes.length == 2) {
@@ -74,30 +80,60 @@ export function to_float64(bytes) {
   return new Ok($ieee_float.from_bytes_64_le(bytes));
 }
 
-function to_list(bytes, item_size, read_item) {
-  let byte_count = $bit_array.byte_size(bytes);
-  return $bool.guard(
-    byte_count === 0,
-    new Ok(toList([])),
-    () => {
-      let $ = remainderInt(byte_count, item_size);
-      if ($ === 0) {
-        let _pipe = $iterator.range(0, (divideInt(byte_count, item_size)) - 1);
-        let _pipe$1 = $iterator.map(
-          _pipe,
-          (i) => {
-            let _pipe$1 = bytes;
-            let _pipe$2 = $bit_array.slice(_pipe$1, i * item_size, item_size);
-            return $result.try$(_pipe$2, read_item);
-          },
-        );
-        let _pipe$2 = $iterator.to_list(_pipe$1);
-        return $result.all(_pipe$2);
+function do_to_list(
+  loop$bytes,
+  loop$item_size,
+  loop$read_item,
+  loop$i,
+  loop$item_count,
+  loop$acc
+) {
+  while (true) {
+    let bytes = loop$bytes;
+    let item_size = loop$item_size;
+    let read_item = loop$read_item;
+    let i = loop$i;
+    let item_count = loop$item_count;
+    let acc = loop$acc;
+    if (i === -1) {
+      return new Ok(acc);
+    } else {
+      let item = (() => {
+        let _pipe = bytes;
+        let _pipe$1 = $bit_array.slice(_pipe, i * item_size, item_size);
+        return $result.try$(_pipe$1, read_item);
+      })();
+      if (item.isOk()) {
+        let item$1 = item[0];
+        loop$bytes = bytes;
+        loop$item_size = item_size;
+        loop$read_item = read_item;
+        loop$i = i - 1;
+        loop$item_count = item_count;
+        loop$acc = listPrepend(item$1, acc);
       } else {
         return new Error(undefined);
       }
-    },
-  );
+    }
+  }
+}
+
+function to_list(bytes, item_size, read_item) {
+  let byte_count = $bit_array.byte_size(bytes);
+  let $ = remainderInt(byte_count, item_size);
+  if ($ === 0) {
+    let item_count = divideInt(byte_count, item_size);
+    return do_to_list(
+      bytes,
+      item_size,
+      read_item,
+      item_count - 1,
+      item_count,
+      toList([]),
+    );
+  } else {
+    return new Error(undefined);
+  }
 }
 
 export function to_int16_list(bytes) {

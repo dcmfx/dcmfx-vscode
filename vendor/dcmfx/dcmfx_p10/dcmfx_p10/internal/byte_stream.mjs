@@ -1,10 +1,10 @@
 /// <reference types="./byte_stream.d.mts" />
+import * as $deque from "../../../gleam_deque/gleam/deque.mjs";
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
 import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
-import * as $queue from "../../../gleam_stdlib/gleam/queue.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $zlib from "../../dcmfx_p10/internal/zlib.mjs";
 import * as $inflate_result from "../../dcmfx_p10/internal/zlib/inflate_result.mjs";
@@ -20,7 +20,7 @@ import {
 } from "../../gleam.mjs";
 
 class ByteStream extends $CustomType {
-  constructor(bytes_queue, bytes_queue_size, bytes_read, max_read_size, is_writing_finished, zlib_stream) {
+  constructor(bytes_queue, bytes_queue_size, bytes_read, max_read_size, is_writing_finished, zlib_stream, zlib_inflate_complete) {
     super();
     this.bytes_queue = bytes_queue;
     this.bytes_queue_size = bytes_queue_size;
@@ -28,6 +28,7 @@ class ByteStream extends $CustomType {
     this.max_read_size = max_read_size;
     this.is_writing_finished = is_writing_finished;
     this.zlib_stream = zlib_stream;
+    this.zlib_inflate_complete = zlib_inflate_complete;
   }
 }
 
@@ -42,7 +43,15 @@ export class ZlibDataError extends $CustomType {}
 export class WriteAfterCompletion extends $CustomType {}
 
 export function new$(max_read_size) {
-  return new ByteStream($queue.new$(), 0, 0, max_read_size, false, new None());
+  return new ByteStream(
+    $deque.new$(),
+    0,
+    0,
+    max_read_size,
+    false,
+    new None(),
+    false,
+  );
 }
 
 export function bytes_read(stream) {
@@ -50,10 +59,10 @@ export function bytes_read(stream) {
 }
 
 export function is_fully_consumed(stream) {
-  return ((stream.bytes_queue_size === 0) && stream.is_writing_finished) && (isEqual(
+  return ((stream.bytes_queue_size === 0) && stream.is_writing_finished) && ((isEqual(
     stream.zlib_stream,
     new None()
-  ));
+  )) || stream.zlib_inflate_complete);
 }
 
 function do_read(loop$bytes_queue, loop$byte_count, loop$acc) {
@@ -61,12 +70,12 @@ function do_read(loop$bytes_queue, loop$byte_count, loop$acc) {
     let bytes_queue = loop$bytes_queue;
     let byte_count = loop$byte_count;
     let acc = loop$acc;
-    let $ = $queue.pop_front(bytes_queue);
+    let $ = $deque.pop_front(bytes_queue);
     if (!$.isOk()) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/internal/byte_stream",
-        177,
+        184,
         "do_read",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
@@ -82,7 +91,7 @@ function do_read(loop$bytes_queue, loop$byte_count, loop$acc) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/internal/byte_stream",
-          185,
+          192,
           "do_read",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }
@@ -105,14 +114,14 @@ function do_read(loop$bytes_queue, loop$byte_count, loop$acc) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/internal/byte_stream",
-              198,
+              205,
               "do_read",
               "Pattern match failed, no pattern matched the value.",
               { value: $4 }
             )
           }
           let unread_bytes = $4[0];
-          return $queue.push_front(bytes_queue$1, unread_bytes);
+          return $deque.push_front(bytes_queue$1, unread_bytes);
         }
       })();
       return [final_bytes, bytes_queue$2];
@@ -129,12 +138,12 @@ function do_peek(loop$bytes_queue, loop$byte_count, loop$acc) {
     let bytes_queue = loop$bytes_queue;
     let byte_count = loop$byte_count;
     let acc = loop$acc;
-    let $ = $queue.pop_front(bytes_queue);
+    let $ = $deque.pop_front(bytes_queue);
     if (!$.isOk()) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/internal/byte_stream",
-        241,
+        248,
         "do_peek",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
@@ -150,7 +159,7 @@ function do_peek(loop$bytes_queue, loop$byte_count, loop$acc) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/internal/byte_stream",
-          249,
+          256,
           "do_peek",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }
@@ -207,7 +216,7 @@ function inflate_up_to_max_read_size(stream) {
         $1[0] instanceof $inflate_result.Finished &&
         $1[0][0].length == 0 &&
         (stream.is_writing_finished)) {
-          return new Ok(stream.withFields({ zlib_stream: new None() }));
+          return new Ok(stream.withFields({ zlib_inflate_complete: true }));
         } else if ($1.isOk() && $1[0] instanceof $inflate_result.Continue) {
           let bytes = $1[0][0];
           if (bytes.length == 0) {
@@ -215,7 +224,7 @@ function inflate_up_to_max_read_size(stream) {
           } else {
             let bytes$1 = bytes;
             let _pipe = stream.withFields({
-              bytes_queue: $queue.push_back(stream.bytes_queue, bytes$1),
+              bytes_queue: $deque.push_back(stream.bytes_queue, bytes$1),
               bytes_queue_size: stream.bytes_queue_size + $bit_array.byte_size(
                 bytes$1,
               )
@@ -229,7 +238,7 @@ function inflate_up_to_max_read_size(stream) {
           } else {
             let bytes$1 = bytes;
             let _pipe = stream.withFields({
-              bytes_queue: $queue.push_back(stream.bytes_queue, bytes$1),
+              bytes_queue: $deque.push_back(stream.bytes_queue, bytes$1),
               bytes_queue_size: stream.bytes_queue_size + $bit_array.byte_size(
                 bytes$1,
               )
@@ -255,15 +264,20 @@ export function write(stream, data, done) {
         let $ = stream.zlib_stream;
         if ($ instanceof Some) {
           let zlib_stream = $[0];
-          let $1 = $zlib.safe_inflate(zlib_stream, data);
-          if ($1.isOk() && $1[0] instanceof $inflate_result.Continue) {
-            let bytes = $1[0][0];
-            return new Ok(bytes);
-          } else if ($1.isOk() && $1[0] instanceof $inflate_result.Finished) {
-            let bytes = $1[0][0];
-            return new Ok(bytes);
+          let $1 = stream.zlib_inflate_complete;
+          if ($1) {
+            return new Ok(toBitArray([]));
           } else {
-            return new Error(new ZlibDataError());
+            let $2 = $zlib.safe_inflate(zlib_stream, data);
+            if ($2.isOk() && $2[0] instanceof $inflate_result.Continue) {
+              let bytes = $2[0][0];
+              return new Ok(bytes);
+            } else if ($2.isOk() && $2[0] instanceof $inflate_result.Finished) {
+              let bytes = $2[0][0];
+              return new Ok(bytes);
+            } else {
+              return new Error(new ZlibDataError());
+            }
           }
         } else {
           return new Ok(data);
@@ -276,7 +290,7 @@ export function write(stream, data, done) {
             if (new_bytes.length == 0) {
               return stream.bytes_queue;
             } else {
-              return $queue.push_back(stream.bytes_queue, new_bytes);
+              return $deque.push_back(stream.bytes_queue, new_bytes);
             }
           })();
           let bytes_queue_size = stream.bytes_queue_size + $bit_array.byte_size(
@@ -337,12 +351,12 @@ export function start_zlib_inflate(stream) {
   $zlib.inflate_init(zlib_stream, window_bits);
   let available_bytes = (() => {
     let _pipe = stream.bytes_queue;
-    let _pipe$1 = $queue.to_list(_pipe);
+    let _pipe$1 = $deque.to_list(_pipe);
     return $bit_array.concat(_pipe$1);
   })();
   let is_writing_finished = stream.is_writing_finished;
   let stream$1 = stream.withFields({
-    bytes_queue: $queue.new$(),
+    bytes_queue: $deque.new$(),
     bytes_queue_size: 0,
     is_writing_finished: false,
     zlib_stream: new Some(zlib_stream)

@@ -3,7 +3,7 @@ import * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag
 import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
 import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $data_set_path from "../../dcmfx_core/dcmfx_core/data_set_path.mjs";
-import * as $registry from "../../dcmfx_core/dcmfx_core/registry.mjs";
+import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $transfer_syntax from "../../dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import { BigEndian, LittleEndian } from "../../dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import * as $value_representation from "../../dcmfx_core/dcmfx_core/value_representation.mjs";
@@ -16,6 +16,7 @@ import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
 import * as $data_element_header from "../dcmfx_p10/internal/data_element_header.mjs";
 import { DataElementHeader } from "../dcmfx_p10/internal/data_element_header.mjs";
+import * as $value_length from "../dcmfx_p10/internal/value_length.mjs";
 import * as $zlib from "../dcmfx_p10/internal/zlib.mjs";
 import * as $flush_command from "../dcmfx_p10/internal/zlib/flush_command.mjs";
 import * as $p10_error from "../dcmfx_p10/p10_error.mjs";
@@ -94,7 +95,7 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
     let _pipe = $data_set.new$();
     return $data_set.insert_string_value(
       _pipe,
-      $registry.specific_character_set,
+      $dictionary.specific_character_set,
       toList(["ISO_IR 192"]),
     );
   })();
@@ -102,7 +103,7 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      462,
+      480,
       "data_set_to_parts",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -172,7 +173,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      558,
+      576,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -186,7 +187,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      560,
+      578,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $1 }
@@ -200,7 +201,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      564,
+      582,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $2 }
@@ -210,24 +211,25 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
   let _pipe = file_meta_information;
   let _pipe$1 = $data_set.insert(
     _pipe,
-    $registry.file_meta_information_version.tag,
+    $dictionary.file_meta_information_version.tag,
     file_meta_information_version,
   );
   let _pipe$2 = $data_set.insert(
     _pipe$1,
-    $registry.implementation_class_uid.tag,
+    $dictionary.implementation_class_uid.tag,
     implementation_class_uid,
   );
   return $data_set.insert(
     _pipe$2,
-    $registry.implementation_version_name.tag,
+    $dictionary.implementation_version_name.tag,
     implementation_version_name,
   );
 }
 
 export function data_element_header_to_bytes(header, endianness) {
+  let length = $value_length.to_int(header.length);
   return $bool.guard(
-    header.length < 0,
+    length < 0,
     new Error(
       new $p10_error.DataInvalid(
         "Serializing data element header",
@@ -254,55 +256,50 @@ export function data_element_header_to_bytes(header, endianness) {
       if ($ instanceof None) {
         if (endianness instanceof LittleEndian) {
           return new Ok(
-            toBitArray([tag_bytes.buffer, sizedInt(header.length, 32, false)]),
+            toBitArray([tag_bytes.buffer, sizedInt(length, 32, false)]),
           );
         } else {
           return new Ok(
-            toBitArray([tag_bytes.buffer, sizedInt(header.length, 32, true)]),
+            toBitArray([tag_bytes.buffer, sizedInt(length, 32, true)]),
           );
         }
       } else {
         let vr = $[0];
+        let length$1 = $value_length.to_int(header.length);
         let length_bytes = (() => {
           let $1 = $data_element_header.value_length_size(vr);
           if ($1 instanceof $data_element_header.ValueLengthU16) {
-            let $2 = header.length;
-            if ($2 > 0xFFFF) {
-              let length = $2;
+            let $2 = length$1 > 0xFFFF;
+            if ($2) {
               let _pipe = new $p10_error.DataInvalid(
                 "Serializing data element header",
-                ("Length 0x" + $int.to_base16(length)) + " exceeds the maximum of 0xFFFF",
+                ("Length 0x" + $int.to_base16(length$1)) + " exceeds the maximum of 0xFFFF",
                 new None(),
                 new None(),
               );
               return new Error(_pipe);
             } else {
               if (endianness instanceof LittleEndian) {
-                return new Ok(toBitArray([sizedInt(header.length, 16, false)]));
+                return new Ok(toBitArray([sizedInt(length$1, 16, false)]));
               } else {
-                return new Ok(toBitArray([sizedInt(header.length, 16, true)]));
+                return new Ok(toBitArray([sizedInt(length$1, 16, true)]));
               }
             }
           } else {
-            let $2 = header.length;
-            if ($2 > 0xFFFFFFFF) {
-              let length = $2;
+            let $2 = length$1 > 0xFFFFFFFF;
+            if ($2) {
               let _pipe = new $p10_error.DataInvalid(
                 "Serializing data element header",
-                ("Length 0x" + $int.to_base16(length)) + " exceeds the maximum of 0xFFFFFFFF",
+                ("Length 0x" + $int.to_base16(length$1)) + " exceeds the maximum of 0xFFFFFFFF",
                 new None(),
                 new None(),
               );
               return new Error(_pipe);
             } else {
               if (endianness instanceof LittleEndian) {
-                return new Ok(
-                  toBitArray([0, 0, sizedInt(header.length, 32, false)]),
-                );
+                return new Ok(toBitArray([0, 0, sizedInt(length$1, 32, false)]));
               } else {
-                return new Ok(
-                  toBitArray([0, 0, sizedInt(header.length, 32, true)]),
-                );
+                return new Ok(toBitArray([0, 0, sizedInt(length$1, 32, true)]));
               }
             }
           }
@@ -377,7 +374,7 @@ function part_to_bytes(part, context) {
                 let _pipe$2 = new DataElementHeader(
                   tag,
                   new Some(vr),
-                  value_length,
+                  $value_length.new$(value_length),
                 );
                 return data_element_header_to_bytes(_pipe$2, new LittleEndian());
               })();
@@ -420,7 +417,7 @@ function part_to_bytes(part, context) {
         return new None();
       }
     })();
-    let _pipe = new DataElementHeader(tag, vr$1, length);
+    let _pipe = new DataElementHeader(tag, vr$1, $value_length.new$(length));
     return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
   } else if (part instanceof $p10_part.DataElementValueBytes) {
     let vr = part.vr;
@@ -445,33 +442,36 @@ function part_to_bytes(part, context) {
         return new None();
       }
     })();
-    let length = 0xFFFFFFFF;
-    let _pipe = new DataElementHeader(tag, vr$1, length);
+    let _pipe = new DataElementHeader(tag, vr$1, new $value_length.Undefined());
     return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
   } else if (part instanceof $p10_part.SequenceDelimiter) {
     let _pipe = new DataElementHeader(
-      $registry.sequence_delimitation_item.tag,
+      $dictionary.sequence_delimitation_item.tag,
       new None(),
-      0,
+      $value_length.zero,
     );
     return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
   } else if (part instanceof $p10_part.SequenceItemStart) {
     let _pipe = new DataElementHeader(
-      $registry.item.tag,
+      $dictionary.item.tag,
       new None(),
-      0xFFFFFFFF,
+      new $value_length.Undefined(),
     );
     return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
   } else if (part instanceof $p10_part.SequenceItemDelimiter) {
     let _pipe = new DataElementHeader(
-      $registry.item_delimitation_item.tag,
+      $dictionary.item_delimitation_item.tag,
       new None(),
-      0,
+      $value_length.zero,
     );
     return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
   } else if (part instanceof $p10_part.PixelDataItem) {
     let length = part.length;
-    let _pipe = new DataElementHeader($registry.item.tag, new None(), length);
+    let _pipe = new DataElementHeader(
+      $dictionary.item.tag,
+      new None(),
+      $value_length.new$(length),
+    );
     return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
   } else {
     return new Ok(toBitArray([]));
@@ -496,7 +496,7 @@ export function write_part(context, part) {
           let _pipe = file_meta_information;
           let _pipe$1 = $data_set.get_string(
             _pipe,
-            $registry.transfer_syntax_uid.tag,
+            $dictionary.transfer_syntax_uid.tag,
           );
           return $result.unwrap(
             _pipe$1,
@@ -579,119 +579,207 @@ export function write_part(context, part) {
         }
       } else {
         let context$1 = (() => {
-          if (part instanceof $p10_part.DataElementHeader) {
-            let tag = part.tag;
-            let path = (() => {
+          let _pipe = (() => {
+            if (part instanceof $p10_part.DataElementHeader) {
+              let tag = part.tag;
               let _pipe = $data_set_path.add_data_element(context.path, tag);
-              return $result.unwrap(_pipe, context.path);
-            })();
-            return context.withFields({ path: path });
-          } else if (part instanceof $p10_part.SequenceStart) {
-            let tag = part.tag;
-            let path = (() => {
+              return $result.map(
+                _pipe,
+                (path) => { return context.withFields({ path: path }); },
+              );
+            } else if (part instanceof $p10_part.SequenceStart) {
+              let tag = part.tag;
               let _pipe = $data_set_path.add_data_element(context.path, tag);
-              return $result.unwrap(_pipe, context.path);
-            })();
-            return context.withFields({
-              path: path,
-              sequence_item_counts: listPrepend(0, context.sequence_item_counts)
-            });
-          } else if (part instanceof $p10_part.SequenceItemStart) {
-            let $ = context.sequence_item_counts;
-            if ($.atLeastLength(1)) {
+              return $result.map(
+                _pipe,
+                (path) => {
+                  return context.withFields({
+                    path: path,
+                    sequence_item_counts: listPrepend(
+                      0,
+                      context.sequence_item_counts,
+                    )
+                  });
+                },
+              );
+            } else if (part instanceof $p10_part.SequenceItemStart) {
+              let $ = context.sequence_item_counts;
+              if (!$.atLeastLength(1)) {
+                throw makeError(
+                  "let_assert",
+                  "dcmfx_p10/p10_write",
+                  237,
+                  "",
+                  "Pattern match failed, no pattern matched the value.",
+                  { value: $ }
+                )
+              }
               let count = $.head;
               let rest = $.tail;
-              let path = (() => {
-                let _pipe = $data_set_path.add_sequence_item(
-                  context.path,
-                  count,
-                );
-                return $result.unwrap(_pipe, context.path);
-              })();
-              let sequence_item_counts = listPrepend(count + 1, rest);
-              return context.withFields({
-                path: path,
-                sequence_item_counts: sequence_item_counts
-              });
+              let _pipe = $data_set_path.add_sequence_item(context.path, count);
+              return $result.map(
+                _pipe,
+                (path) => {
+                  let sequence_item_counts = listPrepend(count + 1, rest);
+                  return context.withFields({
+                    path: path,
+                    sequence_item_counts: sequence_item_counts
+                  });
+                },
+              );
+            } else if (part instanceof $p10_part.PixelDataItem) {
+              let $ = context.sequence_item_counts;
+              if (!$.atLeastLength(1)) {
+                throw makeError(
+                  "let_assert",
+                  "dcmfx_p10/p10_write",
+                  237,
+                  "",
+                  "Pattern match failed, no pattern matched the value.",
+                  { value: $ }
+                )
+              }
+              let count = $.head;
+              let rest = $.tail;
+              let _pipe = $data_set_path.add_sequence_item(context.path, count);
+              return $result.map(
+                _pipe,
+                (path) => {
+                  let sequence_item_counts = listPrepend(count + 1, rest);
+                  return context.withFields({
+                    path: path,
+                    sequence_item_counts: sequence_item_counts
+                  });
+                },
+              );
             } else {
-              return context;
+              return new Ok(context);
             }
-          } else {
-            return context;
-          }
-        })();
-        let part_bytes = (() => {
-          let _pipe = part_to_bytes(part, context$1);
+          })();
           return $result.map_error(
             _pipe,
-            (e) => {
-              if (e instanceof $p10_error.DataInvalid) {
-                let when = e.when;
-                let details = e.details;
-                return new $p10_error.DataInvalid(
-                  when,
-                  details,
-                  new Some(context$1.path),
-                  new Some(context$1.p10_total_byte_count),
-                );
-              } else {
-                let e$1 = e;
-                return e$1;
-              }
+            (_) => {
+              return new $p10_error.PartStreamInvalid(
+                "Writing part to context",
+                "The data set path is not in a valid state for this part",
+                part,
+              );
             },
           );
         })();
-        return $result.map(
-          part_bytes,
-          (part_bytes) => {
-            let context$2 = (() => {
-              if (part instanceof $p10_part.DataElementValueBytes &&
-              part.bytes_remaining === 0) {
-                let path = $data_set_path.pop(context$1.path);
-                return context$1.withFields({ path: path });
-              } else if (part instanceof $p10_part.SequenceItemDelimiter) {
-                let path = $data_set_path.pop(context$1.path);
-                return context$1.withFields({ path: path });
-              } else if (part instanceof $p10_part.SequenceDelimiter) {
-                let path = $data_set_path.pop(context$1.path);
-                let sequence_item_counts = (() => {
-                  let _pipe = $list.rest(context$1.sequence_item_counts);
-                  return $result.unwrap(_pipe, context$1.sequence_item_counts);
-                })();
-                return context$1.withFields({
-                  path: path,
-                  sequence_item_counts: sequence_item_counts
-                });
-              } else {
-                return context$1;
-              }
+        return $result.try$(
+          context$1,
+          (context) => {
+            let part_bytes = (() => {
+              let _pipe = part_to_bytes(part, context);
+              return $result.map_error(
+                _pipe,
+                (e) => {
+                  if (e instanceof $p10_error.DataInvalid) {
+                    let when = e.when;
+                    let details = e.details;
+                    return new $p10_error.DataInvalid(
+                      when,
+                      details,
+                      new Some(context.path),
+                      new Some(context.p10_total_byte_count),
+                    );
+                  } else {
+                    let e$1 = e;
+                    return e$1;
+                  }
+                },
+              );
             })();
-            let $ = context$2.zlib_stream;
-            if ($ instanceof Some) {
-              let zlib_stream = $[0];
-              let data = (() => {
-                let _pipe = zlib_stream;
-                let _pipe$1 = $zlib.deflate(
-                  _pipe,
-                  part_bytes,
-                  new $flush_command.None(),
+            return $result.try$(
+              part_bytes,
+              (part_bytes) => {
+                let context$1 = (() => {
+                  let _pipe = (() => {
+                    if (part instanceof $p10_part.DataElementValueBytes &&
+                    part.bytes_remaining === 0) {
+                      let _pipe = $data_set_path.pop(context.path);
+                      return $result.map(
+                        _pipe,
+                        (path) => { return context.withFields({ path: path }); },
+                      );
+                    } else if (part instanceof $p10_part.SequenceItemDelimiter) {
+                      let _pipe = $data_set_path.pop(context.path);
+                      return $result.map(
+                        _pipe,
+                        (path) => { return context.withFields({ path: path }); },
+                      );
+                    } else if (part instanceof $p10_part.SequenceDelimiter) {
+                      let $ = $list.rest(context.sequence_item_counts);
+                      if (!$.isOk()) {
+                        throw makeError(
+                          "let_assert",
+                          "dcmfx_p10/p10_write",
+                          285,
+                          "",
+                          "Pattern match failed, no pattern matched the value.",
+                          { value: $ }
+                        )
+                      }
+                      let sequence_item_counts = $[0];
+                      let _pipe = $data_set_path.pop(context.path);
+                      return $result.map(
+                        _pipe,
+                        (path) => {
+                          return context.withFields({
+                            path: path,
+                            sequence_item_counts: sequence_item_counts
+                          });
+                        },
+                      );
+                    } else {
+                      return new Ok(context);
+                    }
+                  })();
+                  return $result.map_error(
+                    _pipe,
+                    (_) => {
+                      return new $p10_error.PartStreamInvalid(
+                        "Writing part to context",
+                        "The data set path is empty",
+                        part,
+                      );
+                    },
+                  );
+                })();
+                return $result.map(
+                  context$1,
+                  (context) => {
+                    let $ = context.zlib_stream;
+                    if ($ instanceof Some) {
+                      let zlib_stream = $[0];
+                      let data = (() => {
+                        let _pipe = zlib_stream;
+                        let _pipe$1 = $zlib.deflate(
+                          _pipe,
+                          part_bytes,
+                          new $flush_command.None(),
+                        );
+                        return $bit_array.concat(_pipe$1);
+                      })();
+                      return context.withFields({
+                        p10_bytes: listPrepend(data, context.p10_bytes),
+                        p10_total_byte_count: context.p10_total_byte_count + $bit_array.byte_size(
+                          data,
+                        )
+                      });
+                    } else {
+                      return context.withFields({
+                        p10_bytes: listPrepend(part_bytes, context.p10_bytes),
+                        p10_total_byte_count: context.p10_total_byte_count + $bit_array.byte_size(
+                          part_bytes,
+                        )
+                      });
+                    }
+                  },
                 );
-                return $bit_array.concat(_pipe$1);
-              })();
-              return context$2.withFields({
-                p10_bytes: listPrepend(data, context$2.p10_bytes),
-                p10_total_byte_count: context$2.p10_total_byte_count + $bit_array.byte_size(
-                  data,
-                )
-              });
-            } else {
-              return context$2.withFields({
-                p10_bytes: listPrepend(part_bytes, context$2.p10_bytes),
-                p10_total_byte_count: context$2.p10_total_byte_count + $bit_array.byte_size(
-                  part_bytes,
-                )
-              });
-            }
+              },
+            );
           },
         );
       }

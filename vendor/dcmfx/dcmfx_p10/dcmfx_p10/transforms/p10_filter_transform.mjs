@@ -1,7 +1,7 @@
 /// <reference types="./p10_filter_transform.d.mts" />
 import * as $data_element_tag from "../../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as $data_set from "../../../dcmfx_core/dcmfx_core/data_set.mjs";
-import * as $registry from "../../../dcmfx_core/dcmfx_core/registry.mjs";
+import * as $dictionary from "../../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
@@ -135,7 +135,7 @@ export function add_part(context, part) {
         }
       })();
       let new_location = listPrepend(
-        new LocationEntry($registry.item.tag, filter_result),
+        new LocationEntry($dictionary.item.tag, filter_result),
         context.location,
       );
       let new_context = context.withFields({ location: new_location });

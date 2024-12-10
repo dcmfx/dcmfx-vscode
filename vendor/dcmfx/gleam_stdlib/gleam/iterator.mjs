@@ -13,7 +13,6 @@ import * as $list from "../gleam/list.mjs";
 import * as $option from "../gleam/option.mjs";
 import { None, Some } from "../gleam/option.mjs";
 import * as $order from "../gleam/order.mjs";
-import * as $result from "../gleam/result.mjs";
 
 class Stop extends $CustomType {}
 
@@ -80,13 +79,13 @@ function stop() {
   return new Stop();
 }
 
-function do_unfold(initial, f) {
+function unfold_loop(initial, f) {
   return () => {
     let $ = f(initial);
     if ($ instanceof Next) {
       let x = $.element;
       let acc = $.accumulator;
-      return new Continue(x, do_unfold(acc, f));
+      return new Continue(x, unfold_loop(acc, f));
     } else {
       return new Stop();
     }
@@ -95,7 +94,7 @@ function do_unfold(initial, f) {
 
 export function unfold(initial, f) {
   let _pipe = initial;
-  let _pipe$1 = do_unfold(_pipe, f);
+  let _pipe$1 = unfold_loop(_pipe, f);
   return new Iterator(_pipe$1);
 }
 
@@ -120,7 +119,7 @@ export function from_list(list) {
   return unfold(list, yield$1);
 }
 
-function do_transform(continuation, state, f) {
+function transform_loop(continuation, state, f) {
   return () => {
     let $ = continuation();
     if ($ instanceof Stop) {
@@ -134,18 +133,18 @@ function do_transform(continuation, state, f) {
       } else {
         let yield$1 = $1.element;
         let next_state = $1.accumulator;
-        return new Continue(yield$1, do_transform(next, next_state, f));
+        return new Continue(yield$1, transform_loop(next, next_state, f));
       }
     }
   };
 }
 
 export function transform(iterator, initial, f) {
-  let _pipe = do_transform(iterator.continuation, initial, f);
+  let _pipe = transform_loop(iterator.continuation, initial, f);
   return new Iterator(_pipe);
 }
 
-function do_fold(loop$continuation, loop$f, loop$accumulator) {
+function fold_loop(loop$continuation, loop$f, loop$accumulator) {
   while (true) {
     let continuation = loop$continuation;
     let f = loop$f;
@@ -165,7 +164,7 @@ function do_fold(loop$continuation, loop$f, loop$accumulator) {
 
 export function fold(iterator, initial, f) {
   let _pipe = iterator.continuation;
-  return do_fold(_pipe, f, initial);
+  return fold_loop(_pipe, f, initial);
 }
 
 export function run(iterator) {
@@ -193,7 +192,7 @@ export function step(iterator) {
   }
 }
 
-function do_take(continuation, desired) {
+function take_loop(continuation, desired) {
   return () => {
     let $ = desired > 0;
     if (!$) {
@@ -205,7 +204,7 @@ function do_take(continuation, desired) {
       } else {
         let e = $1[0];
         let next = $1[1];
-        return new Continue(e, do_take(next, desired - 1));
+        return new Continue(e, take_loop(next, desired - 1));
       }
     }
   };
@@ -213,11 +212,11 @@ function do_take(continuation, desired) {
 
 export function take(iterator, desired) {
   let _pipe = iterator.continuation;
-  let _pipe$1 = do_take(_pipe, desired);
+  let _pipe$1 = take_loop(_pipe, desired);
   return new Iterator(_pipe$1);
 }
 
-function do_drop(loop$continuation, loop$desired) {
+function drop_loop(loop$continuation, loop$desired) {
   while (true) {
     let continuation = loop$continuation;
     let desired = loop$desired;
@@ -239,11 +238,11 @@ function do_drop(loop$continuation, loop$desired) {
 }
 
 export function drop(iterator, desired) {
-  let _pipe = () => { return do_drop(iterator.continuation, desired); };
+  let _pipe = () => { return drop_loop(iterator.continuation, desired); };
   return new Iterator(_pipe);
 }
 
-function do_map(continuation, f) {
+function map_loop(continuation, f) {
   return () => {
     let $ = continuation();
     if ($ instanceof Stop) {
@@ -251,18 +250,18 @@ function do_map(continuation, f) {
     } else {
       let e = $[0];
       let continuation$1 = $[1];
-      return new Continue(f(e), do_map(continuation$1, f));
+      return new Continue(f(e), map_loop(continuation$1, f));
     }
   };
 }
 
 export function map(iterator, f) {
   let _pipe = iterator.continuation;
-  let _pipe$1 = do_map(_pipe, f);
+  let _pipe$1 = map_loop(_pipe, f);
   return new Iterator(_pipe$1);
 }
 
-function do_map2(continuation1, continuation2, fun) {
+function map2_loop(continuation1, continuation2, fun) {
   return () => {
     let $ = continuation1();
     if ($ instanceof Stop) {
@@ -276,23 +275,23 @@ function do_map2(continuation1, continuation2, fun) {
       } else {
         let b = $1[0];
         let next_b = $1[1];
-        return new Continue(fun(a, b), do_map2(next_a, next_b, fun));
+        return new Continue(fun(a, b), map2_loop(next_a, next_b, fun));
       }
     }
   };
 }
 
 export function map2(iterator1, iterator2, fun) {
-  let _pipe = do_map2(iterator1.continuation, iterator2.continuation, fun);
+  let _pipe = map2_loop(iterator1.continuation, iterator2.continuation, fun);
   return new Iterator(_pipe);
 }
 
-function do_append(first, second) {
+function append_loop(first, second) {
   let $ = first();
   if ($ instanceof Continue) {
     let e = $[0];
     let first$1 = $[1];
-    return new Continue(e, () => { return do_append(first$1, second); });
+    return new Continue(e, () => { return append_loop(first$1, second); });
   } else {
     return second();
   }
@@ -300,27 +299,27 @@ function do_append(first, second) {
 
 export function append(first, second) {
   let _pipe = () => {
-    return do_append(first.continuation, second.continuation);
+    return append_loop(first.continuation, second.continuation);
   };
   return new Iterator(_pipe);
 }
 
-function do_flatten(flattened) {
+function flatten_loop(flattened) {
   let $ = flattened();
   if ($ instanceof Stop) {
     return new Stop();
   } else {
     let it = $[0];
     let next_iterator = $[1];
-    return do_append(
+    return append_loop(
       it.continuation,
-      () => { return do_flatten(next_iterator); },
+      () => { return flatten_loop(next_iterator); },
     );
   }
 }
 
 export function flatten(iterator) {
-  let _pipe = () => { return do_flatten(iterator.continuation); };
+  let _pipe = () => { return flatten_loop(iterator.continuation); };
   return new Iterator(_pipe);
 }
 
@@ -334,7 +333,7 @@ export function flat_map(iterator, f) {
   return flatten(_pipe$1);
 }
 
-function do_filter(loop$continuation, loop$predicate) {
+function filter_loop(loop$continuation, loop$predicate) {
   while (true) {
     let continuation = loop$continuation;
     let predicate = loop$predicate;
@@ -346,7 +345,10 @@ function do_filter(loop$continuation, loop$predicate) {
       let iterator = $[1];
       let $1 = predicate(e);
       if ($1) {
-        return new Continue(e, () => { return do_filter(iterator, predicate); });
+        return new Continue(
+          e,
+          () => { return filter_loop(iterator, predicate); },
+        );
       } else {
         loop$continuation = iterator;
         loop$predicate = predicate;
@@ -356,11 +358,11 @@ function do_filter(loop$continuation, loop$predicate) {
 }
 
 export function filter(iterator, predicate) {
-  let _pipe = () => { return do_filter(iterator.continuation, predicate); };
+  let _pipe = () => { return filter_loop(iterator.continuation, predicate); };
   return new Iterator(_pipe);
 }
 
-function do_filter_map(loop$continuation, loop$f) {
+function filter_map_loop(loop$continuation, loop$f) {
   while (true) {
     let continuation = loop$continuation;
     let f = loop$f;
@@ -373,7 +375,7 @@ function do_filter_map(loop$continuation, loop$f) {
       let $1 = f(e);
       if ($1.isOk()) {
         let e$1 = $1[0];
-        return new Continue(e$1, () => { return do_filter_map(next, f); });
+        return new Continue(e$1, () => { return filter_map_loop(next, f); });
       } else {
         loop$continuation = next;
         loop$f = f;
@@ -383,7 +385,7 @@ function do_filter_map(loop$continuation, loop$f) {
 }
 
 export function filter_map(iterator, f) {
-  let _pipe = () => { return do_filter_map(iterator.continuation, f); };
+  let _pipe = () => { return filter_map_loop(iterator.continuation, f); };
   return new Iterator(_pipe);
 }
 
@@ -392,7 +394,7 @@ export function cycle(iterator) {
   return flatten(_pipe);
 }
 
-function do_find(loop$continuation, loop$f) {
+function find_loop(loop$continuation, loop$f) {
   while (true) {
     let continuation = loop$continuation;
     let f = loop$f;
@@ -415,10 +417,10 @@ function do_find(loop$continuation, loop$f) {
 
 export function find(haystack, is_desired) {
   let _pipe = haystack.continuation;
-  return do_find(_pipe, is_desired);
+  return find_loop(_pipe, is_desired);
 }
 
-function do_find_map(loop$continuation, loop$f) {
+function find_map_loop(loop$continuation, loop$f) {
   while (true) {
     let continuation = loop$continuation;
     let f = loop$f;
@@ -442,10 +444,10 @@ function do_find_map(loop$continuation, loop$f) {
 
 export function find_map(haystack, is_desired) {
   let _pipe = haystack.continuation;
-  return do_find_map(_pipe, is_desired);
+  return find_map_loop(_pipe, is_desired);
 }
 
-function do_index(continuation, next) {
+function index_loop(continuation, next) {
   return () => {
     let $ = continuation();
     if ($ instanceof Stop) {
@@ -453,14 +455,14 @@ function do_index(continuation, next) {
     } else {
       let e = $[0];
       let continuation$1 = $[1];
-      return new Continue([e, next], do_index(continuation$1, next + 1));
+      return new Continue([e, next], index_loop(continuation$1, next + 1));
     }
   };
 }
 
 export function index(iterator) {
   let _pipe = iterator.continuation;
-  let _pipe$1 = do_index(_pipe, 0);
+  let _pipe$1 = index_loop(_pipe, 0);
   return new Iterator(_pipe$1);
 }
 
@@ -468,7 +470,7 @@ export function iterate(initial, f) {
   return unfold(initial, (element) => { return new Next(element, f(element)); });
 }
 
-function do_take_while(continuation, predicate) {
+function take_while_loop(continuation, predicate) {
   return () => {
     let $ = continuation();
     if ($ instanceof Stop) {
@@ -480,7 +482,7 @@ function do_take_while(continuation, predicate) {
       if (!$1) {
         return new Stop();
       } else {
-        return new Continue(e, do_take_while(next, predicate));
+        return new Continue(e, take_while_loop(next, predicate));
       }
     }
   };
@@ -488,11 +490,11 @@ function do_take_while(continuation, predicate) {
 
 export function take_while(iterator, predicate) {
   let _pipe = iterator.continuation;
-  let _pipe$1 = do_take_while(_pipe, predicate);
+  let _pipe$1 = take_while_loop(_pipe, predicate);
   return new Iterator(_pipe$1);
 }
 
-function do_drop_while(loop$continuation, loop$predicate) {
+function drop_while_loop(loop$continuation, loop$predicate) {
   while (true) {
     let continuation = loop$continuation;
     let predicate = loop$predicate;
@@ -514,11 +516,11 @@ function do_drop_while(loop$continuation, loop$predicate) {
 }
 
 export function drop_while(iterator, predicate) {
-  let _pipe = () => { return do_drop_while(iterator.continuation, predicate); };
+  let _pipe = () => { return drop_while_loop(iterator.continuation, predicate); };
   return new Iterator(_pipe);
 }
 
-function do_scan(continuation, f, accumulator) {
+function scan_loop(continuation, f, accumulator) {
   return () => {
     let $ = continuation();
     if ($ instanceof Stop) {
@@ -527,18 +529,18 @@ function do_scan(continuation, f, accumulator) {
       let el = $[0];
       let next = $[1];
       let accumulated = f(accumulator, el);
-      return new Continue(accumulated, do_scan(next, f, accumulated));
+      return new Continue(accumulated, scan_loop(next, f, accumulated));
     }
   };
 }
 
 export function scan(iterator, initial, f) {
   let _pipe = iterator.continuation;
-  let _pipe$1 = do_scan(_pipe, f, initial);
+  let _pipe$1 = scan_loop(_pipe, f, initial);
   return new Iterator(_pipe$1);
 }
 
-function do_zip(left, right) {
+function zip_loop(left, right) {
   return () => {
     let $ = left();
     if ($ instanceof Stop) {
@@ -552,14 +554,17 @@ function do_zip(left, right) {
       } else {
         let el_right = $1[0];
         let next_right = $1[1];
-        return new Continue([el_left, el_right], do_zip(next_left, next_right));
+        return new Continue(
+          [el_left, el_right],
+          zip_loop(next_left, next_right),
+        );
       }
     }
   };
 }
 
 export function zip(left, right) {
-  let _pipe = do_zip(left.continuation, right.continuation);
+  let _pipe = zip_loop(left.continuation, right.continuation);
   return new Iterator(_pipe);
 }
 
@@ -594,7 +599,7 @@ function next_chunk(
   }
 }
 
-function do_chunk(continuation, f, previous_key, previous_element) {
+function chunk_loop(continuation, f, previous_key, previous_element) {
   let $ = next_chunk(continuation, f, previous_key, toList([previous_element]));
   if ($ instanceof LastBy) {
     let chunk$1 = $[0];
@@ -604,7 +609,7 @@ function do_chunk(continuation, f, previous_key, previous_element) {
     let key = $[1];
     let el = $[2];
     let next = $[3];
-    return new Continue(chunk$1, () => { return do_chunk(next, f, key, el); });
+    return new Continue(chunk$1, () => { return chunk_loop(next, f, key, el); });
   }
 }
 
@@ -616,7 +621,7 @@ export function chunk(iterator, f) {
     } else {
       let e = $[0];
       let next = $[1];
-      return do_chunk(next, f, f(e), e);
+      return chunk_loop(next, f, f(e), e);
     }
   };
   return new Iterator(_pipe);
@@ -651,7 +656,7 @@ function next_sized_chunk(loop$continuation, loop$left, loop$current_chunk) {
   }
 }
 
-function do_sized_chunk(continuation, count) {
+function sized_chunk_loop(continuation, count) {
   return () => {
     let $ = next_sized_chunk(continuation, count, toList([]));
     if ($ instanceof NoMore) {
@@ -662,25 +667,25 @@ function do_sized_chunk(continuation, count) {
     } else {
       let chunk$1 = $[0];
       let next_element = $[1];
-      return new Continue(chunk$1, do_sized_chunk(next_element, count));
+      return new Continue(chunk$1, sized_chunk_loop(next_element, count));
     }
   };
 }
 
 export function sized_chunk(iterator, count) {
   let _pipe = iterator.continuation;
-  let _pipe$1 = do_sized_chunk(_pipe, count);
+  let _pipe$1 = sized_chunk_loop(_pipe, count);
   return new Iterator(_pipe$1);
 }
 
-function do_intersperse(continuation, separator) {
+function intersperse_loop(continuation, separator) {
   let $ = continuation();
   if ($ instanceof Stop) {
     return new Stop();
   } else {
     let e = $[0];
     let next = $[1];
-    let next_interspersed = () => { return do_intersperse(next, separator); };
+    let next_interspersed = () => { return intersperse_loop(next, separator); };
     return new Continue(
       separator,
       () => { return new Continue(e, next_interspersed); },
@@ -696,13 +701,13 @@ export function intersperse(iterator, elem) {
     } else {
       let e = $[0];
       let next = $[1];
-      return new Continue(e, () => { return do_intersperse(next, elem); });
+      return new Continue(e, () => { return intersperse_loop(next, elem); });
     }
   };
   return new Iterator(_pipe);
 }
 
-function do_any(loop$continuation, loop$predicate) {
+function any_loop(loop$continuation, loop$predicate) {
   while (true) {
     let continuation = loop$continuation;
     let predicate = loop$predicate;
@@ -725,10 +730,10 @@ function do_any(loop$continuation, loop$predicate) {
 
 export function any(iterator, predicate) {
   let _pipe = iterator.continuation;
-  return do_any(_pipe, predicate);
+  return any_loop(_pipe, predicate);
 }
 
-function do_all(loop$continuation, loop$predicate) {
+function all_loop(loop$continuation, loop$predicate) {
   while (true) {
     let continuation = loop$continuation;
     let predicate = loop$predicate;
@@ -751,7 +756,7 @@ function do_all(loop$continuation, loop$predicate) {
 
 export function all(iterator, predicate) {
   let _pipe = iterator.continuation;
-  return do_all(_pipe, predicate);
+  return all_loop(_pipe, predicate);
 }
 
 function update_group_with(el) {
@@ -788,7 +793,7 @@ export function reduce(iterator, f) {
   } else {
     let e = $[0];
     let next = $[1];
-    let _pipe = do_fold(next, f, e);
+    let _pipe = fold_loop(next, f, e);
     return new Ok(_pipe);
   }
 }
@@ -842,25 +847,25 @@ export function single(elem) {
   return once(() => { return elem; });
 }
 
-function do_interleave(current, next) {
+function interleave_loop(current, next) {
   let $ = current();
   if ($ instanceof Stop) {
     return next();
   } else {
     let e = $[0];
     let next_other = $[1];
-    return new Continue(e, () => { return do_interleave(next, next_other); });
+    return new Continue(e, () => { return interleave_loop(next, next_other); });
   }
 }
 
 export function interleave(left, right) {
   let _pipe = () => {
-    return do_interleave(left.continuation, right.continuation);
+    return interleave_loop(left.continuation, right.continuation);
   };
   return new Iterator(_pipe);
 }
 
-function do_fold_until(loop$continuation, loop$f, loop$accumulator) {
+function fold_until_loop(loop$continuation, loop$f, loop$accumulator) {
   while (true) {
     let continuation = loop$continuation;
     let f = loop$f;
@@ -887,26 +892,37 @@ function do_fold_until(loop$continuation, loop$f, loop$accumulator) {
 
 export function fold_until(iterator, initial, f) {
   let _pipe = iterator.continuation;
-  return do_fold_until(_pipe, f, initial);
+  return fold_until_loop(_pipe, f, initial);
 }
 
-function do_try_fold(continuation, f, accumulator) {
-  let $ = continuation();
-  if ($ instanceof Stop) {
-    return new Ok(accumulator);
-  } else {
-    let elem = $[0];
-    let next = $[1];
-    return $result.try$(
-      f(accumulator, elem),
-      (accumulator) => { return do_try_fold(next, f, accumulator); },
-    );
+function try_fold_loop(loop$continuation, loop$f, loop$accumulator) {
+  while (true) {
+    let continuation = loop$continuation;
+    let f = loop$f;
+    let accumulator = loop$accumulator;
+    let $ = continuation();
+    if ($ instanceof Stop) {
+      return new Ok(accumulator);
+    } else {
+      let elem = $[0];
+      let next = $[1];
+      let $1 = f(accumulator, elem);
+      if ($1.isOk()) {
+        let result = $1[0];
+        loop$continuation = next;
+        loop$f = f;
+        loop$accumulator = result;
+      } else {
+        let error = $1;
+        return error;
+      }
+    }
   }
 }
 
 export function try_fold(iterator, initial, f) {
   let _pipe = iterator.continuation;
-  return do_try_fold(_pipe, f, initial);
+  return try_fold_loop(_pipe, f, initial);
 }
 
 export function first(iterator) {
@@ -925,7 +941,7 @@ export function at(iterator, index) {
   return first(_pipe$1);
 }
 
-function do_length(loop$continuation, loop$length) {
+function length_loop(loop$continuation, loop$length) {
   while (true) {
     let continuation = loop$continuation;
     let length = loop$length;
@@ -942,7 +958,7 @@ function do_length(loop$continuation, loop$length) {
 
 export function length(iterator) {
   let _pipe = iterator.continuation;
-  return do_length(_pipe, 0);
+  return length_loop(_pipe, 0);
 }
 
 export function each(iterator, f) {

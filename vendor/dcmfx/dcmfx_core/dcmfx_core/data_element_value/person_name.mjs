@@ -35,7 +35,7 @@ export class StructuredPersonName extends $CustomType {
 function parse_person_name_component_group(component_group) {
   let components = (() => {
     let _pipe = $string.split(component_group, "^");
-    return $list.map(_pipe, $string.trim_right);
+    return $list.map(_pipe, $string.trim_end);
   })();
   let component_count = $list.length(components);
   let is_valid = (component_count > 0) && (component_count <= 5);
@@ -146,7 +146,7 @@ export function from_bytes(bytes) {
   let person_name_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_right_whitespace);
+    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
       _pipe$2,
       $data_error.new_value_invalid("PersonName is invalid UTF-8"),
@@ -206,7 +206,7 @@ function components_to_string(components) {
   );
   return $result.map(
     _pipe$4,
-    (_capture) => { return $utils.trim_right(_capture, "^"); },
+    (_capture) => { return $utils.trim_end(_capture, "^"); },
   );
 }
 
@@ -239,7 +239,7 @@ export function to_bytes(value) {
         );
         return $result.map(
           _pipe$4,
-          (_capture) => { return $utils.trim_right(_capture, "="); },
+          (_capture) => { return $utils.trim_end(_capture, "="); },
         );
       },
     );

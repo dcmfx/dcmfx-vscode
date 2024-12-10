@@ -150,7 +150,7 @@ function update_code_element(candidate, bytes) {
         throw makeError(
           "let_assert",
           "dcmfx_character_set",
-          298,
+          302,
           "update_code_element",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
@@ -243,7 +243,7 @@ function decode_iso_2022_bytes(
         throw makeError(
           "let_assert",
           "dcmfx_character_set",
-          193,
+          197,
           "decode_iso_2022_bytes",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -356,7 +356,7 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
           throw makeError(
             "let_assert",
             "dcmfx_character_set",
-            344,
+            348,
             "do_sanitize_default_charset_bytes",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -372,7 +372,7 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
           throw makeError(
             "let_assert",
             "dcmfx_character_set",
-            345,
+            349,
             "do_sanitize_default_charset_bytes",
             "Pattern match failed, no pattern matched the value.",
             { value: $3 }

@@ -53,14 +53,14 @@ export function read_bytes(context: P10WriteContext$): [
   _.List<_.BitArray>
 ];
 
-export function data_set_to_parts<CCBM, CCBN>(
+export function data_set_to_parts<ANI, ANJ>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  callback_context: CCBM,
-  part_callback: (x0: CCBM, x1: $p10_part.P10Part$) => _.Result<CCBM, CCBN>
-): _.Result<CCBM, CCBN>;
+  callback_context: ANI,
+  part_callback: (x0: ANI, x1: $p10_part.P10Part$) => _.Result<ANI, ANJ>
+): _.Result<ANI, ANJ>;
 
 export function data_element_header_to_bytes(
   header: $data_element_header.DataElementHeader$,
@@ -72,15 +72,15 @@ export function write_part(context: P10WriteContext$, part: $p10_part.P10Part$):
   $p10_error.P10Error$
 >;
 
-export function data_set_to_bytes<CCBS>(
+export function data_set_to_bytes<ANO>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: CCBS,
-  bytes_callback: (x0: CCBS, x1: _.BitArray) => _.Result<
-    CCBS,
+  context: ANO,
+  bytes_callback: (x0: ANO, x1: _.BitArray) => _.Result<
+    ANO,
     $p10_error.P10Error$
   >,
   config: P10WriteConfig$
-): _.Result<CCBS, $p10_error.P10Error$>;
+): _.Result<ANO, $p10_error.P10Error$>;

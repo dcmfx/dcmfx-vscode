@@ -13,7 +13,7 @@ export function from_bytes(bytes) {
   let decimal_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_right_whitespace);
+    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
       _pipe$2,
       $data_error.new_value_invalid("DecimalString is invalid UTF-8"),
@@ -53,8 +53,8 @@ export function to_bytes(values) {
         return value;
       } else {
         let _pipe = value;
-        let _pipe$1 = $utils.trim_right(_pipe, "0");
-        let _pipe$2 = $utils.trim_right(_pipe$1, ".");
+        let _pipe$1 = $utils.trim_end(_pipe, "0");
+        let _pipe$2 = $utils.trim_end(_pipe$1, ".");
         return $string.slice(_pipe$2, 0, 16);
       }
     },

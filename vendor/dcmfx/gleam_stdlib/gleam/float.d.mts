@@ -36,6 +36,8 @@ export function negate(x: number): number;
 
 export function round(x: number): number;
 
+export function to_precision(x: number, precision: number): number;
+
 export function sum(numbers: _.List<number>): number;
 
 export function product(numbers: _.List<number>): number;

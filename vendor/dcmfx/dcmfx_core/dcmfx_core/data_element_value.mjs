@@ -22,9 +22,9 @@ import * as $person_name from "../dcmfx_core/data_element_value/person_name.mjs"
 import * as $time from "../dcmfx_core/data_element_value/time.mjs";
 import * as $unique_identifier from "../dcmfx_core/data_element_value/unique_identifier.mjs";
 import * as $data_error from "../dcmfx_core/data_error.mjs";
+import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import * as $bit_array_utils from "../dcmfx_core/internal/bit_array_utils.mjs";
 import * as $utils from "../dcmfx_core/internal/utils.mjs";
-import * as $registry from "../dcmfx_core/registry.mjs";
 import * as $value_representation from "../dcmfx_core/value_representation.mjs";
 import {
   Ok,
@@ -254,7 +254,7 @@ export function get_strings(value) {
         return $list.map(
           _capture,
           (_capture) => {
-            return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+            return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
           },
         );
       },
@@ -280,7 +280,7 @@ export function get_strings(value) {
         return $list.map(
           _capture,
           (_capture) => {
-            return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+            return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
           },
         );
       },
@@ -306,7 +306,7 @@ export function get_strings(value) {
         return $list.map(
           _capture,
           (_capture) => {
-            return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+            return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
           },
         );
       },
@@ -332,7 +332,7 @@ export function get_strings(value) {
         return $list.map(
           _capture,
           (_capture) => {
-            return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+            return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
           },
         );
       },
@@ -358,7 +358,7 @@ export function get_strings(value) {
         return $list.map(
           _capture,
           (_capture) => {
-            return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+            return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
           },
         );
       },
@@ -383,7 +383,7 @@ export function get_string(value) {
     return $result.map(
       _pipe$2,
       (_capture) => {
-        return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
       },
     );
   } else if (value instanceof BinaryValue &&
@@ -400,7 +400,7 @@ export function get_string(value) {
     return $result.map(
       _pipe$2,
       (_capture) => {
-        return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
       },
     );
   } else if (value instanceof BinaryValue &&
@@ -417,7 +417,7 @@ export function get_string(value) {
     return $result.map(
       _pipe$2,
       (_capture) => {
-        return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
       },
     );
   } else if (value instanceof BinaryValue &&
@@ -434,7 +434,7 @@ export function get_string(value) {
     return $result.map(
       _pipe$2,
       (_capture) => {
-        return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
       },
     );
   } else if (value instanceof BinaryValue &&
@@ -451,7 +451,7 @@ export function get_string(value) {
     return $result.map(
       _pipe$2,
       (_capture) => {
-        return $utils.trim_right_codepoints(_capture, toList([0x0, 0x20]));
+        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
       },
     );
   } else {
@@ -668,7 +668,7 @@ export function to_string(value, tag, output_width) {
             );
           } else if (vr instanceof $value_representation.ApplicationEntity) {
             let _pipe = value$1;
-            let _pipe$1 = $utils.trim_right_codepoints(_pipe, toList([0x20]));
+            let _pipe$1 = $utils.trim_end_codepoints(_pipe, toList([0x20]));
             return $string.inspect(_pipe$1);
           } else if (vr instanceof $value_representation.Date) {
             let _pipe = value$1;
@@ -705,14 +705,14 @@ export function to_string(value, tag, output_width) {
               (s) => {
                 if (vr instanceof $value_representation.UniqueIdentifier) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x0]),
                   );
                   return $string.inspect(_pipe$3);
                 } else if (vr instanceof $value_representation.UnlimitedCharacters) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x20]),
                   );
@@ -733,14 +733,14 @@ export function to_string(value, tag, output_width) {
               (s) => {
                 if (vr instanceof $value_representation.UniqueIdentifier) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x0]),
                   );
                   return $string.inspect(_pipe$3);
                 } else if (vr instanceof $value_representation.UnlimitedCharacters) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x20]),
                   );
@@ -761,14 +761,14 @@ export function to_string(value, tag, output_width) {
               (s) => {
                 if (vr instanceof $value_representation.UniqueIdentifier) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x0]),
                   );
                   return $string.inspect(_pipe$3);
                 } else if (vr instanceof $value_representation.UnlimitedCharacters) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x20]),
                   );
@@ -789,14 +789,14 @@ export function to_string(value, tag, output_width) {
               (s) => {
                 if (vr instanceof $value_representation.UniqueIdentifier) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x0]),
                   );
                   return $string.inspect(_pipe$3);
                 } else if (vr instanceof $value_representation.UnlimitedCharacters) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x20]),
                   );
@@ -817,14 +817,14 @@ export function to_string(value, tag, output_width) {
               (s) => {
                 if (vr instanceof $value_representation.UniqueIdentifier) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x0]),
                   );
                   return $string.inspect(_pipe$3);
                 } else if (vr instanceof $value_representation.UnlimitedCharacters) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x20]),
                   );
@@ -845,14 +845,14 @@ export function to_string(value, tag, output_width) {
               (s) => {
                 if (vr instanceof $value_representation.UniqueIdentifier) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x0]),
                   );
                   return $string.inspect(_pipe$3);
                 } else if (vr instanceof $value_representation.UnlimitedCharacters) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x20]),
                   );
@@ -873,14 +873,14 @@ export function to_string(value, tag, output_width) {
               (s) => {
                 if (vr instanceof $value_representation.UniqueIdentifier) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x0]),
                   );
                   return $string.inspect(_pipe$3);
                 } else if (vr instanceof $value_representation.UnlimitedCharacters) {
                   let _pipe$2 = s;
-                  let _pipe$3 = $utils.trim_right_codepoints(
+                  let _pipe$3 = $utils.trim_end_codepoints(
                     _pipe$2,
                     toList([0x20]),
                   );
@@ -895,13 +895,13 @@ export function to_string(value, tag, output_width) {
             return $string.join(_pipe$2, ", ");
           } else {
             let _pipe = value$1;
-            let _pipe$1 = $utils.trim_right_codepoints(_pipe, toList([0x20]));
+            let _pipe$1 = $utils.trim_end_codepoints(_pipe, toList([0x20]));
             return $string.inspect(_pipe$1);
           }
         })();
         let suffix = (() => {
           if (vr instanceof $value_representation.UniqueIdentifier) {
-            let $ = $registry.uid_name($utils.trim_right_whitespace(value$1));
+            let $ = $dictionary.uid_name($utils.trim_end_whitespace(value$1));
             if ($.isOk()) {
               let uid_name = $[0];
               return new Some((" (" + uid_name) + ")");
@@ -1837,7 +1837,7 @@ export function new_integer_string(value) {
 
 export function new_long_text(value) {
   let _pipe = value;
-  let _pipe$1 = $string.trim_right(_pipe);
+  let _pipe$1 = $string.trim_end(_pipe);
   let _pipe$2 = $bit_array.from_string(_pipe$1);
   let _pipe$3 = ((_capture) => {
     return $value_representation.pad_bytes_to_even_length(
@@ -1897,7 +1897,7 @@ export function new_person_name(value) {
 
 export function new_short_text(value) {
   let _pipe = value;
-  let _pipe$1 = $string.trim_right(_pipe);
+  let _pipe$1 = $string.trim_end(_pipe);
   let _pipe$2 = $bit_array.from_string(_pipe$1);
   let _pipe$3 = ((_capture) => {
     return $value_representation.pad_bytes_to_even_length(
@@ -2002,7 +2002,7 @@ export function new_unique_identifier(value) {
 
 export function new_universal_resource_identifier(value) {
   let _pipe = value;
-  let _pipe$1 = $string.trim_right(_pipe);
+  let _pipe$1 = $string.trim_end(_pipe);
   let _pipe$2 = $bit_array.from_string(_pipe$1);
   let _pipe$3 = ((_capture) => {
     return $value_representation.pad_bytes_to_even_length(
@@ -2024,7 +2024,7 @@ export function new_unknown(value) {
 
 export function new_unlimited_text(value) {
   let _pipe = value;
-  let _pipe$1 = $string.trim_right(_pipe);
+  let _pipe$1 = $string.trim_end(_pipe);
   let _pipe$2 = $bit_array.from_string(_pipe$1);
   let _pipe$3 = ((_capture) => {
     return $value_representation.pad_bytes_to_even_length(
@@ -2196,7 +2196,7 @@ export function new_short_string(value) {
 
 export function new_unlimited_characters(value) {
   let _pipe = value;
-  let _pipe$1 = $list.map(_pipe, $string.trim_right);
+  let _pipe$1 = $list.map(_pipe, $string.trim_end);
   return ((_capture) => {
     return new_string_list(
       new $value_representation.UnlimitedCharacters(),

@@ -3,7 +3,7 @@ import * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag
 import { DataElementTag } from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
 import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
-import * as $registry from "../../dcmfx_core/dcmfx_core/registry.mjs";
+import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $bool from "../../gleam_stdlib/gleam/bool.mjs";
@@ -169,7 +169,7 @@ function build_final_data_element_value(tag, vr, value_bytes) {
     let _pipe$1 = $list.reverse(_pipe);
     return $bit_array.concat(_pipe$1);
   })();
-  let $ = $registry.is_lut_descriptor_tag(tag);
+  let $ = $dictionary.is_lut_descriptor_tag(tag);
   if ($) {
     return $data_element_value.new_lookup_table_descriptor_unchecked(
       vr,
@@ -273,7 +273,7 @@ function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
     let _pipe = builder.withFields({
       pending_data_element: new Some(
         new PendingDataElement(
-          $registry.item.tag,
+          $dictionary.item.tag,
           new $value_representation.OtherByteString(),
           toList([]),
         ),
@@ -306,7 +306,7 @@ function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
     let value = $1[0];
     let new_location = insert_data_element_at_current_location(
       sequence_location,
-      $registry.pixel_data.tag,
+      $dictionary.pixel_data.tag,
       value,
     );
     return new Ok(builder.withFields({ location: new_location }));

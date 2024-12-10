@@ -1,13 +1,13 @@
 /// <reference types="./data_set_path.d.mts" />
+import * as $regexp from "../../gleam_regexp/gleam/regexp.mjs";
 import * as $bool from "../../gleam_stdlib/gleam/bool.mjs";
 import * as $int from "../../gleam_stdlib/gleam/int.mjs";
 import * as $list from "../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
-import * as $regex from "../../gleam_stdlib/gleam/regex.mjs";
 import * as $string from "../../gleam_stdlib/gleam/string.mjs";
 import * as $data_element_tag from "../dcmfx_core/data_element_tag.mjs";
-import * as $registry from "../dcmfx_core/registry.mjs";
+import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import {
   Ok,
   Error,
@@ -60,6 +60,21 @@ export function is_empty(path) {
   return $list.is_empty(_pipe);
 }
 
+export function sequence_item_count(path) {
+  let _pipe = path.entries;
+  return $list.fold(
+    _pipe,
+    0,
+    (acc, entry) => {
+      if (entry instanceof DataElement) {
+        return acc;
+      } else {
+        return acc + 1;
+      }
+    },
+  );
+}
+
 export function final_data_element(path) {
   let $ = path.entries;
   if ($.atLeastLength(1) && $.head instanceof DataElement) {
@@ -104,9 +119,9 @@ export function pop(path) {
   let $ = path.entries;
   if ($.atLeastLength(1)) {
     let rest = $.tail;
-    return new DataSetPath(rest);
+    return new Ok(new DataSetPath(rest));
   } else {
-    return path;
+    return new Error(undefined);
   }
 }
 
@@ -127,21 +142,21 @@ export function from_string(s) {
             let tag = $[0];
             return add_data_element(path, tag);
           } else {
-            let $1 = $regex.from_string("^\\[(\\d+)\\]$");
+            let $1 = $regexp.from_string("^\\[(\\d+)\\]$");
             if (!$1.isOk()) {
               throw makeError(
                 "let_assert",
                 "dcmfx_core/data_set_path",
-                135,
+                149,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $1 }
               )
             }
             let re = $1[0];
-            let $2 = $regex.scan(re, entry);
+            let $2 = $regexp.scan(re, entry);
             if ($2.hasLength(1) &&
-            $2.head instanceof $regex.Match &&
+            $2.head instanceof $regexp.Match &&
             $2.head.submatches.hasLength(1) &&
             $2.head.submatches.head instanceof Some) {
               let index = $2.head.submatches.head[0];
@@ -150,7 +165,7 @@ export function from_string(s) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_core/data_set_path",
-                  139,
+                  153,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $3 }
@@ -175,7 +190,7 @@ export function to_detailed_string(path) {
     (entry) => {
       if (entry instanceof DataElement) {
         let tag = entry.tag;
-        return $registry.tag_with_name(tag, new None());
+        return $dictionary.tag_with_name(tag, new None());
       } else {
         let index = entry.index;
         return "Item " + $int.to_string(index);

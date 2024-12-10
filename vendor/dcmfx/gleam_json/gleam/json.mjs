@@ -5,12 +5,12 @@ import * as $list from "../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
-import * as $string_builder from "../../gleam_stdlib/gleam/string_builder.mjs";
+import * as $string_tree from "../../gleam_stdlib/gleam/string_tree.mjs";
 import { Error, CustomType as $CustomType } from "../gleam.mjs";
 import {
   decode as decode_string,
   json_to_string as do_to_string,
-  json_to_string as do_to_string_builder,
+  json_to_string as to_string_tree,
   identity as do_string,
   identity as do_bool,
   identity as do_int,
@@ -19,6 +19,8 @@ import {
   object as do_object,
   array as do_preprocessed_array,
 } from "../gleam_json_ffi.mjs";
+
+export { to_string_tree };
 
 export class UnexpectedEndOfInput extends $CustomType {}
 
@@ -88,7 +90,7 @@ export function to_string(json) {
 }
 
 export function to_string_builder(json) {
-  return do_to_string_builder(json);
+  return to_string_tree(json);
 }
 
 export function string(input) {

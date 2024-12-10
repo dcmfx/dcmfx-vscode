@@ -2,25 +2,18 @@
 import { Ok, Error, divideFloat } from "../gleam.mjs";
 import * as $order from "../gleam/order.mjs";
 import {
-  parse_float as do_parse,
-  float_to_string as do_to_string,
-  ceiling as do_ceiling,
-  floor as do_floor,
+  parse_float as parse,
+  float_to_string as to_string,
+  ceiling,
+  floor,
   round as js_round,
-  truncate as do_truncate,
+  truncate,
+  identity as do_to_float,
   power as do_power,
   random_uniform as random,
 } from "../gleam_stdlib.mjs";
 
-export { random };
-
-export function parse(string) {
-  return do_parse(string);
-}
-
-export function to_string(x) {
-  return do_to_string(x);
-}
+export { ceiling, floor, parse, random, to_string, truncate };
 
 export function compare(a, b) {
   let $ = a === b;
@@ -58,18 +51,6 @@ export function clamp(x, min_bound, max_bound) {
   let _pipe = x;
   let _pipe$1 = min(_pipe, max_bound);
   return max(_pipe$1, min_bound);
-}
-
-export function ceiling(x) {
-  return do_ceiling(x);
-}
-
-export function floor(x) {
-  return do_floor(x);
-}
-
-export function truncate(x) {
-  return do_truncate(x);
 }
 
 export function absolute_value(x) {
@@ -114,7 +95,7 @@ export function negate(x) {
   return -1.0 * x;
 }
 
-function do_round(x) {
+export function round(x) {
   let $ = x >= 0.0;
   if ($) {
     return js_round(x);
@@ -123,41 +104,41 @@ function do_round(x) {
   }
 }
 
-export function round(x) {
-  return do_round(x);
+export function to_precision(x, precision) {
+  let factor = do_power(10.0, do_to_float(- precision));
+  return do_to_float(round(divideFloat(x, factor))) * factor;
 }
 
-function do_sum(loop$numbers, loop$initial) {
+function sum_loop(loop$numbers, loop$initial) {
   while (true) {
     let numbers = loop$numbers;
     let initial = loop$initial;
-    if (numbers.hasLength(0)) {
-      return initial;
-    } else {
+    if (numbers.atLeastLength(1)) {
       let x = numbers.head;
       let rest = numbers.tail;
       loop$numbers = rest;
       loop$initial = x + initial;
+    } else {
+      return initial;
     }
   }
 }
 
 export function sum(numbers) {
-  let _pipe = numbers;
-  return do_sum(_pipe, 0.0);
+  return sum_loop(numbers, 0.0);
 }
 
-function do_product(loop$numbers, loop$initial) {
+function product_loop(loop$numbers, loop$initial) {
   while (true) {
     let numbers = loop$numbers;
     let initial = loop$initial;
-    if (numbers.hasLength(0)) {
-      return initial;
-    } else {
+    if (numbers.atLeastLength(1)) {
       let x = numbers.head;
       let rest = numbers.tail;
       loop$numbers = rest;
       loop$initial = x * initial;
+    } else {
+      return initial;
     }
   }
 }
@@ -166,7 +147,7 @@ export function product(numbers) {
   if (numbers.hasLength(0)) {
     return 1.0;
   } else {
-    return do_product(numbers, 1.0);
+    return product_loop(numbers, 1.0);
   }
 }
 

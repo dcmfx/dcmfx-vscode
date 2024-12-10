@@ -7,11 +7,11 @@ import * as $list from "../gleam/list.mjs";
 import * as $option from "../gleam/option.mjs";
 import { Some } from "../gleam/option.mjs";
 import * as $result from "../gleam/result.mjs";
-import * as $string_builder from "../gleam/string_builder.mjs";
+import * as $string_tree from "../gleam/string_tree.mjs";
 import {
   identity as from,
   decode_bit_array,
-  classify_dynamic as do_classify,
+  classify_dynamic as classify,
   decode_int,
   decode_float,
   decode_bool,
@@ -27,11 +27,11 @@ import {
   decode_tuple6,
   tuple_get,
   length as tuple_size,
-  decode_map,
+  decode_map as decode_dict,
   decode_string,
 } from "../gleam_stdlib.mjs";
 
-export { from };
+export { classify, from };
 
 export class DecodeError extends $CustomType {
   constructor(expected, found, path) {
@@ -52,10 +52,6 @@ export function bit_array(data) {
 
 function put_expected(error, expected) {
   return error.withFields({ expected: expected });
-}
-
-export function classify(data) {
-  return do_classify(data);
 }
 
 export function int(data) {
@@ -93,8 +89,8 @@ function at_least_decode_tuple_error(size, data) {
       " element",
       s,
     ]);
-    let _pipe$1 = $string_builder.from_strings(_pipe);
-    let _pipe$2 = $string_builder.to_string(_pipe$1);
+    let _pipe$1 = $string_tree.from_strings(_pipe);
+    let _pipe$2 = $string_tree.to_string(_pipe$1);
     return new DecodeError(_pipe$2, classify(data), toList([]));
   })();
   return new Error(toList([error]));
@@ -154,8 +150,8 @@ function push_path(error, name) {
       return name$2;
     } else {
       let _pipe = toList(["<", classify(name$1), ">"]);
-      let _pipe$1 = $string_builder.from_strings(_pipe);
-      return $string_builder.to_string(_pipe$1);
+      let _pipe$1 = $string_tree.from_strings(_pipe);
+      return $string_tree.to_string(_pipe$1);
     }
   })();
   return error.withFields({ path: listPrepend(name$2, error.path) });
@@ -498,11 +494,11 @@ export function tuple6(decode1, decode2, decode3, decode4, decode5, decode6) {
 export function dict(key_type, value_type) {
   return (value) => {
     return $result.try$(
-      decode_map(value),
-      (map) => {
+      decode_dict(value),
+      (dict) => {
         return $result.try$(
           (() => {
-            let _pipe = map;
+            let _pipe = dict;
             let _pipe$1 = $dict.to_list(_pipe);
             return $list.try_map(
               _pipe$1,
@@ -551,7 +547,7 @@ export function decode2(constructor, t1, t2) {
     } else {
       let a = $;
       let b = $1;
-      return new Error($list.concat(toList([all_errors(a), all_errors(b)])));
+      return new Error($list.flatten(toList([all_errors(a), all_errors(b)])));
     }
   };
 }
@@ -571,7 +567,7 @@ export function decode3(constructor, t1, t2, t3) {
       let b = $1;
       let c = $2;
       return new Error(
-        $list.concat(toList([all_errors(a), all_errors(b), all_errors(c)])),
+        $list.flatten(toList([all_errors(a), all_errors(b), all_errors(c)])),
       );
     }
   };
@@ -595,7 +591,7 @@ export function decode4(constructor, t1, t2, t3, t4) {
       let c = $2;
       let d = $3;
       return new Error(
-        $list.concat(
+        $list.flatten(
           toList([all_errors(a), all_errors(b), all_errors(c), all_errors(d)]),
         ),
       );
@@ -624,7 +620,7 @@ export function decode5(constructor, t1, t2, t3, t4, t5) {
       let d = $3;
       let e = $4;
       return new Error(
-        $list.concat(
+        $list.flatten(
           toList([
             all_errors(a),
             all_errors(b),
@@ -667,7 +663,7 @@ export function decode6(constructor, t1, t2, t3, t4, t5, t6) {
       let e = $4;
       let f = $5;
       return new Error(
-        $list.concat(
+        $list.flatten(
           toList([
             all_errors(a),
             all_errors(b),
@@ -715,7 +711,7 @@ export function decode7(constructor, t1, t2, t3, t4, t5, t6, t7) {
       let f = $5;
       let g = $6;
       return new Error(
-        $list.concat(
+        $list.flatten(
           toList([
             all_errors(a),
             all_errors(b),
@@ -768,7 +764,7 @@ export function decode8(constructor, t1, t2, t3, t4, t5, t6, t7, t8) {
       let g = $6;
       let h = $7;
       return new Error(
-        $list.concat(
+        $list.flatten(
           toList([
             all_errors(a),
             all_errors(b),
@@ -826,7 +822,7 @@ export function decode9(constructor, t1, t2, t3, t4, t5, t6, t7, t8, t9) {
       let h = $7;
       let i = $8;
       return new Error(
-        $list.concat(
+        $list.flatten(
           toList([
             all_errors(a),
             all_errors(b),

@@ -1,6 +1,6 @@
 import type * as $dynamic from "../../gleam_stdlib/gleam/dynamic.d.mts";
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
-import type * as $string_builder from "../../gleam_stdlib/gleam/string_builder.d.mts";
+import type * as $string_tree from "../../gleam_stdlib/gleam/string_tree.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 export type Json$ = unknown;
@@ -27,25 +27,27 @@ export class UnexpectedFormat extends _.CustomType {
 
 export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnexpectedFormat;
 
-export function decode<CCRG>(
+export function decode<CCTY>(
   json: string,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCRG,
+    CCTY,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCRG, DecodeError$>;
+): _.Result<CCTY, DecodeError$>;
 
-export function decode_bits<CCRQ>(
+export function decode_bits<CCUI>(
   json: _.BitArray,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCRQ,
+    CCUI,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCRQ, DecodeError$>;
+): _.Result<CCUI, DecodeError$>;
 
 export function to_string(json: Json$): string;
 
-export function to_string_builder(json: Json$): $string_builder.StringBuilder$;
+export function to_string_tree(json: Json$): $string_tree.StringTree$;
+
+export function to_string_builder(json: Json$): $string_tree.StringTree$;
 
 export function string(input: string): Json$;
 
@@ -57,16 +59,16 @@ export function float(input: number): Json$;
 
 export function null$(): Json$;
 
-export function nullable<CCRW>(
-  input: $option.Option$<CCRW>,
-  inner_type: (x0: CCRW) => Json$
+export function nullable<CCUO>(
+  input: $option.Option$<CCUO>,
+  inner_type: (x0: CCUO) => Json$
 ): Json$;
 
 export function object(entries: _.List<[string, Json$]>): Json$;
 
 export function preprocessed_array(from: _.List<Json$>): Json$;
 
-export function array<CCSA>(
-  entries: _.List<CCSA>,
-  inner_type: (x0: CCSA) => Json$
+export function array<CCUS>(
+  entries: _.List<CCUS>,
+  inner_type: (x0: CCUS) => Json$
 ): Json$;

@@ -6,7 +6,7 @@ import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_v
 import * as $data_error from "../../dcmfx_core/dcmfx_core/data_error.mjs";
 import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $data_set_path from "../../dcmfx_core/dcmfx_core/data_set_path.mjs";
-import * as $registry from "../../dcmfx_core/dcmfx_core/registry.mjs";
+import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $transfer_syntax from "../../dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import { BigEndian, LittleEndian } from "../../dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import * as $value_representation from "../../dcmfx_core/dcmfx_core/value_representation.mjs";
@@ -20,6 +20,7 @@ import * as $byte_stream from "../dcmfx_p10/internal/byte_stream.mjs";
 import * as $data_element_header from "../dcmfx_p10/internal/data_element_header.mjs";
 import { DataElementHeader } from "../dcmfx_p10/internal/data_element_header.mjs";
 import * as $p10_location from "../dcmfx_p10/internal/p10_location.mjs";
+import * as $value_length from "../dcmfx_p10/internal/value_length.mjs";
 import * as $p10_error from "../dcmfx_p10/p10_error.mjs";
 import * as $p10_part from "../dcmfx_p10/p10_part.mjs";
 import {
@@ -140,9 +141,33 @@ function next_delimiter_part(context) {
     })();
     let new_path = (() => {
       if (part instanceof $p10_part.SequenceDelimiter) {
-        return $data_set_path.pop(context.path);
+        let $1 = $data_set_path.pop(context.path);
+        if (!$1.isOk()) {
+          throw makeError(
+            "let_assert",
+            "dcmfx_p10/p10_read",
+            333,
+            "next_delimiter_part",
+            "Pattern match failed, no pattern matched the value.",
+            { value: $1 }
+          )
+        }
+        let path = $1[0];
+        return path;
       } else if (part instanceof $p10_part.SequenceItemDelimiter) {
-        return $data_set_path.pop(context.path);
+        let $1 = $data_set_path.pop(context.path);
+        if (!$1.isOk()) {
+          throw makeError(
+            "let_assert",
+            "dcmfx_p10/p10_read",
+            333,
+            "next_delimiter_part",
+            "Pattern match failed, no pattern matched the value.",
+            { value: $1 }
+          )
+        }
+        let path = $1[0];
+        return path;
       } else {
         return context.path;
       }
@@ -263,7 +288,7 @@ function read_file_preamble_and_dicm_prefix_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            363,
+            366,
             "read_file_preamble_and_dicm_prefix_part",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -336,7 +361,7 @@ function read_file_meta_information_data_set(
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              478,
+              481,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -404,7 +429,7 @@ function read_file_meta_information_data_set(
                                 throw makeError(
                                   "let_assert",
                                   "dcmfx_p10/p10_read",
-                                  536,
+                                  539,
                                   "",
                                   "Pattern match failed, no pattern matched the value.",
                                   { value: data }
@@ -420,7 +445,7 @@ function read_file_meta_information_data_set(
                                   throw makeError(
                                     "let_assert",
                                     "dcmfx_p10/p10_read",
-                                    544,
+                                    547,
                                     "",
                                     "Pattern match failed, no pattern matched the value.",
                                     { value: data$1 }
@@ -491,7 +516,7 @@ function read_file_meta_information_data_set(
                                         throw makeError(
                                           "let_assert",
                                           "dcmfx_p10/p10_read",
-                                          588,
+                                          591,
                                           "",
                                           "Pattern match failed, no pattern matched the value.",
                                           { value: $ }
@@ -505,7 +530,7 @@ function read_file_meta_information_data_set(
                                       let ends_at$1 = (() => {
                                         let $1 = isEqual(
                                           tag,
-                                          $registry.file_meta_information_group_length.tag
+                                          $dictionary.file_meta_information_group_length.tag
                                         );
                                         if ($1) {
                                           let $2 = $data_set.is_empty(
@@ -554,7 +579,7 @@ function read_file_meta_information_data_set(
                                           let transfer_syntax$1 = (() => {
                                             let $1 = isEqual(
                                               tag,
-                                              $registry.transfer_syntax_uid.tag
+                                              $dictionary.transfer_syntax_uid.tag
                                             );
                                             if ($1) {
                                               let $2 = $data_element_value.get_string(
@@ -610,7 +635,7 @@ function read_file_meta_information_data_set(
                                               let fmi_data_set$1 = (() => {
                                                 let $1 = isEqual(
                                                   tag,
-                                                  $registry.file_meta_information_group_length.tag
+                                                  $dictionary.file_meta_information_group_length.tag
                                                 );
                                                 if ($1) {
                                                   return fmi_data_set;
@@ -701,14 +726,14 @@ function read_file_meta_information_part(context, starts_at) {
             } else {
               let $1 = $data_set.insert_string_value(
                 fmi_data_set,
-                $registry.transfer_syntax_uid,
+                $dictionary.transfer_syntax_uid,
                 toList([new_context.transfer_syntax.uid]),
               );
               if (!$1.isOk()) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  435,
+                  438,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $1 }
@@ -741,7 +766,7 @@ function read_implicit_vr_and_length(context, tag) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            1041,
+            1042,
             "read_implicit_vr_and_length",
             "Pattern match failed, no pattern matched the value.",
             { value: data }
@@ -754,7 +779,7 @@ function read_implicit_vr_and_length(context, tag) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            1045,
+            1046,
             "read_implicit_vr_and_length",
             "Pattern match failed, no pattern matched the value.",
             { value: data }
@@ -765,17 +790,21 @@ function read_implicit_vr_and_length(context, tag) {
       }
     })();
     let vr = (() => {
-      let $1 = ((isEqual(tag, $registry.item.tag)) || (isEqual(
+      let $1 = ((isEqual(tag, $dictionary.item.tag)) || (isEqual(
         tag,
-        $registry.item_delimitation_item.tag
-      ))) || (isEqual(tag, $registry.sequence_delimitation_item.tag));
+        $dictionary.item_delimitation_item.tag
+      ))) || (isEqual(tag, $dictionary.sequence_delimitation_item.tag));
       if ($1) {
         return new None();
       } else {
         return new Some(new $value_representation.Unknown());
       }
     })();
-    let header = new DataElementHeader(tag, vr, value_length);
+    let header = new DataElementHeader(
+      tag,
+      vr,
+      $value_length.new$(value_length),
+    );
     return new Ok([header, new_stream]);
   } else {
     let e = $[0];
@@ -794,7 +823,7 @@ function read_explicit_vr_and_length(context, tag) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1082,
+          1083,
           "read_explicit_vr_and_length",
           "Pattern match failed, no pattern matched the value.",
           { value: data }
@@ -814,7 +843,7 @@ function read_explicit_vr_and_length(context, tag) {
           return new Error(
             new $p10_error.DataInvalid(
               "Reading data element VR",
-              ((("Unrecognized VR " + $bit_array.inspect(vr_bytes)) + " for tag '") + $registry.tag_with_name(
+              ((("Unrecognized VR " + $bit_array.inspect(vr_bytes)) + " for tag '") + $dictionary.tag_with_name(
                 tag,
                 new None(),
               )) + "'",
@@ -858,7 +887,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1136,
+                  1137,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -871,7 +900,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1140,
+                  1141,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -887,7 +916,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1147,
+                  1148,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -900,7 +929,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1151,
+                  1152,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -911,7 +940,11 @@ function read_explicit_vr_and_length(context, tag) {
             }
           }
         })();
-        let header = new DataElementHeader(tag, new Some(vr), length);
+        let header = new DataElementHeader(
+          tag,
+          new Some(vr),
+          $value_length.new$(length),
+        );
         return new Ok([header, new_stream]);
       } else {
         let e = $[0];
@@ -940,7 +973,7 @@ function read_data_element_header(context) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              982,
+              983,
               "read_data_element_header",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -954,7 +987,7 @@ function read_data_element_header(context) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              987,
+              988,
               "read_data_element_header",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -979,10 +1012,10 @@ function read_data_element_header(context) {
     tag,
     (tag) => {
       let vr_serialization = (() => {
-        let $ = ((isEqual(tag, $registry.item.tag)) || (isEqual(
+        let $ = ((isEqual(tag, $dictionary.item.tag)) || (isEqual(
           tag,
-          $registry.item_delimitation_item.tag
-        ))) || (isEqual(tag, $registry.sequence_delimitation_item.tag));
+          $dictionary.item_delimitation_item.tag
+        ))) || (isEqual(tag, $dictionary.sequence_delimitation_item.tag));
         if ($) {
           return new $transfer_syntax.VrImplicit();
         } else {
@@ -1024,11 +1057,12 @@ function read_data_element_header_part(context) {
           new $value_representation.Sequence(),
         );
         let ends_at = (() => {
-          let $2 = header.length === 0xFFFFFFFF;
-          if ($2) {
-            return new None();
+          let $2 = header.length;
+          if ($2 instanceof $value_length.Defined) {
+            let length = $2.length;
+            return new Some($byte_stream.bytes_read(new_stream) + length);
           } else {
-            return new Some($byte_stream.bytes_read(new_stream) + header.length);
+            return new None();
           }
         })();
         let is_implicit_vr = isEqual(
@@ -1079,7 +1113,7 @@ function read_data_element_header_part(context) {
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    723,
+                    727,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $2 }
@@ -1099,18 +1133,19 @@ function read_data_element_header_part(context) {
         );
       } else if (vr instanceof Some &&
       vr[0] instanceof $value_representation.Unknown &&
-      $1 === 0xFFFFFFFF) {
+      $1 instanceof $value_length.Undefined) {
         let tag = $;
         let part = new $p10_part.SequenceStart(
           tag,
           new $value_representation.Sequence(),
         );
         let ends_at = (() => {
-          let $2 = header.length === 0xFFFFFFFF;
-          if ($2) {
-            return new None();
+          let $2 = header.length;
+          if ($2 instanceof $value_length.Defined) {
+            let length = $2.length;
+            return new Some($byte_stream.bytes_read(new_stream) + length);
           } else {
-            return new Some($byte_stream.bytes_read(new_stream) + header.length);
+            return new None();
           }
         })();
         let is_implicit_vr = isEqual(
@@ -1161,7 +1196,7 @@ function read_data_element_header_part(context) {
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    723,
+                    727,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $2 }
@@ -1179,16 +1214,16 @@ function read_data_element_header_part(context) {
             );
           },
         );
-      } else if (vr instanceof None && (isEqual($, $registry.item.tag))) {
+      } else if (vr instanceof None && (isEqual($, $dictionary.item.tag))) {
         let tag = $;
-        let length = $1;
         let part = new $p10_part.SequenceItemStart();
         let ends_at = (() => {
-          let $2 = header.length === 0xFFFFFFFF;
-          if ($2) {
-            return new None();
-          } else {
+          let $2 = header.length;
+          if ($2 instanceof $value_length.Defined) {
+            let length = $2.length;
             return new Some($byte_stream.bytes_read(new_stream) + length);
+          } else {
+            return new None();
           }
         })();
         let new_location = (() => {
@@ -1224,7 +1259,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                762,
+                767,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }
@@ -1241,14 +1276,14 @@ function read_data_element_header_part(context) {
         );
       } else if (vr instanceof Some &&
       vr[0] instanceof $value_representation.OtherByteString &&
-      $1 === 0xFFFFFFFF &&
-      (isEqual($, $registry.pixel_data.tag))) {
+      $1 instanceof $value_length.Undefined &&
+      (isEqual($, $dictionary.pixel_data.tag))) {
         let tag = $;
         if (!(vr instanceof Some)) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            782,
+            787,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: vr }
@@ -1278,24 +1313,37 @@ function read_data_element_header_part(context) {
         return $result.try$(
           new_location,
           (new_location) => {
+            let $2 = $data_set_path.add_data_element(context.path, tag);
+            if (!$2.isOk()) {
+              throw makeError(
+                "let_assert",
+                "dcmfx_p10/p10_read",
+                802,
+                "",
+                "Pattern match failed, no pattern matched the value.",
+                { value: $2 }
+              )
+            }
+            let new_path = $2[0];
             let new_context = context.withFields({
               stream: new_stream,
               next_action: new ReadPixelDataItem(vr$1),
-              location: new_location
+              location: new_location,
+              path: new_path
             });
             return new Ok([toList([part]), new_context]);
           },
         );
       } else if (vr instanceof Some &&
       vr[0] instanceof $value_representation.OtherWordString &&
-      $1 === 0xFFFFFFFF &&
-      (isEqual($, $registry.pixel_data.tag))) {
+      $1 instanceof $value_length.Undefined &&
+      (isEqual($, $dictionary.pixel_data.tag))) {
         let tag = $;
         if (!(vr instanceof Some)) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            782,
+            787,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: vr }
@@ -1325,23 +1373,48 @@ function read_data_element_header_part(context) {
         return $result.try$(
           new_location,
           (new_location) => {
+            let $2 = $data_set_path.add_data_element(context.path, tag);
+            if (!$2.isOk()) {
+              throw makeError(
+                "let_assert",
+                "dcmfx_p10/p10_read",
+                802,
+                "",
+                "Pattern match failed, no pattern matched the value.",
+                { value: $2 }
+              )
+            }
+            let new_path = $2[0];
             let new_context = context.withFields({
               stream: new_stream,
               next_action: new ReadPixelDataItem(vr$1),
-              location: new_location
+              location: new_location,
+              path: new_path
             });
             return new Ok([toList([part]), new_context]);
           },
         );
       } else if (vr instanceof None &&
-      $1 === 0 &&
-      (isEqual($, $registry.sequence_delimitation_item.tag))) {
+      $1 instanceof $value_length.Defined &&
+      $1.length === 0 &&
+      (isEqual($, $dictionary.sequence_delimitation_item.tag))) {
         let tag = $;
         let $2 = (() => {
           let $3 = $p10_location.end_sequence(context.location);
           if ($3.isOk()) {
             let new_location = $3[0];
-            let new_path = $data_set_path.pop(context.path);
+            let $4 = $data_set_path.pop(context.path);
+            if (!$4.isOk()) {
+              throw makeError(
+                "let_assert",
+                "dcmfx_p10/p10_read",
+                826,
+                "",
+                "Pattern match failed, no pattern matched the value.",
+                { value: $4 }
+              )
+            }
+            let new_path = $4[0];
             let new_sequence_depth = context.sequence_depth - 1;
             return [
               toList([new $p10_part.SequenceDelimiter()]),
@@ -1370,8 +1443,9 @@ function read_data_element_header_part(context) {
         });
         return new Ok([parts, new_context]);
       } else if (vr instanceof None &&
-      $1 === 0 &&
-      (isEqual($, $registry.item_delimitation_item.tag))) {
+      $1 instanceof $value_length.Defined &&
+      $1.length === 0 &&
+      (isEqual($, $dictionary.item_delimitation_item.tag))) {
         let tag = $;
         let part = new $p10_part.SequenceItemDelimiter();
         let new_location = (() => {
@@ -1391,7 +1465,18 @@ function read_data_element_header_part(context) {
         return $result.try$(
           new_location,
           (new_location) => {
-            let new_path = $data_set_path.pop(context.path);
+            let $2 = $data_set_path.pop(context.path);
+            if (!$2.isOk()) {
+              throw makeError(
+                "let_assert",
+                "dcmfx_p10/p10_read",
+                881,
+                "",
+                "Pattern match failed, no pattern matched the value.",
+                { value: $2 }
+              )
+            }
+            let new_path = $2[0];
             let new_context = context.withFields({
               stream: new_stream,
               path: new_path,
@@ -1400,26 +1485,27 @@ function read_data_element_header_part(context) {
             return new Ok([toList([part]), new_context]);
           },
         );
-      } else if (vr instanceof Some) {
+      } else if (vr instanceof Some && $1 instanceof $value_length.Defined) {
         let tag = $;
         let vr$1 = vr[0];
+        let length = $1.length;
         let materialized_value_required = is_materialized_value_required(
           context,
           header.tag,
           vr$1,
         );
         let max_size_check_result = (() => {
-          let $2 = materialized_value_required && (header.length > context.config.max_string_size);
+          let $2 = materialized_value_required && (length > context.config.max_string_size);
           if ($2) {
             return new Error(
               new $p10_error.MaximumExceeded(
-                ((((((("Value for '" + $registry.tag_with_name(
+                ((((((("Value for '" + $dictionary.tag_with_name(
                   header.tag,
                   new None(),
                 )) + "' with VR ") + $value_representation.to_string(vr$1)) + " and length ") + $int.to_string(
-                  header.length,
+                  length,
                 )) + " bytes exceeds the maximum allowed string size of ") + $int.to_string(
-                  header.length,
+                  context.config.max_string_size,
                 )) + " bytes",
                 context.path,
                 $byte_stream.bytes_read(context.stream),
@@ -1432,26 +1518,16 @@ function read_data_element_header_part(context) {
         return $result.try$(
           max_size_check_result,
           (_) => {
-            let parts = (() => {
-              if (materialized_value_required) {
-                return toList([]);
-              } else {
-                return toList([
-                  new $p10_part.DataElementHeader(
-                    header.tag,
-                    vr$1,
-                    header.length,
-                  ),
-                ]);
-              }
-            })();
             let emit_parts = (!isEqual(
               header.tag,
-              $registry.data_set_trailing_padding.tag
+              $dictionary.data_set_trailing_padding.tag
             )) && (header.tag.element !== 0x0);
-            let parts$1 = (() => {
-              if (emit_parts) {
-                return parts;
+            let parts = (() => {
+              let $2 = emit_parts && !materialized_value_required;
+              if ($2) {
+                return toList([
+                  new $p10_part.DataElementHeader(header.tag, vr$1, length),
+                ]);
               } else {
                 return toList([]);
               }
@@ -1459,8 +1535,8 @@ function read_data_element_header_part(context) {
             let next_action = new ReadDataElementValueBytes(
               header.tag,
               vr$1,
-              header.length,
-              header.length,
+              length,
+              length,
               emit_parts,
             );
             let $2 = $data_set_path.add_data_element(context.path, tag);
@@ -1468,7 +1544,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                944,
+                945,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }
@@ -1480,7 +1556,7 @@ function read_data_element_header_part(context) {
               next_action: next_action,
               path: new_path
             });
-            return new Ok([parts$1, new_context]);
+            return new Ok([parts, new_context]);
           },
         );
       } else {
@@ -1543,24 +1619,31 @@ function read_data_element_value_bytes_part(
         let data$2 = _use0[0];
         let new_location = _use0[1];
         let parts = (() => {
-          if (materialized_value_required) {
-            return toList([
-              new $p10_part.DataElementHeader(
-                tag,
-                vr,
-                $bit_array.byte_size(data$2),
-              ),
-              new $p10_part.DataElementValueBytes(vr, data$2, bytes_remaining$1),
-            ]);
+          if (emit_parts) {
+            let value_bytes_part = new $p10_part.DataElementValueBytes(
+              vr,
+              data$2,
+              bytes_remaining$1,
+            );
+            if (materialized_value_required) {
+              return toList([
+                new $p10_part.DataElementHeader(
+                  tag,
+                  vr,
+                  $bit_array.byte_size(data$2),
+                ),
+                value_bytes_part,
+              ]);
+            } else {
+              return toList([value_bytes_part]);
+            }
           } else {
-            return toList([
-              new $p10_part.DataElementValueBytes(vr, data$2, bytes_remaining$1),
-            ]);
+            return toList([]);
           }
         })();
         let next_action = (() => {
           if (bytes_remaining$1 === 0) {
-            let $1 = (isEqual(tag, $registry.pixel_data.tag)) && (value_length === 0xFFFFFFFF);
+            let $1 = isEqual(tag, $dictionary.item.tag);
             if ($1) {
               return new ReadPixelDataItem(vr);
             } else {
@@ -1578,7 +1661,19 @@ function read_data_element_value_bytes_part(
         })();
         let new_path = (() => {
           if (bytes_remaining$1 === 0) {
-            return $data_set_path.pop(context.path);
+            let $1 = $data_set_path.pop(context.path);
+            if (!$1.isOk()) {
+              throw makeError(
+                "let_assert",
+                "dcmfx_p10/p10_read",
+                1249,
+                "",
+                "Pattern match failed, no pattern matched the value.",
+                { value: $1 }
+              )
+            }
+            let path = $1[0];
+            return path;
           } else {
             return context.path;
           }
@@ -1589,14 +1684,7 @@ function read_data_element_value_bytes_part(
           path: new_path,
           location: new_location
         });
-        let parts$1 = (() => {
-          if (emit_parts) {
-            return parts;
-          } else {
-            return toList([]);
-          }
-        })();
-        return new Ok([parts$1, new_context]);
+        return new Ok([parts, new_context]);
       },
     );
   } else {
@@ -1615,26 +1703,45 @@ function read_pixel_data_item_part(context, vr) {
     let new_stream = $[0][1];
     if (header instanceof DataElementHeader &&
     header.vr instanceof None &&
-    ((isEqual(header.tag, $registry.item.tag)) && (header.length !== 0xFFFFFFFF))) {
+    header.length instanceof $value_length.Defined &&
+    ((isEqual(header.tag, $dictionary.item.tag)) && (header.length.length !== 0xFFFFFFFF))) {
       let tag = header.tag;
-      let length = header.length;
+      let length = header.length.length;
       let part = new $p10_part.PixelDataItem(length);
       let next_action = new ReadDataElementValueBytes(
-        $registry.pixel_data.tag,
+        $dictionary.item.tag,
         vr,
-        0xFFFFFFFF,
+        length,
         length,
         true,
       );
+      let item_count = (() => {
+        let _pipe = $p10_location.sequence_item_count(context.location);
+        return $result.unwrap(_pipe, 1);
+      })();
+      let $1 = $data_set_path.add_sequence_item(context.path, item_count - 1);
+      if (!$1.isOk()) {
+        throw makeError(
+          "let_assert",
+          "dcmfx_p10/p10_read",
+          1355,
+          "read_pixel_data_item_part",
+          "Pattern match failed, no pattern matched the value.",
+          { value: $1 }
+        )
+      }
+      let new_path = $1[0];
       let new_context = context.withFields({
         stream: new_stream,
-        next_action: next_action
+        next_action: next_action,
+        path: new_path
       });
       return new Ok([toList([part]), new_context]);
     } else if (header instanceof DataElementHeader &&
     header.vr instanceof None &&
-    header.length === 0 &&
-    (isEqual(header.tag, $registry.sequence_delimitation_item.tag))) {
+    header.length instanceof $value_length.Defined &&
+    header.length.length === 0 &&
+    (isEqual(header.tag, $dictionary.sequence_delimitation_item.tag))) {
       let tag = header.tag;
       let part = new $p10_part.SequenceDelimiter();
       let new_location = (() => {
@@ -1654,11 +1761,24 @@ function read_pixel_data_item_part(context, vr) {
       return $result.try$(
         new_location,
         (new_location) => {
+          let $1 = $data_set_path.pop(context.path);
+          if (!$1.isOk()) {
+            throw makeError(
+              "let_assert",
+              "dcmfx_p10/p10_read",
+              1386,
+              "",
+              "Pattern match failed, no pattern matched the value.",
+              { value: $1 }
+            )
+          }
+          let new_path = $1[0];
           let next_action = new ReadDataElementHeader();
           let new_context = context.withFields({
             stream: new_stream,
             next_action: next_action,
-            location: new_location
+            location: new_location,
+            path: new_path
           });
           return new Ok([toList([part]), new_context]);
         },

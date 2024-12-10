@@ -1,11 +1,11 @@
 /// <reference types="./date_time.d.mts" />
+import * as $regexp from "../../../gleam_regexp/gleam/regexp.mjs";
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
 import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
-import * as $regex from "../../../gleam_stdlib/gleam/regex.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $date from "../../dcmfx_core/data_element_value/date.mjs";
@@ -33,7 +33,7 @@ export function from_bytes(bytes) {
   let date_time_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_right_whitespace);
+    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
       _pipe$2,
       $data_error.new_value_invalid("DateTime is invalid UTF-8"),
@@ -42,7 +42,7 @@ export function from_bytes(bytes) {
   return $result.try$(
     date_time_string,
     (date_time_string) => {
-      let $ = $regex.from_string(
+      let $ = $regexp.from_string(
         "^(\\d{4})((\\d{2})((\\d{2})((\\d{2})((\\d{2})((\\d{2})(\\.\\d{1,6})?)?)?)?)?)?([\\+\\-]\\d{4})?$",
       );
       if (!$.isOk()) {
@@ -56,7 +56,7 @@ export function from_bytes(bytes) {
         )
       }
       let re = $[0];
-      let $1 = $regex.scan(re, date_time_string);
+      let $1 = $regexp.scan(re, date_time_string);
       if ($1.atLeastLength(1)) {
         let match = $1.head;
         let submatches = $list.append(

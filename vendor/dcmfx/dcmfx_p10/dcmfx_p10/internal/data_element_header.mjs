@@ -1,10 +1,11 @@
 /// <reference types="./data_element_header.d.mts" />
 import * as $data_element_tag from "../../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import { DataElementTag } from "../../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
-import * as $registry from "../../../dcmfx_core/dcmfx_core/registry.mjs";
+import * as $dictionary from "../../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
+import * as $value_length from "../../dcmfx_p10/internal/value_length.mjs";
 import { CustomType as $CustomType } from "../../gleam.mjs";
 
 export class DataElementHeader extends $CustomType {
@@ -30,7 +31,7 @@ export function to_string(header) {
       return "  ";
     }
   })();
-  return ((($data_element_tag.to_string(header.tag) + " ") + vr) + " ") + $registry.tag_name(
+  return ((($data_element_tag.to_string(header.tag) + " ") + vr) + " ") + $dictionary.tag_name(
     header.tag,
     new None(),
   );

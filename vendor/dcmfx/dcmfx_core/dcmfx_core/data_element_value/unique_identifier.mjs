@@ -1,9 +1,9 @@
 /// <reference types="./unique_identifier.d.mts" />
+import * as $regexp from "../../../gleam_regexp/gleam/regexp.mjs";
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
 import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
-import * as $regex from "../../../gleam_stdlib/gleam/regex.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
@@ -17,7 +17,7 @@ export function is_valid(uid) {
     (length === 0) || (length > 64),
     false,
     () => {
-      let $ = $regex.from_string("^(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*))*$");
+      let $ = $regexp.from_string("^(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*))*$");
       if (!$.isOk()) {
         throw makeError(
           "let_assert",
@@ -29,7 +29,7 @@ export function is_valid(uid) {
         )
       }
       let re = $[0];
-      return $regex.check(re, uid);
+      return $regexp.check(re, uid);
     },
   );
 }

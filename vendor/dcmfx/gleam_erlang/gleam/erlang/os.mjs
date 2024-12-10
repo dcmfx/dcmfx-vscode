@@ -1,5 +1,4 @@
 /// <reference types="./os.d.mts" />
-import * as $dict from "../../../gleam_stdlib/gleam/dict.mjs";
 import { CustomType as $CustomType } from "../../gleam.mjs";
 
 export class WindowsNt extends $CustomType {}

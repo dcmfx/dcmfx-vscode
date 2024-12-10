@@ -1,24 +1,26 @@
+import type * as $deque from "../../../gleam_deque/gleam/deque.d.mts";
 import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
-import type * as $queue from "../../../gleam_stdlib/gleam/queue.d.mts";
 import type * as $zlib from "../../dcmfx_p10/internal/zlib.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class ByteStream extends _.CustomType {
   constructor(
-    bytes_queue: $queue.Queue$<_.BitArray>,
+    bytes_queue: $deque.Deque$<_.BitArray>,
     bytes_queue_size: number,
     bytes_read: number,
     max_read_size: number,
     is_writing_finished: boolean,
-    zlib_stream: $option.Option$<$zlib.ZlibStream$>
+    zlib_stream: $option.Option$<$zlib.ZlibStream$>,
+    zlib_inflate_complete: boolean
   );
   
-  bytes_queue: $queue.Queue$<_.BitArray>;
+  bytes_queue: $deque.Deque$<_.BitArray>;
   bytes_queue_size: number;
   bytes_read: number;
   max_read_size: number;
   is_writing_finished: boolean;
   zlib_stream: $option.Option$<$zlib.ZlibStream$>;
+  zlib_inflate_complete: boolean;
 }
 
 export type ByteStream$ = ByteStream;

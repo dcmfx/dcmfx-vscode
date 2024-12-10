@@ -45,7 +45,7 @@ import {
   round,
   square_root,
   subtract,
-} from "./ieee_float_js.mjs";
+} from "./ieee_float_ffi.mjs";
 
 export {
   absolute_value,

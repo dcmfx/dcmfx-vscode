@@ -3,7 +3,7 @@ import * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag
 import { DataElementTag } from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
 import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
-import * as $registry from "../../dcmfx_core/dcmfx_core/registry.mjs";
+import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $int from "../../gleam_stdlib/gleam/int.mjs";
@@ -13,6 +13,7 @@ import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../gleam_stdlib/gleam/string.mjs";
 import * as $data_element_header from "../dcmfx_p10/internal/data_element_header.mjs";
+import * as $value_length from "../dcmfx_p10/internal/value_length.mjs";
 import { CustomType as $CustomType, makeError } from "../gleam.mjs";
 
 export class FilePreambleAndDICMPrefix extends $CustomType {
@@ -83,7 +84,7 @@ export function to_string(part) {
             let _pipe = new $data_element_header.DataElementHeader(
               tag,
               new Some($data_element_value.value_representation(value)),
-              0,
+              $value_length.zero,
             );
             return $data_element_header.to_string(_pipe);
           })() + ": ") + $data_element_value.to_string(value, tag, 80);
@@ -95,7 +96,7 @@ export function to_string(part) {
     let tag = part.tag;
     let vr = part.vr;
     let length = part.length;
-    return ((((((("DataElementHeader: " + $data_element_tag.to_string(tag)) + ", name: ") + $registry.tag_name(
+    return ((((((("DataElementHeader: " + $data_element_tag.to_string(tag)) + ", name: ") + $dictionary.tag_name(
       tag,
       new None(),
     )) + ", vr: ") + $value_representation.to_string(vr)) + ", length: ") + $int.to_string(
@@ -110,7 +111,7 @@ export function to_string(part) {
   } else if (part instanceof SequenceStart) {
     let tag = part.tag;
     let vr = part.vr;
-    return (((("SequenceStart: " + $data_element_tag.to_string(tag)) + ", name: ") + $registry.tag_name(
+    return (((("SequenceStart: " + $data_element_tag.to_string(tag)) + ", name: ") + $dictionary.tag_name(
       tag,
       new None(),
     )) + ", vr: ") + $value_representation.to_string(vr);
@@ -130,16 +131,14 @@ export function to_string(part) {
 
 export function data_element_to_parts(tag, value, context, part_callback) {
   let vr = $data_element_value.value_representation(value);
-  let length = (() => {
-    let _pipe = value;
-    let _pipe$1 = $data_element_value.bytes(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $bit_array.byte_size);
-    return $result.unwrap(_pipe$2, 0xFFFFFFFF);
-  })();
   let $ = $data_element_value.bytes(value);
   if ($.isOk()) {
     let bytes = $[0];
-    let header_part = new DataElementHeader(tag, vr, length);
+    let header_part = new DataElementHeader(
+      tag,
+      vr,
+      $bit_array.byte_size(bytes),
+    );
     return $result.try$(
       part_callback(context, header_part),
       (context) => {
@@ -163,8 +162,8 @@ export function data_element_to_parts(tag, value, context, part_callback) {
               _pipe,
               context,
               (context, item) => {
-                let length$1 = $bit_array.byte_size(item);
-                let item_header_part = new PixelDataItem(length$1);
+                let length = $bit_array.byte_size(item);
+                let item_header_part = new PixelDataItem(length);
                 let context$1 = part_callback(context, item_header_part);
                 return $result.try$(
                   context$1,
@@ -194,7 +193,7 @@ export function data_element_to_parts(tag, value, context, part_callback) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_part",
-          204,
+          199,
           "data_element_to_parts",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }

@@ -1,43 +1,43 @@
 import type * as _ from "../gleam.d.mts";
 
-export class Some<I> extends _.CustomType {
-  constructor(argument$0: I);
+export class Some<FQ> extends _.CustomType {
+  constructor(argument$0: FQ);
   
-  0: I;
+  0: FQ;
 }
 
 export class None extends _.CustomType {}
 
-export type Option$<I> = Some<I> | None;
+export type Option$<FQ> = Some<FQ> | None;
 
-export function all<P>(list: _.List<Option$<P>>): Option$<_.List<P>>;
+export function all<FR>(list: _.List<Option$<FR>>): Option$<_.List<FR>>;
 
 export function is_some(option: Option$<any>): boolean;
 
 export function is_none(option: Option$<any>): boolean;
 
-export function to_result<Y, AB>(option: Option$<Y>, e: AB): _.Result<Y, AB>;
+export function to_result<GG, GJ>(option: Option$<GG>, e: GJ): _.Result<GG, GJ>;
 
-export function from_result<AE>(result: _.Result<AE, any>): Option$<AE>;
+export function from_result<GM>(result: _.Result<GM, any>): Option$<GM>;
 
-export function unwrap<AJ>(option: Option$<AJ>, default$: AJ): AJ;
+export function unwrap<GR>(option: Option$<GR>, default$: GR): GR;
 
-export function lazy_unwrap<AL>(option: Option$<AL>, default$: () => AL): AL;
+export function lazy_unwrap<GT>(option: Option$<GT>, default$: () => GT): GT;
 
-export function map<AN, AP>(option: Option$<AN>, fun: (x0: AN) => AP): Option$<
-  AP
+export function map<GV, GX>(option: Option$<GV>, fun: (x0: GV) => GX): Option$<
+  GX
 >;
 
-export function flatten<AR>(option: Option$<Option$<AR>>): Option$<AR>;
+export function flatten<GZ>(option: Option$<Option$<GZ>>): Option$<GZ>;
 
-export function then$<AV, AX>(option: Option$<AV>, fun: (x0: AV) => Option$<AX>): Option$<
-  AX
+export function then$<HD, HF>(option: Option$<HD>, fun: (x0: HD) => Option$<HF>): Option$<
+  HF
 >;
 
-export function or<BA>(first: Option$<BA>, second: Option$<BA>): Option$<BA>;
+export function or<HI>(first: Option$<HI>, second: Option$<HI>): Option$<HI>;
 
-export function lazy_or<BE>(first: Option$<BE>, second: () => Option$<BE>): Option$<
-  BE
+export function lazy_or<HM>(first: Option$<HM>, second: () => Option$<HM>): Option$<
+  HM
 >;
 
-export function values<BN>(options: _.List<Option$<BN>>): _.List<BN>;
+export function values<HQ>(options: _.List<Option$<HQ>>): _.List<HQ>;

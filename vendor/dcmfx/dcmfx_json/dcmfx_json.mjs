@@ -13,9 +13,10 @@ import * as $p10_json_transform from "./dcmfx_json/transforms/p10_json_transform
 
 export function data_set_to_json(data_set, config) {
   let transform = $p10_json_transform.new$(config);
+  let context = [transform, ""];
   let _pipe = $p10_write.data_set_to_parts(
     data_set,
-    [transform, ""],
+    context,
     (context, part) => {
       let transform$1 = context[0];
       let json = context[1];

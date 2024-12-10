@@ -1,49 +1,55 @@
 import type * as _ from "../gleam.d.mts";
+import type * as $string_tree from "../gleam/string_tree.d.mts";
 
-export type StringBuilder$ = unknown;
+export type StringBuilder = $string_tree.StringTree$;
 
-declare class All extends _.CustomType {}
+export function new$(): $string_tree.StringTree$;
 
-declare type Direction$ = All;
+export function prepend(builder: $string_tree.StringTree$, prefix: string): $string_tree.StringTree$;
 
-export function prepend_builder(builder: StringBuilder$, prefix: StringBuilder$): StringBuilder$;
+export function append(builder: $string_tree.StringTree$, second: string): $string_tree.StringTree$;
 
-export function append_builder(builder: StringBuilder$, suffix: StringBuilder$): StringBuilder$;
+export function prepend_builder(
+  builder: $string_tree.StringTree$,
+  prefix: $string_tree.StringTree$
+): $string_tree.StringTree$;
 
-export function new$(): StringBuilder$;
+export function append_builder(
+  builder: $string_tree.StringTree$,
+  suffix: $string_tree.StringTree$
+): $string_tree.StringTree$;
 
-export function from_strings(strings: _.List<string>): StringBuilder$;
+export function from_strings(strings: _.List<string>): $string_tree.StringTree$;
 
-export function concat(builders: _.List<StringBuilder$>): StringBuilder$;
+export function concat(builders: _.List<$string_tree.StringTree$>): $string_tree.StringTree$;
 
-export function from_string(string: string): StringBuilder$;
+export function from_string(string: string): $string_tree.StringTree$;
 
-export function prepend(builder: StringBuilder$, prefix: string): StringBuilder$;
+export function to_string(builder: $string_tree.StringTree$): string;
 
-export function append(builder: StringBuilder$, second: string): StringBuilder$;
+export function byte_size(builder: $string_tree.StringTree$): number;
 
-export function to_string(builder: StringBuilder$): string;
+export function join(builders: _.List<$string_tree.StringTree$>, sep: string): $string_tree.StringTree$;
 
-export function byte_size(builder: StringBuilder$): number;
+export function lowercase(builder: $string_tree.StringTree$): $string_tree.StringTree$;
 
-export function join(builders: _.List<StringBuilder$>, sep: string): StringBuilder$;
+export function uppercase(builder: $string_tree.StringTree$): $string_tree.StringTree$;
 
-export function lowercase(builder: StringBuilder$): StringBuilder$;
+export function reverse(builder: $string_tree.StringTree$): $string_tree.StringTree$;
 
-export function uppercase(builder: StringBuilder$): StringBuilder$;
-
-export function reverse(builder: StringBuilder$): StringBuilder$;
-
-export function split(iodata: StringBuilder$, pattern: string): _.List<
-  StringBuilder$
+export function split(iodata: $string_tree.StringTree$, pattern: string): _.List<
+  $string_tree.StringTree$
 >;
 
 export function replace(
-  builder: StringBuilder$,
+  builder: $string_tree.StringTree$,
   pattern: string,
   substitute: string
-): StringBuilder$;
+): $string_tree.StringTree$;
 
-export function is_equal(a: StringBuilder$, b: StringBuilder$): boolean;
+export function is_equal(
+  a: $string_tree.StringTree$,
+  b: $string_tree.StringTree$
+): boolean;
 
-export function is_empty(builder: StringBuilder$): boolean;
+export function is_empty(builder: $string_tree.StringTree$): boolean;
