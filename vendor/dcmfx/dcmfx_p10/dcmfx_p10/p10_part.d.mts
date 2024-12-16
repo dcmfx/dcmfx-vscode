@@ -76,18 +76,18 @@ export type P10Part$ = FilePreambleAndDICMPrefix | FileMetaInformation | DataEle
 
 export function to_string(part: P10Part$): string;
 
-export function data_element_to_parts<CADC, CADD>(
+export function data_element_to_parts<CACF, CACG>(
   tag: $data_element_tag.DataElementTag$,
   value: $data_element_value.DataElementValue$,
-  context: CADC,
-  part_callback: (x0: CADC, x1: P10Part$) => _.Result<CADC, CADD>
-): _.Result<CADC, CADD>;
+  context: CACF,
+  part_callback: (x0: CACF, x1: P10Part$) => _.Result<CACF, CACG>
+): _.Result<CACF, CACG>;
 
-export function data_elements_to_parts<CACW, CACX>(
+export function data_elements_to_parts<CABZ, CACA>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: CACW,
-  part_callback: (x0: CACW, x1: P10Part$) => _.Result<CACW, CACX>
-): _.Result<CACW, CACX>;
+  context: CABZ,
+  part_callback: (x0: CABZ, x1: P10Part$) => _.Result<CABZ, CACA>
+): _.Result<CABZ, CACA>;

@@ -242,8 +242,8 @@ function map_byte_stream_error(context, error, when) {
     return new $p10_error.DataInvalid(
       when,
       "Zlib data is invalid",
-      new Some(context.path),
-      new Some(offset),
+      context.path,
+      offset,
     );
   } else if (error instanceof $byte_stream.WriteAfterCompletion) {
     return new $p10_error.WriteAfterCompletion();
@@ -383,8 +383,8 @@ function read_file_meta_information_data_set(
                     new $p10_error.DataInvalid(
                       "Reading File Meta Information",
                       "Data element in File Meta Information does not have the group " + "0x0002",
-                      new Some($data_set_path.new_with_data_element(tag)),
-                      new Some($byte_stream.bytes_read(context.stream)),
+                      $data_set_path.new_with_data_element(tag),
+                      $byte_stream.bytes_read(context.stream),
                     ),
                   );
                 },
@@ -398,8 +398,8 @@ function read_file_meta_information_data_set(
                         return new $p10_error.DataInvalid(
                           "Reading File Meta Information",
                           "Data element has invalid VR",
-                          new Some($data_set_path.new_with_data_element(tag)),
-                          new Some($byte_stream.bytes_read(context.stream)),
+                          $data_set_path.new_with_data_element(tag),
+                          $byte_stream.bytes_read(context.stream),
                         );
                       },
                     );
@@ -414,10 +414,8 @@ function read_file_meta_information_data_set(
                             new $p10_error.DataInvalid(
                               "Reading File Meta Information",
                               "Data element in File Meta Information is a sequence",
-                              new Some(
-                                $data_set_path.new_with_data_element(tag),
-                              ),
-                              new Some($byte_stream.bytes_read(context.stream)),
+                              $data_set_path.new_with_data_element(tag),
+                              $byte_stream.bytes_read(context.stream),
                             ),
                           );
                         },
@@ -540,10 +538,26 @@ function read_file_meta_information_data_set(
                                             let $3 = $data_element_value.get_int(
                                               value,
                                             );
-                                            if ($3.isOk()) {
+                                            if ($3.isOk() && ($3[0] >= 0)) {
                                               let i = $3[0];
                                               return new Ok(
                                                 new Some((starts_at + 12) + i),
+                                              );
+                                            } else if ($3.isOk()) {
+                                              let i = $3[0];
+                                              return new Error(
+                                                new $p10_error.DataInvalid(
+                                                  "Reading File Meta Information",
+                                                  "Group length is invalid: " + $int.to_string(
+                                                    i,
+                                                  ),
+                                                  $data_set_path.new_with_data_element(
+                                                    tag,
+                                                  ),
+                                                  $byte_stream.bytes_read(
+                                                    context.stream,
+                                                  ),
+                                                ),
                                               );
                                             } else {
                                               let e = $3[0];
@@ -553,15 +567,11 @@ function read_file_meta_information_data_set(
                                                   "Group length is invalid: " + $data_error.to_string(
                                                     e,
                                                   ),
-                                                  new Some(
-                                                    $data_set_path.new_with_data_element(
-                                                      tag,
-                                                    ),
+                                                  $data_set_path.new_with_data_element(
+                                                    tag,
                                                   ),
-                                                  new Some(
-                                                    $byte_stream.bytes_read(
-                                                      context.stream,
-                                                    ),
+                                                  $byte_stream.bytes_read(
+                                                    context.stream,
                                                   ),
                                                 ),
                                               );
@@ -613,11 +623,11 @@ function read_file_meta_information_data_set(
                                                     new $p10_error.DataInvalid(
                                                       "Reading File Meta Information",
                                                       $data_error.to_string(e),
-                                                      $data_error.path(e),
-                                                      new Some(
-                                                        $byte_stream.bytes_read(
-                                                          context.stream,
-                                                        ),
+                                                      $data_set_path.new_with_data_element(
+                                                        $dictionary.transfer_syntax_uid.tag,
+                                                      ),
+                                                      $byte_stream.bytes_read(
+                                                        context.stream,
                                                       ),
                                                     ),
                                                   );
@@ -704,8 +714,8 @@ function read_file_meta_information_part(context, starts_at) {
               new $p10_error.DataInvalid(
                 "Starting zlib decompression for deflated transfer syntax",
                 "Zlib data is invalid",
-                new None(),
-                new Some($byte_stream.bytes_read(context.stream)),
+                $data_set_path.new$(),
+                $byte_stream.bytes_read(context.stream),
               ),
             );
           }
@@ -766,7 +776,7 @@ function read_implicit_vr_and_length(context, tag) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            1042,
+            1078,
             "read_implicit_vr_and_length",
             "Pattern match failed, no pattern matched the value.",
             { value: data }
@@ -779,7 +789,7 @@ function read_implicit_vr_and_length(context, tag) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            1046,
+            1082,
             "read_implicit_vr_and_length",
             "Pattern match failed, no pattern matched the value.",
             { value: data }
@@ -823,7 +833,7 @@ function read_explicit_vr_and_length(context, tag) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1083,
+          1119,
           "read_explicit_vr_and_length",
           "Pattern match failed, no pattern matched the value.",
           { value: data }
@@ -847,8 +857,8 @@ function read_explicit_vr_and_length(context, tag) {
                 tag,
                 new None(),
               )) + "'",
-              new Some(context.path),
-              new Some($byte_stream.bytes_read(context.stream)),
+              context.path,
+              $byte_stream.bytes_read(context.stream),
             ),
           );
         }
@@ -887,7 +897,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1137,
+                  1173,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -900,7 +910,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1141,
+                  1177,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -916,7 +926,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1148,
+                  1184,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -929,7 +939,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1152,
+                  1188,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -973,7 +983,7 @@ function read_data_element_header(context) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              983,
+              1003,
               "read_data_element_header",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -987,7 +997,7 @@ function read_data_element_header(context) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              988,
+              1008,
               "read_data_element_header",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -1022,11 +1032,35 @@ function read_data_element_header(context) {
           return transfer_syntax$1.vr_serialization;
         }
       })();
-      if (vr_serialization instanceof $transfer_syntax.VrExplicit) {
-        return read_explicit_vr_and_length(context, tag);
-      } else {
-        return read_implicit_vr_and_length(context, tag);
-      }
+      let is_invalid_data_element = (() => {
+        let $ = tag.group;
+        let $1 = context.next_action;
+        if ($ === 0x2 && $1 instanceof ReadFileMetaInformation) {
+          return false;
+        } else if ($ === 0x2) {
+          return true;
+        } else {
+          return false;
+        }
+      })();
+      return $bool.guard(
+        is_invalid_data_element,
+        new Error(
+          new $p10_error.DataInvalid(
+            "Reading data element header",
+            "File Meta Information data element found in the main data set",
+            context.path,
+            $byte_stream.bytes_read(context.stream),
+          ),
+        ),
+        () => {
+          if (vr_serialization instanceof $transfer_syntax.VrExplicit) {
+            return read_explicit_vr_and_length(context, tag);
+          } else {
+            return read_implicit_vr_and_length(context, tag);
+          }
+        },
+      );
     },
   );
 }
@@ -1082,8 +1116,8 @@ function read_data_element_header_part(context) {
               return new $p10_error.DataInvalid(
                 "Reading data element header",
                 details,
-                new Some(context.path),
-                new Some($byte_stream.bytes_read(context.stream)),
+                context.path,
+                $byte_stream.bytes_read(context.stream),
               );
             },
           );
@@ -1113,7 +1147,7 @@ function read_data_element_header_part(context) {
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    727,
+                    736,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $2 }
@@ -1165,8 +1199,8 @@ function read_data_element_header_part(context) {
               return new $p10_error.DataInvalid(
                 "Reading data element header",
                 details,
-                new Some(context.path),
-                new Some($byte_stream.bytes_read(context.stream)),
+                context.path,
+                $byte_stream.bytes_read(context.stream),
               );
             },
           );
@@ -1196,7 +1230,7 @@ function read_data_element_header_part(context) {
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    727,
+                    736,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $2 }
@@ -1238,8 +1272,8 @@ function read_data_element_header_part(context) {
               return new $p10_error.DataInvalid(
                 "Reading data element header",
                 details,
-                new Some(context.path),
-                new Some($byte_stream.bytes_read(context.stream)),
+                context.path,
+                $byte_stream.bytes_read(context.stream),
               );
             },
           );
@@ -1259,7 +1293,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                767,
+                776,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }
@@ -1283,7 +1317,7 @@ function read_data_element_header_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            787,
+            796,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: vr }
@@ -1304,8 +1338,8 @@ function read_data_element_header_part(context) {
               return new $p10_error.DataInvalid(
                 "Reading data element header",
                 details,
-                new Some(context.path),
-                new Some($byte_stream.bytes_read(context.stream)),
+                context.path,
+                $byte_stream.bytes_read(context.stream),
               );
             },
           );
@@ -1318,7 +1352,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                802,
+                811,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }
@@ -1343,7 +1377,7 @@ function read_data_element_header_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            787,
+            796,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: vr }
@@ -1364,8 +1398,8 @@ function read_data_element_header_part(context) {
               return new $p10_error.DataInvalid(
                 "Reading data element header",
                 details,
-                new Some(context.path),
-                new Some($byte_stream.bytes_read(context.stream)),
+                context.path,
+                $byte_stream.bytes_read(context.stream),
               );
             },
           );
@@ -1378,7 +1412,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                802,
+                811,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }
@@ -1408,7 +1442,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                826,
+                835,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $4 }
@@ -1456,8 +1490,8 @@ function read_data_element_header_part(context) {
               return new $p10_error.DataInvalid(
                 "Reading data element header",
                 details,
-                new Some(context.path),
-                new Some($byte_stream.bytes_read(context.stream)),
+                context.path,
+                $byte_stream.bytes_read(context.stream),
               );
             },
           );
@@ -1470,7 +1504,7 @@ function read_data_element_header_part(context) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                881,
+                890,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }
@@ -1539,24 +1573,31 @@ function read_data_element_header_part(context) {
               length,
               emit_parts,
             );
-            let $2 = $data_set_path.add_data_element(context.path, tag);
-            if (!$2.isOk()) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                945,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: $2 }
-              )
-            }
-            let new_path = $2[0];
-            let new_context = context.withFields({
-              stream: new_stream,
-              next_action: next_action,
-              path: new_path
-            });
-            return new Ok([parts, new_context]);
+            let new_path = (() => {
+              let _pipe = $data_set_path.add_data_element(context.path, tag);
+              return $result.map_error(
+                _pipe,
+                (_) => {
+                  return new $p10_error.DataInvalid(
+                    "Reading data element header",
+                    ("Data element '" + $data_element_header.to_string(header)) + "' is not valid for the current path",
+                    context.path,
+                    $byte_stream.bytes_read(context.stream),
+                  );
+                },
+              );
+            })();
+            return $result.try$(
+              new_path,
+              (new_path) => {
+                let new_context = context.withFields({
+                  stream: new_stream,
+                  next_action: next_action,
+                  path: new_path
+                });
+                return new Ok([parts, new_context]);
+              },
+            );
           },
         );
       } else {
@@ -1564,8 +1605,8 @@ function read_data_element_header_part(context) {
           new $p10_error.DataInvalid(
             "Reading data element header",
             ("Invalid data element '" + $data_element_header.to_string(header)) + "'",
-            new Some(context.path),
-            new Some($byte_stream.bytes_read(context.stream)),
+            context.path,
+            $byte_stream.bytes_read(context.stream),
           ),
         );
       }
@@ -1626,65 +1667,81 @@ function read_data_element_value_bytes_part(
               bytes_remaining$1,
             );
             if (materialized_value_required) {
-              return toList([
-                new $p10_part.DataElementHeader(
+              let length = $bit_array.byte_size(data$2);
+              let $1 = length < 0xFFFFFFFF;
+              if ($1) {
+                return new Ok(
+                  toList([
+                    new $p10_part.DataElementHeader(tag, vr, length),
+                    value_bytes_part,
+                  ]),
+                );
+              } else {
+                return new Error(
+                  new $p10_error.DataInvalid(
+                    "Reading data element value bytes",
+                    "Value exceeds 2^32 - 2 bytes when converted to UTF-8",
+                    context.path,
+                    $byte_stream.bytes_read(context.stream),
+                  ),
+                );
+              }
+            } else {
+              return new Ok(toList([value_bytes_part]));
+            }
+          } else {
+            return new Ok(toList([]));
+          }
+        })();
+        return $result.try$(
+          parts,
+          (parts) => {
+            let next_action = (() => {
+              if (bytes_remaining$1 === 0) {
+                let $1 = isEqual(tag, $dictionary.item.tag);
+                if ($1) {
+                  return new ReadPixelDataItem(vr);
+                } else {
+                  return new ReadDataElementHeader();
+                }
+              } else {
+                return new ReadDataElementValueBytes(
                   tag,
                   vr,
-                  $bit_array.byte_size(data$2),
-                ),
-                value_bytes_part,
-              ]);
-            } else {
-              return toList([value_bytes_part]);
-            }
-          } else {
-            return toList([]);
-          }
-        })();
-        let next_action = (() => {
-          if (bytes_remaining$1 === 0) {
-            let $1 = isEqual(tag, $dictionary.item.tag);
-            if ($1) {
-              return new ReadPixelDataItem(vr);
-            } else {
-              return new ReadDataElementHeader();
-            }
-          } else {
-            return new ReadDataElementValueBytes(
-              tag,
-              vr,
-              value_length,
-              bytes_remaining$1,
-              emit_parts,
-            );
-          }
-        })();
-        let new_path = (() => {
-          if (bytes_remaining$1 === 0) {
-            let $1 = $data_set_path.pop(context.path);
-            if (!$1.isOk()) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                1249,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: $1 }
-              )
-            }
-            let path = $1[0];
-            return path;
-          } else {
-            return context.path;
-          }
-        })();
-        let new_context = context.withFields({
-          stream: new_stream,
-          next_action: next_action,
-          path: new_path,
-          location: new_location
-        });
-        return new Ok([parts, new_context]);
+                  value_length,
+                  bytes_remaining$1,
+                  emit_parts,
+                );
+              }
+            })();
+            let new_path = (() => {
+              if (bytes_remaining$1 === 0) {
+                let $1 = $data_set_path.pop(context.path);
+                if (!$1.isOk()) {
+                  throw makeError(
+                    "let_assert",
+                    "dcmfx_p10/p10_read",
+                    1299,
+                    "",
+                    "Pattern match failed, no pattern matched the value.",
+                    { value: $1 }
+                  )
+                }
+                let path = $1[0];
+                return path;
+              } else {
+                return context.path;
+              }
+            })();
+            let new_context = context.withFields({
+              stream: new_stream,
+              next_action: next_action,
+              path: new_path,
+              location: new_location
+            });
+            return new Ok([parts, new_context]);
+          },
+        );
       },
     );
   } else {
@@ -1724,7 +1781,7 @@ function read_pixel_data_item_part(context, vr) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1355,
+          1405,
           "read_pixel_data_item_part",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
@@ -1752,8 +1809,8 @@ function read_pixel_data_item_part(context, vr) {
             return new $p10_error.DataInvalid(
               "Reading encapsulated pixel data item",
               details,
-              new Some(context.path),
-              new Some($byte_stream.bytes_read(context.stream)),
+              context.path,
+              $byte_stream.bytes_read(context.stream),
             );
           },
         );
@@ -1766,7 +1823,7 @@ function read_pixel_data_item_part(context, vr) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              1386,
+              1436,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: $1 }
@@ -1788,8 +1845,8 @@ function read_pixel_data_item_part(context, vr) {
         new $p10_error.DataInvalid(
           "Reading encapsulated pixel data item",
           ("Invalid data element '" + $data_element_header.to_string(header)) + "'",
-          new Some(context.path),
-          new Some($byte_stream.bytes_read(context.stream)),
+          context.path,
+          $byte_stream.bytes_read(context.stream),
         ),
       );
     }

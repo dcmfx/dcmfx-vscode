@@ -4,8 +4,6 @@ import * as $file_stream_error from "../../file_streams/file_streams/file_stream
 import * as $int from "../../gleam_stdlib/gleam/int.mjs";
 import * as $io from "../../gleam_stdlib/gleam/io.mjs";
 import * as $list from "../../gleam_stdlib/gleam/list.mjs";
-import * as $option from "../../gleam_stdlib/gleam/option.mjs";
-import { Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $string from "../../gleam_stdlib/gleam/string.mjs";
 import * as $p10_part from "../dcmfx_p10/p10_part.mjs";
 import { toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
@@ -180,11 +178,9 @@ export function to_lines(error, task_description) {
           lines$3,
         ),
       );
-    } else if (error instanceof DataInvalid &&
-    error.path instanceof Some &&
-    error.offset instanceof Some) {
-      let path = error.path[0];
-      let offset = error.offset[0];
+    } else if (error instanceof DataInvalid) {
+      let path = error.path;
+      let offset = error.offset;
       return listPrepend(
         "  Offset: 0x" + $int.to_base16(offset),
         listPrepend(

@@ -33,15 +33,19 @@ export function from_bytes(bytes) {
   let date_time_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
-      _pipe$2,
+      _pipe$1,
       $data_error.new_value_invalid("DateTime is invalid UTF-8"),
     );
   })();
   return $result.try$(
     date_time_string,
     (date_time_string) => {
+      let date_time_string$1 = (() => {
+        let _pipe = date_time_string;
+        let _pipe$1 = $utils.trim_ascii(_pipe, 0x0);
+        return $string.trim(_pipe$1);
+      })();
       let $ = $regexp.from_string(
         "^(\\d{4})((\\d{2})((\\d{2})((\\d{2})((\\d{2})((\\d{2})(\\.\\d{1,6})?)?)?)?)?)?([\\+\\-]\\d{4})?$",
       );
@@ -49,14 +53,14 @@ export function from_bytes(bytes) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_element_value/date_time",
-          43,
+          45,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
         )
       }
       let re = $[0];
-      let $1 = $regexp.scan(re, date_time_string);
+      let $1 = $regexp.scan(re, date_time_string$1);
       if ($1.atLeastLength(1)) {
         let match = $1.head;
         let submatches = $list.append(
@@ -97,7 +101,7 @@ export function from_bytes(bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_core/data_element_value/date_time",
-            73,
+            75,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $3 }
@@ -139,7 +143,7 @@ export function from_bytes(bytes) {
       } else {
         return new Error(
           $data_error.new_value_invalid(
-            ("DateTime is invalid: '" + date_time_string) + "'",
+            ("DateTime is invalid: '" + date_time_string$1) + "'",
           ),
         );
       }

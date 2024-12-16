@@ -101,7 +101,7 @@ function do_to_list(
       let item = (() => {
         let _pipe = bytes;
         let _pipe$1 = $bit_array.slice(_pipe, i * item_size, item_size);
-        return $result.try$(_pipe$1, read_item);
+        return $result.then$(_pipe$1, read_item);
       })();
       if (item.isOk()) {
         let item$1 = item[0];

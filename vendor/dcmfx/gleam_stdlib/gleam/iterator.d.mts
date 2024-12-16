@@ -22,7 +22,7 @@ declare class Iterator<DRU> extends _.CustomType {
 
 export type Iterator$<DRU> = Iterator<DRU>;
 
-export class Next<DRW, DRV> extends _.CustomType {
+export class Next<DRV, DRW> extends _.CustomType {
   constructor(element: DRV, accumulator: DRW);
   
   element: DRV;
@@ -53,7 +53,7 @@ declare class LastBy<DRX> extends _.CustomType {
   0: _.List<any>;
 }
 
-declare type Chunk$<DRX, DRY> = AnotherBy<DRX, DRY> | LastBy<DRX>;
+declare type Chunk$<DRY, DRX> = AnotherBy<DRY, DRX> | LastBy<DRX>;
 
 declare class Another<DRZ> extends _.CustomType {
   constructor(argument$0: _.List<any>, argument$1: () => Action$<any>);

@@ -56,28 +56,32 @@ export function from_bytes(bytes) {
   let age_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
-      _pipe$2,
+      _pipe$1,
       $data_error.new_value_invalid("AgeString is invalid UTF-8"),
     );
   })();
   return $result.try$(
     age_string,
     (age_string) => {
+      let age_string$1 = (() => {
+        let _pipe = age_string;
+        let _pipe$1 = $utils.trim_ascii(_pipe, 0x0);
+        return $string.trim(_pipe$1);
+      })();
       let $ = $regexp.from_string("^(\\d\\d\\d)([DWMY])$");
       if (!$.isOk()) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_element_value/age_string",
-          59,
+          60,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
         )
       }
       let re = $[0];
-      let $1 = $regexp.scan(re, age_string);
+      let $1 = $regexp.scan(re, age_string$1);
       if ($1.hasLength(1) &&
       $1.head instanceof $regexp.Match &&
       $1.head.submatches.hasLength(2) &&
@@ -90,7 +94,7 @@ export function from_bytes(bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_core/data_element_value/age_string",
-            63,
+            64,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -112,7 +116,7 @@ export function from_bytes(bytes) {
       } else {
         return new Error(
           $data_error.new_value_invalid(
-            ("AgeString is invalid: '" + age_string) + "'",
+            ("AgeString is invalid: '" + age_string$1) + "'",
           ),
         );
       }

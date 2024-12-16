@@ -10,4 +10,6 @@ export class ValueMultiplicity extends _.CustomType {
 
 export type ValueMultiplicity$ = ValueMultiplicity;
 
+export function contains(multiplicity: ValueMultiplicity$, n: number): boolean;
+
 export function to_string(multiplicity: ValueMultiplicity$): string;

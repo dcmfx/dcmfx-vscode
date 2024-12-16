@@ -4,17 +4,15 @@ export function string_fast_length(s: string): number;
 
 export function pad_start(s: string, desired_length: number, pad_string: string): string;
 
-export function trim_end_codepoints(s: string, codepoints: _.List<number>): string;
+export function trim_ascii_end(s: string, ascii_character: number): string;
 
 export function smart_parse_float(input: string): _.Result<number, undefined>;
 
-export function trim_end(s: string, chars: string): string;
+export function trim_ascii(s: string, ascii_character: number): string;
 
-export function trim_end_whitespace(s: string): string;
-
-export function list_at<HHD>(list: _.List<HHD>, index: number): _.Result<
-  HHD,
+export function list_at<HGB>(list: _.List<HGB>, index: number): _.Result<
+  HGB,
   undefined
 >;
 
-export function inspect_bit_array(bits: _.BitArray): string;
+export function inspect_bit_array(bits: _.BitArray, max_length: number): string;

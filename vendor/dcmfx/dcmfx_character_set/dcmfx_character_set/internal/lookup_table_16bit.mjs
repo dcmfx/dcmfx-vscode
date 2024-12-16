@@ -1,25 +1,14 @@
 /// <reference types="./lookup_table_16bit.d.mts" />
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
-import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
+import * as $utils from "../../dcmfx_character_set/internal/utils.mjs";
 import { Ok, Error, makeError } from "../../gleam.mjs";
 
 export function decode_next_codepoint(bytes, lookup_table) {
   if (bytes.length >= 1 && (bytes.byteAt(0) <= 0x20)) {
     let byte_0 = bytes.byteAt(0);
     let rest = bytes.sliceAfter(1);
-    let $ = $string.utf_codepoint(byte_0);
-    if (!$.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/lookup_table_16bit",
-        19,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $ }
-      )
-    }
-    let codepoint = $[0];
-    return new Ok([codepoint, rest]);
+    let codepoint_value = byte_0;
+    return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
   } else if (bytes.length >= 2 &&
   ((((bytes.byteAt(0) >= 0x21) && (bytes.byteAt(0) <= 0x7E)) && (bytes.byteAt(1) >= 0x21)) && (bytes.byteAt(1) <= 0x7E))) {
     let byte_0 = bytes.byteAt(0);
@@ -31,41 +20,17 @@ export function decode_next_codepoint(bytes, lookup_table) {
       throw makeError(
         "let_assert",
         "dcmfx_character_set/internal/lookup_table_16bit",
-        29,
+        30,
         "decode_next_codepoint",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
       )
     }
-    let codepoint = $[0].intFromSlice(0, 2, true, false);
-    let $1 = $string.utf_codepoint(codepoint);
-    if (!$1.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/lookup_table_16bit",
-        31,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $1 }
-      )
-    }
-    let codepoint$1 = $1[0];
-    return new Ok([codepoint$1, rest]);
+    let codepoint_value = $[0].intFromSlice(0, 2, true, false);
+    return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
   } else if (bytes.length >= 1) {
     let rest = bytes.sliceAfter(1);
-    let $ = $string.utf_codepoint(0xFFFD);
-    if (!$.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/lookup_table_16bit",
-        37,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $ }
-      )
-    }
-    let codepoint = $[0];
-    return new Ok([codepoint, rest]);
+    return new Ok([$utils.replacement_character(), rest]);
   } else {
     return new Error(undefined);
   }

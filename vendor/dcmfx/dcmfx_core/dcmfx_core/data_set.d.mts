@@ -149,7 +149,7 @@ export function to_list(
   [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
 >;
 
-export function map<BYNB>(
+export function map<BYKY>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -157,8 +157,8 @@ export function map<BYNB>(
   callback: (
     x0: $data_element_tag.DataElementTag$,
     x1: $data_element_value.DataElementValue$
-  ) => BYNB
-): _.List<BYNB>;
+  ) => BYKY
+): _.List<BYKY>;
 
 export function map_values(
   data_set: $dict.Dict$<
@@ -188,44 +188,44 @@ export function filter(
   $data_element_value.DataElementValue$
 >;
 
-export function fold<BYND>(
+export function fold<BYLA>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYND,
+  initial: BYLA,
   callback: (
-    x0: BYND,
+    x0: BYLA,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => BYND
-): BYND;
+  ) => BYLA
+): BYLA;
 
-export function try_fold<BYNE, BYNF>(
+export function try_fold<BYLB, BYLC>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYNE,
+  initial: BYLB,
   callback: (
-    x0: BYNE,
+    x0: BYLB,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => _.Result<BYNE, BYNF>
-): _.Result<BYNE, BYNF>;
+  ) => _.Result<BYLB, BYLC>
+): _.Result<BYLB, BYLC>;
 
-export function fold_until<BYNK>(
+export function fold_until<BYLH>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYNK,
+  initial: BYLH,
   callback: (
-    x0: BYNK,
+    x0: BYLH,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => $list.ContinueOrStop$<BYNK>
-): BYNK;
+  ) => $list.ContinueOrStop$<BYLH>
+): BYLH;
 
 export function partition(
   data_set: $dict.Dict$<
@@ -435,15 +435,15 @@ export function tag_name(
   tag: $data_element_tag.DataElementTag$
 ): string;
 
-export function to_lines<BYNM>(
+export function to_lines<BYLJ>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   print_options: $data_set_print.DataSetPrintOptions$,
-  context: BYNM,
-  callback: (x0: BYNM, x1: string) => BYNM
-): BYNM;
+  context: BYLJ,
+  callback: (x0: BYLJ, x1: string) => BYLJ
+): BYLJ;
 
 export function print_with_options(
   data_set: $dict.Dict$<

@@ -123,21 +123,10 @@ function do_read_stream(loop$stream, loop$context, loop$builder) {
       })();
       if (builder$1.isOk()) {
         let builder$2 = builder$1[0];
-        let $ = $data_set_builder.is_complete(builder$2);
-        if ($) {
-          let $1 = $data_set_builder.final_data_set(builder$2);
-          if (!$1.isOk()) {
-            throw makeError(
-              "let_assert",
-              "dcmfx_p10",
-              111,
-              "do_read_stream",
-              "Pattern match failed, no pattern matched the value.",
-              { value: $1 }
-            )
-          }
-          let data_set = $1[0];
-          return new Ok(data_set);
+        let $ = $data_set_builder.final_data_set(builder$2);
+        if ($.isOk()) {
+          let final_data_set = $[0];
+          return new Ok(final_data_set);
         } else {
           loop$stream = stream;
           loop$context = context$1;
@@ -172,7 +161,7 @@ export function read_file_returning_builder_on_error(filename) {
       ];
     },
   );
-  return $result.try$(_pipe$2, read_stream);
+  return $result.then$(_pipe$2, read_stream);
 }
 
 export function read_file(filename) {
@@ -201,21 +190,10 @@ function do_read_bytes(loop$context, loop$builder) {
       })();
       if (new_builder.isOk()) {
         let builder$1 = new_builder[0];
-        let $1 = $data_set_builder.is_complete(builder$1);
-        if ($1) {
-          let $2 = $data_set_builder.final_data_set(builder$1);
-          if (!$2.isOk()) {
-            throw makeError(
-              "let_assert",
-              "dcmfx_p10",
-              196,
-              "do_read_bytes",
-              "Pattern match failed, no pattern matched the value.",
-              { value: $2 }
-            )
-          }
-          let data_set = $2[0];
-          return new Ok(data_set);
+        let $1 = $data_set_builder.final_data_set(builder$1);
+        if ($1.isOk()) {
+          let final_data_set = $1[0];
+          return new Ok(final_data_set);
         } else {
           loop$context = context$1;
           loop$builder = builder$1;
@@ -240,7 +218,7 @@ export function read_bytes(bytes) {
     throw makeError(
       "let_assert",
       "dcmfx_p10",
-      167,
+      164,
       "read_bytes",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }

@@ -70,7 +70,7 @@ export function system_time(a: TimeUnit$): number;
 
 export function erlang_timestamp(): [number, number, number];
 
-export function rescue<GMA>(a: () => GMA): _.Result<GMA, Crash$>;
+export function rescue<GLA>(a: () => GLA): _.Result<GLA, Crash$>;
 
 export function binary_to_term(binary: _.BitArray): _.Result<
   $dynamic.Dynamic$,

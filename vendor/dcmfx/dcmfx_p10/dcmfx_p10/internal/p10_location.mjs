@@ -301,7 +301,10 @@ function update_specific_character_set_clarifying_data_element(
     return $result.map_error(
       _pipe$1,
       (_) => {
-        return new $p10_error.SpecificCharacterSetInvalid("", "Invalid UTF-8");
+        return new $p10_error.SpecificCharacterSetInvalid(
+          $utils.inspect_bit_array(value_bytes, 64),
+          "Invalid UTF-8",
+        );
       },
     );
   })();
@@ -394,35 +397,30 @@ function update_private_creator_clarifying_data_element(
   value_bytes,
   tag
 ) {
-  let $ = (() => {
-    let _pipe = $bit_array.to_string(value_bytes);
-    return $result.map(_pipe, $utils.trim_end_whitespace);
-  })();
-  if (!$.isOk()) {
-    throw makeError(
-      "let_assert",
-      "dcmfx_p10/internal/p10_location",
-      398,
-      "update_private_creator_clarifying_data_element",
-      "Pattern match failed, no pattern matched the value.",
-      { value: $ }
-    )
-  }
-  let private_creator = $[0];
   let location$1 = (() => {
-    let _pipe = location;
-    return map_clarifying_data_elements(
-      _pipe,
-      (clarifying_data_elements) => {
-        return clarifying_data_elements.withFields({
-          private_creators: $dict.insert(
-            clarifying_data_elements.private_creators,
-            tag,
-            private_creator,
-          )
-        });
-      },
-    );
+    let $ = $bit_array.to_string(value_bytes);
+    if ($.isOk()) {
+      let private_creator = $[0];
+      let private_creator$1 = (() => {
+        let _pipe = private_creator;
+        return $utils.trim_ascii_end(_pipe, 0x20);
+      })();
+      let _pipe = location;
+      return map_clarifying_data_elements(
+        _pipe,
+        (clarifying_data_elements) => {
+          return clarifying_data_elements.withFields({
+            private_creators: $dict.insert(
+              clarifying_data_elements.private_creators,
+              tag,
+              private_creator$1,
+            )
+          });
+        },
+      );
+    } else {
+      return location;
+    }
   })();
   return [value_bytes, location$1];
 }
@@ -552,10 +550,10 @@ export function infer_vr_for_tag(location, tag) {
     $dictionary.histogram_first_bin_value.tag
   ))) || (isEqual(tag, $dictionary.histogram_last_bin_value.tag)))) {
     let $ = clarifying_data_elements.pixel_representation;
-    if ($ instanceof Some && $[0] === 0) {
-      return new $value_representation.UnsignedShort();
-    } else {
+    if ($ instanceof Some && $[0] === 1) {
       return new $value_representation.SignedShort();
+    } else {
+      return new $value_representation.UnsignedShort();
     }
   } else if (allowed_vrs.hasLength(2) &&
   allowed_vrs.head instanceof $value_representation.OtherByteString &&

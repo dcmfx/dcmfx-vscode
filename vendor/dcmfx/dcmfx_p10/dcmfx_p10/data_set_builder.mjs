@@ -155,7 +155,7 @@ function insert_data_element_at_current_location(location, tag, value) {
     throw makeError(
       "panic",
       "dcmfx_p10/data_set_builder",
-      408,
+      412,
       "insert_data_element_at_current_location",
       "Internal error: unable to insert at current location",
       {}
@@ -250,7 +250,7 @@ function add_part_in_sequence(builder, part) {
     let tag = $.head.tag;
     let items = $.head.items;
     let sequence_location = $.tail;
-    let value = (() => {
+    let sequence = (() => {
       let _pipe = items;
       let _pipe$1 = $list.reverse(_pipe);
       return $data_element_value.new_sequence(_pipe$1);
@@ -258,7 +258,7 @@ function add_part_in_sequence(builder, part) {
     let new_location = insert_data_element_at_current_location(
       sequence_location,
       tag,
-      value,
+      sequence,
     );
     return new Ok(builder.withFields({ location: new_location }));
   } else {
@@ -297,7 +297,7 @@ function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/data_set_builder",
-        240,
+        244,
         "add_part_in_encapsulated_pixel_data_sequence",
         "Pattern match failed, no pattern matched the value.",
         { value: $1 }
@@ -385,25 +385,15 @@ function add_part_in_data_set(builder, part) {
 
 function add_part_in_pending_data_element(builder, part) {
   let $ = builder.pending_data_element;
-  if (!($ instanceof Some) || !($[0] instanceof PendingDataElement)) {
-    throw makeError(
-      "let_assert",
-      "dcmfx_p10/data_set_builder",
-      336,
-      "add_part_in_pending_data_element",
-      "Pattern match failed, no pattern matched the value.",
-      { value: $ }
-    )
-  }
-  let tag = $[0].tag;
-  let vr = $[0].vr;
-  let value_bytes = $[0].data;
-  if (part instanceof $p10_part.DataElementValueBytes) {
+  if (part instanceof $p10_part.DataElementValueBytes && $ instanceof Some) {
     let data = part.data;
     let bytes_remaining = part.bytes_remaining;
-    let new_value_bytes = listPrepend(data, value_bytes);
+    let pending_data_element = $[0];
+    let tag = pending_data_element.tag;
+    let vr = pending_data_element.vr;
+    let data$1 = listPrepend(data, pending_data_element.data);
     if (bytes_remaining === 0) {
-      let value = build_final_data_element_value(tag, vr, new_value_bytes);
+      let value = build_final_data_element_value(tag, vr, data$1);
       let new_location = insert_data_element_at_current_location(
         builder.location,
         tag,
@@ -416,10 +406,7 @@ function add_part_in_pending_data_element(builder, part) {
       return new Ok(_pipe);
     } else {
       let _pipe = builder.withFields({
-        pending_data_element: (() => {
-          let _pipe = new PendingDataElement(tag, vr, new_value_bytes);
-          return new Some(_pipe);
-        })()
+        pending_data_element: new Some(new PendingDataElement(tag, vr, data$1))
       });
       return new Ok(_pipe);
     }

@@ -147,7 +147,7 @@ function read_dicom_json_person_name_value(value, path) {
             $option.unwrap(raw_person_name.phonetic, ""),
           ]);
           let _pipe$2 = $string.join(_pipe$1, "=");
-          return $utils.trim_end(_pipe$2, "=");
+          return $utils.trim_ascii_end(_pipe$2, 0x3D);
         },
       );
       let _pipe$2 = $string.join(_pipe$1, "\\");
@@ -686,7 +686,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.DecimalString) {
     let _pipe = value;
     let _pipe$1 = $dynamic.list($dynamic.dynamic)(_pipe);
-    let _pipe$2 = $result.try$(
+    let _pipe$2 = $result.then$(
       _pipe$1,
       (lst) => {
         let _pipe$2 = $list.map(

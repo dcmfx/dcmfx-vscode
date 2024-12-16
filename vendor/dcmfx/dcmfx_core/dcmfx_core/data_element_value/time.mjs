@@ -7,6 +7,7 @@ import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
+import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
 import { Ok, Error, CustomType as $CustomType, makeError } from "../../gleam.mjs";
@@ -24,15 +25,19 @@ export function from_bytes(bytes) {
   let time_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
-      _pipe$2,
+      _pipe$1,
       $data_error.new_value_invalid("Time is invalid UTF-8"),
     );
   })();
   return $result.try$(
     time_string,
     (time_string) => {
+      let time_string$1 = (() => {
+        let _pipe = time_string;
+        let _pipe$1 = $utils.trim_ascii(_pipe, 0x0);
+        return $string.trim(_pipe$1);
+      })();
       let $ = $regexp.from_string(
         "^(\\d\\d)((\\d\\d)((\\d\\d)(\\.\\d{1,6})?)?)?$",
       );
@@ -40,14 +45,14 @@ export function from_bytes(bytes) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_element_value/time",
-          31,
+          33,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
         )
       }
       let re = $[0];
-      let $1 = $regexp.scan(re, time_string);
+      let $1 = $regexp.scan(re, time_string$1);
       if ($1.hasLength(1)) {
         let match = $1.head;
         let $2 = (() => {
@@ -78,7 +83,7 @@ export function from_bytes(bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_core/data_element_value/time",
-            43,
+            45,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $3 }
@@ -105,7 +110,7 @@ export function from_bytes(bytes) {
       } else {
         return new Error(
           $data_error.new_value_invalid(
-            ("Time is invalid: '" + time_string) + "'",
+            ("Time is invalid: '" + time_string$1) + "'",
           ),
         );
       }
@@ -131,7 +136,7 @@ function format_second(seconds) {
     let fractional_seconds$1 = (() => {
       let _pipe = fractional_seconds;
       let _pipe$1 = $int.to_string(_pipe);
-      return $utils.trim_end(_pipe$1, "0");
+      return $utils.trim_ascii_end(_pipe$1, 0x30);
     })();
     return (whole_seconds + ".") + fractional_seconds$1;
   }

@@ -14,16 +14,16 @@ export function from_bytes(bytes) {
   let integer_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
-      _pipe$2,
+      _pipe$1,
       $data_error.new_value_invalid("IntegerString is invalid UTF-8"),
     );
   })();
   return $result.try$(
     integer_string,
     (integer_string) => {
-      let _pipe = integer_string;
+      let integer_string$1 = $utils.trim_ascii(integer_string, 0x0);
+      let _pipe = integer_string$1;
       let _pipe$1 = $string.split(_pipe, "\\");
       let _pipe$2 = $list.map(_pipe$1, $string.trim);
       let _pipe$3 = $list.filter(
@@ -36,7 +36,7 @@ export function from_bytes(bytes) {
         _pipe$5,
         (_) => {
           return $data_error.new_value_invalid(
-            ("IntegerString is invalid: '" + integer_string) + "'",
+            ("IntegerString is invalid: '" + integer_string$1) + "'",
           );
         },
       );

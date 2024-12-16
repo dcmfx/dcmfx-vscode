@@ -86,6 +86,101 @@ export function read_bytes(context) {
   return [context.withFields({ p10_bytes: toList([]) }), p10_bytes];
 }
 
+export function data_element_header_to_bytes(header, endianness, context) {
+  let length = $value_length.to_int(header.length);
+  return $bool.guard(
+    length < 0,
+    new Error(
+      new $p10_error.DataInvalid(
+        "Serializing data element header",
+        "Length is negative",
+        context.path,
+        context.p10_total_byte_count,
+      ),
+    ),
+    () => {
+      let tag_bytes = (() => {
+        if (endianness instanceof LittleEndian) {
+          return toBitArray([
+            sizedInt(header.tag.group, 16, false),
+            sizedInt(header.tag.element, 16, false),
+          ]);
+        } else {
+          return toBitArray([
+            sizedInt(header.tag.group, 16, true),
+            sizedInt(header.tag.element, 16, true),
+          ]);
+        }
+      })();
+      let $ = header.vr;
+      if ($ instanceof None) {
+        if (endianness instanceof LittleEndian) {
+          return new Ok(
+            toBitArray([tag_bytes.buffer, sizedInt(length, 32, false)]),
+          );
+        } else {
+          return new Ok(
+            toBitArray([tag_bytes.buffer, sizedInt(length, 32, true)]),
+          );
+        }
+      } else {
+        let vr = $[0];
+        let length$1 = $value_length.to_int(header.length);
+        let length_bytes = (() => {
+          let $1 = $data_element_header.value_length_size(vr);
+          if ($1 instanceof $data_element_header.ValueLengthU16) {
+            let $2 = length$1 > 0xFFFF;
+            if ($2) {
+              let _pipe = new $p10_error.DataInvalid(
+                "Serializing data element header",
+                ("Length " + $int.to_string(length$1)) + " exceeds the maximum of 2^16 - 1 bytes",
+                context.path,
+                context.p10_total_byte_count,
+              );
+              return new Error(_pipe);
+            } else {
+              if (endianness instanceof LittleEndian) {
+                return new Ok(toBitArray([sizedInt(length$1, 16, false)]));
+              } else {
+                return new Ok(toBitArray([sizedInt(length$1, 16, true)]));
+              }
+            }
+          } else {
+            let $2 = length$1 > 0xFFFFFFFF;
+            if ($2) {
+              let _pipe = new $p10_error.DataInvalid(
+                "Serializing data element header",
+                ("Length " + $int.to_string(length$1)) + " exceeds the maximum of 0xFFFFFFFF",
+                context.path,
+                context.p10_total_byte_count,
+              );
+              return new Error(_pipe);
+            } else {
+              if (endianness instanceof LittleEndian) {
+                return new Ok(toBitArray([0, 0, sizedInt(length$1, 32, false)]));
+              } else {
+                return new Ok(toBitArray([0, 0, sizedInt(length$1, 32, true)]));
+              }
+            }
+          }
+        })();
+        return $result.try$(
+          length_bytes,
+          (length_bytes) => {
+            return new Ok(
+              toBitArray([
+                tag_bytes.buffer,
+                stringBits($value_representation.to_string(vr)),
+                length_bytes.buffer,
+              ]),
+            );
+          },
+        );
+      }
+    },
+  );
+}
+
 export function data_set_to_parts(data_set, callback_context, part_callback) {
   let remove_fmi_transform = $p10_filter_transform.new$(
     (tag, _, _1) => { return tag.group !== 2; },
@@ -103,7 +198,7 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      480,
+      554,
       "data_set_to_parts",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -173,7 +268,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      576,
+      650,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -187,7 +282,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      578,
+      652,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $1 }
@@ -201,7 +296,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      582,
+      656,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $2 }
@@ -226,101 +321,6 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
   );
 }
 
-export function data_element_header_to_bytes(header, endianness) {
-  let length = $value_length.to_int(header.length);
-  return $bool.guard(
-    length < 0,
-    new Error(
-      new $p10_error.DataInvalid(
-        "Serializing data element header",
-        "Length is negative",
-        new None(),
-        new None(),
-      ),
-    ),
-    () => {
-      let tag_bytes = (() => {
-        if (endianness instanceof LittleEndian) {
-          return toBitArray([
-            sizedInt(header.tag.group, 16, false),
-            sizedInt(header.tag.element, 16, false),
-          ]);
-        } else {
-          return toBitArray([
-            sizedInt(header.tag.group, 16, true),
-            sizedInt(header.tag.element, 16, true),
-          ]);
-        }
-      })();
-      let $ = header.vr;
-      if ($ instanceof None) {
-        if (endianness instanceof LittleEndian) {
-          return new Ok(
-            toBitArray([tag_bytes.buffer, sizedInt(length, 32, false)]),
-          );
-        } else {
-          return new Ok(
-            toBitArray([tag_bytes.buffer, sizedInt(length, 32, true)]),
-          );
-        }
-      } else {
-        let vr = $[0];
-        let length$1 = $value_length.to_int(header.length);
-        let length_bytes = (() => {
-          let $1 = $data_element_header.value_length_size(vr);
-          if ($1 instanceof $data_element_header.ValueLengthU16) {
-            let $2 = length$1 > 0xFFFF;
-            if ($2) {
-              let _pipe = new $p10_error.DataInvalid(
-                "Serializing data element header",
-                ("Length 0x" + $int.to_base16(length$1)) + " exceeds the maximum of 0xFFFF",
-                new None(),
-                new None(),
-              );
-              return new Error(_pipe);
-            } else {
-              if (endianness instanceof LittleEndian) {
-                return new Ok(toBitArray([sizedInt(length$1, 16, false)]));
-              } else {
-                return new Ok(toBitArray([sizedInt(length$1, 16, true)]));
-              }
-            }
-          } else {
-            let $2 = length$1 > 0xFFFFFFFF;
-            if ($2) {
-              let _pipe = new $p10_error.DataInvalid(
-                "Serializing data element header",
-                ("Length 0x" + $int.to_base16(length$1)) + " exceeds the maximum of 0xFFFFFFFF",
-                new None(),
-                new None(),
-              );
-              return new Error(_pipe);
-            } else {
-              if (endianness instanceof LittleEndian) {
-                return new Ok(toBitArray([0, 0, sizedInt(length$1, 32, false)]));
-              } else {
-                return new Ok(toBitArray([0, 0, sizedInt(length$1, 32, true)]));
-              }
-            }
-          }
-        })();
-        return $result.try$(
-          length_bytes,
-          (length_bytes) => {
-            return new Ok(
-              toBitArray([
-                tag_bytes.buffer,
-                stringBits($value_representation.to_string(vr)),
-                length_bytes.buffer,
-              ]),
-            );
-          },
-        );
-      }
-    },
-  );
-}
-
 function part_to_bytes(part, context) {
   let transfer_syntax = context.transfer_syntax;
   if (part instanceof $p10_part.FilePreambleAndDICMPrefix) {
@@ -337,8 +337,8 @@ function part_to_bytes(part, context) {
           ("Preamble data must be 128 bytes in length but " + $int.to_string(
             preamble_length,
           )) + " bytes were supplied",
-          new None(),
-          new Some(0),
+          context.path,
+          context.p10_total_byte_count,
         ),
       );
     }
@@ -361,8 +361,8 @@ function part_to_bytes(part, context) {
                 ((("Tag '" + $data_element_tag.to_string(tag)) + "' with value representation '") + $value_representation.to_string(
                   vr,
                 )) + "' is not allowed in File Meta Information",
-                new None(),
-                new None(),
+                context.path,
+                context.p10_total_byte_count,
               ),
             );
           })();
@@ -376,7 +376,11 @@ function part_to_bytes(part, context) {
                   new Some(vr),
                   $value_length.new$(value_length),
                 );
-                return data_element_header_to_bytes(_pipe$2, new LittleEndian());
+                return data_element_header_to_bytes(
+                  _pipe$2,
+                  new LittleEndian(),
+                  context,
+                );
               })();
               return $result.try$(
                 header_bytes,
@@ -418,7 +422,11 @@ function part_to_bytes(part, context) {
       }
     })();
     let _pipe = new DataElementHeader(tag, vr$1, $value_length.new$(length));
-    return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
+    return data_element_header_to_bytes(
+      _pipe,
+      transfer_syntax.endianness,
+      context,
+    );
   } else if (part instanceof $p10_part.DataElementValueBytes) {
     let vr = part.vr;
     let data = part.data;
@@ -443,28 +451,44 @@ function part_to_bytes(part, context) {
       }
     })();
     let _pipe = new DataElementHeader(tag, vr$1, new $value_length.Undefined());
-    return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
+    return data_element_header_to_bytes(
+      _pipe,
+      transfer_syntax.endianness,
+      context,
+    );
   } else if (part instanceof $p10_part.SequenceDelimiter) {
     let _pipe = new DataElementHeader(
       $dictionary.sequence_delimitation_item.tag,
       new None(),
       $value_length.zero,
     );
-    return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
+    return data_element_header_to_bytes(
+      _pipe,
+      transfer_syntax.endianness,
+      context,
+    );
   } else if (part instanceof $p10_part.SequenceItemStart) {
     let _pipe = new DataElementHeader(
       $dictionary.item.tag,
       new None(),
       new $value_length.Undefined(),
     );
-    return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
+    return data_element_header_to_bytes(
+      _pipe,
+      transfer_syntax.endianness,
+      context,
+    );
   } else if (part instanceof $p10_part.SequenceItemDelimiter) {
     let _pipe = new DataElementHeader(
       $dictionary.item_delimitation_item.tag,
       new None(),
       $value_length.zero,
     );
-    return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
+    return data_element_header_to_bytes(
+      _pipe,
+      transfer_syntax.endianness,
+      context,
+    );
   } else if (part instanceof $p10_part.PixelDataItem) {
     let length = part.length;
     let _pipe = new DataElementHeader(
@@ -472,7 +496,11 @@ function part_to_bytes(part, context) {
       new None(),
       $value_length.new$(length),
     );
-    return data_element_header_to_bytes(_pipe, transfer_syntax.endianness);
+    return data_element_header_to_bytes(
+      _pipe,
+      transfer_syntax.endianness,
+      context,
+    );
   } else {
     return new Ok(toBitArray([]));
   }
@@ -482,11 +510,10 @@ export function write_part(context, part) {
   return $bool.guard(
     context.is_ended,
     new Error(
-      new $p10_error.DataInvalid(
+      new $p10_error.PartStreamInvalid(
         "Writing DICOM P10 part",
-        ("Received the DICOM P10 part '" + $p10_part.to_string(part)) + "' after the write has been completed",
-        new None(),
-        new None(),
+        "Received a further DICOM P10 part after the write was completed",
+        part,
       ),
     ),
     () => {
@@ -608,7 +635,7 @@ export function write_part(context, part) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_write",
-                  237,
+                  234,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $ }
@@ -633,7 +660,7 @@ export function write_part(context, part) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_write",
-                  237,
+                  234,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $ }
@@ -670,29 +697,8 @@ export function write_part(context, part) {
         return $result.try$(
           context$1,
           (context) => {
-            let part_bytes = (() => {
-              let _pipe = part_to_bytes(part, context);
-              return $result.map_error(
-                _pipe,
-                (e) => {
-                  if (e instanceof $p10_error.DataInvalid) {
-                    let when = e.when;
-                    let details = e.details;
-                    return new $p10_error.DataInvalid(
-                      when,
-                      details,
-                      new Some(context.path),
-                      new Some(context.p10_total_byte_count),
-                    );
-                  } else {
-                    let e$1 = e;
-                    return e$1;
-                  }
-                },
-              );
-            })();
             return $result.try$(
-              part_bytes,
+              part_to_bytes(part, context),
               (part_bytes) => {
                 let context$1 = (() => {
                   let _pipe = (() => {
@@ -715,7 +721,7 @@ export function write_part(context, part) {
                         throw makeError(
                           "let_assert",
                           "dcmfx_p10/p10_write",
-                          285,
+                          268,
                           "",
                           "Pattern match failed, no pattern matched the value.",
                           { value: $ }

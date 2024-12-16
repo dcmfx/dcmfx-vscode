@@ -12,6 +12,13 @@ export class ValueMultiplicity extends $CustomType {
   }
 }
 
+export function contains(multiplicity, n) {
+  return (n >= multiplicity.min) && (n <= $option.unwrap(
+    multiplicity.max,
+    0xFFFFFFFF,
+  ));
+}
+
 export function to_string(multiplicity) {
   let $ = (multiplicity.min === 1) && (isEqual(multiplicity.max, new Some(1)));
   if ($) {

@@ -35,7 +35,10 @@ export class StructuredPersonName extends $CustomType {
 function parse_person_name_component_group(component_group) {
   let components = (() => {
     let _pipe = $string.split(component_group, "^");
-    return $list.map(_pipe, $string.trim_end);
+    return $list.map(
+      _pipe,
+      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
+    );
   })();
   let component_count = $list.length(components);
   let is_valid = (component_count > 0) && (component_count <= 5);
@@ -63,7 +66,7 @@ function parse_person_name_component_group(component_group) {
             throw makeError(
               "let_assert",
               "dcmfx_core/data_element_value/person_name",
-              118,
+              117,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: components$1 }
@@ -146,9 +149,8 @@ export function from_bytes(bytes) {
   let person_name_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
-      _pipe$2,
+      _pipe$1,
       $data_error.new_value_invalid("PersonName is invalid UTF-8"),
     );
   })();
@@ -171,7 +173,10 @@ function components_to_string(components) {
     components.prefix,
     components.suffix,
   ]);
-  let _pipe$1 = $list.map(_pipe, $string.trim);
+  let _pipe$1 = $list.map(
+    _pipe,
+    (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
+  );
   let _pipe$2 = $list.map(
     _pipe$1,
     (n) => {
@@ -206,7 +211,7 @@ function components_to_string(components) {
   );
   return $result.map(
     _pipe$4,
-    (_capture) => { return $utils.trim_end(_capture, "^"); },
+    (_capture) => { return $utils.trim_ascii_end(_capture, 0x5E); },
   );
 }
 
@@ -239,7 +244,7 @@ export function to_bytes(value) {
         );
         return $result.map(
           _pipe$4,
-          (_capture) => { return $utils.trim_end(_capture, "="); },
+          (_capture) => { return $utils.trim_ascii_end(_capture, 0x3D); },
         );
       },
     );

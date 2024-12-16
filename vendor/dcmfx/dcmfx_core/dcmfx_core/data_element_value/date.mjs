@@ -6,6 +6,7 @@ import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
+import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
 import { Ok, Error, CustomType as $CustomType, makeError } from "../../gleam.mjs";
@@ -23,28 +24,32 @@ export function from_bytes(bytes) {
   let date_string = (() => {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map(_pipe$1, $utils.trim_end_whitespace);
     return $result.replace_error(
-      _pipe$2,
+      _pipe$1,
       $data_error.new_value_invalid("Date is invalid UTF-8"),
     );
   })();
   return $result.try$(
     date_string,
     (date_string) => {
+      let date_string$1 = (() => {
+        let _pipe = date_string;
+        let _pipe$1 = $utils.trim_ascii(_pipe, 0x0);
+        return $string.trim(_pipe$1);
+      })();
       let $ = $regexp.from_string("^(\\d{4})(\\d\\d)(\\d\\d)$");
       if (!$.isOk()) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_element_value/date",
-          30,
+          32,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
         )
       }
       let re = $[0];
-      let $1 = $regexp.scan(re, date_string);
+      let $1 = $regexp.scan(re, date_string$1);
       if ($1.hasLength(1) &&
       $1.head instanceof $regexp.Match &&
       $1.head.submatches.hasLength(3) &&
@@ -59,7 +64,7 @@ export function from_bytes(bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_core/data_element_value/date",
-            34,
+            36,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -71,7 +76,7 @@ export function from_bytes(bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_core/data_element_value/date",
-            35,
+            37,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $3 }
@@ -83,7 +88,7 @@ export function from_bytes(bytes) {
           throw makeError(
             "let_assert",
             "dcmfx_core/data_element_value/date",
-            36,
+            38,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $4 }
@@ -94,7 +99,7 @@ export function from_bytes(bytes) {
       } else {
         return new Error(
           $data_error.new_value_invalid(
-            ("Date is invalid: '" + date_string) + "'",
+            ("Date is invalid: '" + date_string$1) + "'",
           ),
         );
       }

@@ -27,21 +27,21 @@ export class UnexpectedFormat extends _.CustomType {
 
 export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnexpectedFormat;
 
-export function decode<CCTY>(
+export function decode<CCSD>(
   json: string,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCTY,
+    CCSD,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCTY, DecodeError$>;
+): _.Result<CCSD, DecodeError$>;
 
-export function decode_bits<CCUI>(
+export function decode_bits<CCSN>(
   json: _.BitArray,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCUI,
+    CCSN,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCUI, DecodeError$>;
+): _.Result<CCSN, DecodeError$>;
 
 export function to_string(json: Json$): string;
 
@@ -59,16 +59,16 @@ export function float(input: number): Json$;
 
 export function null$(): Json$;
 
-export function nullable<CCUO>(
-  input: $option.Option$<CCUO>,
-  inner_type: (x0: CCUO) => Json$
+export function nullable<CCST>(
+  input: $option.Option$<CCST>,
+  inner_type: (x0: CCST) => Json$
 ): Json$;
 
 export function object(entries: _.List<[string, Json$]>): Json$;
 
 export function preprocessed_array(from: _.List<Json$>): Json$;
 
-export function array<CCUS>(
-  entries: _.List<CCUS>,
-  inner_type: (x0: CCUS) => Json$
+export function array<CCSX>(
+  entries: _.List<CCSX>,
+  inner_type: (x0: CCSX) => Json$
 ): Json$;

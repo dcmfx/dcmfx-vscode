@@ -123,7 +123,7 @@ export function to_list(data_set) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          379,
+          438,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -146,7 +146,7 @@ export function map(data_set, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          427,
+          486,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -179,7 +179,7 @@ export function fold(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          464,
+          523,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -203,7 +203,7 @@ export function try_fold(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          483,
+          542,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -227,7 +227,7 @@ export function fold_until(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          503,
+          562,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -330,32 +330,39 @@ export function file_meta_information(data_set) {
     return $dict.filter(_pipe, (tag, _) => { return tag.group === 2; });
   })();
   let file_meta_information$2 = (() => {
+    let _pipe = file_meta_information$1;
+    return $dict.filter(
+      _pipe,
+      (_, value) => { return $result.is_ok($data_element_value.bytes(value)); },
+    );
+  })();
+  let file_meta_information$3 = (() => {
     let $ = get_value(data_set, $dictionary.sop_class_uid.tag);
     if ($.isOk()) {
       let value = $[0];
       return $dict.insert(
-        file_meta_information$1,
-        $dictionary.media_storage_sop_class_uid.tag,
-        value,
-      );
-    } else {
-      return file_meta_information$1;
-    }
-  })();
-  let file_meta_information$3 = (() => {
-    let $ = get_value(data_set, $dictionary.sop_instance_uid.tag);
-    if ($.isOk()) {
-      let value = $[0];
-      return $dict.insert(
         file_meta_information$2,
-        $dictionary.media_storage_sop_instance_uid.tag,
+        $dictionary.media_storage_sop_class_uid.tag,
         value,
       );
     } else {
       return file_meta_information$2;
     }
   })();
-  return file_meta_information$3;
+  let file_meta_information$4 = (() => {
+    let $ = get_value(data_set, $dictionary.sop_instance_uid.tag);
+    if ($.isOk()) {
+      let value = $[0];
+      return $dict.insert(
+        file_meta_information$3,
+        $dictionary.media_storage_sop_instance_uid.tag,
+        value,
+      );
+    } else {
+      return file_meta_information$3;
+    }
+  })();
+  return file_meta_information$4;
 }
 
 export function get_value_at_path(data_set, path) {
@@ -423,7 +430,7 @@ export function get_value_bytes(data_set, tag, vr) {
 export function get_string(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_string);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_string);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -438,7 +445,7 @@ export function get_string(data_set, tag) {
 export function get_strings(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_strings);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_strings);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -453,7 +460,7 @@ export function get_strings(data_set, tag) {
 export function get_int(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_int);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_int);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -468,7 +475,7 @@ export function get_int(data_set, tag) {
 export function get_ints(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_ints);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_ints);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -483,7 +490,7 @@ export function get_ints(data_set, tag) {
 export function get_big_int(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_big_int);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_big_int);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -498,7 +505,7 @@ export function get_big_int(data_set, tag) {
 export function get_big_ints(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_big_ints);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_big_ints);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -513,7 +520,7 @@ export function get_big_ints(data_set, tag) {
 export function get_float(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_float);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_float);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -528,7 +535,7 @@ export function get_float(data_set, tag) {
 export function get_floats(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_floats);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_floats);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -543,7 +550,7 @@ export function get_floats(data_set, tag) {
 export function get_age(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_age);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_age);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -558,7 +565,7 @@ export function get_age(data_set, tag) {
 export function get_date(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_date);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_date);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -573,7 +580,7 @@ export function get_date(data_set, tag) {
 export function get_date_time(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_date_time);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_date_time);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -588,7 +595,7 @@ export function get_date_time(data_set, tag) {
 export function get_time(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_time);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_time);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -603,7 +610,7 @@ export function get_time(data_set, tag) {
 export function get_person_name(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_person_name);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_person_name);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -618,7 +625,7 @@ export function get_person_name(data_set, tag) {
 export function get_person_names(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  return $result.try$(_pipe$1, $data_element_value.get_person_names);
+  return $result.then$(_pipe$1, $data_element_value.get_person_names);
 }
 
 export function get_transfer_syntax(data_set) {
@@ -700,7 +707,7 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          563,
+          622,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -964,158 +971,210 @@ function invalid_insert_error(item) {
 }
 
 export function insert_age_string(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.AgeString) {
-      return $data_element_value.new_age_string(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, 1),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) && $.head instanceof $value_representation.AgeString) {
+          return $data_element_value.new_age_string(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }
 
 export function insert_attribute_tag_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.AttributeTag) {
-      return $data_element_value.new_attribute_tag(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) &&
+        $.head instanceof $value_representation.AttributeTag) {
+          return $data_element_value.new_attribute_tag(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }
 
 export function insert_date_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.Date) {
-      return $data_element_value.new_date(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, 1),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) && $.head instanceof $value_representation.Date) {
+          return $data_element_value.new_date(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }
 
 export function insert_date_time_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.Date) {
-      return $data_element_value.new_date_time(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, 1),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) && $.head instanceof $value_representation.Date) {
+          return $data_element_value.new_date_time(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }
 
 export function insert_float_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.DecimalString) {
-      let _pipe = value;
-      let _pipe$1 = $list.map(_pipe, $ieee_float.to_finite);
-      let _pipe$2 = $result.all(_pipe$1);
-      let _pipe$3 = $result.replace_error(
-        _pipe$2,
-        $data_error.new_value_invalid(
-          "DecimalString float value was not finite",
-        ),
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) &&
+        $.head instanceof $value_representation.DecimalString) {
+          let _pipe = value;
+          let _pipe$1 = $list.map(_pipe, $ieee_float.to_finite);
+          let _pipe$2 = $result.all(_pipe$1);
+          let _pipe$3 = $result.replace_error(
+            _pipe$2,
+            $data_error.new_value_invalid(
+              "DecimalString float value was not finite",
+            ),
+          );
+          return $result.then$(_pipe$3, $data_element_value.new_decimal_string);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.FloatingPointDouble) {
+          return $data_element_value.new_floating_point_double(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.FloatingPointSingle) {
+          return $data_element_value.new_floating_point_single(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.OtherDoubleString) {
+          return $data_element_value.new_other_double_string(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.OtherFloatString) {
+          return $data_element_value.new_other_float_string(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
       );
-      return $result.try$(_pipe$3, $data_element_value.new_decimal_string);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.FloatingPointDouble) {
-      return $data_element_value.new_floating_point_double(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.FloatingPointSingle) {
-      return $data_element_value.new_floating_point_single(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.OtherDoubleString) {
-      return $data_element_value.new_other_double_string(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.OtherFloatString) {
-      return $data_element_value.new_other_float_string(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+    },
   );
 }
 
 export function insert_int_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.IntegerString) {
-      return $data_element_value.new_integer_string(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.SignedLong) {
-      return $data_element_value.new_signed_long(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.SignedShort) {
-      return $data_element_value.new_signed_short(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.UnsignedLong) {
-      return $data_element_value.new_unsigned_long(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.UnsignedShort) {
-      return $data_element_value.new_unsigned_short(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) &&
+        $.head instanceof $value_representation.IntegerString) {
+          return $data_element_value.new_integer_string(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.SignedLong) {
+          return $data_element_value.new_signed_long(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.SignedShort) {
+          return $data_element_value.new_signed_short(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.UnsignedLong) {
+          return $data_element_value.new_unsigned_long(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.UnsignedShort) {
+          return $data_element_value.new_unsigned_short(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }
 
 export function insert_big_int_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.SignedVeryLong) {
-      return $data_element_value.new_signed_very_long(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.UnsignedVeryLong) {
-      return $data_element_value.new_unsigned_very_long(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) &&
+        $.head instanceof $value_representation.SignedVeryLong) {
+          return $data_element_value.new_signed_very_long(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.UnsignedVeryLong) {
+          return $data_element_value.new_unsigned_very_long(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }
 
 export function insert_person_name_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.PersonName) {
-      return $data_element_value.new_person_name(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) && $.head instanceof $value_representation.PersonName) {
+          return $data_element_value.new_person_name(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }
 
@@ -1135,69 +1194,81 @@ export function insert_sequence(data_set, item, value) {
 }
 
 export function insert_string_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) &&
-    $.head instanceof $value_representation.ApplicationEntity &&
-    value.hasLength(1)) {
-      let value$1 = value.head;
-      return $data_element_value.new_application_entity(value$1);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.CodeString) {
-      return $data_element_value.new_code_string(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.LongString) {
-      return $data_element_value.new_long_string(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.LongText &&
-    value.hasLength(1)) {
-      let value$1 = value.head;
-      return $data_element_value.new_long_text(value$1);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.ShortString) {
-      return $data_element_value.new_short_string(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.ShortText &&
-    value.hasLength(1)) {
-      let value$1 = value.head;
-      return $data_element_value.new_short_text(value$1);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.UniqueIdentifier) {
-      return $data_element_value.new_unique_identifier(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.UniversalResourceIdentifier &&
-    value.hasLength(1)) {
-      let value$1 = value.head;
-      return $data_element_value.new_universal_resource_identifier(value$1);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.UnlimitedCharacters) {
-      return $data_element_value.new_unlimited_characters(value);
-    } else if ($.hasLength(1) &&
-    $.head instanceof $value_representation.UnlimitedText &&
-    value.hasLength(1)) {
-      let value$1 = value.head;
-      return $data_element_value.new_unlimited_text(value$1);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) &&
+        $.head instanceof $value_representation.ApplicationEntity &&
+        value.hasLength(1)) {
+          let value$1 = value.head;
+          return $data_element_value.new_application_entity(value$1);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.CodeString) {
+          return $data_element_value.new_code_string(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.LongString) {
+          return $data_element_value.new_long_string(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.LongText &&
+        value.hasLength(1)) {
+          let value$1 = value.head;
+          return $data_element_value.new_long_text(value$1);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.ShortString) {
+          return $data_element_value.new_short_string(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.ShortText &&
+        value.hasLength(1)) {
+          let value$1 = value.head;
+          return $data_element_value.new_short_text(value$1);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.UniqueIdentifier) {
+          return $data_element_value.new_unique_identifier(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.UniversalResourceIdentifier &&
+        value.hasLength(1)) {
+          let value$1 = value.head;
+          return $data_element_value.new_universal_resource_identifier(value$1);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.UnlimitedCharacters) {
+          return $data_element_value.new_unlimited_characters(value);
+        } else if ($.hasLength(1) &&
+        $.head instanceof $value_representation.UnlimitedText &&
+        value.hasLength(1)) {
+          let value$1 = value.head;
+          return $data_element_value.new_unlimited_text(value$1);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }
 
 export function insert_time_value(data_set, item, value) {
-  let _pipe = (() => {
-    let $ = item.vrs;
-    if ($.hasLength(1) && $.head instanceof $value_representation.Time) {
-      return $data_element_value.new_time(value);
-    } else {
-      return invalid_insert_error(item);
-    }
-  })();
-  return $result.map(
-    _pipe,
-    (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+  return $bool.lazy_guard(
+    !$value_multiplicity.contains(item.multiplicity, 1),
+    () => { return invalid_insert_error(item); },
+    () => {
+      let _pipe = (() => {
+        let $ = item.vrs;
+        if ($.hasLength(1) && $.head instanceof $value_representation.Time) {
+          return $data_element_value.new_time(value);
+        } else {
+          return invalid_insert_error(item);
+        }
+      })();
+      return $result.map(
+        _pipe,
+        (_capture) => { return $dict.insert(data_set, item.tag, _capture); },
+      );
+    },
   );
 }

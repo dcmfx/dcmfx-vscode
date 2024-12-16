@@ -1,6 +1,6 @@
 /// <reference types="./gb_18030.d.mts" />
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
-import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
+import * as $utils from "../../dcmfx_character_set/internal/utils.mjs";
 import { Ok, Error, makeError, toBitArray, sizedInt } from "../../gleam.mjs";
 
 const gbk_lookup_table = /* @__PURE__ */ toBitArray([
@@ -24076,19 +24076,8 @@ export function decode_next_codepoint(bytes) {
   if (bytes.length >= 1 && (bytes.byteAt(0) <= 0x7F)) {
     let byte_0 = bytes.byteAt(0);
     let rest = bytes.sliceAfter(1);
-    let $ = $string.utf_codepoint(byte_0);
-    if (!$.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/gb_18030",
-        13,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $ }
-      )
-    }
-    let codepoint = $[0];
-    return new Ok([codepoint, rest]);
+    let codepoint_value = byte_0;
+    return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
   } else if (bytes.length >= 2 &&
   ((((bytes.byteAt(0) >= 0x81) && (bytes.byteAt(0) <= 0xFE)) && (bytes.byteAt(1) >= 0x40)) && (bytes.byteAt(1) <= 0xFE))) {
     let byte_0 = bytes.byteAt(0);
@@ -24106,20 +24095,8 @@ export function decode_next_codepoint(bytes) {
         { value: $ }
       )
     }
-    let codepoint = $[0].intFromSlice(0, 2, true, false);
-    let $1 = $string.utf_codepoint(codepoint);
-    if (!$1.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/gb_18030",
-        30,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $1 }
-      )
-    }
-    let codepoint$1 = $1[0];
-    return new Ok([codepoint$1, rest]);
+    let codepoint_value = $[0].intFromSlice(0, 2, true, false);
+    return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
   } else if (bytes.length >= 4 &&
   ((((((((bytes.byteAt(0) >= 0x81) && (bytes.byteAt(0) <= 0x84)) && (bytes.byteAt(1) >= 0x30)) && (bytes.byteAt(1) <= 0x39)) && (bytes.byteAt(2) >= 0x81)) && (bytes.byteAt(2) <= 0xFE)) && (bytes.byteAt(3) >= 0x30)) && (bytes.byteAt(3) <= 0x39))) {
     let byte_0 = bytes.byteAt(0);
@@ -24132,7 +24109,7 @@ export function decode_next_codepoint(bytes) {
     let byte_2$1 = byte_2 - 0x81;
     let byte_3$1 = byte_3 - 0x30;
     let index = ((byte_0$1 * 10 + byte_1$1) * 126 + byte_2$1) * 10 + byte_3$1;
-    let codepoint = (() => {
+    let codepoint_value = (() => {
       if (index <= 0x23) {
         let index$1 = index;
         return (0x80 + index$1) - 0x0;
@@ -24721,19 +24698,7 @@ export function decode_next_codepoint(bytes) {
         return 0xFFFD;
       }
     })();
-    let $ = $string.utf_codepoint(codepoint);
-    if (!$.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/gb_18030",
-        266,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $ }
-      )
-    }
-    let codepoint$1 = $[0];
-    return new Ok([codepoint$1, rest]);
+    return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
   } else if (bytes.length >= 4 &&
   ((((((((bytes.byteAt(0) >= 0x90) && (bytes.byteAt(0) <= 0xE3)) && (bytes.byteAt(1) >= 0x30)) && (bytes.byteAt(1) <= 0x39)) && (bytes.byteAt(2) >= 0x81)) && (bytes.byteAt(2) <= 0xFE)) && (bytes.byteAt(3) >= 0x30)) && (bytes.byteAt(3) <= 0x39))) {
     let byte_0 = bytes.byteAt(0);
@@ -24745,28 +24710,16 @@ export function decode_next_codepoint(bytes) {
     let byte_1$1 = byte_1 - 0x30;
     let byte_2$1 = byte_2 - 0x81;
     let byte_3$1 = byte_3 - 0x30;
-    let codepoint = (((byte_0$1 * 10 + byte_1$1) * 126 + byte_2$1) * 10 + byte_3$1) + 0x10000;
-    let codepoint$1 = (() => {
-      let $ = codepoint > 0x10FFFF;
+    let codepoint_value = (((byte_0$1 * 10 + byte_1$1) * 126 + byte_2$1) * 10 + byte_3$1) + 0x10000;
+    let codepoint = (() => {
+      let $ = codepoint_value > 0x10FFFF;
       if ($) {
-        return 0xFFFD;
+        return $utils.replacement_character();
       } else {
-        return codepoint;
+        return $utils.int_to_codepoint(codepoint_value);
       }
     })();
-    let $ = $string.utf_codepoint(codepoint$1);
-    if (!$.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/gb_18030",
-        299,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $ }
-      )
-    }
-    let codepoint$2 = $[0];
-    return new Ok([codepoint$2, rest]);
+    return new Ok([codepoint, rest]);
   } else if (bytes.length >= 4 &&
   (((((((((bytes.byteAt(0) >= 0x85) && (bytes.byteAt(0) <= 0x8F)) || ((bytes.byteAt(0) >= 0xE4) && (bytes.byteAt(0) <= 0xFE))) && (bytes.byteAt(1) >= 0x30)) && (bytes.byteAt(1) <= 0x39)) && (bytes.byteAt(2) >= 0x81)) && (bytes.byteAt(2) <= 0xFE)) && (bytes.byteAt(3) >= 0x30)) && (bytes.byteAt(3) <= 0x39))) {
     let byte_0 = bytes.byteAt(0);
@@ -24774,34 +24727,10 @@ export function decode_next_codepoint(bytes) {
     let byte_2 = bytes.byteAt(2);
     let byte_3 = bytes.byteAt(3);
     let rest = bytes.sliceAfter(4);
-    let $ = $string.utf_codepoint(0xFFFD);
-    if (!$.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/gb_18030",
-        321,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $ }
-      )
-    }
-    let codepoint = $[0];
-    return new Ok([codepoint, rest]);
+    return new Ok([$utils.replacement_character(), rest]);
   } else if (bytes.length >= 1) {
     let rest = bytes.sliceAfter(1);
-    let $ = $string.utf_codepoint(0xFFFD);
-    if (!$.isOk()) {
-      throw makeError(
-        "let_assert",
-        "dcmfx_character_set/internal/gb_18030",
-        329,
-        "decode_next_codepoint",
-        "Pattern match failed, no pattern matched the value.",
-        { value: $ }
-      )
-    }
-    let codepoint = $[0];
-    return new Ok([codepoint, rest]);
+    return new Ok([$utils.replacement_character(), rest]);
   } else {
     return new Error(undefined);
   }

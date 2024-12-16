@@ -551,7 +551,10 @@ function convert_binary_value_to_json(value, bytes, transform) {
             let component_groups = (() => {
               let _pipe$2 = raw_name;
               let _pipe$3 = $string.split(_pipe$2, "=");
-              let _pipe$4 = $list.map(_pipe$3, $string.trim_end);
+              let _pipe$4 = $list.map(
+                _pipe$3,
+                (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
+              );
               return $list.index_map(_pipe$4, (s, i) => { return [i, s]; });
             })();
             return $bool.guard(
@@ -797,9 +800,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
     );
     let _pipe$3 = $result.map(
       _pipe$2,
-      (_capture) => {
-        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
-      },
+      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
     );
     let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
     return $result.map(_pipe$4, (s) => { return toList([s]); });
@@ -814,9 +815,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
     );
     let _pipe$3 = $result.map(
       _pipe$2,
-      (_capture) => {
-        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
-      },
+      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
     );
     let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
     return $result.map(_pipe$4, (s) => { return toList([s]); });
@@ -831,9 +830,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
     );
     let _pipe$3 = $result.map(
       _pipe$2,
-      (_capture) => {
-        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
-      },
+      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
     );
     let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
     return $result.map(_pipe$4, (s) => { return toList([s]); });
@@ -848,9 +845,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
     );
     let _pipe$3 = $result.map(
       _pipe$2,
-      (_capture) => {
-        return $utils.trim_end_codepoints(_capture, toList([0x0, 0x20]));
-      },
+      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
     );
     let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
     return $result.map(_pipe$4, (s) => { return toList([s]); });
