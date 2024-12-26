@@ -37,6 +37,14 @@ export function to_string(header) {
   );
 }
 
+export function value_length_size_max_length(size) {
+  if (size instanceof ValueLengthU16) {
+    return 0xFFFF;
+  } else {
+    return 0xFFFFFFFE;
+  }
+}
+
 export function value_length_size(vr) {
   if (vr instanceof $value_representation.AgeString) {
     return new ValueLengthU16();

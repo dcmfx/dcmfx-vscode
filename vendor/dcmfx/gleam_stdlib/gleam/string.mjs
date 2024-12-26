@@ -280,6 +280,9 @@ export function utf_codepoint(value) {
   } else if ((value >= 55_296) && (value <= 57_343)) {
     let i = value;
     return new Error(undefined);
+  } else if (value < 0) {
+    let i = value;
+    return new Error(undefined);
   } else {
     let i = value;
     return new Ok(unsafe_int_to_utf_codepoint(i));

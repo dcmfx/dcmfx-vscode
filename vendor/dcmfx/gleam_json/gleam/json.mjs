@@ -1,6 +1,7 @@
 /// <reference types="./json.d.mts" />
 import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $dynamic from "../../gleam_stdlib/gleam/dynamic.mjs";
+import * as $decode from "../../gleam_stdlib/gleam/dynamic/decode.mjs";
 import * as $list from "../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
@@ -45,6 +46,13 @@ export class UnexpectedFormat extends $CustomType {
   }
 }
 
+export class UnableToDecode extends $CustomType {
+  constructor(x0) {
+    super();
+    this[0] = x0;
+  }
+}
+
 function do_decode(json, decoder) {
   return $result.then$(
     decode_string(json),
@@ -60,6 +68,23 @@ function do_decode(json, decoder) {
 
 export function decode(json, decoder) {
   return do_decode(json, decoder);
+}
+
+function do_parse(json, decoder) {
+  return $result.then$(
+    decode_string(json),
+    (dynamic_value) => {
+      let _pipe = $decode.run(dynamic_value, decoder);
+      return $result.map_error(
+        _pipe,
+        (var0) => { return new UnableToDecode(var0); },
+      );
+    },
+  );
+}
+
+export function parse(json, decoder) {
+  return do_parse(json, decoder);
 }
 
 function decode_to_dynamic(json) {
@@ -80,6 +105,19 @@ export function decode_bits(json, decoder) {
       return $result.map_error(
         _pipe,
         (var0) => { return new UnexpectedFormat(var0); },
+      );
+    },
+  );
+}
+
+export function parse_bits(json, decoder) {
+  return $result.then$(
+    decode_to_dynamic(json),
+    (dynamic_value) => {
+      let _pipe = $decode.run(dynamic_value, decoder);
+      return $result.map_error(
+        _pipe,
+        (var0) => { return new UnableToDecode(var0); },
       );
     },
   );

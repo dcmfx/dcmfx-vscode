@@ -61,3 +61,5 @@ export function to_string(tag) {
 export function to_hex_string(tag) {
   return uint16_to_string(tag.group) + uint16_to_string(tag.element);
 }
+
+export const zero = /* @__PURE__ */ new DataElementTag(0, 0);

@@ -5,6 +5,8 @@ import {
   toList,
   prepend as listPrepend,
   CustomType as $CustomType,
+  makeError,
+  divideFloat,
   isEqual,
 } from "../gleam.mjs";
 import * as $dict from "../gleam/dict.mjs";
@@ -1695,4 +1697,110 @@ export function shuffle(list) {
   );
   let _pipe$2 = do_shuffle_by_pair_indexes(_pipe$1);
   return shuffle_pair_unwrap_loop(_pipe$2, toList([]));
+}
+
+export function max(list, compare) {
+  return reduce(
+    list,
+    (acc, other) => {
+      let $ = compare(acc, other);
+      if ($ instanceof $order.Gt) {
+        return acc;
+      } else {
+        return other;
+      }
+    },
+  );
+}
+
+function log_random() {
+  let min_positive = 2.2250738585072014e-308;
+  let $ = $float.logarithm($float.random() + min_positive);
+  if (!$.isOk()) {
+    throw makeError(
+      "let_assert",
+      "gleam/list",
+      2404,
+      "log_random",
+      "Pattern match failed, no pattern matched the value.",
+      { value: $ }
+    )
+  }
+  let random = $[0];
+  return random;
+}
+
+function sample_loop(loop$list, loop$reservoir, loop$k, loop$index, loop$w) {
+  while (true) {
+    let list = loop$list;
+    let reservoir = loop$reservoir;
+    let k = loop$k;
+    let index = loop$index;
+    let w = loop$w;
+    let skip = (() => {
+      let $ = $float.logarithm(1.0 - w);
+      if (!$.isOk()) {
+        throw makeError(
+          "let_assert",
+          "gleam/list",
+          2384,
+          "sample_loop",
+          "Pattern match failed, no pattern matched the value.",
+          { value: $ }
+        )
+      }
+      let log_result = $[0];
+      let _pipe = divideFloat(log_random(), log_result);
+      let _pipe$1 = $float.floor(_pipe);
+      return $float.round(_pipe$1);
+    })();
+    let index$1 = (index + skip) + 1;
+    let $ = drop(list, skip);
+    if ($.hasLength(0)) {
+      return reservoir;
+    } else {
+      let elem = $.head;
+      let rest$1 = $.tail;
+      let reservoir$1 = (() => {
+        let _pipe = $int.random(k);
+        return ((_capture) => { return $dict.insert(reservoir, _capture, elem); })(
+          _pipe,
+        );
+      })();
+      let w$1 = w * $float.exponential(
+        divideFloat(log_random(), $int.to_float(k)),
+      );
+      loop$list = rest$1;
+      loop$reservoir = reservoir$1;
+      loop$k = k;
+      loop$index = index$1;
+      loop$w = w$1;
+    }
+  }
+}
+
+export function sample(list, k) {
+  let $ = k <= 0;
+  if ($) {
+    return toList([]);
+  } else {
+    let $1 = split(list, k);
+    let reservoir = $1[0];
+    let list$1 = $1[1];
+    let $2 = length(reservoir) < k;
+    if ($2) {
+      return reservoir;
+    } else {
+      let reservoir$1 = (() => {
+        let _pipe = reservoir;
+        let _pipe$1 = ((_capture) => {
+          return map2(range(0, k - 1), _capture, (a, b) => { return [a, b]; });
+        })(_pipe);
+        return $dict.from_list(_pipe$1);
+      })();
+      let w = $float.exponential(divideFloat(log_random(), $int.to_float(k)));
+      let _pipe = sample_loop(list$1, reservoir$1, k, k, w);
+      return $dict.values(_pipe);
+    }
+  }
 }

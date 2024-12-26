@@ -1,4 +1,5 @@
 import type * as $dynamic from "../../gleam_stdlib/gleam/dynamic.d.mts";
+import type * as $decode from "../../gleam_stdlib/gleam/dynamic/decode.d.mts";
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $string_tree from "../../gleam_stdlib/gleam/string_tree.d.mts";
 import type * as _ from "../gleam.d.mts";
@@ -25,23 +26,39 @@ export class UnexpectedFormat extends _.CustomType {
   0: _.List<$dynamic.DecodeError$>;
 }
 
-export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnexpectedFormat;
+export class UnableToDecode extends _.CustomType {
+  constructor(argument$0: _.List<$decode.DecodeError$>);
+  
+  0: _.List<$decode.DecodeError$>;
+}
 
-export function decode<CCSD>(
+export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnexpectedFormat | UnableToDecode;
+
+export function decode<CCCQ>(
   json: string,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCSD,
+    CCCQ,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCSD, DecodeError$>;
+): _.Result<CCCQ, DecodeError$>;
 
-export function decode_bits<CCSN>(
+export function parse<CCCU>(json: string, decoder: $decode.Decoder$<CCCU>): _.Result<
+  CCCU,
+  DecodeError$
+>;
+
+export function decode_bits<CCDI>(
   json: _.BitArray,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCSN,
+    CCDI,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCSN, DecodeError$>;
+): _.Result<CCDI, DecodeError$>;
+
+export function parse_bits<CCDM>(
+  json: _.BitArray,
+  decoder: $decode.Decoder$<CCDM>
+): _.Result<CCDM, DecodeError$>;
 
 export function to_string(json: Json$): string;
 
@@ -59,16 +76,16 @@ export function float(input: number): Json$;
 
 export function null$(): Json$;
 
-export function nullable<CCST>(
-  input: $option.Option$<CCST>,
-  inner_type: (x0: CCST) => Json$
+export function nullable<CCDS>(
+  input: $option.Option$<CCDS>,
+  inner_type: (x0: CCDS) => Json$
 ): Json$;
 
 export function object(entries: _.List<[string, Json$]>): Json$;
 
 export function preprocessed_array(from: _.List<Json$>): Json$;
 
-export function array<CCSX>(
-  entries: _.List<CCSX>,
-  inner_type: (x0: CCSX) => Json$
+export function array<CCDW>(
+  entries: _.List<CCDW>,
+  inner_type: (x0: CCDW) => Json$
 ): Json$;

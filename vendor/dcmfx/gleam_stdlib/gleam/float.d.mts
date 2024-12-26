@@ -56,3 +56,7 @@ export function add(a: number, b: number): number;
 export function multiply(a: number, b: number): number;
 
 export function subtract(a: number, b: number): number;
+
+export function logarithm(x: number): _.Result<number, undefined>;
+
+export function exponential(x: number): number;

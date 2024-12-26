@@ -26,6 +26,8 @@ export type ValueLengthSize$ = ValueLengthU16 | ValueLengthU32;
 
 export function to_string(header: DataElementHeader$): string;
 
+export function value_length_size_max_length(size: ValueLengthSize$): number;
+
 export function value_length_size(
   vr: $value_representation.ValueRepresentation$
 ): ValueLengthSize$;

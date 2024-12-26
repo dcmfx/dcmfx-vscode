@@ -36,11 +36,12 @@ import {
 } from "../gleam.mjs";
 
 export class P10ReadConfig extends $CustomType {
-  constructor(max_part_size, max_string_size, max_sequence_depth) {
+  constructor(max_part_size, max_string_size, max_sequence_depth, require_ordered_data_elements) {
     super();
     this.max_part_size = max_part_size;
     this.max_string_size = max_string_size;
     this.max_sequence_depth = max_sequence_depth;
+    this.require_ordered_data_elements = require_ordered_data_elements;
   }
 }
 
@@ -87,7 +88,7 @@ class ReadPixelDataItem extends $CustomType {
 }
 
 export function default_config() {
-  return new P10ReadConfig(0xFFFFFFFE, 0xFFFFFFFE, 10_000);
+  return new P10ReadConfig(0xFFFFFFFE, 0xFFFFFFFE, 10_000, true);
 }
 
 export function with_config(context, config) {
@@ -95,14 +96,14 @@ export function with_config(context, config) {
   let max_string_size = $int.max(config.max_string_size, max_part_size);
   let max_sequence_depth = $int.max(0, config.max_sequence_depth);
   let max_read_size = $int.max(config.max_string_size, config.max_part_size);
-  let config$1 = new P10ReadConfig(
-    max_part_size,
-    max_string_size,
-    max_sequence_depth,
-  );
+  let config$1 = config.withFields({
+    max_part_size: max_part_size,
+    max_string_size: max_string_size,
+    max_sequence_depth: max_sequence_depth
+  });
   return context.withFields({
-    stream: $byte_stream.new$(max_read_size),
-    config: config$1
+    config: config$1,
+    stream: $byte_stream.new$(max_read_size)
   });
 }
 
@@ -146,7 +147,7 @@ function next_delimiter_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            333,
+            349,
             "next_delimiter_part",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -160,7 +161,7 @@ function next_delimiter_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            333,
+            349,
             "next_delimiter_part",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -197,11 +198,19 @@ function is_materialized_value_required(context, tag, vr) {
     $p10_location.is_clarifying_data_element(tag),
     true,
     () => {
-      return $value_representation.is_string(vr) && !($value_representation.is_encoded_string(
-        vr,
-      ) && $p10_location.is_specific_character_set_utf8_compatible(
-        context.location,
-      ));
+      return $bool.guard(
+        $value_representation.is_encoded_string(vr),
+        !$p10_location.is_specific_character_set_utf8_compatible(
+          context.location,
+        ),
+        () => {
+          return $bool.guard(
+            $value_representation.is_string(vr),
+            true,
+            () => { return false; },
+          );
+        },
+      );
     },
   );
 }
@@ -210,7 +219,9 @@ function process_materialized_data_element(context, tag, vr, value_bytes) {
   let value_bytes$1 = (() => {
     let $ = $value_representation.is_string(vr);
     if ($) {
-      let $1 = $value_representation.is_encoded_string(vr);
+      let $1 = $value_representation.is_encoded_string(vr) && !$data_element_tag.is_private_creator(
+        tag,
+      );
       if ($1) {
         return $p10_location.decode_string_bytes(
           context.location,
@@ -288,7 +299,7 @@ function read_file_preamble_and_dicm_prefix_part(context) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            366,
+            382,
             "read_file_preamble_and_dicm_prefix_part",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -361,7 +372,7 @@ function read_file_meta_information_data_set(
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              481,
+              497,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -427,7 +438,7 @@ function read_file_meta_information_data_set(
                                 throw makeError(
                                   "let_assert",
                                   "dcmfx_p10/p10_read",
-                                  539,
+                                  555,
                                   "",
                                   "Pattern match failed, no pattern matched the value.",
                                   { value: data }
@@ -443,7 +454,7 @@ function read_file_meta_information_data_set(
                                   throw makeError(
                                     "let_assert",
                                     "dcmfx_p10/p10_read",
-                                    547,
+                                    563,
                                     "",
                                     "Pattern match failed, no pattern matched the value.",
                                     { value: data$1 }
@@ -514,7 +525,7 @@ function read_file_meta_information_data_set(
                                         throw makeError(
                                           "let_assert",
                                           "dcmfx_p10/p10_read",
-                                          591,
+                                          607,
                                           "",
                                           "Pattern match failed, no pattern matched the value.",
                                           { value: $ }
@@ -743,7 +754,7 @@ function read_file_meta_information_part(context, starts_at) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  438,
+                  454,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $1 }
@@ -776,7 +787,7 @@ function read_implicit_vr_and_length(context, tag) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            1078,
+            1124,
             "read_implicit_vr_and_length",
             "Pattern match failed, no pattern matched the value.",
             { value: data }
@@ -789,7 +800,7 @@ function read_implicit_vr_and_length(context, tag) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
-            1082,
+            1128,
             "read_implicit_vr_and_length",
             "Pattern match failed, no pattern matched the value.",
             { value: data }
@@ -833,7 +844,7 @@ function read_explicit_vr_and_length(context, tag) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1119,
+          1165,
           "read_explicit_vr_and_length",
           "Pattern match failed, no pattern matched the value.",
           { value: data }
@@ -848,7 +859,7 @@ function read_explicit_vr_and_length(context, tag) {
         if (vr_bytes.byteAt(0) === 0x20 &&
         vr_bytes.byteAt(1) === 0x20 &&
         vr_bytes.length == 2) {
-          return new Ok($p10_location.infer_vr_for_tag(context.location, tag));
+          return new Ok(new $value_representation.Unknown());
         } else {
           return new Error(
             new $p10_error.DataInvalid(
@@ -897,7 +908,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1173,
+                  1216,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -910,7 +921,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1177,
+                  1220,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -926,7 +937,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1184,
+                  1227,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -939,7 +950,7 @@ function read_explicit_vr_and_length(context, tag) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1188,
+                  1231,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: data }
@@ -983,7 +994,7 @@ function read_data_element_header(context) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              1003,
+              1049,
               "read_data_element_header",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -997,7 +1008,7 @@ function read_data_element_header(context) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              1008,
+              1054,
               "read_data_element_header",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -1074,513 +1085,71 @@ function read_data_element_header_part(context) {
       let vr = (() => {
         let $ = header.vr;
         if ($ instanceof Some && $[0] instanceof $value_representation.Unknown) {
-          return new Some(
-            $p10_location.infer_vr_for_tag(context.location, header.tag),
+          let _pipe = $p10_location.infer_vr_for_tag(
+            context.location,
+            header.tag,
+          );
+          let _pipe$1 = $result.map(_pipe, (var0) => { return new Some(var0); });
+          return $result.map_error(
+            _pipe$1,
+            (missing_tag) => {
+              return new $p10_error.DataInvalid(
+                ("Inferring VR for data element '" + $dictionary.tag_with_name(
+                  header.tag,
+                  new None(),
+                )) + "'",
+                ("The value for the '" + $dictionary.tag_with_name(
+                  missing_tag,
+                  new None(),
+                )) + "' data element is missing or invalid",
+                context.path,
+                $byte_stream.bytes_read(context.stream),
+              );
+            },
           );
         } else {
           let vr = $;
-          return vr;
+          return new Ok(vr);
         }
       })();
-      let $ = header.tag;
-      let $1 = header.length;
-      if (vr instanceof Some && vr[0] instanceof $value_representation.Sequence) {
-        let tag = $;
-        let part = new $p10_part.SequenceStart(
-          tag,
-          new $value_representation.Sequence(),
-        );
-        let ends_at = (() => {
-          let $2 = header.length;
-          if ($2 instanceof $value_length.Defined) {
-            let length = $2.length;
-            return new Some($byte_stream.bytes_read(new_stream) + length);
-          } else {
-            return new None();
-          }
-        })();
-        let is_implicit_vr = isEqual(
-          header.vr,
-          new Some(new $value_representation.Unknown())
-        );
-        let new_location = (() => {
-          let _pipe = $p10_location.add_sequence(
-            context.location,
-            tag,
-            is_implicit_vr,
-            ends_at,
-          );
-          return $result.map_error(
-            _pipe,
-            (details) => {
-              return new $p10_error.DataInvalid(
-                "Reading data element header",
-                details,
-                context.path,
-                $byte_stream.bytes_read(context.stream),
-              );
-            },
-          );
-        })();
-        return $result.try$(
-          new_location,
-          (new_location) => {
-            let sequence_depth_check = (() => {
-              let $2 = context.sequence_depth < context.config.max_sequence_depth;
-              if ($2) {
-                return new Ok(undefined);
+      return $result.try$(
+        vr,
+        (vr) => {
+          let $ = header.tag;
+          let $1 = header.length;
+          if (vr instanceof Some &&
+          vr[0] instanceof $value_representation.Sequence) {
+            let tag = $;
+            let part = new $p10_part.SequenceStart(
+              tag,
+              new $value_representation.Sequence(),
+            );
+            let ends_at = (() => {
+              let $2 = header.length;
+              if ($2 instanceof $value_length.Defined) {
+                let length = $2.length;
+                return new Some($byte_stream.bytes_read(new_stream) + length);
               } else {
-                return new Error(
-                  new $p10_error.MaximumExceeded(
-                    "Maximum allowed sequence depth reached",
-                    context.path,
-                    $byte_stream.bytes_read(context.stream),
-                  ),
-                );
+                return new None();
               }
             })();
-            return $result.try$(
-              sequence_depth_check,
-              (_) => {
-                let $2 = $data_set_path.add_data_element(context.path, tag);
-                if (!$2.isOk()) {
-                  throw makeError(
-                    "let_assert",
-                    "dcmfx_p10/p10_read",
-                    736,
-                    "",
-                    "Pattern match failed, no pattern matched the value.",
-                    { value: $2 }
-                  )
-                }
-                let new_path = $2[0];
-                let new_context = context.withFields({
-                  stream: new_stream,
-                  path: new_path,
-                  location: new_location,
-                  sequence_depth: context.sequence_depth + 1
-                });
-                return new Ok([toList([part]), new_context]);
-              },
+            let is_implicit_vr = isEqual(
+              header.vr,
+              new Some(new $value_representation.Unknown())
             );
-          },
-        );
-      } else if (vr instanceof Some &&
-      vr[0] instanceof $value_representation.Unknown &&
-      $1 instanceof $value_length.Undefined) {
-        let tag = $;
-        let part = new $p10_part.SequenceStart(
-          tag,
-          new $value_representation.Sequence(),
-        );
-        let ends_at = (() => {
-          let $2 = header.length;
-          if ($2 instanceof $value_length.Defined) {
-            let length = $2.length;
-            return new Some($byte_stream.bytes_read(new_stream) + length);
-          } else {
-            return new None();
-          }
-        })();
-        let is_implicit_vr = isEqual(
-          header.vr,
-          new Some(new $value_representation.Unknown())
-        );
-        let new_location = (() => {
-          let _pipe = $p10_location.add_sequence(
-            context.location,
-            tag,
-            is_implicit_vr,
-            ends_at,
-          );
-          return $result.map_error(
-            _pipe,
-            (details) => {
-              return new $p10_error.DataInvalid(
-                "Reading data element header",
-                details,
-                context.path,
-                $byte_stream.bytes_read(context.stream),
+            let new_location = (() => {
+              let _pipe = $p10_location.add_sequence(
+                context.location,
+                tag,
+                is_implicit_vr,
+                ends_at,
               );
-            },
-          );
-        })();
-        return $result.try$(
-          new_location,
-          (new_location) => {
-            let sequence_depth_check = (() => {
-              let $2 = context.sequence_depth < context.config.max_sequence_depth;
-              if ($2) {
-                return new Ok(undefined);
-              } else {
-                return new Error(
-                  new $p10_error.MaximumExceeded(
-                    "Maximum allowed sequence depth reached",
-                    context.path,
-                    $byte_stream.bytes_read(context.stream),
-                  ),
-                );
-              }
-            })();
-            return $result.try$(
-              sequence_depth_check,
-              (_) => {
-                let $2 = $data_set_path.add_data_element(context.path, tag);
-                if (!$2.isOk()) {
-                  throw makeError(
-                    "let_assert",
-                    "dcmfx_p10/p10_read",
-                    736,
-                    "",
-                    "Pattern match failed, no pattern matched the value.",
-                    { value: $2 }
-                  )
-                }
-                let new_path = $2[0];
-                let new_context = context.withFields({
-                  stream: new_stream,
-                  path: new_path,
-                  location: new_location,
-                  sequence_depth: context.sequence_depth + 1
-                });
-                return new Ok([toList([part]), new_context]);
-              },
-            );
-          },
-        );
-      } else if (vr instanceof None && (isEqual($, $dictionary.item.tag))) {
-        let tag = $;
-        let part = new $p10_part.SequenceItemStart();
-        let ends_at = (() => {
-          let $2 = header.length;
-          if ($2 instanceof $value_length.Defined) {
-            let length = $2.length;
-            return new Some($byte_stream.bytes_read(new_stream) + length);
-          } else {
-            return new None();
-          }
-        })();
-        let new_location = (() => {
-          let _pipe = $p10_location.add_item(
-            context.location,
-            ends_at,
-            header.length,
-          );
-          return $result.map_error(
-            _pipe,
-            (details) => {
-              return new $p10_error.DataInvalid(
-                "Reading data element header",
-                details,
-                context.path,
-                $byte_stream.bytes_read(context.stream),
-              );
-            },
-          );
-        })();
-        return $result.try$(
-          new_location,
-          (new_location) => {
-            let item_count = (() => {
-              let _pipe = $p10_location.sequence_item_count(new_location);
-              return $result.unwrap(_pipe, 1);
-            })();
-            let $2 = $data_set_path.add_sequence_item(
-              context.path,
-              item_count - 1,
-            );
-            if (!$2.isOk()) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                776,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: $2 }
-              )
-            }
-            let new_path = $2[0];
-            let new_context = context.withFields({
-              stream: new_stream,
-              path: new_path,
-              location: new_location
-            });
-            return new Ok([toList([part]), new_context]);
-          },
-        );
-      } else if (vr instanceof Some &&
-      vr[0] instanceof $value_representation.OtherByteString &&
-      $1 instanceof $value_length.Undefined &&
-      (isEqual($, $dictionary.pixel_data.tag))) {
-        let tag = $;
-        if (!(vr instanceof Some)) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_p10/p10_read",
-            796,
-            "",
-            "Pattern match failed, no pattern matched the value.",
-            { value: vr }
-          )
-        }
-        let vr$1 = vr[0];
-        let part = new $p10_part.SequenceStart(tag, vr$1);
-        let new_location = (() => {
-          let _pipe = $p10_location.add_sequence(
-            context.location,
-            tag,
-            false,
-            new None(),
-          );
-          return $result.map_error(
-            _pipe,
-            (details) => {
-              return new $p10_error.DataInvalid(
-                "Reading data element header",
-                details,
-                context.path,
-                $byte_stream.bytes_read(context.stream),
-              );
-            },
-          );
-        })();
-        return $result.try$(
-          new_location,
-          (new_location) => {
-            let $2 = $data_set_path.add_data_element(context.path, tag);
-            if (!$2.isOk()) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                811,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: $2 }
-              )
-            }
-            let new_path = $2[0];
-            let new_context = context.withFields({
-              stream: new_stream,
-              next_action: new ReadPixelDataItem(vr$1),
-              location: new_location,
-              path: new_path
-            });
-            return new Ok([toList([part]), new_context]);
-          },
-        );
-      } else if (vr instanceof Some &&
-      vr[0] instanceof $value_representation.OtherWordString &&
-      $1 instanceof $value_length.Undefined &&
-      (isEqual($, $dictionary.pixel_data.tag))) {
-        let tag = $;
-        if (!(vr instanceof Some)) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_p10/p10_read",
-            796,
-            "",
-            "Pattern match failed, no pattern matched the value.",
-            { value: vr }
-          )
-        }
-        let vr$1 = vr[0];
-        let part = new $p10_part.SequenceStart(tag, vr$1);
-        let new_location = (() => {
-          let _pipe = $p10_location.add_sequence(
-            context.location,
-            tag,
-            false,
-            new None(),
-          );
-          return $result.map_error(
-            _pipe,
-            (details) => {
-              return new $p10_error.DataInvalid(
-                "Reading data element header",
-                details,
-                context.path,
-                $byte_stream.bytes_read(context.stream),
-              );
-            },
-          );
-        })();
-        return $result.try$(
-          new_location,
-          (new_location) => {
-            let $2 = $data_set_path.add_data_element(context.path, tag);
-            if (!$2.isOk()) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                811,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: $2 }
-              )
-            }
-            let new_path = $2[0];
-            let new_context = context.withFields({
-              stream: new_stream,
-              next_action: new ReadPixelDataItem(vr$1),
-              location: new_location,
-              path: new_path
-            });
-            return new Ok([toList([part]), new_context]);
-          },
-        );
-      } else if (vr instanceof None &&
-      $1 instanceof $value_length.Defined &&
-      $1.length === 0 &&
-      (isEqual($, $dictionary.sequence_delimitation_item.tag))) {
-        let tag = $;
-        let $2 = (() => {
-          let $3 = $p10_location.end_sequence(context.location);
-          if ($3.isOk()) {
-            let new_location = $3[0];
-            let $4 = $data_set_path.pop(context.path);
-            if (!$4.isOk()) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                835,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: $4 }
-              )
-            }
-            let new_path = $4[0];
-            let new_sequence_depth = context.sequence_depth - 1;
-            return [
-              toList([new $p10_part.SequenceDelimiter()]),
-              new_path,
-              new_location,
-              new_sequence_depth,
-            ];
-          } else {
-            return [
-              toList([]),
-              context.path,
-              context.location,
-              context.sequence_depth,
-            ];
-          }
-        })();
-        let parts = $2[0];
-        let new_path = $2[1];
-        let new_location = $2[2];
-        let new_sequence_depth = $2[3];
-        let new_context = context.withFields({
-          stream: new_stream,
-          path: new_path,
-          location: new_location,
-          sequence_depth: new_sequence_depth
-        });
-        return new Ok([parts, new_context]);
-      } else if (vr instanceof None &&
-      $1 instanceof $value_length.Defined &&
-      $1.length === 0 &&
-      (isEqual($, $dictionary.item_delimitation_item.tag))) {
-        let tag = $;
-        let part = new $p10_part.SequenceItemDelimiter();
-        let new_location = (() => {
-          let _pipe = $p10_location.end_item(context.location);
-          return $result.map_error(
-            _pipe,
-            (details) => {
-              return new $p10_error.DataInvalid(
-                "Reading data element header",
-                details,
-                context.path,
-                $byte_stream.bytes_read(context.stream),
-              );
-            },
-          );
-        })();
-        return $result.try$(
-          new_location,
-          (new_location) => {
-            let $2 = $data_set_path.pop(context.path);
-            if (!$2.isOk()) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                890,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: $2 }
-              )
-            }
-            let new_path = $2[0];
-            let new_context = context.withFields({
-              stream: new_stream,
-              path: new_path,
-              location: new_location
-            });
-            return new Ok([toList([part]), new_context]);
-          },
-        );
-      } else if (vr instanceof Some && $1 instanceof $value_length.Defined) {
-        let tag = $;
-        let vr$1 = vr[0];
-        let length = $1.length;
-        let materialized_value_required = is_materialized_value_required(
-          context,
-          header.tag,
-          vr$1,
-        );
-        let max_size_check_result = (() => {
-          let $2 = materialized_value_required && (length > context.config.max_string_size);
-          if ($2) {
-            return new Error(
-              new $p10_error.MaximumExceeded(
-                ((((((("Value for '" + $dictionary.tag_with_name(
-                  header.tag,
-                  new None(),
-                )) + "' with VR ") + $value_representation.to_string(vr$1)) + " and length ") + $int.to_string(
-                  length,
-                )) + " bytes exceeds the maximum allowed string size of ") + $int.to_string(
-                  context.config.max_string_size,
-                )) + " bytes",
-                context.path,
-                $byte_stream.bytes_read(context.stream),
-              ),
-            );
-          } else {
-            return new Ok(undefined);
-          }
-        })();
-        return $result.try$(
-          max_size_check_result,
-          (_) => {
-            let emit_parts = (!isEqual(
-              header.tag,
-              $dictionary.data_set_trailing_padding.tag
-            )) && (header.tag.element !== 0x0);
-            let parts = (() => {
-              let $2 = emit_parts && !materialized_value_required;
-              if ($2) {
-                return toList([
-                  new $p10_part.DataElementHeader(header.tag, vr$1, length),
-                ]);
-              } else {
-                return toList([]);
-              }
-            })();
-            let next_action = new ReadDataElementValueBytes(
-              header.tag,
-              vr$1,
-              length,
-              length,
-              emit_parts,
-            );
-            let new_path = (() => {
-              let _pipe = $data_set_path.add_data_element(context.path, tag);
               return $result.map_error(
                 _pipe,
-                (_) => {
+                (details) => {
                   return new $p10_error.DataInvalid(
                     "Reading data element header",
-                    ("Data element '" + $data_element_header.to_string(header)) + "' is not valid for the current path",
+                    details,
                     context.path,
                     $byte_stream.bytes_read(context.stream),
                   );
@@ -1588,28 +1157,527 @@ function read_data_element_header_part(context) {
               );
             })();
             return $result.try$(
-              new_path,
-              (new_path) => {
-                let new_context = context.withFields({
-                  stream: new_stream,
-                  next_action: next_action,
-                  path: new_path
-                });
-                return new Ok([parts, new_context]);
+              new_location,
+              (new_location) => {
+                let sequence_depth_check = (() => {
+                  let $2 = context.sequence_depth < context.config.max_sequence_depth;
+                  if ($2) {
+                    return new Ok(undefined);
+                  } else {
+                    return new Error(
+                      new $p10_error.MaximumExceeded(
+                        "Maximum allowed sequence depth reached",
+                        context.path,
+                        $byte_stream.bytes_read(context.stream),
+                      ),
+                    );
+                  }
+                })();
+                return $result.try$(
+                  sequence_depth_check,
+                  (_) => {
+                    let $2 = $data_set_path.add_data_element(context.path, tag);
+                    if (!$2.isOk()) {
+                      throw makeError(
+                        "let_assert",
+                        "dcmfx_p10/p10_read",
+                        766,
+                        "",
+                        "Pattern match failed, no pattern matched the value.",
+                        { value: $2 }
+                      )
+                    }
+                    let new_path = $2[0];
+                    let new_context = context.withFields({
+                      stream: new_stream,
+                      path: new_path,
+                      location: new_location,
+                      sequence_depth: context.sequence_depth + 1
+                    });
+                    return new Ok([toList([part]), new_context]);
+                  },
+                );
               },
             );
-          },
-        );
-      } else {
-        return new Error(
-          new $p10_error.DataInvalid(
-            "Reading data element header",
-            ("Invalid data element '" + $data_element_header.to_string(header)) + "'",
-            context.path,
-            $byte_stream.bytes_read(context.stream),
-          ),
-        );
-      }
+          } else if (vr instanceof Some &&
+          vr[0] instanceof $value_representation.Unknown &&
+          $1 instanceof $value_length.Undefined) {
+            let tag = $;
+            let part = new $p10_part.SequenceStart(
+              tag,
+              new $value_representation.Sequence(),
+            );
+            let ends_at = (() => {
+              let $2 = header.length;
+              if ($2 instanceof $value_length.Defined) {
+                let length = $2.length;
+                return new Some($byte_stream.bytes_read(new_stream) + length);
+              } else {
+                return new None();
+              }
+            })();
+            let is_implicit_vr = isEqual(
+              header.vr,
+              new Some(new $value_representation.Unknown())
+            );
+            let new_location = (() => {
+              let _pipe = $p10_location.add_sequence(
+                context.location,
+                tag,
+                is_implicit_vr,
+                ends_at,
+              );
+              return $result.map_error(
+                _pipe,
+                (details) => {
+                  return new $p10_error.DataInvalid(
+                    "Reading data element header",
+                    details,
+                    context.path,
+                    $byte_stream.bytes_read(context.stream),
+                  );
+                },
+              );
+            })();
+            return $result.try$(
+              new_location,
+              (new_location) => {
+                let sequence_depth_check = (() => {
+                  let $2 = context.sequence_depth < context.config.max_sequence_depth;
+                  if ($2) {
+                    return new Ok(undefined);
+                  } else {
+                    return new Error(
+                      new $p10_error.MaximumExceeded(
+                        "Maximum allowed sequence depth reached",
+                        context.path,
+                        $byte_stream.bytes_read(context.stream),
+                      ),
+                    );
+                  }
+                })();
+                return $result.try$(
+                  sequence_depth_check,
+                  (_) => {
+                    let $2 = $data_set_path.add_data_element(context.path, tag);
+                    if (!$2.isOk()) {
+                      throw makeError(
+                        "let_assert",
+                        "dcmfx_p10/p10_read",
+                        766,
+                        "",
+                        "Pattern match failed, no pattern matched the value.",
+                        { value: $2 }
+                      )
+                    }
+                    let new_path = $2[0];
+                    let new_context = context.withFields({
+                      stream: new_stream,
+                      path: new_path,
+                      location: new_location,
+                      sequence_depth: context.sequence_depth + 1
+                    });
+                    return new Ok([toList([part]), new_context]);
+                  },
+                );
+              },
+            );
+          } else if (vr instanceof None && (isEqual($, $dictionary.item.tag))) {
+            let tag = $;
+            let part = new $p10_part.SequenceItemStart();
+            let ends_at = (() => {
+              let $2 = header.length;
+              if ($2 instanceof $value_length.Defined) {
+                let length = $2.length;
+                return new Some($byte_stream.bytes_read(new_stream) + length);
+              } else {
+                return new None();
+              }
+            })();
+            let new_location = (() => {
+              let _pipe = $p10_location.add_item(
+                context.location,
+                ends_at,
+                header.length,
+              );
+              return $result.map_error(
+                _pipe,
+                (details) => {
+                  return new $p10_error.DataInvalid(
+                    "Reading data element header",
+                    details,
+                    context.path,
+                    $byte_stream.bytes_read(context.stream),
+                  );
+                },
+              );
+            })();
+            return $result.try$(
+              new_location,
+              (new_location) => {
+                let item_count = (() => {
+                  let _pipe = $p10_location.sequence_item_count(new_location);
+                  return $result.unwrap(_pipe, 1);
+                })();
+                let $2 = $data_set_path.add_sequence_item(
+                  context.path,
+                  item_count - 1,
+                );
+                if (!$2.isOk()) {
+                  throw makeError(
+                    "let_assert",
+                    "dcmfx_p10/p10_read",
+                    806,
+                    "",
+                    "Pattern match failed, no pattern matched the value.",
+                    { value: $2 }
+                  )
+                }
+                let new_path = $2[0];
+                let new_context = context.withFields({
+                  stream: new_stream,
+                  path: new_path,
+                  location: new_location
+                });
+                return new Ok([toList([part]), new_context]);
+              },
+            );
+          } else if (vr instanceof Some &&
+          vr[0] instanceof $value_representation.OtherByteString &&
+          $1 instanceof $value_length.Undefined &&
+          (isEqual($, $dictionary.pixel_data.tag))) {
+            let tag = $;
+            if (!(vr instanceof Some)) {
+              throw makeError(
+                "let_assert",
+                "dcmfx_p10/p10_read",
+                826,
+                "",
+                "Pattern match failed, no pattern matched the value.",
+                { value: vr }
+              )
+            }
+            let vr$1 = vr[0];
+            let part = new $p10_part.SequenceStart(tag, vr$1);
+            let new_location = (() => {
+              let _pipe = $p10_location.add_sequence(
+                context.location,
+                tag,
+                false,
+                new None(),
+              );
+              return $result.map_error(
+                _pipe,
+                (details) => {
+                  return new $p10_error.DataInvalid(
+                    "Reading data element header",
+                    details,
+                    context.path,
+                    $byte_stream.bytes_read(context.stream),
+                  );
+                },
+              );
+            })();
+            return $result.try$(
+              new_location,
+              (new_location) => {
+                let $2 = $data_set_path.add_data_element(context.path, tag);
+                if (!$2.isOk()) {
+                  throw makeError(
+                    "let_assert",
+                    "dcmfx_p10/p10_read",
+                    841,
+                    "",
+                    "Pattern match failed, no pattern matched the value.",
+                    { value: $2 }
+                  )
+                }
+                let new_path = $2[0];
+                let new_context = context.withFields({
+                  stream: new_stream,
+                  next_action: new ReadPixelDataItem(vr$1),
+                  location: new_location,
+                  path: new_path
+                });
+                return new Ok([toList([part]), new_context]);
+              },
+            );
+          } else if (vr instanceof Some &&
+          vr[0] instanceof $value_representation.OtherWordString &&
+          $1 instanceof $value_length.Undefined &&
+          (isEqual($, $dictionary.pixel_data.tag))) {
+            let tag = $;
+            if (!(vr instanceof Some)) {
+              throw makeError(
+                "let_assert",
+                "dcmfx_p10/p10_read",
+                826,
+                "",
+                "Pattern match failed, no pattern matched the value.",
+                { value: vr }
+              )
+            }
+            let vr$1 = vr[0];
+            let part = new $p10_part.SequenceStart(tag, vr$1);
+            let new_location = (() => {
+              let _pipe = $p10_location.add_sequence(
+                context.location,
+                tag,
+                false,
+                new None(),
+              );
+              return $result.map_error(
+                _pipe,
+                (details) => {
+                  return new $p10_error.DataInvalid(
+                    "Reading data element header",
+                    details,
+                    context.path,
+                    $byte_stream.bytes_read(context.stream),
+                  );
+                },
+              );
+            })();
+            return $result.try$(
+              new_location,
+              (new_location) => {
+                let $2 = $data_set_path.add_data_element(context.path, tag);
+                if (!$2.isOk()) {
+                  throw makeError(
+                    "let_assert",
+                    "dcmfx_p10/p10_read",
+                    841,
+                    "",
+                    "Pattern match failed, no pattern matched the value.",
+                    { value: $2 }
+                  )
+                }
+                let new_path = $2[0];
+                let new_context = context.withFields({
+                  stream: new_stream,
+                  next_action: new ReadPixelDataItem(vr$1),
+                  location: new_location,
+                  path: new_path
+                });
+                return new Ok([toList([part]), new_context]);
+              },
+            );
+          } else if (vr instanceof None &&
+          $1 instanceof $value_length.Defined &&
+          $1.length === 0 &&
+          (isEqual($, $dictionary.sequence_delimitation_item.tag))) {
+            let tag = $;
+            let $2 = (() => {
+              let $3 = $p10_location.end_sequence(context.location);
+              if ($3.isOk()) {
+                let new_location = $3[0];
+                let $4 = $data_set_path.pop(context.path);
+                if (!$4.isOk()) {
+                  throw makeError(
+                    "let_assert",
+                    "dcmfx_p10/p10_read",
+                    865,
+                    "",
+                    "Pattern match failed, no pattern matched the value.",
+                    { value: $4 }
+                  )
+                }
+                let new_path = $4[0];
+                let new_sequence_depth = context.sequence_depth - 1;
+                return [
+                  toList([new $p10_part.SequenceDelimiter()]),
+                  new_path,
+                  new_location,
+                  new_sequence_depth,
+                ];
+              } else {
+                return [
+                  toList([]),
+                  context.path,
+                  context.location,
+                  context.sequence_depth,
+                ];
+              }
+            })();
+            let parts = $2[0];
+            let new_path = $2[1];
+            let new_location = $2[2];
+            let new_sequence_depth = $2[3];
+            let new_context = context.withFields({
+              stream: new_stream,
+              path: new_path,
+              location: new_location,
+              sequence_depth: new_sequence_depth
+            });
+            return new Ok([parts, new_context]);
+          } else if (vr instanceof None &&
+          $1 instanceof $value_length.Defined &&
+          $1.length === 0 &&
+          (isEqual($, $dictionary.item_delimitation_item.tag))) {
+            let tag = $;
+            let part = new $p10_part.SequenceItemDelimiter();
+            let new_location = (() => {
+              let _pipe = $p10_location.end_item(context.location);
+              return $result.map_error(
+                _pipe,
+                (details) => {
+                  return new $p10_error.DataInvalid(
+                    "Reading data element header",
+                    details,
+                    context.path,
+                    $byte_stream.bytes_read(context.stream),
+                  );
+                },
+              );
+            })();
+            return $result.try$(
+              new_location,
+              (new_location) => {
+                let $2 = $data_set_path.pop(context.path);
+                if (!$2.isOk()) {
+                  throw makeError(
+                    "let_assert",
+                    "dcmfx_p10/p10_read",
+                    920,
+                    "",
+                    "Pattern match failed, no pattern matched the value.",
+                    { value: $2 }
+                  )
+                }
+                let new_path = $2[0];
+                let new_context = context.withFields({
+                  stream: new_stream,
+                  path: new_path,
+                  location: new_location
+                });
+                return new Ok([toList([part]), new_context]);
+              },
+            );
+          } else if (vr instanceof Some && $1 instanceof $value_length.Defined) {
+            let tag = $;
+            let vr$1 = vr[0];
+            let length = $1.length;
+            let materialized_value_required = is_materialized_value_required(
+              context,
+              header.tag,
+              vr$1,
+            );
+            let max_size_check_result = (() => {
+              let $2 = materialized_value_required && (length > context.config.max_string_size);
+              if ($2) {
+                return new Error(
+                  new $p10_error.MaximumExceeded(
+                    ((((((("Value for '" + $dictionary.tag_with_name(
+                      header.tag,
+                      new None(),
+                    )) + "' with VR ") + $value_representation.to_string(vr$1)) + " and length ") + $int.to_string(
+                      length,
+                    )) + " bytes exceeds the maximum allowed string size of ") + $int.to_string(
+                      context.config.max_string_size,
+                    )) + " bytes",
+                    context.path,
+                    $byte_stream.bytes_read(context.stream),
+                  ),
+                );
+              } else {
+                return new Ok(undefined);
+              }
+            })();
+            return $result.try$(
+              max_size_check_result,
+              (_) => {
+                let emit_parts = (!isEqual(
+                  header.tag,
+                  $dictionary.data_set_trailing_padding.tag
+                )) && (header.tag.element !== 0x0);
+                let parts = (() => {
+                  let $2 = emit_parts && !materialized_value_required;
+                  if ($2) {
+                    return toList([
+                      new $p10_part.DataElementHeader(header.tag, vr$1, length),
+                    ]);
+                  } else {
+                    return toList([]);
+                  }
+                })();
+                let next_action = new ReadDataElementValueBytes(
+                  header.tag,
+                  vr$1,
+                  length,
+                  length,
+                  emit_parts,
+                );
+                let new_location = (() => {
+                  let _pipe = $p10_location.check_data_element_ordering(
+                    context.location,
+                    header.tag,
+                  );
+                  return $result.map_error(
+                    _pipe,
+                    (_) => {
+                      return new $p10_error.DataInvalid(
+                        "Reading data element header",
+                        ("Data element '" + $data_element_header.to_string(
+                          header,
+                        )) + "' is not in ascending order",
+                        context.path,
+                        $byte_stream.bytes_read(context.stream),
+                      );
+                    },
+                  );
+                })();
+                return $result.try$(
+                  new_location,
+                  (new_location) => {
+                    let new_path = (() => {
+                      let _pipe = $data_set_path.add_data_element(
+                        context.path,
+                        tag,
+                      );
+                      return $result.map_error(
+                        _pipe,
+                        (_) => {
+                          return new $p10_error.DataInvalid(
+                            "Reading data element header",
+                            ("Data element '" + $data_element_header.to_string(
+                              header,
+                            )) + "' is not valid for the current path",
+                            context.path,
+                            $byte_stream.bytes_read(context.stream),
+                          );
+                        },
+                      );
+                    })();
+                    return $result.try$(
+                      new_path,
+                      (new_path) => {
+                        let new_context = context.withFields({
+                          stream: new_stream,
+                          next_action: next_action,
+                          location: new_location,
+                          path: new_path
+                        });
+                        return new Ok([parts, new_context]);
+                      },
+                    );
+                  },
+                );
+              },
+            );
+          } else {
+            return new Error(
+              new $p10_error.DataInvalid(
+                "Reading data element header",
+                ("Invalid data element '" + $data_element_header.to_string(
+                  header,
+                )) + "'",
+                context.path,
+                $byte_stream.bytes_read(context.stream),
+              ),
+            );
+          }
+        },
+      );
     },
   );
 }
@@ -1668,7 +1736,14 @@ function read_data_element_value_bytes_part(
             );
             if (materialized_value_required) {
               let length = $bit_array.byte_size(data$2);
-              let $1 = length < 0xFFFFFFFF;
+              let max_length = (() => {
+                let _pipe = vr;
+                let _pipe$1 = $data_element_header.value_length_size(_pipe);
+                return $data_element_header.value_length_size_max_length(
+                  _pipe$1,
+                );
+              })();
+              let $1 = length <= max_length;
               if ($1) {
                 return new Ok(
                   toList([
@@ -1680,7 +1755,9 @@ function read_data_element_value_bytes_part(
                 return new Error(
                   new $p10_error.DataInvalid(
                     "Reading data element value bytes",
-                    "Value exceeds 2^32 - 2 bytes when converted to UTF-8",
+                    ((("Length of " + $int.to_string(length)) + " bytes exceeds the maximum of ") + $int.to_string(
+                      max_length,
+                    )) + " bytes after conversion to UTF-8",
                     context.path,
                     $byte_stream.bytes_read(context.stream),
                   ),
@@ -1721,7 +1798,7 @@ function read_data_element_value_bytes_part(
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    1299,
+                    1351,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $1 }
@@ -1781,7 +1858,7 @@ function read_pixel_data_item_part(context, vr) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1405,
+          1467,
           "read_pixel_data_item_part",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
@@ -1823,7 +1900,7 @@ function read_pixel_data_item_part(context, vr) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              1436,
+              1498,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: $1 }

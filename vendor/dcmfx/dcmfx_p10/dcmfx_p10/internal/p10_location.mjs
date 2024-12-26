@@ -29,9 +29,10 @@ import {
 } from "../../gleam.mjs";
 
 class RootDataSet extends $CustomType {
-  constructor(clarifying_data_elements) {
+  constructor(clarifying_data_elements, last_data_element_tag) {
     super();
     this.clarifying_data_elements = clarifying_data_elements;
+    this.last_data_element_tag = last_data_element_tag;
   }
 }
 
@@ -45,9 +46,10 @@ class Sequence extends $CustomType {
 }
 
 class Item extends $CustomType {
-  constructor(clarifying_data_elements, ends_at) {
+  constructor(clarifying_data_elements, last_data_element_tag, ends_at) {
     super();
     this.clarifying_data_elements = clarifying_data_elements;
+    this.last_data_element_tag = last_data_element_tag;
     this.ends_at = ends_at;
   }
 }
@@ -94,12 +96,12 @@ function private_creator_for_tag(clarifying_data_elements, tag) {
 }
 
 function default_clarifying_data_elements() {
-  let $ = $dcmfx_character_set.from_string("ISO_IR 100");
+  let $ = $dcmfx_character_set.from_string("ISO_IR 6");
   if (!$.isOk()) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/internal/p10_location",
-      113,
+      109,
       "default_clarifying_data_elements",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -117,7 +119,44 @@ function default_clarifying_data_elements() {
 }
 
 export function new$() {
-  return toList([new RootDataSet(default_clarifying_data_elements())]);
+  return toList([
+    new RootDataSet(default_clarifying_data_elements(), $data_element_tag.zero),
+  ]);
+}
+
+export function check_data_element_ordering(location, tag) {
+  if (location.atLeastLength(1) && location.head instanceof RootDataSet) {
+    let clarifying_data_elements = location.head.clarifying_data_elements;
+    let last_data_element_tag = location.head.last_data_element_tag;
+    let rest = location.tail;
+    let $ = $data_element_tag.to_int(tag) > $data_element_tag.to_int(
+      last_data_element_tag,
+    );
+    if ($) {
+      return new Ok(
+        listPrepend(new RootDataSet(clarifying_data_elements, tag), rest),
+      );
+    } else {
+      return new Error(undefined);
+    }
+  } else if (location.atLeastLength(1) && location.head instanceof Item) {
+    let clarifying_data_elements = location.head.clarifying_data_elements;
+    let last_data_element_tag = location.head.last_data_element_tag;
+    let ends_at = location.head.ends_at;
+    let rest = location.tail;
+    let $ = $data_element_tag.to_int(tag) > $data_element_tag.to_int(
+      last_data_element_tag,
+    );
+    if ($) {
+      return new Ok(
+        listPrepend(new Item(clarifying_data_elements, tag, ends_at), rest),
+      );
+    } else {
+      return new Error(undefined);
+    }
+  } else {
+    return new Error(undefined);
+  }
 }
 
 export function is_implicit_vr_forced(loop$location) {
@@ -217,7 +256,7 @@ function active_clarifying_data_elements(loop$location) {
       throw makeError(
         "panic",
         "dcmfx_p10/internal/p10_location",
-        271,
+        306,
         "active_clarifying_data_elements",
         "P10 location does not contain the root data set",
         {}
@@ -257,7 +296,11 @@ export function add_item(location, ends_at, length) {
     let rest = location.tail;
     return new Ok(
       listPrepend(
-        new Item(active_clarifying_data_elements(location), ends_at),
+        new Item(
+          active_clarifying_data_elements(location),
+          $data_element_tag.zero,
+          ends_at,
+        ),
         listPrepend(
           new Sequence(is_implicit_vr, sequence_ends_at, item_count + 1),
           rest,
@@ -276,14 +319,19 @@ export function add_item(location, ends_at, length) {
 function map_clarifying_data_elements(location, map_fn) {
   if (location.atLeastLength(1) && location.head instanceof RootDataSet) {
     let clarifying_data_elements = location.head.clarifying_data_elements;
+    let last_data_element_tag = location.head.last_data_element_tag;
     let rest = location.tail;
-    return listPrepend(new RootDataSet(map_fn(clarifying_data_elements)), rest);
+    return listPrepend(
+      new RootDataSet(map_fn(clarifying_data_elements), last_data_element_tag),
+      rest,
+    );
   } else if (location.atLeastLength(1) && location.head instanceof Item) {
     let clarifying_data_elements = location.head.clarifying_data_elements;
+    let last_data_element_tag = location.head.last_data_element_tag;
     let ends_at = location.head.ends_at;
     let rest = location.tail;
     return listPrepend(
-      new Item(map_fn(clarifying_data_elements), ends_at),
+      new Item(map_fn(clarifying_data_elements), last_data_element_tag, ends_at),
       rest,
     );
   } else {
@@ -506,12 +554,12 @@ export function infer_vr_for_tag(location, tag) {
   })();
   if (allowed_vrs.hasLength(1)) {
     let vr = allowed_vrs.head;
-    return vr;
+    return new Ok(vr);
   } else if (allowed_vrs.hasLength(2) &&
   allowed_vrs.head instanceof $value_representation.OtherByteString &&
   allowed_vrs.tail.head instanceof $value_representation.OtherWordString &&
   (isEqual(tag, $dictionary.pixel_data.tag))) {
-    return new $value_representation.OtherWordString();
+    return new Ok(new $value_representation.OtherWordString());
   } else if (allowed_vrs.hasLength(2) &&
   allowed_vrs.head instanceof $value_representation.UnsignedShort &&
   allowed_vrs.tail.head instanceof $value_representation.SignedShort &&
@@ -550,10 +598,12 @@ export function infer_vr_for_tag(location, tag) {
     $dictionary.histogram_first_bin_value.tag
   ))) || (isEqual(tag, $dictionary.histogram_last_bin_value.tag)))) {
     let $ = clarifying_data_elements.pixel_representation;
-    if ($ instanceof Some && $[0] === 1) {
-      return new $value_representation.SignedShort();
+    if ($ instanceof Some && $[0] === 0) {
+      return new Ok(new $value_representation.UnsignedShort());
+    } else if ($ instanceof Some && $[0] === 1) {
+      return new Ok(new $value_representation.SignedShort());
     } else {
-      return new $value_representation.UnsignedShort();
+      return new Error($dictionary.pixel_representation.tag);
     }
   } else if (allowed_vrs.hasLength(2) &&
   allowed_vrs.head instanceof $value_representation.OtherByteString &&
@@ -563,12 +613,12 @@ export function infer_vr_for_tag(location, tag) {
     $dictionary.channel_maximum_value.tag
   )))) {
     let $ = clarifying_data_elements.waveform_bits_stored;
-    if ($ instanceof Some && $[0] === 16) {
-      return new $value_representation.OtherWordString();
-    } else if ($ instanceof Some) {
-      return new $value_representation.OtherByteString();
+    if ($ instanceof Some && $[0] === 8) {
+      return new Ok(new $value_representation.OtherByteString());
+    } else if ($ instanceof Some && $[0] === 16) {
+      return new Ok(new $value_representation.OtherWordString());
     } else {
-      return new $value_representation.Unknown();
+      return new Error($dictionary.waveform_bits_stored.tag);
     }
   } else if (allowed_vrs.hasLength(2) &&
   allowed_vrs.head instanceof $value_representation.OtherByteString &&
@@ -578,24 +628,24 @@ export function infer_vr_for_tag(location, tag) {
     $dictionary.waveform_data.tag
   )))) {
     let $ = clarifying_data_elements.waveform_bits_allocated;
-    if ($ instanceof Some && $[0] === 16) {
-      return new $value_representation.OtherWordString();
-    } else if ($ instanceof Some) {
-      return new $value_representation.OtherByteString();
+    if ($ instanceof Some && $[0] === 8) {
+      return new Ok(new $value_representation.OtherByteString());
+    } else if ($ instanceof Some && $[0] === 16) {
+      return new Ok(new $value_representation.OtherWordString());
     } else {
-      return new $value_representation.Unknown();
+      return new Error($dictionary.waveform_bits_allocated.tag);
     }
   } else if (allowed_vrs.hasLength(2) &&
   allowed_vrs.head instanceof $value_representation.UnsignedShort &&
   allowed_vrs.tail.head instanceof $value_representation.OtherWordString &&
   (isEqual(tag, $dictionary.lut_data.tag))) {
-    return new $value_representation.OtherWordString();
+    return new Ok(new $value_representation.OtherWordString());
   } else if (allowed_vrs.hasLength(2) &&
   allowed_vrs.head instanceof $value_representation.OtherByteString &&
   allowed_vrs.tail.head instanceof $value_representation.OtherWordString &&
   (((tag.group >= 0x6000) && (tag.group <= 0x60FF)) && (tag.element === 0x3000))) {
-    return new $value_representation.OtherWordString();
+    return new Ok(new $value_representation.OtherWordString());
   } else {
-    return new $value_representation.Unknown();
+    return new Ok(new $value_representation.Unknown());
   }
 }

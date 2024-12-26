@@ -16,12 +16,14 @@ export class P10ReadConfig extends _.CustomType {
   constructor(
     max_part_size: number,
     max_string_size: number,
-    max_sequence_depth: number
+    max_sequence_depth: number,
+    require_ordered_data_elements: boolean
   );
   
   max_part_size: number;
   max_string_size: number;
   max_sequence_depth: number;
+  require_ordered_data_elements: boolean;
 }
 
 export type P10ReadConfig$ = P10ReadConfig;

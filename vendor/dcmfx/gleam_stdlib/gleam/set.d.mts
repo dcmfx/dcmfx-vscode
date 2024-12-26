@@ -1,13 +1,13 @@
 import type * as _ from "../gleam.d.mts";
 import type * as $dict from "../gleam/dict.d.mts";
 
-declare class Set<FBN> extends _.CustomType {
+declare class Set<EJO> extends _.CustomType {
   constructor(dict: $dict.Dict$<any, undefined>);
   
   dict: $dict.Dict$<any, undefined>;
 }
 
-export type Set$<FBN> = Set<FBN>;
+export type Set$<EJO> = Set<EJO>;
 
 export function new$(): Set$<any>;
 
@@ -15,46 +15,46 @@ export function size(set: Set$<any>): number;
 
 export function is_empty(set: Set$<any>): boolean;
 
-export function contains<FBX>(set: Set$<FBX>, member: FBX): boolean;
+export function contains<EJY>(set: Set$<EJY>, member: EJY): boolean;
 
-export function delete$<FBZ>(set: Set$<FBZ>, member: FBZ): Set$<FBZ>;
+export function delete$<EKA>(set: Set$<EKA>, member: EKA): Set$<EKA>;
 
-export function to_list<FCC>(set: Set$<FCC>): _.List<FCC>;
+export function to_list<EKD>(set: Set$<EKD>): _.List<EKD>;
 
-export function fold<FCI, FCK>(
-  set: Set$<FCI>,
-  initial: FCK,
-  reducer: (x0: FCK, x1: FCI) => FCK
-): FCK;
+export function fold<EKJ, EKL>(
+  set: Set$<EKJ>,
+  initial: EKL,
+  reducer: (x0: EKL, x1: EKJ) => EKL
+): EKL;
 
-export function filter<FCL>(set: Set$<FCL>, predicate: (x0: FCL) => boolean): Set$<
-  FCL
+export function filter<EKM>(set: Set$<EKM>, predicate: (x0: EKM) => boolean): Set$<
+  EKM
 >;
 
-export function drop<FCS>(set: Set$<FCS>, disallowed: _.List<FCS>): Set$<FCS>;
+export function drop<EKT>(set: Set$<EKT>, disallowed: _.List<EKT>): Set$<EKT>;
 
-export function take<FCW>(set: Set$<FCW>, desired: _.List<FCW>): Set$<FCW>;
+export function take<EKX>(set: Set$<EKX>, desired: _.List<EKX>): Set$<EKX>;
 
-export function intersection<FDJ>(first: Set$<FDJ>, second: Set$<FDJ>): Set$<
-  FDJ
+export function intersection<ELK>(first: Set$<ELK>, second: Set$<ELK>): Set$<
+  ELK
 >;
 
-export function difference<FDN>(first: Set$<FDN>, second: Set$<FDN>): Set$<FDN>;
+export function difference<ELO>(first: Set$<ELO>, second: Set$<ELO>): Set$<ELO>;
 
-export function is_subset<FDR>(first: Set$<FDR>, second: Set$<FDR>): boolean;
+export function is_subset<ELS>(first: Set$<ELS>, second: Set$<ELS>): boolean;
 
-export function is_disjoint<FDU>(first: Set$<FDU>, second: Set$<FDU>): boolean;
+export function is_disjoint<ELV>(first: Set$<ELV>, second: Set$<ELV>): boolean;
 
-export function each<FEB>(set: Set$<FEB>, fun: (x0: FEB) => any): undefined;
+export function each<EMC>(set: Set$<EMC>, fun: (x0: EMC) => any): undefined;
 
-export function insert<FBU>(set: Set$<FBU>, member: FBU): Set$<FBU>;
+export function insert<EJV>(set: Set$<EJV>, member: EJV): Set$<EJV>;
 
-export function from_list<FCF>(members: _.List<FCF>): Set$<FCF>;
+export function from_list<EKG>(members: _.List<EKG>): Set$<EKG>;
 
-export function map<FCO, FCQ>(set: Set$<FCO>, fun: (x0: FCO) => FCQ): Set$<FCQ>;
+export function map<EKP, EKR>(set: Set$<EKP>, fun: (x0: EKP) => EKR): Set$<EKR>;
 
-export function union<FDA>(first: Set$<FDA>, second: Set$<FDA>): Set$<FDA>;
+export function union<ELB>(first: Set$<ELB>, second: Set$<ELB>): Set$<ELB>;
 
-export function symmetric_difference<FDX>(first: Set$<FDX>, second: Set$<FDX>): Set$<
-  FDX
+export function symmetric_difference<ELY>(first: Set$<ELY>, second: Set$<ELY>): Set$<
+  ELY
 >;

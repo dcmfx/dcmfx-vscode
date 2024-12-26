@@ -23,3 +23,5 @@ export function from_hex_string(tag: string): _.Result<
 export function to_string(tag: DataElementTag$): string;
 
 export function to_hex_string(tag: DataElementTag$): string;
+
+export const zero: DataElementTag$;

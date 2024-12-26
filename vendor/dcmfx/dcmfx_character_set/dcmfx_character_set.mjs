@@ -150,7 +150,7 @@ function update_code_element(candidate, bytes) {
         throw makeError(
           "let_assert",
           "dcmfx_character_set",
-          302,
+          301,
           "update_code_element",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
@@ -243,7 +243,7 @@ function decode_iso_2022_bytes(
         throw makeError(
           "let_assert",
           "dcmfx_character_set",
-          197,
+          196,
           "decode_iso_2022_bytes",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -282,26 +282,6 @@ function decode_iso_2022_bytes(
   }
 }
 
-function trim_codepoints_end(loop$codepoints) {
-  while (true) {
-    let codepoints = loop$codepoints;
-    if (codepoints.hasLength(0)) {
-      return toList([]);
-    } else {
-      let codepoint = codepoints.head;
-      let rest = codepoints.tail;
-      let $ = $string.utf_codepoint_to_int(codepoint);
-      if ($ === 0x0) {
-        loop$codepoints = rest;
-      } else if ($ === 0x20) {
-        loop$codepoints = rest;
-      } else {
-        return codepoints;
-      }
-    }
-  }
-}
-
 export function decode_bytes(specific_character_set, bytes, string_type) {
   let _pipe = (() => {
     if (specific_character_set instanceof SpecificCharacterSet &&
@@ -336,9 +316,8 @@ export function decode_bytes(specific_character_set, bytes, string_type) {
       );
     }
   })();
-  let _pipe$1 = trim_codepoints_end(_pipe);
-  let _pipe$2 = $list.reverse(_pipe$1);
-  return $string.from_utf_codepoints(_pipe$2);
+  let _pipe$1 = $list.reverse(_pipe);
+  return $string.from_utf_codepoints(_pipe$1);
 }
 
 function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
@@ -356,7 +335,7 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
           throw makeError(
             "let_assert",
             "dcmfx_character_set",
-            348,
+            333,
             "do_sanitize_default_charset_bytes",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -372,7 +351,7 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
           throw makeError(
             "let_assert",
             "dcmfx_character_set",
-            349,
+            334,
             "do_sanitize_default_charset_bytes",
             "Pattern match failed, no pattern matched the value.",
             { value: $3 }

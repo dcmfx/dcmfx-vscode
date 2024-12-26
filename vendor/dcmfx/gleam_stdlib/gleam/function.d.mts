@@ -1,50 +1,50 @@
-export function compose<DOM, DON, DOO>(
-  fun1: (x0: DOM) => DON,
-  fun2: (x0: DON) => DOO
-): (x0: DOM) => DOO;
+export function compose<EGH, EGI, EGJ>(
+  fun1: (x0: EGH) => EGI,
+  fun2: (x0: EGI) => EGJ
+): (x0: EGH) => EGJ;
 
-export function curry2<DOP, DOQ, DOR>(fun: (x0: DOP, x1: DOQ) => DOR): (x0: DOP) => (
-  x0: DOQ
-) => DOR;
+export function curry2<EGK, EGL, EGM>(fun: (x0: EGK, x1: EGL) => EGM): (x0: EGK) => (
+  x0: EGL
+) => EGM;
 
-export function curry3<DOT, DOU, DOV, DOW>(
-  fun: (x0: DOT, x1: DOU, x2: DOV) => DOW
-): (x0: DOT) => (x0: DOU) => (x0: DOV) => DOW;
+export function curry3<EGO, EGP, EGQ, EGR>(
+  fun: (x0: EGO, x1: EGP, x2: EGQ) => EGR
+): (x0: EGO) => (x0: EGP) => (x0: EGQ) => EGR;
 
-export function curry4<DOY, DOZ, DPA, DPB, DPC>(
-  fun: (x0: DOY, x1: DOZ, x2: DPA, x3: DPB) => DPC
-): (x0: DOY) => (x0: DOZ) => (x0: DPA) => (x0: DPB) => DPC;
+export function curry4<EGT, EGU, EGV, EGW, EGX>(
+  fun: (x0: EGT, x1: EGU, x2: EGV, x3: EGW) => EGX
+): (x0: EGT) => (x0: EGU) => (x0: EGV) => (x0: EGW) => EGX;
 
-export function curry5<DPE, DPF, DPG, DPH, DPI, DPJ>(
-  fun: (x0: DPE, x1: DPF, x2: DPG, x3: DPH, x4: DPI) => DPJ
-): (x0: DPE) => (x0: DPF) => (x0: DPG) => (x0: DPH) => (x0: DPI) => DPJ;
+export function curry5<EGZ, EHA, EHB, EHC, EHD, EHE>(
+  fun: (x0: EGZ, x1: EHA, x2: EHB, x3: EHC, x4: EHD) => EHE
+): (x0: EGZ) => (x0: EHA) => (x0: EHB) => (x0: EHC) => (x0: EHD) => EHE;
 
-export function curry6<DPL, DPM, DPN, DPO, DPP, DPQ, DPR>(
-  fun: (x0: DPL, x1: DPM, x2: DPN, x3: DPO, x4: DPP, x5: DPQ) => DPR
-): (x0: DPL) => (x0: DPM) => (x0: DPN) => (x0: DPO) => (x0: DPP) => (x0: DPQ) => DPR;
+export function curry6<EHG, EHH, EHI, EHJ, EHK, EHL, EHM>(
+  fun: (x0: EHG, x1: EHH, x2: EHI, x3: EHJ, x4: EHK, x5: EHL) => EHM
+): (x0: EHG) => (x0: EHH) => (x0: EHI) => (x0: EHJ) => (x0: EHK) => (x0: EHL) => EHM;
 
-export function flip<DPT, DPU, DPV>(fun: (x0: DPT, x1: DPU) => DPV): (
-  x0: DPU,
-  x1: DPT
-) => DPV;
+export function flip<EHO, EHP, EHQ>(fun: (x0: EHO, x1: EHP) => EHQ): (
+  x0: EHP,
+  x1: EHO
+) => EHQ;
 
-export function identity<DPW>(x: DPW): DPW;
+export function identity<EHR>(x: EHR): EHR;
 
-export function constant<DPX>(value: DPX): (x0: any) => DPX;
+export function constant<EHS>(value: EHS): (x0: any) => EHS;
 
-export function tap<DPZ>(arg: DPZ, effect: (x0: DPZ) => any): DPZ;
+export function tap<EHU>(arg: EHU, effect: (x0: EHU) => any): EHU;
 
-export function apply1<DQB, DQC>(fun: (x0: DQB) => DQC, arg1: DQB): DQC;
+export function apply1<EHW, EHX>(fun: (x0: EHW) => EHX, arg1: EHW): EHX;
 
-export function apply2<DQD, DQE, DQF>(
-  fun: (x0: DQD, x1: DQE) => DQF,
-  arg1: DQD,
-  arg2: DQE
-): DQF;
+export function apply2<EHY, EHZ, EIA>(
+  fun: (x0: EHY, x1: EHZ) => EIA,
+  arg1: EHY,
+  arg2: EHZ
+): EIA;
 
-export function apply3<DQG, DQH, DQI, DQJ>(
-  fun: (x0: DQG, x1: DQH, x2: DQI) => DQJ,
-  arg1: DQG,
-  arg2: DQH,
-  arg3: DQI
-): DQJ;
+export function apply3<EIB, EIC, EID, EIE>(
+  fun: (x0: EIB, x1: EIC, x2: EID) => EIE,
+  arg1: EIB,
+  arg2: EIC,
+  arg3: EID
+): EIE;

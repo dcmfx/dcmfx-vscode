@@ -149,7 +149,7 @@ export function to_list(
   [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
 >;
 
-export function map<BYKY>(
+export function map<BXSM>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -157,8 +157,8 @@ export function map<BYKY>(
   callback: (
     x0: $data_element_tag.DataElementTag$,
     x1: $data_element_value.DataElementValue$
-  ) => BYKY
-): _.List<BYKY>;
+  ) => BXSM
+): _.List<BXSM>;
 
 export function map_values(
   data_set: $dict.Dict$<
@@ -188,44 +188,44 @@ export function filter(
   $data_element_value.DataElementValue$
 >;
 
-export function fold<BYLA>(
+export function fold<BXSO>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYLA,
+  initial: BXSO,
   callback: (
-    x0: BYLA,
+    x0: BXSO,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => BYLA
-): BYLA;
+  ) => BXSO
+): BXSO;
 
-export function try_fold<BYLB, BYLC>(
+export function try_fold<BXSP, BXSQ>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYLB,
+  initial: BXSP,
   callback: (
-    x0: BYLB,
+    x0: BXSP,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => _.Result<BYLB, BYLC>
-): _.Result<BYLB, BYLC>;
+  ) => _.Result<BXSP, BXSQ>
+): _.Result<BXSP, BXSQ>;
 
-export function fold_until<BYLH>(
+export function fold_until<BXSV>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BYLH,
+  initial: BXSV,
   callback: (
-    x0: BYLH,
+    x0: BXSV,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => $list.ContinueOrStop$<BYLH>
-): BYLH;
+  ) => $list.ContinueOrStop$<BXSV>
+): BXSV;
 
 export function partition(
   data_set: $dict.Dict$<
@@ -251,16 +251,6 @@ export function get_value(
   >,
   tag: $data_element_tag.DataElementTag$
 ): _.Result<$data_element_value.DataElementValue$, $data_error.DataError$>;
-
-export function file_meta_information(
-  data_set: $dict.Dict$<
-    $data_element_tag.DataElementTag$,
-    $data_element_value.DataElementValue$
-  >
-): $dict.Dict$<
-  $data_element_tag.DataElementTag$,
-  $data_element_value.DataElementValue$
->;
 
 export function get_value_at_path(
   data_set: $dict.Dict$<
@@ -300,6 +290,16 @@ export function get_string(
   >,
   tag: $data_element_tag.DataElementTag$
 ): _.Result<string, $data_error.DataError$>;
+
+export function file_meta_information(
+  data_set: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >
+): $dict.Dict$<
+  $data_element_tag.DataElementTag$,
+  $data_element_value.DataElementValue$
+>;
 
 export function get_strings(
   data_set: $dict.Dict$<
@@ -435,15 +435,15 @@ export function tag_name(
   tag: $data_element_tag.DataElementTag$
 ): string;
 
-export function to_lines<BYLJ>(
+export function to_lines<BXSX>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   print_options: $data_set_print.DataSetPrintOptions$,
-  context: BYLJ,
-  callback: (x0: BYLJ, x1: string) => BYLJ
-): BYLJ;
+  context: BXSX,
+  callback: (x0: BXSX, x1: string) => BXSX
+): BXSX;
 
 export function print_with_options(
   data_set: $dict.Dict$<

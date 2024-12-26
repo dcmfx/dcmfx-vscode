@@ -9,9 +9,13 @@ import type * as $p10_part from "../../dcmfx_p10/p10_part.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class RootDataSet extends _.CustomType {
-  constructor(clarifying_data_elements: ClarifyingDataElements$);
+  constructor(
+    clarifying_data_elements: ClarifyingDataElements$,
+    last_data_element_tag: $data_element_tag.DataElementTag$
+  );
   
   clarifying_data_elements: ClarifyingDataElements$;
+  last_data_element_tag: $data_element_tag.DataElementTag$;
 }
 
 declare class Sequence extends _.CustomType {
@@ -29,10 +33,12 @@ declare class Sequence extends _.CustomType {
 declare class Item extends _.CustomType {
   constructor(
     clarifying_data_elements: ClarifyingDataElements$,
+    last_data_element_tag: $data_element_tag.DataElementTag$,
     ends_at: $option.Option$<number>
   );
   
   clarifying_data_elements: ClarifyingDataElements$;
+  last_data_element_tag: $data_element_tag.DataElementTag$;
   ends_at: $option.Option$<number>;
 }
 
@@ -65,6 +71,11 @@ export function is_clarifying_data_element(
 ): boolean;
 
 export function new$(): _.List<LocationEntry$>;
+
+export function check_data_element_ordering(
+  location: _.List<LocationEntry$>,
+  tag: $data_element_tag.DataElementTag$
+): _.Result<_.List<LocationEntry$>, undefined>;
 
 export function is_implicit_vr_forced(location: _.List<LocationEntry$>): boolean;
 
@@ -125,4 +136,7 @@ export function decode_string_bytes(
 export function infer_vr_for_tag(
   location: _.List<LocationEntry$>,
   tag: $data_element_tag.DataElementTag$
-): $value_representation.ValueRepresentation$;
+): _.Result<
+  $value_representation.ValueRepresentation$,
+  $data_element_tag.DataElementTag$
+>;

@@ -123,7 +123,7 @@ export function to_list(data_set) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          438,
+          436,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -146,7 +146,7 @@ export function map(data_set, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          486,
+          484,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -179,7 +179,7 @@ export function fold(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          523,
+          521,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -203,7 +203,7 @@ export function try_fold(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          542,
+          540,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -227,7 +227,7 @@ export function fold_until(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          562,
+          560,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -324,47 +324,6 @@ export function get_value(data_set, tag) {
   );
 }
 
-export function file_meta_information(data_set) {
-  let file_meta_information$1 = (() => {
-    let _pipe = data_set;
-    return $dict.filter(_pipe, (tag, _) => { return tag.group === 2; });
-  })();
-  let file_meta_information$2 = (() => {
-    let _pipe = file_meta_information$1;
-    return $dict.filter(
-      _pipe,
-      (_, value) => { return $result.is_ok($data_element_value.bytes(value)); },
-    );
-  })();
-  let file_meta_information$3 = (() => {
-    let $ = get_value(data_set, $dictionary.sop_class_uid.tag);
-    if ($.isOk()) {
-      let value = $[0];
-      return $dict.insert(
-        file_meta_information$2,
-        $dictionary.media_storage_sop_class_uid.tag,
-        value,
-      );
-    } else {
-      return file_meta_information$2;
-    }
-  })();
-  let file_meta_information$4 = (() => {
-    let $ = get_value(data_set, $dictionary.sop_instance_uid.tag);
-    if ($.isOk()) {
-      let value = $[0];
-      return $dict.insert(
-        file_meta_information$3,
-        $dictionary.media_storage_sop_instance_uid.tag,
-        value,
-      );
-    } else {
-      return file_meta_information$3;
-    }
-  })();
-  return file_meta_information$4;
-}
-
 export function get_value_at_path(data_set, path) {
   let $ = lookup(data_set, path);
   if ($.isOk() && $[0] instanceof LookupResultDataElementValue) {
@@ -439,6 +398,46 @@ export function get_string(data_set, tag) {
         $data_set_path.new_with_data_element(tag),
       );
     },
+  );
+}
+
+export function file_meta_information(data_set) {
+  let file_meta_information$1 = (() => {
+    let _pipe = data_set;
+    return $dict.filter(_pipe, (tag, _) => { return tag.group === 2; });
+  })();
+  let file_meta_information$2 = (() => {
+    let $ = get_value(data_set, $dictionary.sop_class_uid.tag);
+    let $1 = get_string(data_set, $dictionary.sop_class_uid.tag);
+    if ($.isOk() && $1.isOk()) {
+      let value = $[0];
+      return $dict.insert(
+        file_meta_information$1,
+        $dictionary.media_storage_sop_class_uid.tag,
+        value,
+      );
+    } else {
+      return file_meta_information$1;
+    }
+  })();
+  let file_meta_information$3 = (() => {
+    let $ = get_value(data_set, $dictionary.sop_instance_uid.tag);
+    let $1 = get_string(data_set, $dictionary.sop_instance_uid.tag);
+    if ($.isOk() && $1.isOk()) {
+      let value = $[0];
+      return $dict.insert(
+        file_meta_information$2,
+        $dictionary.media_storage_sop_instance_uid.tag,
+        value,
+      );
+    } else {
+      return file_meta_information$2;
+    }
+  })();
+  let _pipe = file_meta_information$3;
+  return $dict.filter(
+    _pipe,
+    (_, value) => { return $result.is_ok($data_element_value.bytes(value)); },
   );
 }
 
@@ -707,7 +706,7 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          622,
+          620,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }

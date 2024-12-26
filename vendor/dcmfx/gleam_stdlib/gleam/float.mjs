@@ -11,9 +11,11 @@ import {
   identity as do_to_float,
   power as do_power,
   random_uniform as random,
+  log as do_log,
+  exp as exponential,
 } from "../gleam_stdlib.mjs";
 
-export { ceiling, floor, parse, random, to_string, truncate };
+export { ceiling, exponential, floor, parse, random, to_string, truncate };
 
 export function compare(a, b) {
   let $ = a === b;
@@ -178,4 +180,13 @@ export function multiply(a, b) {
 
 export function subtract(a, b) {
   return a - b;
+}
+
+export function logarithm(x) {
+  let $ = x <= 0.0;
+  if ($) {
+    return new Error(undefined);
+  } else {
+    return new Ok(do_log(x));
+  }
 }

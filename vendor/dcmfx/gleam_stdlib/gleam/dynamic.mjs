@@ -28,10 +28,10 @@ import {
   tuple_get,
   length as tuple_size,
   decode_map as decode_dict,
-  decode_string,
+  decode_string as string,
 } from "../gleam_stdlib.mjs";
 
-export { classify, from };
+export { classify, from, string };
 
 export class DecodeError extends $CustomType {
   constructor(expected, found, path) {
@@ -213,10 +213,6 @@ function map_errors(result, f) {
     result,
     (_capture) => { return $list.map(_capture, f); },
   );
-}
-
-export function string(data) {
-  return decode_string(data);
 }
 
 export function field(name, inner_type) {

@@ -136,13 +136,13 @@ function* printDicom(
   outputFormat: "dcmfx-print" | "json",
   token: vscode.CancellationToken,
 ) {
-  // Construct DICOM P10 read context with a max part size of 256 KiB to keep
+  // Construct DICOM P10 read context with a max part size of 1 MiB to keep
   // the read context's memory usage low while printing the DICOM
   let readContext = p10_read.new_read_context();
   const maxPartSize = 1024 * 1024;
   readContext = p10_read.with_config(
     readContext,
-    new p10_read.P10ReadConfig(maxPartSize, 0xfffffffe, 10_000),
+    new p10_read.P10ReadConfig(maxPartSize, 0xfffffffe, 10_000, false),
   );
 
   // Construct print transform to convert the stream of DICOM P10 parts into a

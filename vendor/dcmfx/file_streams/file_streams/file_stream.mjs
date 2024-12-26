@@ -32,6 +32,7 @@ import {
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
+  remainderInt,
   isEqual,
 } from "../gleam.mjs";
 
@@ -210,13 +211,19 @@ export function write_bytes(stream, bytes) {
     )),
     new Error(new $file_stream_error.Enotsup()),
     () => {
-      let $ = file_write(stream.io_device, bytes);
-      if ($ instanceof $raw_result.Ok) {
-        return new Ok(undefined);
-      } else {
-        let e = $.error;
-        return new Error(e);
-      }
+      return $bool.guard(
+        (remainderInt($bit_array.bit_size(bytes), 8)) !== 0,
+        new Error(new $file_stream_error.Einval()),
+        () => {
+          let $ = file_write(stream.io_device, bytes);
+          if ($ instanceof $raw_result.Ok) {
+            return new Ok(undefined);
+          } else {
+            let e = $.error;
+            return new Error(e);
+          }
+        },
+      );
     },
   );
 }
@@ -363,7 +370,7 @@ export function read_int8(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          490,
+          496,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -383,7 +390,7 @@ export function read_uint8(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          499,
+          505,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -403,7 +410,7 @@ export function read_int16_le(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          508,
+          514,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -423,7 +430,7 @@ export function read_int16_be(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          517,
+          523,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -443,7 +450,7 @@ export function read_uint16_le(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          526,
+          532,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -463,7 +470,7 @@ export function read_uint16_be(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          535,
+          541,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -483,7 +490,7 @@ export function read_int32_le(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          544,
+          550,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -503,7 +510,7 @@ export function read_int32_be(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          553,
+          559,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -523,7 +530,7 @@ export function read_uint32_le(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          562,
+          568,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -543,7 +550,7 @@ export function read_uint32_be(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          571,
+          577,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -563,7 +570,7 @@ export function read_int64_le(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          580,
+          586,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -583,7 +590,7 @@ export function read_int64_be(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          589,
+          595,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -603,7 +610,7 @@ export function read_uint64_le(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          598,
+          604,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -623,7 +630,7 @@ export function read_uint64_be(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          607,
+          613,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -643,7 +650,7 @@ export function read_float32_le(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          616,
+          622,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -663,7 +670,7 @@ export function read_float32_be(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          625,
+          631,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -683,7 +690,7 @@ export function read_float64_le(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          634,
+          640,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
@@ -703,7 +710,7 @@ export function read_float64_be(stream) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
-          643,
+          649,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: bits }
