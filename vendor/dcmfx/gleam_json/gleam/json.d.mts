@@ -1,3 +1,4 @@
+import type * as $dict from "../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $dynamic from "../../gleam_stdlib/gleam/dynamic.d.mts";
 import type * as $decode from "../../gleam_stdlib/gleam/dynamic/decode.d.mts";
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
@@ -34,31 +35,31 @@ export class UnableToDecode extends _.CustomType {
 
 export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnexpectedFormat | UnableToDecode;
 
-export function decode<CCCQ>(
+export function decode<CBZK>(
   json: string,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCCQ,
+    CBZK,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCCQ, DecodeError$>;
+): _.Result<CBZK, DecodeError$>;
 
-export function parse<CCCU>(json: string, decoder: $decode.Decoder$<CCCU>): _.Result<
-  CCCU,
+export function parse<CBZO>(json: string, decoder: $decode.Decoder$<CBZO>): _.Result<
+  CBZO,
   DecodeError$
 >;
 
-export function decode_bits<CCDI>(
+export function decode_bits<CCAC>(
   json: _.BitArray,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCDI,
+    CCAC,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCDI, DecodeError$>;
+): _.Result<CCAC, DecodeError$>;
 
-export function parse_bits<CCDM>(
+export function parse_bits<CCAG>(
   json: _.BitArray,
-  decoder: $decode.Decoder$<CCDM>
-): _.Result<CCDM, DecodeError$>;
+  decoder: $decode.Decoder$<CCAG>
+): _.Result<CCAG, DecodeError$>;
 
 export function to_string(json: Json$): string;
 
@@ -76,16 +77,22 @@ export function float(input: number): Json$;
 
 export function null$(): Json$;
 
-export function nullable<CCDS>(
-  input: $option.Option$<CCDS>,
-  inner_type: (x0: CCDS) => Json$
+export function nullable<CCAM>(
+  input: $option.Option$<CCAM>,
+  inner_type: (x0: CCAM) => Json$
 ): Json$;
 
 export function object(entries: _.List<[string, Json$]>): Json$;
 
 export function preprocessed_array(from: _.List<Json$>): Json$;
 
-export function array<CCDW>(
-  entries: _.List<CCDW>,
-  inner_type: (x0: CCDW) => Json$
+export function array<CCAQ>(
+  entries: _.List<CCAQ>,
+  inner_type: (x0: CCAQ) => Json$
+): Json$;
+
+export function dict<CCAU, CCAV>(
+  dict: $dict.Dict$<CCAU, CCAV>,
+  keys: (x0: CCAU) => string,
+  values: (x0: CCAV) => Json$
 ): Json$;

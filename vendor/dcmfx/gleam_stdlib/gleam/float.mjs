@@ -107,8 +107,14 @@ export function round(x) {
 }
 
 export function to_precision(x, precision) {
-  let factor = do_power(10.0, do_to_float(- precision));
-  return do_to_float(round(divideFloat(x, factor))) * factor;
+  let $ = precision <= 0;
+  if ($) {
+    let factor = do_power(10.0, do_to_float(- precision));
+    return do_to_float(round(divideFloat(x, factor))) * factor;
+  } else {
+    let factor = do_power(10.0, do_to_float(precision));
+    return divideFloat(do_to_float(round(x * factor)), factor);
+  }
 }
 
 function sum_loop(loop$numbers, loop$initial) {

@@ -164,10 +164,6 @@ export function replace_error(result, error) {
   }
 }
 
-export function nil_error(result) {
-  return replace_error(result, undefined);
-}
-
 export function values(results) {
   return $list.filter_map(results, (r) => { return r; });
 }

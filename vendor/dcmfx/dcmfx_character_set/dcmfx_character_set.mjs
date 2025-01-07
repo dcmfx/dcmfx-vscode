@@ -209,7 +209,7 @@ function decode_iso_2022_bytes(
     let acc = loop$acc;
     if (bytes.length == 0) {
       return acc;
-    } else if (bytes.byteAt(0) === 0x1B && bytes.length >= 1) {
+    } else if (bytes.byteAt(0) === 27 && bytes.length >= 1) {
       let rest = bytes.sliceAfter(1);
       let $ = apply_escape_sequence(
         specific_character_set,
@@ -358,7 +358,7 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
           )
         }
         let after = $3[0];
-        let acc$1 = $bit_array.concat(toList([acc, before, toBitArray([0x3F])]));
+        let acc$1 = $bit_array.concat(toList([acc, before, toBitArray([63])]));
         loop$bytes = after;
         loop$i = 0;
         loop$acc = acc$1;

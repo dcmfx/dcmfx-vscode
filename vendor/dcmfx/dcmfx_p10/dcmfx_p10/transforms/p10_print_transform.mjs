@@ -66,7 +66,7 @@ export function add_part(context, part) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/transforms/p10_print_transform",
-        64,
+        63,
         "add_part",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
@@ -95,12 +95,18 @@ export function add_part(context, part) {
         return new None();
       }
     })();
-    let new_context = context.withFields({
-      current_data_element: tag,
-      value_max_width: value_max_width,
-      ignore_data_element_value_bytes: ignore_data_element_value_bytes,
-      last_data_element_private_creator_tag: last_data_element_private_creator_tag
-    });
+    let new_context = (() => {
+      let _record = context;
+      return new P10PrintTransform(
+        _record.print_options,
+        _record.indent,
+        tag,
+        ignore_data_element_value_bytes,
+        value_max_width,
+        _record.private_creators,
+        last_data_element_private_creator_tag,
+      );
+    })();
     return [new_context, s];
   } else if (part instanceof $p10_part.DataElementValueBytes &&
   (!context.ignore_data_element_value_bytes)) {
@@ -135,10 +141,18 @@ export function add_part(context, part) {
       context.current_data_element,
       context.value_max_width,
     ) + "\n";
-    let new_context = context.withFields({
-      ignore_data_element_value_bytes: ignore_data_element_value_bytes,
-      private_creators: private_creators
-    });
+    let new_context = (() => {
+      let _record = context;
+      return new P10PrintTransform(
+        _record.print_options,
+        _record.indent,
+        _record.current_data_element,
+        ignore_data_element_value_bytes,
+        _record.value_max_width,
+        private_creators,
+        _record.last_data_element_private_creator_tag,
+      );
+    })();
     return [new_context, s];
   } else if (part instanceof $p10_part.SequenceStart) {
     let tag = part.tag;
@@ -148,7 +162,7 @@ export function add_part(context, part) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/transforms/p10_print_transform",
-        153,
+        152,
         "add_part",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
@@ -163,7 +177,18 @@ export function add_part(context, part) {
       context.indent,
       context.print_options,
     )[0];
-    let new_context = context.withFields({ indent: context.indent + 1 });
+    let new_context = (() => {
+      let _record = context;
+      return new P10PrintTransform(
+        _record.print_options,
+        context.indent + 1,
+        _record.current_data_element,
+        _record.ignore_data_element_value_bytes,
+        _record.value_max_width,
+        _record.private_creators,
+        _record.last_data_element_private_creator_tag,
+      );
+    })();
     return [new_context, s + "\n"];
   } else if (part instanceof $p10_part.SequenceDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
@@ -174,7 +199,18 @@ export function add_part(context, part) {
       context.indent - 1,
       context.print_options,
     )[0];
-    let new_context = context.withFields({ indent: context.indent - 1 });
+    let new_context = (() => {
+      let _record = context;
+      return new P10PrintTransform(
+        _record.print_options,
+        context.indent - 1,
+        _record.current_data_element,
+        _record.ignore_data_element_value_bytes,
+        _record.value_max_width,
+        _record.private_creators,
+        _record.last_data_element_private_creator_tag,
+      );
+    })();
     return [new_context, s + "\n"];
   } else if (part instanceof $p10_part.SequenceItemStart) {
     let s = $data_set_print.format_data_element_prefix(
@@ -185,10 +221,18 @@ export function add_part(context, part) {
       context.indent,
       context.print_options,
     )[0];
-    let new_context = context.withFields({
-      indent: context.indent + 1,
-      private_creators: listPrepend($data_set.new$(), context.private_creators)
-    });
+    let new_context = (() => {
+      let _record = context;
+      return new P10PrintTransform(
+        _record.print_options,
+        context.indent + 1,
+        _record.current_data_element,
+        _record.ignore_data_element_value_bytes,
+        _record.value_max_width,
+        listPrepend($data_set.new$(), context.private_creators),
+        _record.last_data_element_private_creator_tag,
+      );
+    })();
     return [new_context, s + "\n"];
   } else if (part instanceof $p10_part.SequenceItemDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
@@ -199,13 +243,21 @@ export function add_part(context, part) {
       context.indent - 1,
       context.print_options,
     )[0];
-    let new_context = context.withFields({
-      indent: context.indent - 1,
-      private_creators: (() => {
-        let _pipe = $list.rest(context.private_creators);
-        return $result.unwrap(_pipe, context.private_creators);
-      })()
-    });
+    let new_context = (() => {
+      let _record = context;
+      return new P10PrintTransform(
+        _record.print_options,
+        context.indent - 1,
+        _record.current_data_element,
+        _record.ignore_data_element_value_bytes,
+        _record.value_max_width,
+        (() => {
+          let _pipe = $list.rest(context.private_creators);
+          return $result.unwrap(_pipe, context.private_creators);
+        })(),
+        _record.last_data_element_private_creator_tag,
+      );
+    })();
     return [new_context, s + "\n"];
   } else if (part instanceof $p10_part.PixelDataItem) {
     let length = part.length;
@@ -221,10 +273,18 @@ export function add_part(context, part) {
     let width = $[1];
     let value_max_width = $int.max(context.print_options.max_width - width, 10);
     let ignore_data_element_value_bytes = false;
-    let new_context = context.withFields({
-      value_max_width: value_max_width,
-      ignore_data_element_value_bytes: ignore_data_element_value_bytes
-    });
+    let new_context = (() => {
+      let _record = context;
+      return new P10PrintTransform(
+        _record.print_options,
+        _record.indent,
+        _record.current_data_element,
+        ignore_data_element_value_bytes,
+        value_max_width,
+        _record.private_creators,
+        _record.last_data_element_private_creator_tag,
+      );
+    })();
     return [new_context, s];
   } else {
     return [context, ""];

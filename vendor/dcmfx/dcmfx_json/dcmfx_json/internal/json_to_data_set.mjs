@@ -165,8 +165,10 @@ function read_dicom_json_person_name_value(value, path) {
 }
 
 function read_encapsulated_pixel_data_items(bytes, vr, items) {
-  if (bytes.intFromSlice(0, 2, false, false) === 0xFFFE &&
-  bytes.intFromSlice(2, 4, false, false) === 0xE000 &&
+  if (bytes.byteAt(0) === 254 &&
+  bytes.byteAt(1) === 255 &&
+  bytes.byteAt(2) === 0 &&
+  bytes.byteAt(3) === 224 &&
   bytes.length >= 8) {
     let length = bytes.intFromSlice(4, 8, false, false);
     let rest = bytes.sliceAfter(8);

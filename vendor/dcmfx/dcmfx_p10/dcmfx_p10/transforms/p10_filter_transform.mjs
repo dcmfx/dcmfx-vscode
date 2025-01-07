@@ -101,7 +101,14 @@ export function add_part(context, part) {
         new LocationEntry(tag, filter_result),
         context.location,
       );
-      let new_context = context.withFields({ location: new_location });
+      let new_context = (() => {
+        let _record = context;
+        return new P10FilterTransform(
+          _record.predicate,
+          new_location,
+          _record.data_set_builder,
+        );
+      })();
       return [filter_result, new_context];
     } else if (part instanceof $p10_part.DataElementHeader) {
       let tag = part.tag;
@@ -122,7 +129,14 @@ export function add_part(context, part) {
         new LocationEntry(tag, filter_result),
         context.location,
       );
-      let new_context = context.withFields({ location: new_location });
+      let new_context = (() => {
+        let _record = context;
+        return new P10FilterTransform(
+          _record.predicate,
+          new_location,
+          _record.data_set_builder,
+        );
+      })();
       return [filter_result, new_context];
     } else if (part instanceof $p10_part.PixelDataItem) {
       let filter_result = (() => {
@@ -138,7 +152,14 @@ export function add_part(context, part) {
         new LocationEntry($dictionary.item.tag, filter_result),
         context.location,
       );
-      let new_context = context.withFields({ location: new_location });
+      let new_context = (() => {
+        let _record = context;
+        return new P10FilterTransform(
+          _record.predicate,
+          new_location,
+          _record.data_set_builder,
+        );
+      })();
       return [filter_result, new_context];
     } else if (part instanceof $p10_part.SequenceDelimiter) {
       let filter_result = (() => {
@@ -162,7 +183,14 @@ export function add_part(context, part) {
         )
       }
       let new_location = $1[0];
-      let new_context = context.withFields({ location: new_location });
+      let new_context = (() => {
+        let _record = context;
+        return new P10FilterTransform(
+          _record.predicate,
+          new_location,
+          _record.data_set_builder,
+        );
+      })();
       return [filter_result, new_context];
     } else if (part instanceof $p10_part.DataElementValueBytes &&
     part.bytes_remaining === 0) {
@@ -187,7 +215,14 @@ export function add_part(context, part) {
         )
       }
       let new_location = $1[0];
-      let new_context = context.withFields({ location: new_location });
+      let new_context = (() => {
+        let _record = context;
+        return new P10FilterTransform(
+          _record.predicate,
+          new_location,
+          _record.data_set_builder,
+        );
+      })();
       return [filter_result, new_context];
     } else {
       let $1 = context.location;
@@ -220,6 +255,13 @@ export function add_part(context, part) {
       return context$1.data_set_builder;
     }
   })();
-  let context$2 = context$1.withFields({ data_set_builder: data_set_builder });
+  let context$2 = (() => {
+    let _record = context$1;
+    return new P10FilterTransform(
+      _record.predicate,
+      _record.location,
+      data_set_builder,
+    );
+  })();
   return [context$2, filter_result];
 }

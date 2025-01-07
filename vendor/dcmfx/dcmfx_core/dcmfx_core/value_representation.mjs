@@ -155,138 +155,138 @@ export function to_string(vr) {
 }
 
 export function from_bytes(bytes) {
-  if (bytes.byteAt(0) === 0x41 && bytes.byteAt(1) === 0x45 && bytes.length == 2) {
+  if (bytes.byteAt(0) === 65 && bytes.byteAt(1) === 69 && bytes.length == 2) {
     return new Ok(new ApplicationEntity());
-  } else if (bytes.byteAt(0) === 0x41 &&
-  bytes.byteAt(1) === 0x53 &&
+  } else if (bytes.byteAt(0) === 65 &&
+  bytes.byteAt(1) === 83 &&
   bytes.length == 2) {
     return new Ok(new AgeString());
-  } else if (bytes.byteAt(0) === 0x41 &&
-  bytes.byteAt(1) === 0x54 &&
+  } else if (bytes.byteAt(0) === 65 &&
+  bytes.byteAt(1) === 84 &&
   bytes.length == 2) {
     return new Ok(new AttributeTag());
-  } else if (bytes.byteAt(0) === 0x43 &&
-  bytes.byteAt(1) === 0x53 &&
+  } else if (bytes.byteAt(0) === 67 &&
+  bytes.byteAt(1) === 83 &&
   bytes.length == 2) {
     return new Ok(new CodeString());
-  } else if (bytes.byteAt(0) === 0x44 &&
-  bytes.byteAt(1) === 0x41 &&
+  } else if (bytes.byteAt(0) === 68 &&
+  bytes.byteAt(1) === 65 &&
   bytes.length == 2) {
     return new Ok(new Date());
-  } else if (bytes.byteAt(0) === 0x44 &&
-  bytes.byteAt(1) === 0x53 &&
+  } else if (bytes.byteAt(0) === 68 &&
+  bytes.byteAt(1) === 83 &&
   bytes.length == 2) {
     return new Ok(new DecimalString());
-  } else if (bytes.byteAt(0) === 0x44 &&
-  bytes.byteAt(1) === 0x54 &&
+  } else if (bytes.byteAt(0) === 68 &&
+  bytes.byteAt(1) === 84 &&
   bytes.length == 2) {
     return new Ok(new DateTime());
-  } else if (bytes.byteAt(0) === 0x46 &&
-  bytes.byteAt(1) === 0x44 &&
+  } else if (bytes.byteAt(0) === 70 &&
+  bytes.byteAt(1) === 68 &&
   bytes.length == 2) {
     return new Ok(new FloatingPointDouble());
-  } else if (bytes.byteAt(0) === 0x46 &&
-  bytes.byteAt(1) === 0x4C &&
+  } else if (bytes.byteAt(0) === 70 &&
+  bytes.byteAt(1) === 76 &&
   bytes.length == 2) {
     return new Ok(new FloatingPointSingle());
-  } else if (bytes.byteAt(0) === 0x49 &&
-  bytes.byteAt(1) === 0x53 &&
+  } else if (bytes.byteAt(0) === 73 &&
+  bytes.byteAt(1) === 83 &&
   bytes.length == 2) {
     return new Ok(new IntegerString());
-  } else if (bytes.byteAt(0) === 0x4C &&
-  bytes.byteAt(1) === 0x4F &&
+  } else if (bytes.byteAt(0) === 76 &&
+  bytes.byteAt(1) === 79 &&
   bytes.length == 2) {
     return new Ok(new LongString());
-  } else if (bytes.byteAt(0) === 0x4C &&
-  bytes.byteAt(1) === 0x54 &&
+  } else if (bytes.byteAt(0) === 76 &&
+  bytes.byteAt(1) === 84 &&
   bytes.length == 2) {
     return new Ok(new LongText());
-  } else if (bytes.byteAt(0) === 0x4F &&
-  bytes.byteAt(1) === 0x42 &&
+  } else if (bytes.byteAt(0) === 79 &&
+  bytes.byteAt(1) === 66 &&
   bytes.length == 2) {
     return new Ok(new OtherByteString());
-  } else if (bytes.byteAt(0) === 0x4F &&
-  bytes.byteAt(1) === 0x44 &&
+  } else if (bytes.byteAt(0) === 79 &&
+  bytes.byteAt(1) === 68 &&
   bytes.length == 2) {
     return new Ok(new OtherDoubleString());
-  } else if (bytes.byteAt(0) === 0x4F &&
-  bytes.byteAt(1) === 0x46 &&
+  } else if (bytes.byteAt(0) === 79 &&
+  bytes.byteAt(1) === 70 &&
   bytes.length == 2) {
     return new Ok(new OtherFloatString());
-  } else if (bytes.byteAt(0) === 0x4F &&
-  bytes.byteAt(1) === 0x4C &&
+  } else if (bytes.byteAt(0) === 79 &&
+  bytes.byteAt(1) === 76 &&
   bytes.length == 2) {
     return new Ok(new OtherLongString());
-  } else if (bytes.byteAt(0) === 0x4F &&
-  bytes.byteAt(1) === 0x56 &&
+  } else if (bytes.byteAt(0) === 79 &&
+  bytes.byteAt(1) === 86 &&
   bytes.length == 2) {
     return new Ok(new OtherVeryLongString());
-  } else if (bytes.byteAt(0) === 0x4F &&
-  bytes.byteAt(1) === 0x57 &&
+  } else if (bytes.byteAt(0) === 79 &&
+  bytes.byteAt(1) === 87 &&
   bytes.length == 2) {
     return new Ok(new OtherWordString());
-  } else if (bytes.byteAt(0) === 0x50 &&
-  bytes.byteAt(1) === 0x4E &&
+  } else if (bytes.byteAt(0) === 80 &&
+  bytes.byteAt(1) === 78 &&
   bytes.length == 2) {
     return new Ok(new PersonName());
-  } else if (bytes.byteAt(0) === 0x53 &&
-  bytes.byteAt(1) === 0x48 &&
+  } else if (bytes.byteAt(0) === 83 &&
+  bytes.byteAt(1) === 72 &&
   bytes.length == 2) {
     return new Ok(new ShortString());
-  } else if (bytes.byteAt(0) === 0x53 &&
-  bytes.byteAt(1) === 0x4C &&
+  } else if (bytes.byteAt(0) === 83 &&
+  bytes.byteAt(1) === 76 &&
   bytes.length == 2) {
     return new Ok(new SignedLong());
-  } else if (bytes.byteAt(0) === 0x53 &&
-  bytes.byteAt(1) === 0x51 &&
+  } else if (bytes.byteAt(0) === 83 &&
+  bytes.byteAt(1) === 81 &&
   bytes.length == 2) {
     return new Ok(new Sequence());
-  } else if (bytes.byteAt(0) === 0x53 &&
-  bytes.byteAt(1) === 0x53 &&
+  } else if (bytes.byteAt(0) === 83 &&
+  bytes.byteAt(1) === 83 &&
   bytes.length == 2) {
     return new Ok(new SignedShort());
-  } else if (bytes.byteAt(0) === 0x53 &&
-  bytes.byteAt(1) === 0x54 &&
+  } else if (bytes.byteAt(0) === 83 &&
+  bytes.byteAt(1) === 84 &&
   bytes.length == 2) {
     return new Ok(new ShortText());
-  } else if (bytes.byteAt(0) === 0x53 &&
-  bytes.byteAt(1) === 0x56 &&
+  } else if (bytes.byteAt(0) === 83 &&
+  bytes.byteAt(1) === 86 &&
   bytes.length == 2) {
     return new Ok(new SignedVeryLong());
-  } else if (bytes.byteAt(0) === 0x54 &&
-  bytes.byteAt(1) === 0x4D &&
+  } else if (bytes.byteAt(0) === 84 &&
+  bytes.byteAt(1) === 77 &&
   bytes.length == 2) {
     return new Ok(new Time());
-  } else if (bytes.byteAt(0) === 0x55 &&
-  bytes.byteAt(1) === 0x43 &&
+  } else if (bytes.byteAt(0) === 85 &&
+  bytes.byteAt(1) === 67 &&
   bytes.length == 2) {
     return new Ok(new UnlimitedCharacters());
-  } else if (bytes.byteAt(0) === 0x55 &&
-  bytes.byteAt(1) === 0x49 &&
+  } else if (bytes.byteAt(0) === 85 &&
+  bytes.byteAt(1) === 73 &&
   bytes.length == 2) {
     return new Ok(new UniqueIdentifier());
-  } else if (bytes.byteAt(0) === 0x55 &&
-  bytes.byteAt(1) === 0x4C &&
+  } else if (bytes.byteAt(0) === 85 &&
+  bytes.byteAt(1) === 76 &&
   bytes.length == 2) {
     return new Ok(new UnsignedLong());
-  } else if (bytes.byteAt(0) === 0x55 &&
-  bytes.byteAt(1) === 0x4E &&
+  } else if (bytes.byteAt(0) === 85 &&
+  bytes.byteAt(1) === 78 &&
   bytes.length == 2) {
     return new Ok(new Unknown());
-  } else if (bytes.byteAt(0) === 0x55 &&
-  bytes.byteAt(1) === 0x52 &&
+  } else if (bytes.byteAt(0) === 85 &&
+  bytes.byteAt(1) === 82 &&
   bytes.length == 2) {
     return new Ok(new UniversalResourceIdentifier());
-  } else if (bytes.byteAt(0) === 0x55 &&
-  bytes.byteAt(1) === 0x53 &&
+  } else if (bytes.byteAt(0) === 85 &&
+  bytes.byteAt(1) === 83 &&
   bytes.length == 2) {
     return new Ok(new UnsignedShort());
-  } else if (bytes.byteAt(0) === 0x55 &&
-  bytes.byteAt(1) === 0x54 &&
+  } else if (bytes.byteAt(0) === 85 &&
+  bytes.byteAt(1) === 84 &&
   bytes.length == 2) {
     return new Ok(new UnlimitedText());
-  } else if (bytes.byteAt(0) === 0x55 &&
-  bytes.byteAt(1) === 0x56 &&
+  } else if (bytes.byteAt(0) === 85 &&
+  bytes.byteAt(1) === 86 &&
   bytes.length == 2) {
     return new Ok(new UnsignedVeryLong());
   } else {

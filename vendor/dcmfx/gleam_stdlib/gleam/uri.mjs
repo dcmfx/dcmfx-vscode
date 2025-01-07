@@ -41,7 +41,20 @@ function is_valid_host_within_brackets_char(char) {
 }
 
 function parse_fragment(rest, pieces) {
-  return new Ok(pieces.withFields({ fragment: new Some(rest) }));
+  return new Ok(
+    (() => {
+      let _record = pieces;
+      return new Uri(
+        _record.scheme,
+        _record.userinfo,
+        _record.host,
+        _record.port,
+        _record.path,
+        _record.query,
+        new Some(rest),
+      );
+    })(),
+  );
 }
 
 function parse_query_with_question_mark_loop(
@@ -61,10 +74,34 @@ function parse_query_with_question_mark_loop(
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
       let query = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ query: new Some(query) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          _record.host,
+          _record.port,
+          _record.path,
+          new Some(query),
+          _record.fragment,
+        );
+      })();
       return parse_fragment(rest, pieces$1);
     } else if (uri_string === "") {
-      return new Ok(pieces.withFields({ query: new Some(original) }));
+      return new Ok(
+        (() => {
+          let _record = pieces;
+          return new Uri(
+            _record.scheme,
+            _record.userinfo,
+            _record.host,
+            _record.port,
+            _record.path,
+            new Some(original),
+            _record.fragment,
+          );
+        })(),
+      );
     } else {
       let $ = pop_codeunit(uri_string);
       let rest = $[1];
@@ -89,15 +126,50 @@ function parse_path_loop(loop$original, loop$uri_string, loop$pieces, loop$size)
     if (uri_string.startsWith("?")) {
       let rest = uri_string.slice(1);
       let path = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ path: path });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          _record.host,
+          _record.port,
+          path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_query_with_question_mark(rest, pieces$1);
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
       let path = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ path: path });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          _record.host,
+          _record.port,
+          path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_fragment(rest, pieces$1);
     } else if (uri_string === "") {
-      return new Ok(pieces.withFields({ path: original }));
+      return new Ok(
+        (() => {
+          let _record = pieces;
+          return new Uri(
+            _record.scheme,
+            _record.userinfo,
+            _record.host,
+            _record.port,
+            original,
+            _record.query,
+            _record.fragment,
+          );
+        })(),
+      );
     } else {
       let $ = pop_codeunit(uri_string);
       let rest = $[1];
@@ -170,17 +242,63 @@ function parse_port_loop(loop$uri_string, loop$pieces, loop$port) {
       loop$port = port * 10 + 9;
     } else if (uri_string.startsWith("?")) {
       let rest = uri_string.slice(1);
-      let pieces$1 = pieces.withFields({ port: new Some(port) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          _record.host,
+          new Some(port),
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_query_with_question_mark(rest, pieces$1);
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
-      let pieces$1 = pieces.withFields({ port: new Some(port) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          _record.host,
+          new Some(port),
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_fragment(rest, pieces$1);
     } else if (uri_string.startsWith("/")) {
-      let pieces$1 = pieces.withFields({ port: new Some(port) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          _record.host,
+          new Some(port),
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_path(uri_string, pieces$1);
     } else if (uri_string === "") {
-      return new Ok(pieces.withFields({ port: new Some(port) }));
+      return new Ok(
+        (() => {
+          let _record = pieces;
+          return new Uri(
+            _record.scheme,
+            _record.userinfo,
+            _record.host,
+            new Some(port),
+            _record.path,
+            _record.query,
+            _record.fragment,
+          );
+        })(),
+      );
     } else {
       return new Error(undefined);
     }
@@ -247,24 +365,81 @@ function parse_host_outside_of_brackets_loop(
     let pieces = loop$pieces;
     let size = loop$size;
     if (uri_string === "") {
-      return new Ok(pieces.withFields({ host: new Some(original) }));
+      return new Ok(
+        (() => {
+          let _record = pieces;
+          return new Uri(
+            _record.scheme,
+            _record.userinfo,
+            new Some(original),
+            _record.port,
+            _record.path,
+            _record.query,
+            _record.fragment,
+          );
+        })(),
+      );
     } else if (uri_string.startsWith(":")) {
       let host = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ host: new Some(host) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(host),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_port(uri_string, pieces$1);
     } else if (uri_string.startsWith("/")) {
       let host = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ host: new Some(host) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(host),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_path(uri_string, pieces$1);
     } else if (uri_string.startsWith("?")) {
       let rest = uri_string.slice(1);
       let host = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ host: new Some(host) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(host),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_query_with_question_mark(rest, pieces$1);
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
       let host = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ host: new Some(host) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(host),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_fragment(rest, pieces$1);
     } else {
       let $ = pop_codeunit(uri_string);
@@ -289,20 +464,55 @@ function parse_host_within_brackets_loop(
     let pieces = loop$pieces;
     let size = loop$size;
     if (uri_string === "") {
-      return new Ok(pieces.withFields({ host: new Some(uri_string) }));
+      return new Ok(
+        (() => {
+          let _record = pieces;
+          return new Uri(
+            _record.scheme,
+            _record.userinfo,
+            new Some(uri_string),
+            _record.port,
+            _record.path,
+            _record.query,
+            _record.fragment,
+          );
+        })(),
+      );
     } else if (uri_string.startsWith("]") && (size === 0)) {
       let rest = uri_string.slice(1);
       return parse_port(rest, pieces);
     } else if (uri_string.startsWith("]")) {
       let rest = uri_string.slice(1);
       let host = codeunit_slice(original, 0, size + 1);
-      let pieces$1 = pieces.withFields({ host: new Some(host) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(host),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_port(rest, pieces$1);
     } else if (uri_string.startsWith("/") && (size === 0)) {
       return parse_path(uri_string, pieces);
     } else if (uri_string.startsWith("/")) {
       let host = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ host: new Some(host) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(host),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_path(uri_string, pieces$1);
     } else if (uri_string.startsWith("?") && (size === 0)) {
       let rest = uri_string.slice(1);
@@ -310,7 +520,18 @@ function parse_host_within_brackets_loop(
     } else if (uri_string.startsWith("?")) {
       let rest = uri_string.slice(1);
       let host = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ host: new Some(host) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(host),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_query_with_question_mark(rest, pieces$1);
     } else if (uri_string.startsWith("#") && (size === 0)) {
       let rest = uri_string.slice(1);
@@ -318,7 +539,18 @@ function parse_host_within_brackets_loop(
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
       let host = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ host: new Some(host) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(host),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_fragment(rest, pieces$1);
     } else {
       let $ = pop_codeunit(uri_string);
@@ -354,10 +586,34 @@ function parse_host(uri_string, pieces) {
   if (uri_string.startsWith("[")) {
     return parse_host_within_brackets(uri_string, pieces);
   } else if (uri_string.startsWith(":")) {
-    let pieces$1 = pieces.withFields({ host: new Some("") });
+    let pieces$1 = (() => {
+      let _record = pieces;
+      return new Uri(
+        _record.scheme,
+        _record.userinfo,
+        new Some(""),
+        _record.port,
+        _record.path,
+        _record.query,
+        _record.fragment,
+      );
+    })();
     return parse_port(uri_string, pieces$1);
   } else if (uri_string === "") {
-    return new Ok(pieces.withFields({ host: new Some("") }));
+    return new Ok(
+      (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(""),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })(),
+    );
   } else {
     return parse_host_outside_of_brackets(uri_string, pieces);
   }
@@ -380,7 +636,18 @@ function parse_userinfo_loop(
     } else if (uri_string.startsWith("@")) {
       let rest = uri_string.slice(1);
       let userinfo = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({ userinfo: new Some(userinfo) });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          new Some(userinfo),
+          _record.host,
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_host(rest, pieces$1);
     } else if (uri_string === "") {
       return parse_host(original, pieces);
@@ -407,7 +674,20 @@ function parse_authority_pieces(string, pieces) {
 
 function parse_authority_with_slashes(uri_string, pieces) {
   if (uri_string === "//") {
-    return new Ok(pieces.withFields({ host: new Some("") }));
+    return new Ok(
+      (() => {
+        let _record = pieces;
+        return new Uri(
+          _record.scheme,
+          _record.userinfo,
+          new Some(""),
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })(),
+    );
   } else if (uri_string.startsWith("//")) {
     let rest = uri_string.slice(2);
     return parse_authority_pieces(rest, pieces);
@@ -431,9 +711,18 @@ function parse_scheme_loop(
       return parse_authority_with_slashes(uri_string, pieces);
     } else if (uri_string.startsWith("/")) {
       let scheme = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({
-        scheme: new Some($string.lowercase(scheme))
-      });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          new Some($string.lowercase(scheme)),
+          _record.userinfo,
+          _record.host,
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_authority_with_slashes(uri_string, pieces$1);
     } else if (uri_string.startsWith("?") && (size === 0)) {
       let rest = uri_string.slice(1);
@@ -441,9 +730,18 @@ function parse_scheme_loop(
     } else if (uri_string.startsWith("?")) {
       let rest = uri_string.slice(1);
       let scheme = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({
-        scheme: new Some($string.lowercase(scheme))
-      });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          new Some($string.lowercase(scheme)),
+          _record.userinfo,
+          _record.host,
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_query_with_question_mark(rest, pieces$1);
     } else if (uri_string.startsWith("#") && (size === 0)) {
       let rest = uri_string.slice(1);
@@ -451,21 +749,52 @@ function parse_scheme_loop(
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
       let scheme = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({
-        scheme: new Some($string.lowercase(scheme))
-      });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          new Some($string.lowercase(scheme)),
+          _record.userinfo,
+          _record.host,
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_fragment(rest, pieces$1);
     } else if (uri_string.startsWith(":") && (size === 0)) {
       return new Error(undefined);
     } else if (uri_string.startsWith(":")) {
       let rest = uri_string.slice(1);
       let scheme = codeunit_slice(original, 0, size);
-      let pieces$1 = pieces.withFields({
-        scheme: new Some($string.lowercase(scheme))
-      });
+      let pieces$1 = (() => {
+        let _record = pieces;
+        return new Uri(
+          new Some($string.lowercase(scheme)),
+          _record.userinfo,
+          _record.host,
+          _record.port,
+          _record.path,
+          _record.query,
+          _record.fragment,
+        );
+      })();
       return parse_authority_with_slashes(rest, pieces$1);
     } else if (uri_string === "") {
-      return new Ok(pieces.withFields({ path: original }));
+      return new Ok(
+        (() => {
+          let _record = pieces;
+          return new Uri(
+            _record.scheme,
+            _record.userinfo,
+            _record.host,
+            _record.port,
+            original,
+            _record.query,
+            _record.fragment,
+          );
+        })(),
+      );
     } else {
       let $ = pop_codeunit(uri_string);
       let rest = $[1];

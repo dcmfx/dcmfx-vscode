@@ -178,7 +178,12 @@ export function set_encoding(stream, encoding) {
       ]);
       let $ = io_setopts(stream.io_device, opts);
       if ($ instanceof $raw_result.Ok) {
-        return new Ok(stream.withFields({ encoding: new Some(encoding) }));
+        return new Ok(
+          (() => {
+            let _record = stream;
+            return new FileStream(_record.io_device, new Some(encoding));
+          })(),
+        );
       } else {
         let e = $.error;
         return new Error(e);

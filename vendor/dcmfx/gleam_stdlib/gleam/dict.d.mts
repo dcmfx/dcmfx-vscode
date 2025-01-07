@@ -1,77 +1,77 @@
 import type * as _ from "../gleam.d.mts";
 import type * as $option from "../gleam/option.d.mts";
 
-export type Dict$<KR, KQ> = unknown;
+export type Dict$<KS, KR> = unknown;
 
 export function size(dict: Dict$<any, any>): number;
 
-export function to_list<LA, LB>(dict: Dict$<LA, LB>): _.List<[LA, LB]>;
+export function to_list<LB, LC>(dict: Dict$<LB, LC>): _.List<[LB, LC]>;
 
 export function new$(): Dict$<any, any>;
 
 export function is_empty(dict: Dict$<any, any>): boolean;
 
-export function get<MD, ME>(from: Dict$<MD, ME>, get: MD): _.Result<
-  ME,
+export function get<ME, MF>(from: Dict$<ME, MF>, get: ME): _.Result<
+  MF,
   undefined
 >;
 
-export function has_key<LR>(dict: Dict$<LR, any>, key: LR): boolean;
+export function has_key<LS>(dict: Dict$<LS, any>, key: LS): boolean;
 
-export function insert<MJ, MK>(dict: Dict$<MJ, MK>, key: MJ, value: MK): Dict$<
-  MJ,
-  MK
+export function insert<MK, ML>(dict: Dict$<MK, ML>, key: MK, value: ML): Dict$<
+  MK,
+  ML
 >;
 
-export function from_list<LF, LG>(list: _.List<[LF, LG]>): Dict$<LF, LG>;
+export function from_list<LG, LH>(list: _.List<[LG, LH]>): Dict$<LG, LH>;
 
-export function keys<NJ>(dict: Dict$<NJ, any>): _.List<NJ>;
+export function keys<NK>(dict: Dict$<NK, any>): _.List<NK>;
 
-export function values<NY>(dict: Dict$<any, NY>): _.List<NY>;
+export function values<NZ>(dict: Dict$<any, NZ>): _.List<NZ>;
 
-export function take<OT, OU>(dict: Dict$<OT, OU>, desired_keys: _.List<OT>): Dict$<
-  OT,
-  OU
+export function take<OU, OV>(dict: Dict$<OU, OV>, desired_keys: _.List<OU>): Dict$<
+  OU,
+  OV
 >;
 
-export function merge<PQ, PR>(dict: Dict$<PQ, PR>, new_entries: Dict$<PQ, PR>): Dict$<
-  PQ,
-  PR
+export function merge<PR, PS>(dict: Dict$<PR, PS>, new_entries: Dict$<PR, PS>): Dict$<
+  PR,
+  PS
 >;
 
-export function delete$<QL, QM>(dict: Dict$<QL, QM>, key: QL): Dict$<QL, QM>;
+export function delete$<QM, QN>(dict: Dict$<QM, QN>, key: QM): Dict$<QM, QN>;
 
-export function drop<QX, QY>(dict: Dict$<QX, QY>, disallowed_keys: _.List<QX>): Dict$<
-  QX,
-  QY
+export function drop<QY, QZ>(dict: Dict$<QY, QZ>, disallowed_keys: _.List<QY>): Dict$<
+  QY,
+  QZ
 >;
 
-export function upsert<RE, RF>(
-  dict: Dict$<RE, RF>,
-  key: RE,
-  fun: (x0: $option.Option$<RF>) => RF
-): Dict$<RE, RF>;
+export function upsert<RF, RG>(
+  dict: Dict$<RF, RG>,
+  key: RF,
+  fun: (x0: $option.Option$<RG>) => RG
+): Dict$<RF, RG>;
 
-export function fold<RL, RM, RP>(
-  dict: Dict$<RL, RM>,
-  initial: RP,
-  fun: (x0: RP, x1: RL, x2: RM) => RP
-): RP;
+export function fold<RM, RN, RQ>(
+  dict: Dict$<RM, RN>,
+  initial: RQ,
+  fun: (x0: RQ, x1: RM, x2: RN) => RQ
+): RQ;
 
-export function map_values<MV, MW, MZ>(
-  dict: Dict$<MV, MW>,
-  fun: (x0: MV, x1: MW) => MZ
-): Dict$<MV, MZ>;
+export function map_values<MW, MX, NA>(
+  dict: Dict$<MW, MX>,
+  fun: (x0: MW, x1: MX) => NA
+): Dict$<MW, NA>;
 
-export function filter<OH, OI>(
-  dict: Dict$<OH, OI>,
-  predicate: (x0: OH, x1: OI) => boolean
-): Dict$<OH, OI>;
+export function filter<OI, OJ>(
+  dict: Dict$<OI, OJ>,
+  predicate: (x0: OI, x1: OJ) => boolean
+): Dict$<OI, OJ>;
 
-export function each<RU, RV>(dict: Dict$<RU, RV>, fun: (x0: RU, x1: RV) => any): undefined;
+export function each<RV, RW>(dict: Dict$<RV, RW>, fun: (x0: RV, x1: RW) => any): undefined;
 
-export function combine<RZ, SA>(
-  dict: Dict$<RZ, SA>,
-  other: Dict$<RZ, SA>,
-  fun: (x0: SA, x1: SA) => SA
-): Dict$<RZ, SA>;
+export function combine<SA, SB>(
+  dict: Dict$<SA, SB>,
+  other: Dict$<SA, SB>,
+  fun: (x0: SB, x1: SB) => SB
+): Dict$<SA, SB>;

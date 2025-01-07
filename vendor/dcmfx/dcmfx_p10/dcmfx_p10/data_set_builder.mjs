@@ -226,23 +226,31 @@ function add_part_in_sequence(builder, part) {
   $.hasLength(1) &&
   $.head instanceof RootDataSet) {
     return new Ok(
-      builder.withFields({
-        location: listPrepend(
-          new SequenceItem($data_set.new$()),
-          builder.location,
-        )
-      }),
+      (() => {
+        let _record = builder;
+        return new DataSetBuilder(
+          _record.file_preamble,
+          _record.file_meta_information,
+          listPrepend(new SequenceItem($data_set.new$()), builder.location),
+          _record.pending_data_element,
+          _record.is_complete,
+        );
+      })(),
     );
   } else if (part instanceof $p10_part.SequenceItemStart &&
   $.atLeastLength(1) &&
   $.head instanceof Sequence) {
     return new Ok(
-      builder.withFields({
-        location: listPrepend(
-          new SequenceItem($data_set.new$()),
-          builder.location,
-        )
-      }),
+      (() => {
+        let _record = builder;
+        return new DataSetBuilder(
+          _record.file_preamble,
+          _record.file_meta_information,
+          listPrepend(new SequenceItem($data_set.new$()), builder.location),
+          _record.pending_data_element,
+          _record.is_complete,
+        );
+      })(),
     );
   } else if (part instanceof $p10_part.SequenceDelimiter &&
   $.atLeastLength(1) &&
@@ -260,7 +268,18 @@ function add_part_in_sequence(builder, part) {
       tag,
       sequence,
     );
-    return new Ok(builder.withFields({ location: new_location }));
+    return new Ok(
+      (() => {
+        let _record = builder;
+        return new DataSetBuilder(
+          _record.file_preamble,
+          _record.file_meta_information,
+          new_location,
+          _record.pending_data_element,
+          _record.is_complete,
+        );
+      })(),
+    );
   } else {
     let part$1 = part;
     return unexpected_part_error(part$1, builder);
@@ -270,15 +289,22 @@ function add_part_in_sequence(builder, part) {
 function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
   let $ = builder.location;
   if (part instanceof $p10_part.PixelDataItem) {
-    let _pipe = builder.withFields({
-      pending_data_element: new Some(
-        new PendingDataElement(
-          $dictionary.item.tag,
-          new $value_representation.OtherByteString(),
-          toList([]),
+    let _pipe = (() => {
+      let _record = builder;
+      return new DataSetBuilder(
+        _record.file_preamble,
+        _record.file_meta_information,
+        _record.location,
+        new Some(
+          new PendingDataElement(
+            $dictionary.item.tag,
+            new $value_representation.OtherByteString(),
+            toList([]),
+          ),
         ),
-      )
-    });
+        _record.is_complete,
+      );
+    })();
     return new Ok(_pipe);
   } else if (part instanceof $p10_part.SequenceDelimiter &&
   $.atLeastLength(1) &&
@@ -309,7 +335,18 @@ function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
       $dictionary.pixel_data.tag,
       value,
     );
-    return new Ok(builder.withFields({ location: new_location }));
+    return new Ok(
+      (() => {
+        let _record = builder;
+        return new DataSetBuilder(
+          _record.file_preamble,
+          _record.file_meta_information,
+          new_location,
+          _record.pending_data_element,
+          _record.is_complete,
+        );
+      })(),
+    );
   } else {
     return unexpected_part_error(part, builder);
   }
@@ -319,11 +356,16 @@ function add_part_in_data_set(builder, part) {
   if (part instanceof $p10_part.DataElementHeader) {
     let tag = part.tag;
     let vr = part.vr;
-    let _pipe = builder.withFields({
-      pending_data_element: new Some(
-        new PendingDataElement(tag, vr, toList([])),
-      )
-    });
+    let _pipe = (() => {
+      let _record = builder;
+      return new DataSetBuilder(
+        _record.file_preamble,
+        _record.file_meta_information,
+        _record.location,
+        new Some(new PendingDataElement(tag, vr, toList([]))),
+        _record.is_complete,
+      );
+    })();
     return new Ok(_pipe);
   } else if (part instanceof $p10_part.SequenceStart) {
     let tag = part.tag;
@@ -337,9 +379,16 @@ function add_part_in_data_set(builder, part) {
         return new Sequence(tag, toList([]));
       }
     })();
-    let _pipe = builder.withFields({
-      location: listPrepend(new_location, builder.location)
-    });
+    let _pipe = (() => {
+      let _record = builder;
+      return new DataSetBuilder(
+        _record.file_preamble,
+        _record.file_meta_information,
+        listPrepend(new_location, builder.location),
+        _record.pending_data_element,
+        _record.is_complete,
+      );
+    })();
     return new Ok(_pipe);
   } else if (part instanceof $p10_part.SequenceItemDelimiter) {
     let $ = builder.location;
@@ -354,7 +403,18 @@ function add_part_in_data_set(builder, part) {
         new Sequence(tag, listPrepend(item_data_set, items)),
         rest,
       );
-      return new Ok(builder.withFields({ location: new_location }));
+      return new Ok(
+        (() => {
+          let _record = builder;
+          return new DataSetBuilder(
+            _record.file_preamble,
+            _record.file_meta_information,
+            new_location,
+            _record.pending_data_element,
+            _record.is_complete,
+          );
+        })(),
+      );
     } else {
       return new Error(
         new $p10_error.PartStreamInvalid(
@@ -367,7 +427,18 @@ function add_part_in_data_set(builder, part) {
   } else if (part instanceof $p10_part.End) {
     let $ = builder.location;
     if ($.hasLength(1) && $.head instanceof RootDataSet) {
-      return new Ok(builder.withFields({ is_complete: true }));
+      return new Ok(
+        (() => {
+          let _record = builder;
+          return new DataSetBuilder(
+            _record.file_preamble,
+            _record.file_meta_information,
+            _record.location,
+            _record.pending_data_element,
+            true,
+          );
+        })(),
+      );
     } else {
       return new Error(
         new $p10_error.PartStreamInvalid(
@@ -399,15 +470,28 @@ function add_part_in_pending_data_element(builder, part) {
         tag,
         value,
       );
-      let _pipe = builder.withFields({
-        location: new_location,
-        pending_data_element: new None()
-      });
+      let _pipe = (() => {
+        let _record = builder;
+        return new DataSetBuilder(
+          _record.file_preamble,
+          _record.file_meta_information,
+          new_location,
+          new None(),
+          _record.is_complete,
+        );
+      })();
       return new Ok(_pipe);
     } else {
-      let _pipe = builder.withFields({
-        pending_data_element: new Some(new PendingDataElement(tag, vr, data$1))
-      });
+      let _pipe = (() => {
+        let _record = builder;
+        return new DataSetBuilder(
+          _record.file_preamble,
+          _record.file_meta_information,
+          _record.location,
+          new Some(new PendingDataElement(tag, vr, data$1)),
+          _record.is_complete,
+        );
+      })();
       return new Ok(_pipe);
     }
   } else {
@@ -435,12 +519,30 @@ export function add_part(builder, part) {
           if (part instanceof $p10_part.FilePreambleAndDICMPrefix) {
             let preamble = part.preamble;
             return new Ok(
-              builder.withFields({ file_preamble: new Some(preamble) }),
+              (() => {
+                let _record = builder;
+                return new DataSetBuilder(
+                  new Some(preamble),
+                  _record.file_meta_information,
+                  _record.location,
+                  _record.pending_data_element,
+                  _record.is_complete,
+                );
+              })(),
             );
           } else if (part instanceof $p10_part.FileMetaInformation) {
             let data_set = part.data_set;
             return new Ok(
-              builder.withFields({ file_meta_information: new Some(data_set) }),
+              (() => {
+                let _record = builder;
+                return new DataSetBuilder(
+                  _record.file_preamble,
+                  new Some(data_set),
+                  _record.location,
+                  _record.pending_data_element,
+                  _record.is_complete,
+                );
+              })(),
             );
           } else if ($.atLeastLength(1) && $.head instanceof Sequence) {
             return add_part_in_sequence(builder, part);
@@ -461,7 +563,16 @@ export function force_end(builder) {
     builder.is_complete,
     builder,
     () => {
-      let builder$1 = builder.withFields({ pending_data_element: new None() });
+      let builder$1 = (() => {
+        let _record = builder;
+        return new DataSetBuilder(
+          _record.file_preamble,
+          _record.file_meta_information,
+          _record.location,
+          new None(),
+          _record.is_complete,
+        );
+      })();
       let part = (() => {
         let $ = builder$1.location;
         if ($.atLeastLength(1) && $.head instanceof Sequence) {

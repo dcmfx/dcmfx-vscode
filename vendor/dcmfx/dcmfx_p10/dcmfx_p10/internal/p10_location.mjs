@@ -378,9 +378,15 @@ function update_specific_character_set_clarifying_data_element(
           let new_location = map_clarifying_data_elements(
             location,
             (clarifying_data_elements) => {
-              return clarifying_data_elements.withFields({
-                specific_character_set: charset
-              });
+              let _record = clarifying_data_elements;
+              return new ClarifyingDataElements(
+                charset,
+                _record.bits_allocated,
+                _record.pixel_representation,
+                _record.waveform_bits_stored,
+                _record.waveform_bits_allocated,
+                _record.private_creators,
+              );
             },
           );
           return new Ok([toBitArray([stringBits("ISO_IR 192")]), new_location]);
@@ -397,9 +403,15 @@ function update_unsigned_short_clarifying_data_element(location, tag, value) {
     return map_clarifying_data_elements(
       _pipe,
       (clarifying_data_elements) => {
-        return clarifying_data_elements.withFields({
-          bits_allocated: new Some(value)
-        });
+        let _record = clarifying_data_elements;
+        return new ClarifyingDataElements(
+          _record.specific_character_set,
+          new Some(value),
+          _record.pixel_representation,
+          _record.waveform_bits_stored,
+          _record.waveform_bits_allocated,
+          _record.private_creators,
+        );
       },
     );
   } else if (isEqual(tag, $dictionary.pixel_representation.tag)) {
@@ -408,9 +420,15 @@ function update_unsigned_short_clarifying_data_element(location, tag, value) {
     return map_clarifying_data_elements(
       _pipe,
       (clarifying_data_elements) => {
-        return clarifying_data_elements.withFields({
-          pixel_representation: new Some(value)
-        });
+        let _record = clarifying_data_elements;
+        return new ClarifyingDataElements(
+          _record.specific_character_set,
+          _record.bits_allocated,
+          new Some(value),
+          _record.waveform_bits_stored,
+          _record.waveform_bits_allocated,
+          _record.private_creators,
+        );
       },
     );
   } else if (isEqual(tag, $dictionary.waveform_bits_stored.tag)) {
@@ -419,9 +437,15 @@ function update_unsigned_short_clarifying_data_element(location, tag, value) {
     return map_clarifying_data_elements(
       _pipe,
       (clarifying_data_elements) => {
-        return clarifying_data_elements.withFields({
-          waveform_bits_stored: new Some(value)
-        });
+        let _record = clarifying_data_elements;
+        return new ClarifyingDataElements(
+          _record.specific_character_set,
+          _record.bits_allocated,
+          _record.pixel_representation,
+          new Some(value),
+          _record.waveform_bits_allocated,
+          _record.private_creators,
+        );
       },
     );
   } else if (isEqual(tag, $dictionary.waveform_bits_allocated.tag)) {
@@ -430,9 +454,15 @@ function update_unsigned_short_clarifying_data_element(location, tag, value) {
     return map_clarifying_data_elements(
       _pipe,
       (clarifying_data_elements) => {
-        return clarifying_data_elements.withFields({
-          waveform_bits_allocated: new Some(value)
-        });
+        let _record = clarifying_data_elements;
+        return new ClarifyingDataElements(
+          _record.specific_character_set,
+          _record.bits_allocated,
+          _record.pixel_representation,
+          _record.waveform_bits_stored,
+          new Some(value),
+          _record.private_creators,
+        );
       },
     );
   } else {
@@ -457,13 +487,19 @@ function update_private_creator_clarifying_data_element(
       return map_clarifying_data_elements(
         _pipe,
         (clarifying_data_elements) => {
-          return clarifying_data_elements.withFields({
-            private_creators: $dict.insert(
+          let _record = clarifying_data_elements;
+          return new ClarifyingDataElements(
+            _record.specific_character_set,
+            _record.bits_allocated,
+            _record.pixel_representation,
+            _record.waveform_bits_stored,
+            _record.waveform_bits_allocated,
+            $dict.insert(
               clarifying_data_elements.private_creators,
               tag,
               private_creator$1,
-            )
-          });
+            ),
+          );
         },
       );
     } else {

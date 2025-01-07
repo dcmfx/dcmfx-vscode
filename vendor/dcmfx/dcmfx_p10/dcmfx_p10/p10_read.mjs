@@ -32,7 +32,6 @@ import {
   divideInt,
   isEqual,
   toBitArray,
-  sizedInt,
 } from "../gleam.mjs";
 
 export class P10ReadConfig extends $CustomType {
@@ -96,19 +95,38 @@ export function with_config(context, config) {
   let max_string_size = $int.max(config.max_string_size, max_part_size);
   let max_sequence_depth = $int.max(0, config.max_sequence_depth);
   let max_read_size = $int.max(config.max_string_size, config.max_part_size);
-  let config$1 = config.withFields({
-    max_part_size: max_part_size,
-    max_string_size: max_string_size,
-    max_sequence_depth: max_sequence_depth
-  });
-  return context.withFields({
-    config: config$1,
-    stream: $byte_stream.new$(max_read_size)
-  });
+  let config$1 = (() => {
+    let _record = config;
+    return new P10ReadConfig(
+      max_part_size,
+      max_string_size,
+      max_sequence_depth,
+      _record.require_ordered_data_elements,
+    );
+  })();
+  let _record = context;
+  return new P10ReadContext(
+    config$1,
+    $byte_stream.new$(max_read_size),
+    _record.next_action,
+    _record.transfer_syntax,
+    _record.path,
+    _record.location,
+    _record.sequence_depth,
+  );
 }
 
 export function set_fallback_transfer_syntax(context, transfer_syntax) {
-  return context.withFields({ transfer_syntax: transfer_syntax });
+  let _record = context;
+  return new P10ReadContext(
+    _record.config,
+    _record.stream,
+    _record.next_action,
+    transfer_syntax,
+    _record.path,
+    _record.location,
+    _record.sequence_depth,
+  );
 }
 
 export function transfer_syntax(context) {
@@ -173,11 +191,18 @@ function next_delimiter_part(context) {
         return context.path;
       }
     })();
-    let new_context = context.withFields({
-      path: new_path,
-      location: new_location,
-      sequence_depth: new_sequence_depth
-    });
+    let new_context = (() => {
+      let _record = context;
+      return new P10ReadContext(
+        _record.config,
+        _record.stream,
+        _record.next_action,
+        _record.transfer_syntax,
+        new_path,
+        new_location,
+        new_sequence_depth,
+      );
+    })();
     return [toList([part]), new_context];
   } else {
     return [toList([]), context];
@@ -270,7 +295,20 @@ export function write_bytes(context, bytes, done) {
   let $ = $byte_stream.write(context.stream, bytes, done);
   if ($.isOk()) {
     let stream = $[0];
-    return new Ok(context.withFields({ stream: stream }));
+    return new Ok(
+      (() => {
+        let _record = context;
+        return new P10ReadContext(
+          _record.config,
+          stream,
+          _record.next_action,
+          _record.transfer_syntax,
+          _record.path,
+          _record.location,
+          _record.sequence_depth,
+        );
+      })(),
+    );
   } else {
     let e = $[0];
     return new Error(
@@ -308,10 +346,10 @@ function read_file_preamble_and_dicm_prefix_part(context) {
         let new_stream = $1[0];
         return new Ok([preamble, new_stream[1]]);
       } else {
-        return new Ok([toBitArray([sizedInt(0, 8, true)]), context.stream]);
+        return new Ok([toBitArray([0]), context.stream]);
       }
     } else if (!$.isOk() && $[0] instanceof $byte_stream.DataEnd) {
-      return new Ok([toBitArray([sizedInt(0, 8, true)]), context.stream]);
+      return new Ok([toBitArray([0]), context.stream]);
     } else {
       let e = $[0];
       return new Error(map_byte_stream_error(context, e, "Reading file header"));
@@ -323,12 +361,18 @@ function read_file_preamble_and_dicm_prefix_part(context) {
       let preamble = _use0[0];
       let new_stream = _use0[1];
       let part = new $p10_part.FilePreambleAndDICMPrefix(preamble);
-      let new_context = context.withFields({
-        stream: new_stream,
-        next_action: new ReadFileMetaInformation(
-          $byte_stream.bytes_read(new_stream),
-        )
-      });
+      let new_context = (() => {
+        let _record = context;
+        return new P10ReadContext(
+          _record.config,
+          new_stream,
+          new ReadFileMetaInformation($byte_stream.bytes_read(new_stream)),
+          _record.transfer_syntax,
+          _record.path,
+          _record.location,
+          _record.sequence_depth,
+        );
+      })();
       return new Ok([toList([part]), new_context]);
     },
   );
@@ -668,10 +712,18 @@ function read_file_meta_information_data_set(
                                                   );
                                                 }
                                               })();
-                                              let new_context = context.withFields({
-                                                stream: new_stream,
-                                                transfer_syntax: transfer_syntax
-                                              });
+                                              let new_context = (() => {
+                                                let _record = context;
+                                                return new P10ReadContext(
+                                                  _record.config,
+                                                  new_stream,
+                                                  _record.next_action,
+                                                  transfer_syntax,
+                                                  _record.path,
+                                                  _record.location,
+                                                  _record.sequence_depth,
+                                                );
+                                              })();
                                               return read_file_meta_information_data_set(
                                                 new_context,
                                                 starts_at,
@@ -764,10 +816,18 @@ function read_file_meta_information_part(context, starts_at) {
               return fmi_data_set$1;
             }
           })();
-          let new_context$1 = new_context.withFields({
-            stream: new_stream,
-            next_action: new ReadDataElementHeader()
-          });
+          let new_context$1 = (() => {
+            let _record = new_context;
+            return new P10ReadContext(
+              _record.config,
+              new_stream,
+              new ReadDataElementHeader(),
+              _record.transfer_syntax,
+              _record.path,
+              _record.location,
+              _record.sequence_depth,
+            );
+          })();
           return [fmi_data_set$1, new_context$1];
         },
       );
@@ -856,8 +916,8 @@ function read_explicit_vr_and_length(context, tag) {
         let vr = $1[0];
         return new Ok(vr);
       } else {
-        if (vr_bytes.byteAt(0) === 0x20 &&
-        vr_bytes.byteAt(1) === 0x20 &&
+        if (vr_bytes.byteAt(0) === 32 &&
+        vr_bytes.byteAt(1) === 32 &&
         vr_bytes.length == 2) {
           return new Ok(new $value_representation.Unknown());
         } else {
@@ -1188,12 +1248,18 @@ function read_data_element_header_part(context) {
                       )
                     }
                     let new_path = $2[0];
-                    let new_context = context.withFields({
-                      stream: new_stream,
-                      path: new_path,
-                      location: new_location,
-                      sequence_depth: context.sequence_depth + 1
-                    });
+                    let new_context = (() => {
+                      let _record = context;
+                      return new P10ReadContext(
+                        _record.config,
+                        new_stream,
+                        _record.next_action,
+                        _record.transfer_syntax,
+                        new_path,
+                        new_location,
+                        context.sequence_depth + 1,
+                      );
+                    })();
                     return new Ok([toList([part]), new_context]);
                   },
                 );
@@ -1271,12 +1337,18 @@ function read_data_element_header_part(context) {
                       )
                     }
                     let new_path = $2[0];
-                    let new_context = context.withFields({
-                      stream: new_stream,
-                      path: new_path,
-                      location: new_location,
-                      sequence_depth: context.sequence_depth + 1
-                    });
+                    let new_context = (() => {
+                      let _record = context;
+                      return new P10ReadContext(
+                        _record.config,
+                        new_stream,
+                        _record.next_action,
+                        _record.transfer_syntax,
+                        new_path,
+                        new_location,
+                        context.sequence_depth + 1,
+                      );
+                    })();
                     return new Ok([toList([part]), new_context]);
                   },
                 );
@@ -1334,11 +1406,18 @@ function read_data_element_header_part(context) {
                   )
                 }
                 let new_path = $2[0];
-                let new_context = context.withFields({
-                  stream: new_stream,
-                  path: new_path,
-                  location: new_location
-                });
+                let new_context = (() => {
+                  let _record = context;
+                  return new P10ReadContext(
+                    _record.config,
+                    new_stream,
+                    _record.next_action,
+                    _record.transfer_syntax,
+                    new_path,
+                    new_location,
+                    _record.sequence_depth,
+                  );
+                })();
                 return new Ok([toList([part]), new_context]);
               },
             );
@@ -1347,16 +1426,6 @@ function read_data_element_header_part(context) {
           $1 instanceof $value_length.Undefined &&
           (isEqual($, $dictionary.pixel_data.tag))) {
             let tag = $;
-            if (!(vr instanceof Some)) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                826,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: vr }
-              )
-            }
             let vr$1 = vr[0];
             let part = new $p10_part.SequenceStart(tag, vr$1);
             let new_location = (() => {
@@ -1393,12 +1462,18 @@ function read_data_element_header_part(context) {
                   )
                 }
                 let new_path = $2[0];
-                let new_context = context.withFields({
-                  stream: new_stream,
-                  next_action: new ReadPixelDataItem(vr$1),
-                  location: new_location,
-                  path: new_path
-                });
+                let new_context = (() => {
+                  let _record = context;
+                  return new P10ReadContext(
+                    _record.config,
+                    new_stream,
+                    new ReadPixelDataItem(vr$1),
+                    _record.transfer_syntax,
+                    new_path,
+                    new_location,
+                    _record.sequence_depth,
+                  );
+                })();
                 return new Ok([toList([part]), new_context]);
               },
             );
@@ -1407,16 +1482,6 @@ function read_data_element_header_part(context) {
           $1 instanceof $value_length.Undefined &&
           (isEqual($, $dictionary.pixel_data.tag))) {
             let tag = $;
-            if (!(vr instanceof Some)) {
-              throw makeError(
-                "let_assert",
-                "dcmfx_p10/p10_read",
-                826,
-                "",
-                "Pattern match failed, no pattern matched the value.",
-                { value: vr }
-              )
-            }
             let vr$1 = vr[0];
             let part = new $p10_part.SequenceStart(tag, vr$1);
             let new_location = (() => {
@@ -1453,12 +1518,18 @@ function read_data_element_header_part(context) {
                   )
                 }
                 let new_path = $2[0];
-                let new_context = context.withFields({
-                  stream: new_stream,
-                  next_action: new ReadPixelDataItem(vr$1),
-                  location: new_location,
-                  path: new_path
-                });
+                let new_context = (() => {
+                  let _record = context;
+                  return new P10ReadContext(
+                    _record.config,
+                    new_stream,
+                    new ReadPixelDataItem(vr$1),
+                    _record.transfer_syntax,
+                    new_path,
+                    new_location,
+                    _record.sequence_depth,
+                  );
+                })();
                 return new Ok([toList([part]), new_context]);
               },
             );
@@ -1503,12 +1574,18 @@ function read_data_element_header_part(context) {
             let new_path = $2[1];
             let new_location = $2[2];
             let new_sequence_depth = $2[3];
-            let new_context = context.withFields({
-              stream: new_stream,
-              path: new_path,
-              location: new_location,
-              sequence_depth: new_sequence_depth
-            });
+            let new_context = (() => {
+              let _record = context;
+              return new P10ReadContext(
+                _record.config,
+                new_stream,
+                _record.next_action,
+                _record.transfer_syntax,
+                new_path,
+                new_location,
+                new_sequence_depth,
+              );
+            })();
             return new Ok([parts, new_context]);
           } else if (vr instanceof None &&
           $1 instanceof $value_length.Defined &&
@@ -1545,11 +1622,18 @@ function read_data_element_header_part(context) {
                   )
                 }
                 let new_path = $2[0];
-                let new_context = context.withFields({
-                  stream: new_stream,
-                  path: new_path,
-                  location: new_location
-                });
+                let new_context = (() => {
+                  let _record = context;
+                  return new P10ReadContext(
+                    _record.config,
+                    new_stream,
+                    _record.next_action,
+                    _record.transfer_syntax,
+                    new_path,
+                    new_location,
+                    _record.sequence_depth,
+                  );
+                })();
                 return new Ok([toList([part]), new_context]);
               },
             );
@@ -1651,12 +1735,18 @@ function read_data_element_header_part(context) {
                     return $result.try$(
                       new_path,
                       (new_path) => {
-                        let new_context = context.withFields({
-                          stream: new_stream,
-                          next_action: next_action,
-                          location: new_location,
-                          path: new_path
-                        });
+                        let new_context = (() => {
+                          let _record = context;
+                          return new P10ReadContext(
+                            _record.config,
+                            new_stream,
+                            next_action,
+                            _record.transfer_syntax,
+                            new_path,
+                            new_location,
+                            _record.sequence_depth,
+                          );
+                        })();
                         return new Ok([parts, new_context]);
                       },
                     );
@@ -1810,12 +1900,18 @@ function read_data_element_value_bytes_part(
                 return context.path;
               }
             })();
-            let new_context = context.withFields({
-              stream: new_stream,
-              next_action: next_action,
-              path: new_path,
-              location: new_location
-            });
+            let new_context = (() => {
+              let _record = context;
+              return new P10ReadContext(
+                _record.config,
+                new_stream,
+                next_action,
+                _record.transfer_syntax,
+                new_path,
+                new_location,
+                _record.sequence_depth,
+              );
+            })();
             return new Ok([parts, new_context]);
           },
         );
@@ -1865,11 +1961,18 @@ function read_pixel_data_item_part(context, vr) {
         )
       }
       let new_path = $1[0];
-      let new_context = context.withFields({
-        stream: new_stream,
-        next_action: next_action,
-        path: new_path
-      });
+      let new_context = (() => {
+        let _record = context;
+        return new P10ReadContext(
+          _record.config,
+          new_stream,
+          next_action,
+          _record.transfer_syntax,
+          new_path,
+          _record.location,
+          _record.sequence_depth,
+        );
+      })();
       return new Ok([toList([part]), new_context]);
     } else if (header instanceof DataElementHeader &&
     header.vr instanceof None &&
@@ -1908,12 +2011,18 @@ function read_pixel_data_item_part(context, vr) {
           }
           let new_path = $1[0];
           let next_action = new ReadDataElementHeader();
-          let new_context = context.withFields({
-            stream: new_stream,
-            next_action: next_action,
-            location: new_location,
-            path: new_path
-          });
+          let new_context = (() => {
+            let _record = context;
+            return new P10ReadContext(
+              _record.config,
+              new_stream,
+              next_action,
+              _record.transfer_syntax,
+              new_path,
+              new_location,
+              _record.sequence_depth,
+            );
+          })();
           return new Ok([toList([part]), new_context]);
         },
       );

@@ -181,7 +181,7 @@ export const iso_ir_166 = /* @__PURE__ */ new SingleByteWithoutExtensions(
 );
 
 const iso_ir_6_code_element = /* @__PURE__ */ new CodeElement(
-  /* @__PURE__ */ toBitArray([0x28, 0x42]),
+  /* @__PURE__ */ toBitArray([40, 66]),
   $iso_ir_6.decode_next_codepoint,
 );
 
@@ -198,7 +198,7 @@ export const iso_2022_ir_100 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x41]),
+      /* @__PURE__ */ toBitArray([45, 65]),
       $iso_8859_1.decode_next_codepoint,
     ),
   ),
@@ -210,7 +210,7 @@ export const iso_2022_ir_101 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x42]),
+      /* @__PURE__ */ toBitArray([45, 66]),
       $iso_8859_2.decode_next_codepoint,
     ),
   ),
@@ -222,7 +222,7 @@ export const iso_2022_ir_109 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x43]),
+      /* @__PURE__ */ toBitArray([45, 67]),
       $iso_8859_3.decode_next_codepoint,
     ),
   ),
@@ -234,7 +234,7 @@ export const iso_2022_ir_110 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x44]),
+      /* @__PURE__ */ toBitArray([45, 68]),
       $iso_8859_4.decode_next_codepoint,
     ),
   ),
@@ -246,7 +246,7 @@ export const iso_2022_ir_144 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x4C]),
+      /* @__PURE__ */ toBitArray([45, 76]),
       $iso_8859_5.decode_next_codepoint,
     ),
   ),
@@ -258,7 +258,7 @@ export const iso_2022_ir_127 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x47]),
+      /* @__PURE__ */ toBitArray([45, 71]),
       $iso_8859_6.decode_next_codepoint,
     ),
   ),
@@ -270,7 +270,7 @@ export const iso_2022_ir_126 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x46]),
+      /* @__PURE__ */ toBitArray([45, 70]),
       $iso_8859_7.decode_next_codepoint,
     ),
   ),
@@ -282,7 +282,7 @@ export const iso_2022_ir_138 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x48]),
+      /* @__PURE__ */ toBitArray([45, 72]),
       $iso_8859_8.decode_next_codepoint,
     ),
   ),
@@ -294,7 +294,7 @@ export const iso_2022_ir_148 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x4D]),
+      /* @__PURE__ */ toBitArray([45, 77]),
       $iso_8859_9.decode_next_codepoint,
     ),
   ),
@@ -306,7 +306,7 @@ export const iso_2022_ir_203 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x62]),
+      /* @__PURE__ */ toBitArray([45, 98]),
       $iso_8859_15.decode_next_codepoint,
     ),
   ),
@@ -316,12 +316,12 @@ export const iso_2022_ir_13 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 13",
   "Japanese",
   /* @__PURE__ */ new CodeElement(
-    /* @__PURE__ */ toBitArray([0x28, 0x4A]),
+    /* @__PURE__ */ toBitArray([40, 74]),
     $jis_x_0201.decode_next_codepoint,
   ),
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x29, 0x49]),
+      /* @__PURE__ */ toBitArray([41, 73]),
       $jis_x_0201.decode_next_codepoint,
     ),
   ),
@@ -333,7 +333,7 @@ export const iso_2022_ir_166 = /* @__PURE__ */ new SingleByteWithExtensions(
   iso_ir_6_code_element,
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x2D, 0x54]),
+      /* @__PURE__ */ toBitArray([45, 84]),
       $iso_8859_11.decode_next_codepoint,
     ),
   ),
@@ -344,7 +344,7 @@ export const iso_2022_ir_87 = /* @__PURE__ */ new MultiByteWithExtensions(
   "Japanese",
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x24, 0x42]),
+      /* @__PURE__ */ toBitArray([36, 66]),
       $jis_x_0208.decode_next_codepoint,
     ),
   ),
@@ -356,7 +356,7 @@ export const iso_2022_ir_159 = /* @__PURE__ */ new MultiByteWithExtensions(
   "Japanese",
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x24, 0x28, 0x44]),
+      /* @__PURE__ */ toBitArray([36, 40, 68]),
       $jis_x_0212.decode_next_codepoint,
     ),
   ),
@@ -369,7 +369,7 @@ export const iso_2022_ir_149 = /* @__PURE__ */ new MultiByteWithExtensions(
   /* @__PURE__ */ new None(),
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x24, 0x29, 0x43]),
+      /* @__PURE__ */ toBitArray([36, 41, 67]),
       $ks_x_1001.decode_next_codepoint,
     ),
   ),
@@ -381,7 +381,7 @@ export const iso_2022_ir_58 = /* @__PURE__ */ new MultiByteWithExtensions(
   /* @__PURE__ */ new None(),
   /* @__PURE__ */ new Some(
     /* @__PURE__ */ new CodeElement(
-      /* @__PURE__ */ toBitArray([0x24, 0x29, 0x41]),
+      /* @__PURE__ */ toBitArray([36, 41, 65]),
       $gb_18030.decode_next_codepoint,
     ),
   ),

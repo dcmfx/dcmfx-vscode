@@ -51,7 +51,8 @@ export function bit_array(data) {
 }
 
 function put_expected(error, expected) {
-  return error.withFields({ expected: expected });
+  let _record = error;
+  return new DecodeError(expected, _record.found, _record.path);
 }
 
 export function int(data) {
@@ -154,7 +155,12 @@ function push_path(error, name) {
       return $string_tree.to_string(_pipe$1);
     }
   })();
-  return error.withFields({ path: listPrepend(name$2, error.path) });
+  let _record = error;
+  return new DecodeError(
+    _record.expected,
+    _record.found,
+    listPrepend(name$2, error.path),
+  );
 }
 
 export function result(decode_ok, decode_error) {

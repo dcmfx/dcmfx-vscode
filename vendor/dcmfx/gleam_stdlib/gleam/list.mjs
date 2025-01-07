@@ -371,7 +371,7 @@ function reverse_and_prepend(loop$prefix, loop$suffix) {
   }
 }
 
-function concat_loop(loop$lists, loop$acc) {
+function flatten_loop(loop$lists, loop$acc) {
   while (true) {
     let lists = loop$lists;
     let acc = loop$acc;
@@ -386,12 +386,8 @@ function concat_loop(loop$lists, loop$acc) {
   }
 }
 
-export function concat(lists) {
-  return concat_loop(lists, toList([]));
-}
-
 export function flatten(lists) {
-  return concat_loop(lists, toList([]));
+  return flatten_loop(lists, toList([]));
 }
 
 export function flat_map(list, fun) {
@@ -1720,7 +1716,7 @@ function log_random() {
     throw makeError(
       "let_assert",
       "gleam/list",
-      2404,
+      2388,
       "log_random",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -1743,7 +1739,7 @@ function sample_loop(loop$list, loop$reservoir, loop$k, loop$index, loop$w) {
         throw makeError(
           "let_assert",
           "gleam/list",
-          2384,
+          2368,
           "sample_loop",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }

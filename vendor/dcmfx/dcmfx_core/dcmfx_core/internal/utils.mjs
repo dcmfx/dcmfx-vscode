@@ -4,11 +4,11 @@ import * as $float from "../../../gleam_stdlib/gleam/float.mjs";
 import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
+import { Ok, Error, toList, makeError } from "../../gleam.mjs";
 import {
   utils__string_fast_length as string_fast_length,
   utils__pad_start as pad_start,
-} from "../../dcmfx_core_ffi.mjs";
-import { Ok, Error, toList, makeError } from "../../gleam.mjs";
+} from "./utils_ffi.mjs";
 
 export { pad_start, string_fast_length };
 
@@ -208,7 +208,7 @@ export function inspect_bit_array(bits, max_length) {
     if ($1) {
       return "]";
     } else {
-      return " ...]";
+      return " …]";
     }
   })();
   return s + suffix;

@@ -95,7 +95,13 @@ export function add_part(context, part) {
       let $ = $p10_filter_transform.add_part(context.filter_transform, part);
       let filter_transform = $[0];
       let filter_result = $[1];
-      let context$1 = context.withFields({ filter_transform: filter_transform });
+      let context$1 = (() => {
+        let _record = context;
+        return new P10InsertTransform(
+          _record.data_elements_to_insert,
+          filter_transform,
+        );
+      })();
       return $bool.guard(
         !filter_result,
         [context$1, toList([])],
@@ -113,9 +119,13 @@ export function add_part(context, part) {
                 );
                 let parts_to_insert = $1[0];
                 let data_elements_to_insert = $1[1];
-                let context$2 = context$1.withFields({
-                  data_elements_to_insert: data_elements_to_insert
-                });
+                let context$2 = (() => {
+                  let _record = context$1;
+                  return new P10InsertTransform(
+                    data_elements_to_insert,
+                    _record.filter_transform,
+                  );
+                })();
                 let parts = (() => {
                   let _pipe = listPrepend(part, parts_to_insert);
                   return $list.reverse(_pipe);
@@ -130,9 +140,13 @@ export function add_part(context, part) {
                 );
                 let parts_to_insert = $1[0];
                 let data_elements_to_insert = $1[1];
-                let context$2 = context$1.withFields({
-                  data_elements_to_insert: data_elements_to_insert
-                });
+                let context$2 = (() => {
+                  let _record = context$1;
+                  return new P10InsertTransform(
+                    data_elements_to_insert,
+                    _record.filter_transform,
+                  );
+                })();
                 let parts = (() => {
                   let _pipe = listPrepend(part, parts_to_insert);
                   return $list.reverse(_pipe);
@@ -149,9 +163,13 @@ export function add_part(context, part) {
                     },
                   );
                 })();
-                let context$2 = context$1.withFields({
-                  data_elements_to_insert: toList([])
-                });
+                let context$2 = (() => {
+                  let _record = context$1;
+                  return new P10InsertTransform(
+                    toList([]),
+                    _record.filter_transform,
+                  );
+                })();
                 let parts$1 = (() => {
                   let _pipe = listPrepend(new $p10_part.End(), parts);
                   return $list.reverse(_pipe);

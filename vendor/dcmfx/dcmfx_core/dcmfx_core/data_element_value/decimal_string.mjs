@@ -7,7 +7,7 @@ import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
-import { decimal_string__float_to_shortest_string as float_to_shortest_string } from "../../dcmfx_core_ffi.mjs";
+import { float_to_shortest_string } from "./decimal_string_ffi.mjs";
 
 export function from_bytes(bytes) {
   let decimal_string = (() => {

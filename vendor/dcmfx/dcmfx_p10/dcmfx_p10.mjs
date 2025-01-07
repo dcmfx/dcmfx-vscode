@@ -18,8 +18,10 @@ export function is_valid_bytes(bytes) {
   bytes.byteAt(129) === 0x49 &&
   bytes.byteAt(130) === 0x43 &&
   bytes.byteAt(131) === 0x4D &&
-  bytes.intFromSlice(132, 134, false, false) === 2 &&
-  bytes.intFromSlice(134, 136, false, false) === 0 &&
+  bytes.byteAt(132) === 2 &&
+  bytes.byteAt(133) === 0 &&
+  bytes.byteAt(134) === 0 &&
+  bytes.byteAt(135) === 0 &&
   bytes.byteAt(136) === 0x55 &&
   bytes.byteAt(137) === 0x4C &&
   bytes.length >= 138) {

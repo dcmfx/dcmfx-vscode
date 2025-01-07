@@ -289,7 +289,12 @@ function push_path(layer, path) {
   let errors = $list.map(
     layer[1],
     (error) => {
-      return error.withFields({ path: $list.append(path$1, error.path) });
+      let _record = error;
+      return new DecodeError(
+        _record.expected,
+        _record.found,
+        $list.append(path$1, error.path),
+      );
     },
   );
   return [layer[0], errors];

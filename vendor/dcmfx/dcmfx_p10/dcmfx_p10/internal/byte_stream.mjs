@@ -216,19 +216,38 @@ function inflate_up_to_max_read_size(stream) {
         $1[0] instanceof $inflate_result.Finished &&
         $1[0][0].length == 0 &&
         (stream.is_writing_finished)) {
-          return new Ok(stream.withFields({ zlib_inflate_complete: true }));
+          return new Ok(
+            (() => {
+              let _record = stream;
+              return new ByteStream(
+                _record.bytes_queue,
+                _record.bytes_queue_size,
+                _record.bytes_read,
+                _record.max_read_size,
+                _record.is_writing_finished,
+                _record.zlib_stream,
+                true,
+              );
+            })(),
+          );
         } else if ($1.isOk() && $1[0] instanceof $inflate_result.Continue) {
           let bytes = $1[0][0];
           if (bytes.length == 0) {
             return new Ok(stream);
           } else {
             let bytes$1 = bytes;
-            let _pipe = stream.withFields({
-              bytes_queue: $deque.push_back(stream.bytes_queue, bytes$1),
-              bytes_queue_size: stream.bytes_queue_size + $bit_array.byte_size(
-                bytes$1,
-              )
-            });
+            let _pipe = (() => {
+              let _record = stream;
+              return new ByteStream(
+                $deque.push_back(stream.bytes_queue, bytes$1),
+                stream.bytes_queue_size + $bit_array.byte_size(bytes$1),
+                _record.bytes_read,
+                _record.max_read_size,
+                _record.is_writing_finished,
+                _record.zlib_stream,
+                _record.zlib_inflate_complete,
+              );
+            })();
             return inflate_up_to_max_read_size(_pipe);
           }
         } else if ($1.isOk() && $1[0] instanceof $inflate_result.Finished) {
@@ -237,12 +256,18 @@ function inflate_up_to_max_read_size(stream) {
             return new Ok(stream);
           } else {
             let bytes$1 = bytes;
-            let _pipe = stream.withFields({
-              bytes_queue: $deque.push_back(stream.bytes_queue, bytes$1),
-              bytes_queue_size: stream.bytes_queue_size + $bit_array.byte_size(
-                bytes$1,
-              )
-            });
+            let _pipe = (() => {
+              let _record = stream;
+              return new ByteStream(
+                $deque.push_back(stream.bytes_queue, bytes$1),
+                stream.bytes_queue_size + $bit_array.byte_size(bytes$1),
+                _record.bytes_read,
+                _record.max_read_size,
+                _record.is_writing_finished,
+                _record.zlib_stream,
+                _record.zlib_inflate_complete,
+              );
+            })();
             return inflate_up_to_max_read_size(_pipe);
           }
         } else {
@@ -296,11 +321,18 @@ export function write(stream, data, done) {
           let bytes_queue_size = stream.bytes_queue_size + $bit_array.byte_size(
             new_bytes,
           );
-          let stream$1 = stream.withFields({
-            bytes_queue: bytes_queue,
-            bytes_queue_size: bytes_queue_size,
-            is_writing_finished: done
-          });
+          let stream$1 = (() => {
+            let _record = stream;
+            return new ByteStream(
+              bytes_queue,
+              bytes_queue_size,
+              _record.bytes_read,
+              _record.max_read_size,
+              done,
+              _record.zlib_stream,
+              _record.zlib_inflate_complete,
+            );
+          })();
           return inflate_up_to_max_read_size(stream$1);
         },
       );
@@ -322,11 +354,18 @@ export function read(stream, byte_count) {
             let $1 = do_read(stream.bytes_queue, byte_count, toList([]));
             let bytes = $1[0];
             let new_bytes_queue = $1[1];
-            let new_stream = stream.withFields({
-              bytes_queue: new_bytes_queue,
-              bytes_queue_size: stream.bytes_queue_size - byte_count,
-              bytes_read: stream.bytes_read + byte_count
-            });
+            let new_stream = (() => {
+              let _record = stream;
+              return new ByteStream(
+                new_bytes_queue,
+                stream.bytes_queue_size - byte_count,
+                stream.bytes_read + byte_count,
+                _record.max_read_size,
+                _record.is_writing_finished,
+                _record.zlib_stream,
+                _record.zlib_inflate_complete,
+              );
+            })();
             return $result.try$(
               inflate_up_to_max_read_size(new_stream),
               (new_stream) => { return new Ok([bytes, new_stream]); },
@@ -355,11 +394,17 @@ export function start_zlib_inflate(stream) {
     return $bit_array.concat(_pipe$1);
   })();
   let is_writing_finished = stream.is_writing_finished;
-  let stream$1 = stream.withFields({
-    bytes_queue: $deque.new$(),
-    bytes_queue_size: 0,
-    is_writing_finished: false,
-    zlib_stream: new Some(zlib_stream)
-  });
+  let stream$1 = (() => {
+    let _record = stream;
+    return new ByteStream(
+      $deque.new$(),
+      0,
+      _record.bytes_read,
+      _record.max_read_size,
+      false,
+      new Some(zlib_stream),
+      _record.zlib_inflate_complete,
+    );
+  })();
   return write(stream$1, available_bytes, is_writing_finished);
 }

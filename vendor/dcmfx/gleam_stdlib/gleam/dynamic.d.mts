@@ -45,140 +45,161 @@ export function shallow_list(value: Dynamic$): _.Result<
   _.List<DecodeError$>
 >;
 
-export function optional<CJX>(
-  decode: (x0: Dynamic$) => _.Result<CJX, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<$option.Option$<CJX>, _.List<DecodeError$>>;
+export function optional<CJF>(
+  decode: (x0: Dynamic$) => _.Result<CJF, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<$option.Option$<CJF>, _.List<DecodeError$>>;
 
-export function any<CNX>(
-  decoders: _.List<(x0: Dynamic$) => _.Result<CNX, _.List<DecodeError$>>>
-): (x0: Dynamic$) => _.Result<CNX, _.List<DecodeError$>>;
+export function any<CNF>(
+  decoders: _.List<(x0: Dynamic$) => _.Result<CNF, _.List<DecodeError$>>>
+): (x0: Dynamic$) => _.Result<CNF, _.List<DecodeError$>>;
 
-export function decode1<COB, COC>(
-  constructor: (x0: COB) => COC,
-  t1: (x0: Dynamic$) => _.Result<COB, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<COC, _.List<DecodeError$>>;
+export function decode1<CNJ, CNK>(
+  constructor: (x0: CNJ) => CNK,
+  t1: (x0: Dynamic$) => _.Result<CNJ, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CNK, _.List<DecodeError$>>;
 
-export function result<CJF, CJH>(
-  decode_ok: (x0: Dynamic$) => _.Result<CJF, _.List<DecodeError$>>,
-  decode_error: (x0: Dynamic$) => _.Result<CJH, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<_.Result<CJF, CJH>, _.List<DecodeError$>>;
+export function result<CIN, CIP>(
+  decode_ok: (x0: Dynamic$) => _.Result<CIN, _.List<DecodeError$>>,
+  decode_error: (x0: Dynamic$) => _.Result<CIP, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<_.Result<CIN, CIP>, _.List<DecodeError$>>;
 
-export function list<CJS>(
-  decoder_type: (x0: Dynamic$) => _.Result<CJS, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<_.List<CJS>, _.List<DecodeError$>>;
+export function list<CJA>(
+  decoder_type: (x0: Dynamic$) => _.Result<CJA, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<_.List<CJA>, _.List<DecodeError$>>;
 
 export function string(data: Dynamic$): _.Result<string, _.List<DecodeError$>>;
 
-export function field<CKH>(
+export function field<CJP>(
   name: any,
-  inner_type: (x0: Dynamic$) => _.Result<CKH, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<CKH, _.List<DecodeError$>>;
+  inner_type: (x0: Dynamic$) => _.Result<CJP, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CJP, _.List<DecodeError$>>;
 
-export function optional_field<CKL>(
+export function optional_field<CJT>(
   name: any,
-  inner_type: (x0: Dynamic$) => _.Result<CKL, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<$option.Option$<CKL>, _.List<DecodeError$>>;
+  inner_type: (x0: Dynamic$) => _.Result<CJT, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<$option.Option$<CJT>, _.List<DecodeError$>>;
 
-export function element<CKT>(
+export function element<CKB>(
   index: number,
-  inner_type: (x0: Dynamic$) => _.Result<CKT, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<CKT, _.List<DecodeError$>>;
+  inner_type: (x0: Dynamic$) => _.Result<CKB, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CKB, _.List<DecodeError$>>;
 
-export function tuple2<CLT, CLV>(
-  decode1: (x0: Dynamic$) => _.Result<CLT, _.List<DecodeError$>>,
-  decode2: (x0: Dynamic$) => _.Result<CLV, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<[CLT, CLV], _.List<DecodeError$>>;
+export function tuple2<CLB, CLD>(
+  decode1: (x0: Dynamic$) => _.Result<CLB, _.List<DecodeError$>>,
+  decode2: (x0: Dynamic$) => _.Result<CLD, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<[CLB, CLD], _.List<DecodeError$>>;
 
-export function tuple3<CLY, CMA, CMC>(
-  decode1: (x0: Dynamic$) => _.Result<CLY, _.List<DecodeError$>>,
-  decode2: (x0: Dynamic$) => _.Result<CMA, _.List<DecodeError$>>,
-  decode3: (x0: Dynamic$) => _.Result<CMC, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<[CLY, CMA, CMC], _.List<DecodeError$>>;
+export function tuple3<CLG, CLI, CLK>(
+  decode1: (x0: Dynamic$) => _.Result<CLG, _.List<DecodeError$>>,
+  decode2: (x0: Dynamic$) => _.Result<CLI, _.List<DecodeError$>>,
+  decode3: (x0: Dynamic$) => _.Result<CLK, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<[CLG, CLI, CLK], _.List<DecodeError$>>;
 
-export function tuple4<CMF, CMH, CMJ, CML>(
-  decode1: (x0: Dynamic$) => _.Result<CMF, _.List<DecodeError$>>,
-  decode2: (x0: Dynamic$) => _.Result<CMH, _.List<DecodeError$>>,
-  decode3: (x0: Dynamic$) => _.Result<CMJ, _.List<DecodeError$>>,
-  decode4: (x0: Dynamic$) => _.Result<CML, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<[CMF, CMH, CMJ, CML], _.List<DecodeError$>>;
+export function tuple4<CLN, CLP, CLR, CLT>(
+  decode1: (x0: Dynamic$) => _.Result<CLN, _.List<DecodeError$>>,
+  decode2: (x0: Dynamic$) => _.Result<CLP, _.List<DecodeError$>>,
+  decode3: (x0: Dynamic$) => _.Result<CLR, _.List<DecodeError$>>,
+  decode4: (x0: Dynamic$) => _.Result<CLT, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<[CLN, CLP, CLR, CLT], _.List<DecodeError$>>;
 
-export function tuple5<CMO, CMQ, CMS, CMU, CMW>(
-  decode1: (x0: Dynamic$) => _.Result<CMO, _.List<DecodeError$>>,
-  decode2: (x0: Dynamic$) => _.Result<CMQ, _.List<DecodeError$>>,
-  decode3: (x0: Dynamic$) => _.Result<CMS, _.List<DecodeError$>>,
-  decode4: (x0: Dynamic$) => _.Result<CMU, _.List<DecodeError$>>,
-  decode5: (x0: Dynamic$) => _.Result<CMW, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<[CMO, CMQ, CMS, CMU, CMW], _.List<DecodeError$>>;
+export function tuple5<CLW, CLY, CMA, CMC, CME>(
+  decode1: (x0: Dynamic$) => _.Result<CLW, _.List<DecodeError$>>,
+  decode2: (x0: Dynamic$) => _.Result<CLY, _.List<DecodeError$>>,
+  decode3: (x0: Dynamic$) => _.Result<CMA, _.List<DecodeError$>>,
+  decode4: (x0: Dynamic$) => _.Result<CMC, _.List<DecodeError$>>,
+  decode5: (x0: Dynamic$) => _.Result<CME, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<[CLW, CLY, CMA, CMC, CME], _.List<DecodeError$>>;
 
-export function tuple6<CMZ, CNB, CND, CNF, CNH, CNJ>(
-  decode1: (x0: Dynamic$) => _.Result<CMZ, _.List<DecodeError$>>,
-  decode2: (x0: Dynamic$) => _.Result<CNB, _.List<DecodeError$>>,
-  decode3: (x0: Dynamic$) => _.Result<CND, _.List<DecodeError$>>,
-  decode4: (x0: Dynamic$) => _.Result<CNF, _.List<DecodeError$>>,
-  decode5: (x0: Dynamic$) => _.Result<CNH, _.List<DecodeError$>>,
-  decode6: (x0: Dynamic$) => _.Result<CNJ, _.List<DecodeError$>>
+export function tuple6<CMH, CMJ, CML, CMN, CMP, CMR>(
+  decode1: (x0: Dynamic$) => _.Result<CMH, _.List<DecodeError$>>,
+  decode2: (x0: Dynamic$) => _.Result<CMJ, _.List<DecodeError$>>,
+  decode3: (x0: Dynamic$) => _.Result<CML, _.List<DecodeError$>>,
+  decode4: (x0: Dynamic$) => _.Result<CMN, _.List<DecodeError$>>,
+  decode5: (x0: Dynamic$) => _.Result<CMP, _.List<DecodeError$>>,
+  decode6: (x0: Dynamic$) => _.Result<CMR, _.List<DecodeError$>>
 ): (x0: Dynamic$) => _.Result<
-  [CMZ, CNB, CND, CNF, CNH, CNJ],
+  [CMH, CMJ, CML, CMN, CMP, CMR],
   _.List<DecodeError$>
 >;
 
-export function dict<CNM, CNO>(
-  key_type: (x0: Dynamic$) => _.Result<CNM, _.List<DecodeError$>>,
-  value_type: (x0: Dynamic$) => _.Result<CNO, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<$dict.Dict$<CNM, CNO>, _.List<DecodeError$>>;
+export function dict<CMU, CMW>(
+  key_type: (x0: Dynamic$) => _.Result<CMU, _.List<DecodeError$>>,
+  value_type: (x0: Dynamic$) => _.Result<CMW, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<$dict.Dict$<CMU, CMW>, _.List<DecodeError$>>;
 
-export function decode2<COF, COG, COH>(
-  constructor: (x0: COF, x1: COG) => COH,
-  t1: (x0: Dynamic$) => _.Result<COF, _.List<DecodeError$>>,
-  t2: (x0: Dynamic$) => _.Result<COG, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<COH, _.List<DecodeError$>>;
+export function decode2<CNN, CNO, CNP>(
+  constructor: (x0: CNN, x1: CNO) => CNP,
+  t1: (x0: Dynamic$) => _.Result<CNN, _.List<DecodeError$>>,
+  t2: (x0: Dynamic$) => _.Result<CNO, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CNP, _.List<DecodeError$>>;
 
-export function decode3<COL, COM, CON, COO>(
-  constructor: (x0: COL, x1: COM, x2: CON) => COO,
+export function decode3<CNT, CNU, CNV, CNW>(
+  constructor: (x0: CNT, x1: CNU, x2: CNV) => CNW,
+  t1: (x0: Dynamic$) => _.Result<CNT, _.List<DecodeError$>>,
+  t2: (x0: Dynamic$) => _.Result<CNU, _.List<DecodeError$>>,
+  t3: (x0: Dynamic$) => _.Result<CNV, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CNW, _.List<DecodeError$>>;
+
+export function decode4<COB, COC, COD, COE, COF>(
+  constructor: (x0: COB, x1: COC, x2: COD, x3: COE) => COF,
+  t1: (x0: Dynamic$) => _.Result<COB, _.List<DecodeError$>>,
+  t2: (x0: Dynamic$) => _.Result<COC, _.List<DecodeError$>>,
+  t3: (x0: Dynamic$) => _.Result<COD, _.List<DecodeError$>>,
+  t4: (x0: Dynamic$) => _.Result<COE, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<COF, _.List<DecodeError$>>;
+
+export function decode5<COL, COM, CON, COO, COP, COQ>(
+  constructor: (x0: COL, x1: COM, x2: CON, x3: COO, x4: COP) => COQ,
   t1: (x0: Dynamic$) => _.Result<COL, _.List<DecodeError$>>,
   t2: (x0: Dynamic$) => _.Result<COM, _.List<DecodeError$>>,
-  t3: (x0: Dynamic$) => _.Result<CON, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<COO, _.List<DecodeError$>>;
+  t3: (x0: Dynamic$) => _.Result<CON, _.List<DecodeError$>>,
+  t4: (x0: Dynamic$) => _.Result<COO, _.List<DecodeError$>>,
+  t5: (x0: Dynamic$) => _.Result<COP, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<COQ, _.List<DecodeError$>>;
 
-export function decode4<COT, COU, COV, COW, COX>(
-  constructor: (x0: COT, x1: COU, x2: COV, x3: COW) => COX,
-  t1: (x0: Dynamic$) => _.Result<COT, _.List<DecodeError$>>,
-  t2: (x0: Dynamic$) => _.Result<COU, _.List<DecodeError$>>,
-  t3: (x0: Dynamic$) => _.Result<COV, _.List<DecodeError$>>,
-  t4: (x0: Dynamic$) => _.Result<COW, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<COX, _.List<DecodeError$>>;
+export function decode6<COX, COY, COZ, CPA, CPB, CPC, CPD>(
+  constructor: (x0: COX, x1: COY, x2: COZ, x3: CPA, x4: CPB, x5: CPC) => CPD,
+  t1: (x0: Dynamic$) => _.Result<COX, _.List<DecodeError$>>,
+  t2: (x0: Dynamic$) => _.Result<COY, _.List<DecodeError$>>,
+  t3: (x0: Dynamic$) => _.Result<COZ, _.List<DecodeError$>>,
+  t4: (x0: Dynamic$) => _.Result<CPA, _.List<DecodeError$>>,
+  t5: (x0: Dynamic$) => _.Result<CPB, _.List<DecodeError$>>,
+  t6: (x0: Dynamic$) => _.Result<CPC, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CPD, _.List<DecodeError$>>;
 
-export function decode5<CPD, CPE, CPF, CPG, CPH, CPI>(
-  constructor: (x0: CPD, x1: CPE, x2: CPF, x3: CPG, x4: CPH) => CPI,
-  t1: (x0: Dynamic$) => _.Result<CPD, _.List<DecodeError$>>,
-  t2: (x0: Dynamic$) => _.Result<CPE, _.List<DecodeError$>>,
-  t3: (x0: Dynamic$) => _.Result<CPF, _.List<DecodeError$>>,
-  t4: (x0: Dynamic$) => _.Result<CPG, _.List<DecodeError$>>,
-  t5: (x0: Dynamic$) => _.Result<CPH, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<CPI, _.List<DecodeError$>>;
+export function decode7<CPL, CPM, CPN, CPO, CPP, CPQ, CPR, CPS>(
+  constructor: (x0: CPL, x1: CPM, x2: CPN, x3: CPO, x4: CPP, x5: CPQ, x6: CPR) => CPS,
+  t1: (x0: Dynamic$) => _.Result<CPL, _.List<DecodeError$>>,
+  t2: (x0: Dynamic$) => _.Result<CPM, _.List<DecodeError$>>,
+  t3: (x0: Dynamic$) => _.Result<CPN, _.List<DecodeError$>>,
+  t4: (x0: Dynamic$) => _.Result<CPO, _.List<DecodeError$>>,
+  t5: (x0: Dynamic$) => _.Result<CPP, _.List<DecodeError$>>,
+  t6: (x0: Dynamic$) => _.Result<CPQ, _.List<DecodeError$>>,
+  t7: (x0: Dynamic$) => _.Result<CPR, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CPS, _.List<DecodeError$>>;
 
-export function decode6<CPP, CPQ, CPR, CPS, CPT, CPU, CPV>(
-  constructor: (x0: CPP, x1: CPQ, x2: CPR, x3: CPS, x4: CPT, x5: CPU) => CPV,
-  t1: (x0: Dynamic$) => _.Result<CPP, _.List<DecodeError$>>,
-  t2: (x0: Dynamic$) => _.Result<CPQ, _.List<DecodeError$>>,
-  t3: (x0: Dynamic$) => _.Result<CPR, _.List<DecodeError$>>,
-  t4: (x0: Dynamic$) => _.Result<CPS, _.List<DecodeError$>>,
-  t5: (x0: Dynamic$) => _.Result<CPT, _.List<DecodeError$>>,
-  t6: (x0: Dynamic$) => _.Result<CPU, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<CPV, _.List<DecodeError$>>;
+export function decode8<CQB, CQC, CQD, CQE, CQF, CQG, CQH, CQI, CQJ>(
+  constructor: (
+    x0: CQB,
+    x1: CQC,
+    x2: CQD,
+    x3: CQE,
+    x4: CQF,
+    x5: CQG,
+    x6: CQH,
+    x7: CQI
+  ) => CQJ,
+  t1: (x0: Dynamic$) => _.Result<CQB, _.List<DecodeError$>>,
+  t2: (x0: Dynamic$) => _.Result<CQC, _.List<DecodeError$>>,
+  t3: (x0: Dynamic$) => _.Result<CQD, _.List<DecodeError$>>,
+  t4: (x0: Dynamic$) => _.Result<CQE, _.List<DecodeError$>>,
+  t5: (x0: Dynamic$) => _.Result<CQF, _.List<DecodeError$>>,
+  t6: (x0: Dynamic$) => _.Result<CQG, _.List<DecodeError$>>,
+  t7: (x0: Dynamic$) => _.Result<CQH, _.List<DecodeError$>>,
+  t8: (x0: Dynamic$) => _.Result<CQI, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CQJ, _.List<DecodeError$>>;
 
-export function decode7<CQD, CQE, CQF, CQG, CQH, CQI, CQJ, CQK>(
-  constructor: (x0: CQD, x1: CQE, x2: CQF, x3: CQG, x4: CQH, x5: CQI, x6: CQJ) => CQK,
-  t1: (x0: Dynamic$) => _.Result<CQD, _.List<DecodeError$>>,
-  t2: (x0: Dynamic$) => _.Result<CQE, _.List<DecodeError$>>,
-  t3: (x0: Dynamic$) => _.Result<CQF, _.List<DecodeError$>>,
-  t4: (x0: Dynamic$) => _.Result<CQG, _.List<DecodeError$>>,
-  t5: (x0: Dynamic$) => _.Result<CQH, _.List<DecodeError$>>,
-  t6: (x0: Dynamic$) => _.Result<CQI, _.List<DecodeError$>>,
-  t7: (x0: Dynamic$) => _.Result<CQJ, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<CQK, _.List<DecodeError$>>;
-
-export function decode8<CQT, CQU, CQV, CQW, CQX, CQY, CQZ, CRA, CRB>(
+export function decode9<CQT, CQU, CQV, CQW, CQX, CQY, CQZ, CRA, CRB, CRC>(
   constructor: (
     x0: CQT,
     x1: CQU,
@@ -187,8 +208,9 @@ export function decode8<CQT, CQU, CQV, CQW, CQX, CQY, CQZ, CRA, CRB>(
     x4: CQX,
     x5: CQY,
     x6: CQZ,
-    x7: CRA
-  ) => CRB,
+    x7: CRA,
+    x8: CRB
+  ) => CRC,
   t1: (x0: Dynamic$) => _.Result<CQT, _.List<DecodeError$>>,
   t2: (x0: Dynamic$) => _.Result<CQU, _.List<DecodeError$>>,
   t3: (x0: Dynamic$) => _.Result<CQV, _.List<DecodeError$>>,
@@ -196,28 +218,6 @@ export function decode8<CQT, CQU, CQV, CQW, CQX, CQY, CQZ, CRA, CRB>(
   t5: (x0: Dynamic$) => _.Result<CQX, _.List<DecodeError$>>,
   t6: (x0: Dynamic$) => _.Result<CQY, _.List<DecodeError$>>,
   t7: (x0: Dynamic$) => _.Result<CQZ, _.List<DecodeError$>>,
-  t8: (x0: Dynamic$) => _.Result<CRA, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<CRB, _.List<DecodeError$>>;
-
-export function decode9<CRL, CRM, CRN, CRO, CRP, CRQ, CRR, CRS, CRT, CRU>(
-  constructor: (
-    x0: CRL,
-    x1: CRM,
-    x2: CRN,
-    x3: CRO,
-    x4: CRP,
-    x5: CRQ,
-    x6: CRR,
-    x7: CRS,
-    x8: CRT
-  ) => CRU,
-  t1: (x0: Dynamic$) => _.Result<CRL, _.List<DecodeError$>>,
-  t2: (x0: Dynamic$) => _.Result<CRM, _.List<DecodeError$>>,
-  t3: (x0: Dynamic$) => _.Result<CRN, _.List<DecodeError$>>,
-  t4: (x0: Dynamic$) => _.Result<CRO, _.List<DecodeError$>>,
-  t5: (x0: Dynamic$) => _.Result<CRP, _.List<DecodeError$>>,
-  t6: (x0: Dynamic$) => _.Result<CRQ, _.List<DecodeError$>>,
-  t7: (x0: Dynamic$) => _.Result<CRR, _.List<DecodeError$>>,
-  t8: (x0: Dynamic$) => _.Result<CRS, _.List<DecodeError$>>,
-  t9: (x0: Dynamic$) => _.Result<CRT, _.List<DecodeError$>>
-): (x0: Dynamic$) => _.Result<CRU, _.List<DecodeError$>>;
+  t8: (x0: Dynamic$) => _.Result<CRA, _.List<DecodeError$>>,
+  t9: (x0: Dynamic$) => _.Result<CRB, _.List<DecodeError$>>
+): (x0: Dynamic$) => _.Result<CRC, _.List<DecodeError$>>;

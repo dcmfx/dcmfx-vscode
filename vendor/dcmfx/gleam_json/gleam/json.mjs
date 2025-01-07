@@ -1,5 +1,6 @@
 /// <reference types="./json.d.mts" />
 import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
+import * as $dict from "../../gleam_stdlib/gleam/dict.mjs";
 import * as $dynamic from "../../gleam_stdlib/gleam/dynamic.mjs";
 import * as $decode from "../../gleam_stdlib/gleam/dynamic/decode.mjs";
 import * as $list from "../../gleam_stdlib/gleam/list.mjs";
@@ -7,7 +8,7 @@ import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
 import * as $string_tree from "../../gleam_stdlib/gleam/string_tree.mjs";
-import { Error, CustomType as $CustomType } from "../gleam.mjs";
+import { Error, toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
 import {
   decode as decode_string,
   json_to_string as do_to_string,
@@ -172,4 +173,14 @@ export function array(entries, inner_type) {
   let _pipe = entries;
   let _pipe$1 = $list.map(_pipe, inner_type);
   return preprocessed_array(_pipe$1);
+}
+
+export function dict(dict, keys, values) {
+  return object(
+    $dict.fold(
+      dict,
+      toList([]),
+      (acc, k, v) => { return listPrepend([keys(k), values(v)], acc); },
+    ),
+  );
 }

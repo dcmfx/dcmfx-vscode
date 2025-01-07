@@ -92416,273 +92416,743 @@ export function find(tag, private_creator) {
     let $2 = tag.element;
     if ($1 === 0x20 && (($2 >= 0x3100) && ($2 <= 0x31FF))) {
       let element = $2;
-      return new Ok(source_image_ids.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = source_image_ids;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x400) || ($2 === 0x410)) || ($2 === 0x420)) || ($2 === 0x430)) || ($2 === 0x440)) || ($2 === 0x450)) || ($2 === 0x460)) || ($2 === 0x470)) || ($2 === 0x480)) || ($2 === 0x490)) || ($2 === 0x4A0)) || ($2 === 0x4B0)) || ($2 === 0x4C0)) || ($2 === 0x4D0)) || ($2 === 0x4E0)) || ($2 === 0x4F0))) {
       let element = $2;
-      return new Ok(rows_for_nth_order_coefficients.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = rows_for_nth_order_coefficients;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x401) || ($2 === 0x411)) || ($2 === 0x421)) || ($2 === 0x431)) || ($2 === 0x441)) || ($2 === 0x451)) || ($2 === 0x461)) || ($2 === 0x471)) || ($2 === 0x481)) || ($2 === 0x491)) || ($2 === 0x4A1)) || ($2 === 0x4B1)) || ($2 === 0x4C1)) || ($2 === 0x4D1)) || ($2 === 0x4E1)) || ($2 === 0x4F1))) {
       let element = $2;
-      return new Ok(columns_for_nth_order_coefficients.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = columns_for_nth_order_coefficients;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x402) || ($2 === 0x412)) || ($2 === 0x422)) || ($2 === 0x432)) || ($2 === 0x442)) || ($2 === 0x452)) || ($2 === 0x462)) || ($2 === 0x472)) || ($2 === 0x482)) || ($2 === 0x492)) || ($2 === 0x4A2)) || ($2 === 0x4B2)) || ($2 === 0x4C2)) || ($2 === 0x4D2)) || ($2 === 0x4E2)) || ($2 === 0x4F2))) {
       let element = $2;
-      return new Ok(coefficient_coding.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = coefficient_coding;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x403) || ($2 === 0x413)) || ($2 === 0x423)) || ($2 === 0x433)) || ($2 === 0x443)) || ($2 === 0x453)) || ($2 === 0x463)) || ($2 === 0x473)) || ($2 === 0x483)) || ($2 === 0x493)) || ($2 === 0x4A3)) || ($2 === 0x4B3)) || ($2 === 0x4C3)) || ($2 === 0x4D3)) || ($2 === 0x4E3)) || ($2 === 0x4F3))) {
       let element = $2;
-      return new Ok(coefficient_coding_pointers.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = coefficient_coding_pointers;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x800) || ($2 === 0x810)) || ($2 === 0x820)) || ($2 === 0x830)) || ($2 === 0x840)) || ($2 === 0x850)) || ($2 === 0x860)) || ($2 === 0x870)) || ($2 === 0x880)) || ($2 === 0x890)) || ($2 === 0x8A0)) || ($2 === 0x8B0)) || ($2 === 0x8C0)) || ($2 === 0x8D0)) || ($2 === 0x8E0)) || ($2 === 0x8F0))) {
       let element = $2;
-      return new Ok(code_label.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = code_label;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x802) || ($2 === 0x812)) || ($2 === 0x822)) || ($2 === 0x832)) || ($2 === 0x842)) || ($2 === 0x852)) || ($2 === 0x862)) || ($2 === 0x872)) || ($2 === 0x882)) || ($2 === 0x892)) || ($2 === 0x8A2)) || ($2 === 0x8B2)) || ($2 === 0x8C2)) || ($2 === 0x8D2)) || ($2 === 0x8E2)) || ($2 === 0x8F2))) {
       let element = $2;
-      return new Ok(number_of_tables.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = number_of_tables;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x803) || ($2 === 0x813)) || ($2 === 0x823)) || ($2 === 0x833)) || ($2 === 0x843)) || ($2 === 0x853)) || ($2 === 0x863)) || ($2 === 0x873)) || ($2 === 0x883)) || ($2 === 0x893)) || ($2 === 0x8A3)) || ($2 === 0x8B3)) || ($2 === 0x8C3)) || ($2 === 0x8D3)) || ($2 === 0x8E3)) || ($2 === 0x8F3))) {
       let element = $2;
-      return new Ok(code_table_location.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = code_table_location;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x804) || ($2 === 0x814)) || ($2 === 0x824)) || ($2 === 0x834)) || ($2 === 0x844)) || ($2 === 0x854)) || ($2 === 0x864)) || ($2 === 0x874)) || ($2 === 0x884)) || ($2 === 0x894)) || ($2 === 0x8A4)) || ($2 === 0x8B4)) || ($2 === 0x8C4)) || ($2 === 0x8D4)) || ($2 === 0x8E4)) || ($2 === 0x8F4))) {
       let element = $2;
-      return new Ok(bits_for_code_word.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = bits_for_code_word;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x28 &&
     (((((((((((((((($2 === 0x808) || ($2 === 0x818)) || ($2 === 0x828)) || ($2 === 0x838)) || ($2 === 0x848)) || ($2 === 0x858)) || ($2 === 0x868)) || ($2 === 0x878)) || ($2 === 0x888)) || ($2 === 0x898)) || ($2 === 0x8A8)) || ($2 === 0x8B8)) || ($2 === 0x8C8)) || ($2 === 0x8D8)) || ($2 === 0x8E8)) || ($2 === 0x8F8))) {
       let element = $2;
-      return new Ok(image_data_location.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = image_data_location;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x1010) {
-      return new Ok(zonal_map.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = zonal_map;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x5 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_dimensions.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_dimensions;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x10 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(number_of_points.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = number_of_points;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x20 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(type_of_data.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = type_of_data;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x22 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_description.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_description;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x30 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(axis_units.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = axis_units;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x40 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(axis_labels.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = axis_labels;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x103 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(data_value_representation.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = data_value_representation;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x104 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(minimum_coordinate_value.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = minimum_coordinate_value;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x105 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(maximum_coordinate_value.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = maximum_coordinate_value;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x106 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_range.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_range;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x110 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_data_descriptor.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_data_descriptor;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x112 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(coordinate_start_value.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = coordinate_start_value;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x114 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(coordinate_step_value.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = coordinate_step_value;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1001 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_activation_layer.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_activation_layer;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x2000 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(audio_type.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = audio_type;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x2002 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(audio_sample_format.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = audio_sample_format;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x2004 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(number_of_channels.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = number_of_channels;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x2006 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(number_of_samples.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = number_of_samples;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x2008 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(sample_rate.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = sample_rate;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x200A && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(total_time.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = total_time;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x200C && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(audio_sample_data.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = audio_sample_data;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x200E && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(audio_comments.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = audio_comments;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x2500 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_label.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_label;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x2600 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_referenced_overlay_sequence.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_referenced_overlay_sequence;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x2610 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_referenced_overlay_group.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_referenced_overlay_group;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x3000 && (($1 >= 0x5000) && ($1 <= 0x50FF))) {
       let group = $1;
-      return new Ok(curve_data.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = curve_data;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x10 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_rows.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_rows;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x11 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_columns.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_columns;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x12 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_planes.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_planes;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x15 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(number_of_frames_in_overlay.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = number_of_frames_in_overlay;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x22 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_description.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_description;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x40 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_type.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_type;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x45 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_subtype.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_subtype;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x50 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_origin.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_origin;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x51 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(image_frame_origin.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = image_frame_origin;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x52 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_plane_origin.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_plane_origin;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x60 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_compression_code.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_compression_code;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x61 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_compression_originator.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_compression_originator;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x62 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_compression_label.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_compression_label;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x63 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_compression_description.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_compression_description;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x66 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_compression_step_pointers.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_compression_step_pointers;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x68 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_repeat_interval.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_repeat_interval;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x69 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_bits_grouped.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_bits_grouped;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x100 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_bits_allocated.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_bits_allocated;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x102 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_bit_position.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_bit_position;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x110 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_format.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_format;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x200 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_location.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_location;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x800 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_code_label.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_code_label;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x802 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_number_of_tables.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_number_of_tables;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x803 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_code_table_location.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_code_table_location;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x804 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_bits_for_code_word.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_bits_for_code_word;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1001 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_activation_layer.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_activation_layer;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1100 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_descriptor_gray.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_descriptor_gray;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1101 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_descriptor_red.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_descriptor_red;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1102 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_descriptor_green.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_descriptor_green;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1103 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_descriptor_blue.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_descriptor_blue;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1200 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlays_gray.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlays_gray;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1201 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlays_red.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlays_red;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1202 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlays_green.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlays_green;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1203 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlays_blue.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlays_blue;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1301 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(roi_area.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = roi_area;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1302 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(roi_mean.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = roi_mean;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1303 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(roi_standard_deviation.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = roi_standard_deviation;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x1500 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_label.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_label;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x3000 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_data.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_data;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x4000 && (($1 >= 0x6000) && ($1 <= 0x60FF))) {
       let group = $1;
-      return new Ok(overlay_comments.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = overlay_comments;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x10 && (($1 >= 0x7F00) && ($1 <= 0x7FFF))) {
       let group = $1;
-      return new Ok(variable_pixel_data.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = variable_pixel_data;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x11 && (($1 >= 0x7F00) && ($1 <= 0x7FFF))) {
       let group = $1;
-      return new Ok(variable_next_data_group.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = variable_next_data_group;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x20 && (($1 >= 0x7F00) && ($1 <= 0x7FFF))) {
       let group = $1;
-      return new Ok(variable_coefficients_sdvn.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = variable_coefficients_sdvn;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x30 && (($1 >= 0x7F00) && ($1 <= 0x7FFF))) {
       let group = $1;
-      return new Ok(variable_coefficients_sdhn.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = variable_coefficients_sdhn;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($2 === 0x40 && (($1 >= 0x7F00) && ($1 <= 0x7FFF))) {
       let group = $1;
-      return new Ok(variable_coefficients_sddn.withFields({ tag: tag }));
+      return new Ok(
+        (() => {
+          let _record = variable_coefficients_sddn;
+          return new Item(tag, _record.name, _record.vrs, _record.multiplicity);
+        })(),
+      );
     } else if ($1 === 0x1000) {
       let element = $2;
       let $3 = remainderInt(element, 16);
       if ($3 === 0) {
-        return new Ok(escape_triplet.withFields({ tag: tag }));
+        return new Ok(
+          (() => {
+            let _record = escape_triplet;
+            return new Item(
+              tag,
+              _record.name,
+              _record.vrs,
+              _record.multiplicity,
+            );
+          })(),
+        );
       } else if ($3 === 1) {
-        return new Ok(run_length_triplet.withFields({ tag: tag }));
+        return new Ok(
+          (() => {
+            let _record = run_length_triplet;
+            return new Item(
+              tag,
+              _record.name,
+              _record.vrs,
+              _record.multiplicity,
+            );
+          })(),
+        );
       } else if ($3 === 2) {
-        return new Ok(huffman_table_size.withFields({ tag: tag }));
+        return new Ok(
+          (() => {
+            let _record = huffman_table_size;
+            return new Item(
+              tag,
+              _record.name,
+              _record.vrs,
+              _record.multiplicity,
+            );
+          })(),
+        );
       } else if ($3 === 3) {
-        return new Ok(huffman_table_triplet.withFields({ tag: tag }));
+        return new Ok(
+          (() => {
+            let _record = huffman_table_triplet;
+            return new Item(
+              tag,
+              _record.name,
+              _record.vrs,
+              _record.multiplicity,
+            );
+          })(),
+        );
       } else if ($3 === 4) {
-        return new Ok(shift_table_size.withFields({ tag: tag }));
+        return new Ok(
+          (() => {
+            let _record = shift_table_size;
+            return new Item(
+              tag,
+              _record.name,
+              _record.vrs,
+              _record.multiplicity,
+            );
+          })(),
+        );
       } else if ($3 === 5) {
-        return new Ok(shift_table_triplet.withFields({ tag: tag }));
+        return new Ok(
+          (() => {
+            let _record = shift_table_triplet;
+            return new Item(
+              tag,
+              _record.name,
+              _record.vrs,
+              _record.multiplicity,
+            );
+          })(),
+        );
       } else {
         return new Error(undefined);
       }

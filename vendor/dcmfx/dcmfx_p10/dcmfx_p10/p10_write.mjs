@@ -78,12 +78,37 @@ export function with_config(context, config) {
   let config$1 = new P10WriteConfig(
     $int.clamp(config.zlib_compression_level, 0, 9),
   );
-  return context.withFields({ config: config$1 });
+  let _record = context;
+  return new P10WriteContext(
+    config$1,
+    _record.p10_bytes,
+    _record.p10_total_byte_count,
+    _record.is_ended,
+    _record.transfer_syntax,
+    _record.zlib_stream,
+    _record.path,
+    _record.sequence_item_counts,
+  );
 }
 
 export function read_bytes(context) {
   let p10_bytes = $list.reverse(context.p10_bytes);
-  return [context.withFields({ p10_bytes: toList([]) }), p10_bytes];
+  return [
+    (() => {
+      let _record = context;
+      return new P10WriteContext(
+        _record.config,
+        toList([]),
+        _record.p10_total_byte_count,
+        _record.is_ended,
+        _record.transfer_syntax,
+        _record.zlib_stream,
+        _record.path,
+        _record.sequence_item_counts,
+      );
+    })(),
+    p10_bytes,
+  ];
 }
 
 export function data_element_header_to_bytes(header, endianness, context) {
@@ -198,7 +223,7 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      554,
+      553,
       "data_set_to_parts",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -268,7 +293,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      650,
+      649,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -282,7 +307,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      652,
+      651,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $1 }
@@ -296,7 +321,7 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      656,
+      655,
       "prepare_file_meta_information_part_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $2 }
@@ -400,10 +425,10 @@ function part_to_bytes(part, context) {
       (fmi_bytes) => {
         let fmi_length = $bit_array.byte_size(fmi_bytes);
         let fmi_length_bytes = toBitArray([
-          sizedInt(2, 16, false),
-          sizedInt(0, 16, true),
+          2, 0,
+          0, 0,
           stringBits("UL"),
-          sizedInt(4, 16, false),
+          4, 0,
           sizedInt(fmi_length, 32, false),
         ]);
         return $bit_array.concat(toList([fmi_length_bytes, fmi_bytes]));
@@ -562,19 +587,35 @@ export function write_part(context, part) {
                 return new None();
               }
             })();
-            let new_context = context.withFields({
-              transfer_syntax: new_transfer_syntax,
-              zlib_stream: zlib_stream
-            });
+            let new_context = (() => {
+              let _record = context;
+              return new P10WriteContext(
+                _record.config,
+                _record.p10_bytes,
+                _record.p10_total_byte_count,
+                _record.is_ended,
+                new_transfer_syntax,
+                zlib_stream,
+                _record.path,
+                _record.sequence_item_counts,
+              );
+            })();
             return $result.map(
               part_to_bytes(part, new_context),
               (part_bytes) => {
-                return new_context.withFields({
-                  p10_bytes: listPrepend(part_bytes, new_context.p10_bytes),
-                  p10_total_byte_count: context.p10_total_byte_count + $bit_array.byte_size(
+                let _record = new_context;
+                return new P10WriteContext(
+                  _record.config,
+                  listPrepend(part_bytes, new_context.p10_bytes),
+                  context.p10_total_byte_count + $bit_array.byte_size(
                     part_bytes,
-                  )
-                });
+                  ),
+                  _record.is_ended,
+                  _record.transfer_syntax,
+                  _record.zlib_stream,
+                  _record.path,
+                  _record.sequence_item_counts,
+                );
               },
             );
           },
@@ -592,17 +633,36 @@ export function write_part(context, part) {
             );
             return $bit_array.concat(_pipe$1);
           })();
-          let _pipe = context.withFields({
-            p10_bytes: listPrepend(data, context.p10_bytes),
-            p10_total_byte_count: context.p10_total_byte_count + $bit_array.byte_size(
-              data,
-            ),
-            is_ended: true,
-            zlib_stream: new None()
-          });
+          let _pipe = (() => {
+            let _record = context;
+            return new P10WriteContext(
+              _record.config,
+              listPrepend(data, context.p10_bytes),
+              context.p10_total_byte_count + $bit_array.byte_size(data),
+              true,
+              _record.transfer_syntax,
+              new None(),
+              _record.path,
+              _record.sequence_item_counts,
+            );
+          })();
           return new Ok(_pipe);
         } else {
-          return new Ok(context.withFields({ is_ended: true }));
+          return new Ok(
+            (() => {
+              let _record = context;
+              return new P10WriteContext(
+                _record.config,
+                _record.p10_bytes,
+                _record.p10_total_byte_count,
+                true,
+                _record.transfer_syntax,
+                _record.zlib_stream,
+                _record.path,
+                _record.sequence_item_counts,
+              );
+            })(),
+          );
         }
       } else {
         let context$1 = (() => {
@@ -612,7 +672,19 @@ export function write_part(context, part) {
               let _pipe = $data_set_path.add_data_element(context.path, tag);
               return $result.map(
                 _pipe,
-                (path) => { return context.withFields({ path: path }); },
+                (path) => {
+                  let _record = context;
+                  return new P10WriteContext(
+                    _record.config,
+                    _record.p10_bytes,
+                    _record.p10_total_byte_count,
+                    _record.is_ended,
+                    _record.transfer_syntax,
+                    _record.zlib_stream,
+                    path,
+                    _record.sequence_item_counts,
+                  );
+                },
               );
             } else if (part instanceof $p10_part.SequenceStart) {
               let tag = part.tag;
@@ -620,13 +692,17 @@ export function write_part(context, part) {
               return $result.map(
                 _pipe,
                 (path) => {
-                  return context.withFields({
-                    path: path,
-                    sequence_item_counts: listPrepend(
-                      0,
-                      context.sequence_item_counts,
-                    )
-                  });
+                  let _record = context;
+                  return new P10WriteContext(
+                    _record.config,
+                    _record.p10_bytes,
+                    _record.p10_total_byte_count,
+                    _record.is_ended,
+                    _record.transfer_syntax,
+                    _record.zlib_stream,
+                    path,
+                    listPrepend(0, context.sequence_item_counts),
+                  );
                 },
               );
             } else if (part instanceof $p10_part.SequenceItemStart) {
@@ -635,7 +711,7 @@ export function write_part(context, part) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_write",
-                  234,
+                  233,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $ }
@@ -648,10 +724,17 @@ export function write_part(context, part) {
                 _pipe,
                 (path) => {
                   let sequence_item_counts = listPrepend(count + 1, rest);
-                  return context.withFields({
-                    path: path,
-                    sequence_item_counts: sequence_item_counts
-                  });
+                  let _record = context;
+                  return new P10WriteContext(
+                    _record.config,
+                    _record.p10_bytes,
+                    _record.p10_total_byte_count,
+                    _record.is_ended,
+                    _record.transfer_syntax,
+                    _record.zlib_stream,
+                    path,
+                    sequence_item_counts,
+                  );
                 },
               );
             } else if (part instanceof $p10_part.PixelDataItem) {
@@ -660,7 +743,7 @@ export function write_part(context, part) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_write",
-                  234,
+                  233,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $ }
@@ -673,10 +756,17 @@ export function write_part(context, part) {
                 _pipe,
                 (path) => {
                   let sequence_item_counts = listPrepend(count + 1, rest);
-                  return context.withFields({
-                    path: path,
-                    sequence_item_counts: sequence_item_counts
-                  });
+                  let _record = context;
+                  return new P10WriteContext(
+                    _record.config,
+                    _record.p10_bytes,
+                    _record.p10_total_byte_count,
+                    _record.is_ended,
+                    _record.transfer_syntax,
+                    _record.zlib_stream,
+                    path,
+                    sequence_item_counts,
+                  );
                 },
               );
             } else {
@@ -707,13 +797,37 @@ export function write_part(context, part) {
                       let _pipe = $data_set_path.pop(context.path);
                       return $result.map(
                         _pipe,
-                        (path) => { return context.withFields({ path: path }); },
+                        (path) => {
+                          let _record = context;
+                          return new P10WriteContext(
+                            _record.config,
+                            _record.p10_bytes,
+                            _record.p10_total_byte_count,
+                            _record.is_ended,
+                            _record.transfer_syntax,
+                            _record.zlib_stream,
+                            path,
+                            _record.sequence_item_counts,
+                          );
+                        },
                       );
                     } else if (part instanceof $p10_part.SequenceItemDelimiter) {
                       let _pipe = $data_set_path.pop(context.path);
                       return $result.map(
                         _pipe,
-                        (path) => { return context.withFields({ path: path }); },
+                        (path) => {
+                          let _record = context;
+                          return new P10WriteContext(
+                            _record.config,
+                            _record.p10_bytes,
+                            _record.p10_total_byte_count,
+                            _record.is_ended,
+                            _record.transfer_syntax,
+                            _record.zlib_stream,
+                            path,
+                            _record.sequence_item_counts,
+                          );
+                        },
                       );
                     } else if (part instanceof $p10_part.SequenceDelimiter) {
                       let $ = $list.rest(context.sequence_item_counts);
@@ -721,7 +835,7 @@ export function write_part(context, part) {
                         throw makeError(
                           "let_assert",
                           "dcmfx_p10/p10_write",
-                          268,
+                          267,
                           "",
                           "Pattern match failed, no pattern matched the value.",
                           { value: $ }
@@ -732,10 +846,17 @@ export function write_part(context, part) {
                       return $result.map(
                         _pipe,
                         (path) => {
-                          return context.withFields({
-                            path: path,
-                            sequence_item_counts: sequence_item_counts
-                          });
+                          let _record = context;
+                          return new P10WriteContext(
+                            _record.config,
+                            _record.p10_bytes,
+                            _record.p10_total_byte_count,
+                            _record.is_ended,
+                            _record.transfer_syntax,
+                            _record.zlib_stream,
+                            path,
+                            sequence_item_counts,
+                          );
                         },
                       );
                     } else {
@@ -768,19 +889,33 @@ export function write_part(context, part) {
                         );
                         return $bit_array.concat(_pipe$1);
                       })();
-                      return context.withFields({
-                        p10_bytes: listPrepend(data, context.p10_bytes),
-                        p10_total_byte_count: context.p10_total_byte_count + $bit_array.byte_size(
+                      let _record = context;
+                      return new P10WriteContext(
+                        _record.config,
+                        listPrepend(data, context.p10_bytes),
+                        context.p10_total_byte_count + $bit_array.byte_size(
                           data,
-                        )
-                      });
+                        ),
+                        _record.is_ended,
+                        _record.transfer_syntax,
+                        _record.zlib_stream,
+                        _record.path,
+                        _record.sequence_item_counts,
+                      );
                     } else {
-                      return context.withFields({
-                        p10_bytes: listPrepend(part_bytes, context.p10_bytes),
-                        p10_total_byte_count: context.p10_total_byte_count + $bit_array.byte_size(
+                      let _record = context;
+                      return new P10WriteContext(
+                        _record.config,
+                        listPrepend(part_bytes, context.p10_bytes),
+                        context.p10_total_byte_count + $bit_array.byte_size(
                           part_bytes,
-                        )
-                      });
+                        ),
+                        _record.is_ended,
+                        _record.transfer_syntax,
+                        _record.zlib_stream,
+                        _record.path,
+                        _record.sequence_item_counts,
+                      );
                     }
                   },
                 );

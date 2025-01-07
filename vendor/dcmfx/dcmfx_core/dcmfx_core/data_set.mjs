@@ -28,7 +28,15 @@ import * as $utils from "../dcmfx_core/internal/utils.mjs";
 import * as $transfer_syntax from "../dcmfx_core/transfer_syntax.mjs";
 import * as $value_multiplicity from "../dcmfx_core/value_multiplicity.mjs";
 import * as $value_representation from "../dcmfx_core/value_representation.mjs";
-import { Ok, Error, toList, CustomType as $CustomType, makeError, isEqual } from "../gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  CustomType as $CustomType,
+  makeError,
+  divideInt,
+  isEqual,
+} from "../gleam.mjs";
 
 export class LookupResultDataElementValue extends $CustomType {
   constructor(x0) {
@@ -790,16 +798,26 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
             _pipe$2,
             context$1,
             (context, item) => {
+              let $4 = $data_set_print.format_data_element_prefix(
+                $dictionary.item.tag,
+                $dictionary.item.name,
+                new None(),
+                new Some($bit_array.byte_size(item)),
+                indent + 1,
+                print_options,
+              );
+              let item_header = $4[0];
+              let item_header_width = $4[1];
+              let value_max_width = $int.max(
+                print_options.max_width - item_header_width,
+                10,
+              );
               return callback(
                 context,
-                $data_set_print.format_data_element_prefix(
-                  $dictionary.item.tag,
-                  $dictionary.item.name,
-                  new None(),
-                  new Some($bit_array.byte_size(item)),
-                  indent + 1,
-                  print_options,
-                )[0],
+                item_header + $utils.inspect_bit_array(
+                  item,
+                  divideInt((value_max_width - 2), 3),
+                ),
               );
             },
           );

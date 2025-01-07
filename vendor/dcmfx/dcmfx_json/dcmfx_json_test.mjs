@@ -97,7 +97,7 @@ function test_data_sets() {
       toList([
         [
           $dictionary.pixel_data.tag,
-          $data_element_value.new_other_word_string(toBitArray([0x3, 0x4])),
+          $data_element_value.new_other_word_string(toBitArray([3, 4])),
         ],
       ]),
       "{\"7FE00010\":{\"vr\":\"OW\",\"InlineBinary\":\"AwQ=\"}}",

@@ -89,7 +89,19 @@ function begin(transform, file_meta_information) {
       );
       if (transfer_syntax_uid.isOk()) {
         let transfer_syntax_uid$1 = transfer_syntax_uid[0];
-        let transform$1 = transform.withFields({ insert_comma: true });
+        let transform$1 = (() => {
+          let _record = transform;
+          return new P10JsonTransform(
+            _record.config,
+            true,
+            _record.current_data_element,
+            _record.ignore_data_element_value_bytes,
+            _record.in_encapsulated_pixel_data,
+            _record.pending_base64_input,
+            _record.data_set_path,
+            _record.sequence_item_counts,
+          );
+        })();
         let json$1 = (() => {
           let $2 = transform$1.config.pretty_print;
           if ($2) {
@@ -115,9 +127,19 @@ function write_data_element_header(transform, tag, vr, length) {
   return $bool.lazy_guard(
     (tag.element === 0) || (isEqual(tag, $dictionary.specific_character_set.tag)),
     () => {
-      let transform$1 = transform.withFields({
-        ignore_data_element_value_bytes: true
-      });
+      let transform$1 = (() => {
+        let _record = transform;
+        return new P10JsonTransform(
+          _record.config,
+          _record.insert_comma,
+          _record.current_data_element,
+          true,
+          _record.in_encapsulated_pixel_data,
+          _record.pending_base64_input,
+          _record.data_set_path,
+          _record.sequence_item_counts,
+        );
+      })();
       return [transform$1, ""];
     },
     () => {
@@ -134,10 +156,19 @@ function write_data_element_header(transform, tag, vr, length) {
           return "";
         }
       })();
-      let transform$1 = transform.withFields({
-        insert_comma: true,
-        current_data_element: [tag, toList([])]
-      });
+      let transform$1 = (() => {
+        let _record = transform;
+        return new P10JsonTransform(
+          _record.config,
+          true,
+          [tag, toList([])],
+          _record.ignore_data_element_value_bytes,
+          _record.in_encapsulated_pixel_data,
+          _record.pending_base64_input,
+          _record.data_set_path,
+          _record.sequence_item_counts,
+        );
+      })();
       let json$1 = json + (() => {
         let $ = transform$1.config.pretty_print;
         if ($) {
@@ -163,9 +194,19 @@ function write_data_element_header(transform, tag, vr, length) {
               return "}";
             }
           })();
-          let transform$2 = transform$1.withFields({
-            ignore_data_element_value_bytes: true
-          });
+          let transform$2 = (() => {
+            let _record = transform$1;
+            return new P10JsonTransform(
+              _record.config,
+              _record.insert_comma,
+              _record.current_data_element,
+              true,
+              _record.in_encapsulated_pixel_data,
+              _record.pending_base64_input,
+              _record.data_set_path,
+              _record.sequence_item_counts,
+            );
+          })();
           return [transform$2, json$2];
         },
         () => {
@@ -249,9 +290,33 @@ function write_sequence_start(transform, tag, vr) {
       return "";
     }
   })();
-  let transform$1 = transform.withFields({ insert_comma: true });
+  let transform$1 = (() => {
+    let _record = transform;
+    return new P10JsonTransform(
+      _record.config,
+      true,
+      _record.current_data_element,
+      _record.ignore_data_element_value_bytes,
+      _record.in_encapsulated_pixel_data,
+      _record.pending_base64_input,
+      _record.data_set_path,
+      _record.sequence_item_counts,
+    );
+  })();
   if (vr instanceof $value_representation.Sequence) {
-    let transform$2 = transform$1.withFields({ insert_comma: false });
+    let transform$2 = (() => {
+      let _record = transform$1;
+      return new P10JsonTransform(
+        _record.config,
+        false,
+        _record.current_data_element,
+        _record.ignore_data_element_value_bytes,
+        _record.in_encapsulated_pixel_data,
+        _record.pending_base64_input,
+        _record.data_set_path,
+        _record.sequence_item_counts,
+      );
+    })();
     let json$1 = json + (() => {
       let $ = transform$2.config.pretty_print;
       if ($) {
@@ -282,9 +347,19 @@ function write_sequence_start(transform, tag, vr) {
         );
       },
       () => {
-        let transform$2 = transform$1.withFields({
-          in_encapsulated_pixel_data: true
-        });
+        let transform$2 = (() => {
+          let _record = transform$1;
+          return new P10JsonTransform(
+            _record.config,
+            _record.insert_comma,
+            _record.current_data_element,
+            _record.ignore_data_element_value_bytes,
+            true,
+            _record.pending_base64_input,
+            _record.data_set_path,
+            _record.sequence_item_counts,
+          );
+        })();
         let json$1 = json + (() => {
           let $ = transform$2.config.pretty_print;
           if ($) {
@@ -314,7 +389,19 @@ function write_sequence_item_start(transform) {
       return "";
     }
   })();
-  let transform$1 = transform.withFields({ insert_comma: false });
+  let transform$1 = (() => {
+    let _record = transform;
+    return new P10JsonTransform(
+      _record.config,
+      false,
+      _record.current_data_element,
+      _record.ignore_data_element_value_bytes,
+      _record.in_encapsulated_pixel_data,
+      _record.pending_base64_input,
+      _record.data_set_path,
+      _record.sequence_item_counts,
+    );
+  })();
   let json$1 = json + (() => {
     let $ = transform$1.config.pretty_print;
     if ($) {
@@ -327,7 +414,19 @@ function write_sequence_item_start(transform) {
 }
 
 function write_sequence_item_end(transform) {
-  let transform$1 = transform.withFields({ insert_comma: true });
+  let transform$1 = (() => {
+    let _record = transform;
+    return new P10JsonTransform(
+      _record.config,
+      true,
+      _record.current_data_element,
+      _record.ignore_data_element_value_bytes,
+      _record.in_encapsulated_pixel_data,
+      _record.pending_base64_input,
+      _record.data_set_path,
+      _record.sequence_item_counts,
+    );
+  })();
   let json = (() => {
     let $ = transform$1.config.pretty_print;
     if ($) {
@@ -356,12 +455,19 @@ function write_base64(transform, input, finish) {
   return $bool.lazy_guard(
     (($bit_array.byte_size(transform.pending_base64_input) + input_size) < 3) && !finish,
     () => {
-      let transform$1 = transform.withFields({
-        pending_base64_input: toBitArray([
-          transform.pending_base64_input.buffer,
-          input.buffer,
-        ])
-      });
+      let transform$1 = (() => {
+        let _record = transform;
+        return new P10JsonTransform(
+          _record.config,
+          _record.insert_comma,
+          _record.current_data_element,
+          _record.ignore_data_element_value_bytes,
+          _record.in_encapsulated_pixel_data,
+          toBitArray([transform.pending_base64_input.buffer, input.buffer]),
+          _record.data_set_path,
+          _record.sequence_item_counts,
+        );
+      })();
       return [transform$1, ""];
     },
     () => {
@@ -380,7 +486,7 @@ function write_base64(transform, input, finish) {
         throw makeError(
           "let_assert",
           "dcmfx_json/transforms/p10_json_transform",
-          708,
+          705,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -391,21 +497,31 @@ function write_base64(transform, input, finish) {
         toBitArray([transform.pending_base64_input.buffer, base64_input.buffer]),
         finish,
       );
-      let transform$1 = transform.withFields({
-        pending_base64_input: (() => {
-          let $1 = $bit_array.slice(
-            input,
-            input_bytes_consumed,
-            input_size - input_bytes_consumed,
-          );
-          if ($1.isOk()) {
-            let bytes = $1[0];
-            return bytes;
-          } else {
-            return toBitArray([]);
-          }
-        })()
-      });
+      let transform$1 = (() => {
+        let _record = transform;
+        return new P10JsonTransform(
+          _record.config,
+          _record.insert_comma,
+          _record.current_data_element,
+          _record.ignore_data_element_value_bytes,
+          _record.in_encapsulated_pixel_data,
+          (() => {
+            let $1 = $bit_array.slice(
+              input,
+              input_bytes_consumed,
+              input_size - input_bytes_consumed,
+            );
+            if ($1.isOk()) {
+              let bytes = $1[0];
+              return bytes;
+            } else {
+              return toBitArray([]);
+            }
+          })(),
+          _record.data_set_path,
+          _record.sequence_item_counts,
+        );
+      })();
       return [transform$1, json];
     },
   );
@@ -414,7 +530,19 @@ function write_base64(transform, input, finish) {
 function write_sequence_end(transform) {
   let $ = transform.in_encapsulated_pixel_data;
   if ($) {
-    let transform$1 = transform.withFields({ in_encapsulated_pixel_data: false });
+    let transform$1 = (() => {
+      let _record = transform;
+      return new P10JsonTransform(
+        _record.config,
+        _record.insert_comma,
+        _record.current_data_element,
+        _record.ignore_data_element_value_bytes,
+        false,
+        _record.pending_base64_input,
+        _record.data_set_path,
+        _record.sequence_item_counts,
+      );
+    })();
     let $1 = write_base64(transform$1, toBitArray([]), true);
     let transform$2 = $1[0];
     let json = $1[1];
@@ -428,7 +556,19 @@ function write_sequence_end(transform) {
     })();
     return [transform$2, json$1];
   } else {
-    let transform$1 = transform.withFields({ insert_comma: true });
+    let transform$1 = (() => {
+      let _record = transform;
+      return new P10JsonTransform(
+        _record.config,
+        true,
+        _record.current_data_element,
+        _record.ignore_data_element_value_bytes,
+        _record.in_encapsulated_pixel_data,
+        _record.pending_base64_input,
+        _record.data_set_path,
+        _record.sequence_item_counts,
+      );
+    })();
     let json = (() => {
       let $1 = transform$1.config.pretty_print;
       if ($1) {
@@ -460,13 +600,7 @@ function write_encapsulated_pixel_data_item(transform, length) {
       );
     },
     () => {
-      let bytes = toBitArray([
-        0xFE,
-        0xFF,
-        0x0,
-        0xE0,
-        sizedInt(length, 32, false),
-      ]);
+      let bytes = toBitArray([254, 255, 0, 224, sizedInt(length, 32, false)]);
       return new Ok(write_base64(transform, bytes, false));
     },
   );
@@ -682,7 +816,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            851,
+            845,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -694,7 +828,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            852,
+            846,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -715,7 +849,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_json/transforms/p10_json_transform",
-                  861,
+                  855,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $4 }
@@ -740,7 +874,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            851,
+            845,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -752,7 +886,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            852,
+            846,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -773,7 +907,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_json/transforms/p10_json_transform",
-                  861,
+                  855,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $4 }
@@ -955,9 +1089,19 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
   return $bool.lazy_guard(
     transform.ignore_data_element_value_bytes,
     () => {
-      let transform$1 = transform.withFields({
-        ignore_data_element_value_bytes: false
-      });
+      let transform$1 = (() => {
+        let _record = transform;
+        return new P10JsonTransform(
+          _record.config,
+          _record.insert_comma,
+          _record.current_data_element,
+          false,
+          _record.in_encapsulated_pixel_data,
+          _record.pending_base64_input,
+          _record.data_set_path,
+          _record.sequence_item_counts,
+        );
+      })();
       return new Ok([transform$1, ""]);
     },
     () => {
@@ -1004,12 +1148,22 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
             ($bit_array.byte_size(data) === 0) && (bytes_remaining === 0),
             new Ok([transform, ""]),
             () => {
-              let transform$1 = transform.withFields({
-                current_data_element: [
-                  transform.current_data_element[0],
-                  listPrepend(data, transform.current_data_element[1]),
-                ]
-              });
+              let transform$1 = (() => {
+                let _record = transform;
+                return new P10JsonTransform(
+                  _record.config,
+                  _record.insert_comma,
+                  [
+                    transform.current_data_element[0],
+                    listPrepend(data, transform.current_data_element[1]),
+                  ],
+                  _record.ignore_data_element_value_bytes,
+                  _record.in_encapsulated_pixel_data,
+                  _record.pending_base64_input,
+                  _record.data_set_path,
+                  _record.sequence_item_counts,
+                );
+              })();
               return $bool.guard(
                 bytes_remaining > 0,
                 new Ok([transform$1, ""]),
@@ -1096,7 +1250,19 @@ export function add_part(transform, part) {
         return $result.map_error(_pipe, part_stream_invalid_error);
       })(),
       (path) => {
-        let transform$2 = transform$1.withFields({ data_set_path: path });
+        let transform$2 = (() => {
+          let _record = transform$1;
+          return new P10JsonTransform(
+            _record.config,
+            _record.insert_comma,
+            _record.current_data_element,
+            _record.ignore_data_element_value_bytes,
+            _record.in_encapsulated_pixel_data,
+            _record.pending_base64_input,
+            path,
+            _record.sequence_item_counts,
+          );
+        })();
         return [transform$2, json];
       },
     );
@@ -1116,7 +1282,17 @@ export function add_part(transform, part) {
             return $result.map(
               _pipe$1,
               (path) => {
-                return transform$1.withFields({ data_set_path: path });
+                let _record = transform$1;
+                return new P10JsonTransform(
+                  _record.config,
+                  _record.insert_comma,
+                  _record.current_data_element,
+                  _record.ignore_data_element_value_bytes,
+                  _record.in_encapsulated_pixel_data,
+                  _record.pending_base64_input,
+                  path,
+                  _record.sequence_item_counts,
+                );
               },
             );
           } else {
@@ -1147,13 +1323,19 @@ export function add_part(transform, part) {
         return $result.map(
           path,
           (path) => {
-            let transform$2 = transform$1.withFields({
-              data_set_path: path,
-              sequence_item_counts: listPrepend(
-                0,
-                transform$1.sequence_item_counts,
-              )
-            });
+            let transform$2 = (() => {
+              let _record = transform$1;
+              return new P10JsonTransform(
+                _record.config,
+                _record.insert_comma,
+                _record.current_data_element,
+                _record.ignore_data_element_value_bytes,
+                _record.in_encapsulated_pixel_data,
+                _record.pending_base64_input,
+                path,
+                listPrepend(0, transform$1.sequence_item_counts),
+              );
+            })();
             return [transform$2, json];
           },
         );
@@ -1174,10 +1356,19 @@ export function add_part(transform, part) {
           let _pipe = $list.rest(transform$1.sequence_item_counts);
           return $result.unwrap(_pipe, toList([]));
         })();
-        let transform$2 = transform$1.withFields({
-          data_set_path: path,
-          sequence_item_counts: sequence_item_counts
-        });
+        let transform$2 = (() => {
+          let _record = transform$1;
+          return new P10JsonTransform(
+            _record.config,
+            _record.insert_comma,
+            _record.current_data_element,
+            _record.ignore_data_element_value_bytes,
+            _record.in_encapsulated_pixel_data,
+            _record.pending_base64_input,
+            path,
+            sequence_item_counts,
+          );
+        })();
         return new Ok([transform$2, json]);
       },
     );
@@ -1203,10 +1394,19 @@ export function add_part(transform, part) {
       (_use0) => {
         let path = _use0[0];
         let sequence_item_counts = _use0[1];
-        let transform$1 = transform.withFields({
-          data_set_path: path,
-          sequence_item_counts: sequence_item_counts
-        });
+        let transform$1 = (() => {
+          let _record = transform;
+          return new P10JsonTransform(
+            _record.config,
+            _record.insert_comma,
+            _record.current_data_element,
+            _record.ignore_data_element_value_bytes,
+            _record.in_encapsulated_pixel_data,
+            _record.pending_base64_input,
+            path,
+            sequence_item_counts,
+          );
+        })();
         return write_sequence_item_start(transform$1);
       },
     );
@@ -1221,7 +1421,19 @@ export function add_part(transform, part) {
     return $result.try$(
       path,
       (path) => {
-        let transform$2 = transform$1.withFields({ data_set_path: path });
+        let transform$2 = (() => {
+          let _record = transform$1;
+          return new P10JsonTransform(
+            _record.config,
+            _record.insert_comma,
+            _record.current_data_element,
+            _record.ignore_data_element_value_bytes,
+            _record.in_encapsulated_pixel_data,
+            _record.pending_base64_input,
+            path,
+            _record.sequence_item_counts,
+          );
+        })();
         return new Ok([transform$2, json]);
       },
     );
@@ -1248,10 +1460,19 @@ export function add_part(transform, part) {
       (_use0) => {
         let path = _use0[0];
         let sequence_item_counts = _use0[1];
-        let transform$1 = transform.withFields({
-          data_set_path: path,
-          sequence_item_counts: sequence_item_counts
-        });
+        let transform$1 = (() => {
+          let _record = transform;
+          return new P10JsonTransform(
+            _record.config,
+            _record.insert_comma,
+            _record.current_data_element,
+            _record.ignore_data_element_value_bytes,
+            _record.in_encapsulated_pixel_data,
+            _record.pending_base64_input,
+            path,
+            sequence_item_counts,
+          );
+        })();
         return write_encapsulated_pixel_data_item(transform$1, length);
       },
     );

@@ -1,5 +1,3 @@
-import type * as $order from "../gleam/order.d.mts";
-
 export function and(a: boolean, b: boolean): boolean;
 
 export function or(a: boolean, b: boolean): boolean;
@@ -14,20 +12,16 @@ export function exclusive_or(a: boolean, b: boolean): boolean;
 
 export function exclusive_nor(a: boolean, b: boolean): boolean;
 
-export function compare(a: boolean, b: boolean): $order.Order$;
-
-export function to_int(bool: boolean): number;
-
 export function to_string(bool: boolean): string;
 
-export function guard<BWC>(
+export function guard<BVV>(
   requirement: boolean,
-  consequence: BWC,
-  alternative: () => BWC
-): BWC;
+  consequence: BVV,
+  alternative: () => BVV
+): BVV;
 
-export function lazy_guard<BWD>(
+export function lazy_guard<BVW>(
   requirement: boolean,
-  consequence: () => BWD,
-  alternative: () => BWD
-): BWD;
+  consequence: () => BVW,
+  alternative: () => BVW
+): BVW;

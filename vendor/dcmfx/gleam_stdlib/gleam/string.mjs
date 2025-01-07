@@ -273,10 +273,6 @@ export function utf_codepoint(value) {
   if (value > 1_114_111) {
     let i = value;
     return new Error(undefined);
-  } else if (value === 65_534) {
-    return new Error(undefined);
-  } else if (value === 65_535) {
-    return new Error(undefined);
   } else if ((value >= 55_296) && (value <= 57_343)) {
     let i = value;
     return new Error(undefined);

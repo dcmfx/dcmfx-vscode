@@ -28,7 +28,7 @@ export function from_bytes(bytes) {
             throw makeError(
               "let_assert",
               "dcmfx_core/data_element_value/attribute_tag",
-              19,
+              20,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: $ }

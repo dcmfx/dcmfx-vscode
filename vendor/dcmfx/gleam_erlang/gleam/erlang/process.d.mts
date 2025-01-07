@@ -12,11 +12,11 @@ declare class Subject extends _.CustomType {
   tag: $erlang.Reference$;
 }
 
-export type Subject$<FVJ> = Subject;
+export type Subject$<FSD> = Subject;
 
 declare type DoNotLeak$ = unknown;
 
-export type Selector$<FVK> = unknown;
+export type Selector$<FSE> = unknown;
 
 export class ExitMessage extends _.CustomType {
   constructor(pid: Pid$, reason: ExitReason$);
@@ -72,7 +72,7 @@ export class CalleeDown extends _.CustomType {
 
 export class CallTimeout extends _.CustomType {}
 
-export type CallError$<FVL> = CalleeDown | CallTimeout;
+export type CallError$<FSF> = CalleeDown | CallTimeout;
 
 export type Timer$ = unknown;
 
@@ -98,80 +98,80 @@ export function new_subject(): Subject$<any>;
 
 export function subject_owner(subject: Subject$<any>): Pid$;
 
-export function send<FVU>(subject: Subject$<FVU>, message: FVU): undefined;
+export function send<FSO>(subject: Subject$<FSO>, message: FSO): undefined;
 
-export function receive<FVW>(subject: Subject$<FVW>, timeout: number): _.Result<
-  FVW,
+export function receive<FSQ>(subject: Subject$<FSQ>, timeout: number): _.Result<
+  FSQ,
   undefined
 >;
 
-export function receive_forever<FWA>(subject: Subject$<FWA>): FWA;
+export function receive_forever<FSU>(subject: Subject$<FSU>): FSU;
 
 export function new_selector(): Selector$<any>;
 
-export function select<FWE>(from: Selector$<FWE>, within: number): _.Result<
-  FWE,
+export function select<FSY>(from: Selector$<FSY>, within: number): _.Result<
+  FSY,
   undefined
 >;
 
-export function select_forever<FWI>(from: Selector$<FWI>): FWI;
+export function select_forever<FTC>(from: Selector$<FTC>): FTC;
 
-export function map_selector<FWK, FWM>(a: Selector$<FWK>, b: (x0: FWK) => FWM): Selector$<
-  FWM
+export function map_selector<FTE, FTG>(a: Selector$<FTE>, b: (x0: FTE) => FTG): Selector$<
+  FTG
 >;
 
-export function merge_selector<FWO>(a: Selector$<FWO>, b: Selector$<FWO>): Selector$<
-  FWO
+export function merge_selector<FTI>(a: Selector$<FTI>, b: Selector$<FTI>): Selector$<
+  FTI
 >;
 
 export function flush_messages(): undefined;
 
-export function selecting_trapped_exits<FWS>(
-  selector: Selector$<FWS>,
-  handler: (x0: ExitMessage$) => FWS
-): Selector$<FWS>;
+export function selecting_trapped_exits<FTM>(
+  selector: Selector$<FTM>,
+  handler: (x0: ExitMessage$) => FTM
+): Selector$<FTM>;
 
-export function selecting<FWV, FWX>(
-  selector: Selector$<FWV>,
-  subject: Subject$<FWX>,
-  transform: (x0: FWX) => FWV
-): Selector$<FWV>;
+export function selecting<FTP, FTR>(
+  selector: Selector$<FTP>,
+  subject: Subject$<FTR>,
+  transform: (x0: FTR) => FTP
+): Selector$<FTP>;
 
-export function selecting_record2<FXF>(
-  selector: Selector$<FXF>,
+export function selecting_record2<FTZ>(
+  selector: Selector$<FTZ>,
   tag: any,
-  transform: (x0: $dynamic.Dynamic$) => FXF
-): Selector$<FXF>;
+  transform: (x0: $dynamic.Dynamic$) => FTZ
+): Selector$<FTZ>;
 
-export function selecting_record3<FXJ>(
-  selector: Selector$<FXJ>,
+export function selecting_record3<FUD>(
+  selector: Selector$<FUD>,
   tag: any,
-  transform: (x0: $dynamic.Dynamic$, x1: $dynamic.Dynamic$) => FXJ
-): Selector$<FXJ>;
+  transform: (x0: $dynamic.Dynamic$, x1: $dynamic.Dynamic$) => FUD
+): Selector$<FUD>;
 
-export function selecting_record4<FXN>(
-  selector: Selector$<FXN>,
+export function selecting_record4<FUH>(
+  selector: Selector$<FUH>,
   tag: any,
   transform: (
     x0: $dynamic.Dynamic$,
     x1: $dynamic.Dynamic$,
     x2: $dynamic.Dynamic$
-  ) => FXN
-): Selector$<FXN>;
+  ) => FUH
+): Selector$<FUH>;
 
-export function selecting_record5<FXR>(
-  selector: Selector$<FXR>,
+export function selecting_record5<FUL>(
+  selector: Selector$<FUL>,
   tag: any,
   transform: (
     x0: $dynamic.Dynamic$,
     x1: $dynamic.Dynamic$,
     x2: $dynamic.Dynamic$,
     x3: $dynamic.Dynamic$
-  ) => FXR
-): Selector$<FXR>;
+  ) => FUL
+): Selector$<FUL>;
 
-export function selecting_record6<FXV>(
-  selector: Selector$<FXV>,
+export function selecting_record6<FUP>(
+  selector: Selector$<FUP>,
   tag: any,
   transform: (
     x0: $dynamic.Dynamic$,
@@ -179,11 +179,11 @@ export function selecting_record6<FXV>(
     x2: $dynamic.Dynamic$,
     x3: $dynamic.Dynamic$,
     x4: $dynamic.Dynamic$
-  ) => FXV
-): Selector$<FXV>;
+  ) => FUP
+): Selector$<FUP>;
 
-export function selecting_record7<FXZ>(
-  selector: Selector$<FXZ>,
+export function selecting_record7<FUT>(
+  selector: Selector$<FUT>,
   tag: any,
   transform: (
     x0: $dynamic.Dynamic$,
@@ -192,11 +192,11 @@ export function selecting_record7<FXZ>(
     x3: $dynamic.Dynamic$,
     x4: $dynamic.Dynamic$,
     x5: $dynamic.Dynamic$
-  ) => FXZ
-): Selector$<FXZ>;
+  ) => FUT
+): Selector$<FUT>;
 
-export function selecting_record8<FYD>(
-  selector: Selector$<FYD>,
+export function selecting_record8<FUX>(
+  selector: Selector$<FUX>,
   tag: any,
   transform: (
     x0: $dynamic.Dynamic$,
@@ -206,18 +206,18 @@ export function selecting_record8<FYD>(
     x4: $dynamic.Dynamic$,
     x5: $dynamic.Dynamic$,
     x6: $dynamic.Dynamic$
-  ) => FYD
-): Selector$<FYD>;
+  ) => FUX
+): Selector$<FUX>;
 
-export function selecting_anything<FYH>(
-  selector: Selector$<FYH>,
-  handler: (x0: $dynamic.Dynamic$) => FYH
-): Selector$<FYH>;
+export function selecting_anything<FVB>(
+  selector: Selector$<FVB>,
+  handler: (x0: $dynamic.Dynamic$) => FVB
+): Selector$<FVB>;
 
-export function deselecting<FXA>(
-  selector: Selector$<FXA>,
+export function deselecting<FTU>(
+  selector: Selector$<FTU>,
   subject: Subject$<any>
-): Selector$<FXA>;
+): Selector$<FTU>;
 
 export function sleep(a: number): undefined;
 
@@ -227,49 +227,49 @@ export function is_alive(a: Pid$): boolean;
 
 export function monitor_process(pid: Pid$): ProcessMonitor$;
 
-export function selecting_process_down<FYT>(
-  selector: Selector$<FYT>,
+export function selecting_process_down<FVN>(
+  selector: Selector$<FVN>,
   monitor: ProcessMonitor$,
-  mapping: (x0: ProcessDown$) => FYT
-): Selector$<FYT>;
+  mapping: (x0: ProcessDown$) => FVN
+): Selector$<FVN>;
 
 export function demonitor_process(monitor: ProcessMonitor$): undefined;
 
-export function deselecting_process_down<FYW>(
-  selector: Selector$<FYW>,
+export function deselecting_process_down<FVQ>(
+  selector: Selector$<FVQ>,
   monitor: ProcessMonitor$
-): Selector$<FYW>;
+): Selector$<FVQ>;
 
-export function try_call<FYZ, FZB>(
-  subject: Subject$<FYZ>,
-  make_request: (x0: Subject$<FZB>) => FYZ,
+export function try_call<FVT, FVV>(
+  subject: Subject$<FVT>,
+  make_request: (x0: Subject$<FVV>) => FVT,
   timeout: number
-): _.Result<FZB, CallError$<FZB>>;
+): _.Result<FVV, CallError$<FVV>>;
 
-export function call<FZG, FZI>(
-  subject: Subject$<FZG>,
-  make_request: (x0: Subject$<FZI>) => FZG,
+export function call<FWA, FWC>(
+  subject: Subject$<FWA>,
+  make_request: (x0: Subject$<FWC>) => FWA,
   timeout: number
-): FZI;
+): FWC;
 
-export function try_call_forever<FZO, FZQ>(
-  subject: Subject$<FZO>,
-  make_request: (x0: Subject$<FZQ>) => FZO
-): _.Result<FZQ, CallError$<any>>;
+export function try_call_forever<FWI, FWK>(
+  subject: Subject$<FWI>,
+  make_request: (x0: Subject$<FWK>) => FWI
+): _.Result<FWK, CallError$<any>>;
 
-export function call_forever<FZK, FZM>(
-  subject: Subject$<FZK>,
-  make_request: (x0: Subject$<FZM>) => FZK
-): FZM;
+export function call_forever<FWE, FWG>(
+  subject: Subject$<FWE>,
+  make_request: (x0: Subject$<FWG>) => FWE
+): FWG;
 
 export function link(pid: Pid$): boolean;
 
 export function unlink(pid: Pid$): undefined;
 
-export function send_after<FZX>(
-  subject: Subject$<FZX>,
+export function send_after<FWR>(
+  subject: Subject$<FWR>,
   delay: number,
-  message: FZX
+  message: FWR
 ): Timer$;
 
 export function cancel_timer(timer: Timer$): Cancelled$;

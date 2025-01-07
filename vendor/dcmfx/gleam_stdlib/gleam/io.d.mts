@@ -6,4 +6,4 @@ export function println(string: string): undefined;
 
 export function println_error(string: string): undefined;
 
-export function debug<EJE>(term: EJE): EJE;
+export function debug<EFY>(term: EFY): EFY;
