@@ -1,0 +1,9 @@
+name = "dcmfx_vendor"
+
+[javascript]
+typescript_declarations = true
+
+[dependencies]
+dcmfx_core = { path = "../../../dcmfx/src/gleam/dcmfx_core" }
+dcmfx_json = { path = "../../../dcmfx/src/gleam/dcmfx_json" }
+dcmfx_p10 = { path = "../../../dcmfx/src/gleam/dcmfx_p10" }

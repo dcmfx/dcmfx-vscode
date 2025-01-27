@@ -40,6 +40,6 @@ export type P10JsonTransform$ = P10JsonTransform;
 export function new$(config: $json_config.DicomJsonConfig$): P10JsonTransform$;
 
 export function add_part(transform: P10JsonTransform$, part: $p10_part.P10Part$): _.Result<
-  [P10JsonTransform$, string],
+  [string, P10JsonTransform$],
   $json_error.JsonSerializeError$
 >;

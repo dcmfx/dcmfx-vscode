@@ -14,8 +14,7 @@ import * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_rep
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
 import * as $dict from "../../../gleam_stdlib/gleam/dict.mjs";
-import * as $dynamic from "../../../gleam_stdlib/gleam/dynamic.mjs";
-import { DecodeError } from "../../../gleam_stdlib/gleam/dynamic.mjs";
+import * as $decode from "../../../gleam_stdlib/gleam/dynamic/decode.mjs";
 import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
@@ -59,7 +58,7 @@ function read_dicom_json_vr(raw_value, path) {
     (raw_vr) => {
       let vr_string = (() => {
         let _pipe = raw_vr;
-        let _pipe$1 = $dynamic.string(_pipe);
+        let _pipe$1 = $decode.run(_pipe, $decode.string);
         return $result.replace_error(
           _pipe$1,
           new $json_error.JsonInvalid("VR is not a string", path),
@@ -81,56 +80,74 @@ function read_dicom_json_vr(raw_value, path) {
   );
 }
 
-function decode_ieee_float(f) {
-  let $ = $dynamic.float(f);
-  if ($.isOk()) {
-    let f$1 = $[0];
-    return new Ok($ieee_float.finite(f$1));
-  } else {
-    let $1 = $dynamic.int(f);
-    if ($1.isOk()) {
-      let f$1 = $1[0];
-      return new Ok($ieee_float.finite($int.to_float(f$1)));
-    } else {
-      return $bool.guard(
-        isEqual(f, $dynamic.from("Infinity")),
-        new Ok($ieee_float.positive_infinity()),
-        () => {
-          return $bool.guard(
-            isEqual(f, $dynamic.from("-Infinity")),
-            new Ok($ieee_float.negative_infinity()),
-            () => {
-              return $bool.guard(
-                isEqual(f, $dynamic.from("NaN")),
-                new Ok($ieee_float.nan()),
-                () => {
-                  return new Error(
-                    toList([new DecodeError("Number", "Unknown", toList([]))]),
-                  );
-                },
-              );
-            },
-          );
+function decode_ieee_float() {
+  return $decode.one_of(
+    (() => {
+      let _pipe = $decode.float;
+      return $decode.map(_pipe, $ieee_float.finite);
+    })(),
+    toList([
+      (() => {
+        let _pipe = $decode.int;
+        let _pipe$1 = $decode.map(_pipe, $int.to_float);
+        return $decode.map(_pipe$1, $ieee_float.finite);
+      })(),
+      $decode.then$(
+        $decode.string,
+        (s) => {
+          if (s === "Infinity") {
+            return $decode.success($ieee_float.positive_infinity());
+          } else if (s === "-Infinity") {
+            return $decode.success($ieee_float.negative_infinity());
+          } else if (s === "NaN") {
+            return $decode.success($ieee_float.nan());
+          } else {
+            return $decode.failure($ieee_float.finite(0.0), "Number");
+          }
         },
-      );
-    }
-  }
+      ),
+    ]),
+  );
 }
 
 function read_dicom_json_person_name_value(value, path) {
   let person_name_variants = (() => {
-    let _pipe = $dynamic.list(
-      $dynamic.decode3(
-        (var0, var1, var2) => {
-          return new PersonNameVariants(var0, var1, var2);
-        },
-        $dynamic.optional_field("Alphabetic", $dynamic.string),
-        $dynamic.optional_field("Ideographic", $dynamic.string),
-        $dynamic.optional_field("Phonetic", $dynamic.string),
-      ),
-    )(value);
-    return $result.replace_error(
+    let _pipe = value;
+    let _pipe$1 = $decode.run(
       _pipe,
+      $decode.list(
+        $decode.optional_field(
+          "Alphabetic",
+          "",
+          $decode.string,
+          (alphabetic) => {
+            return $decode.optional_field(
+              "Ideographic",
+              "",
+              $decode.string,
+              (ideographic) => {
+                return $decode.optional_field(
+                  "Phonetic",
+                  "",
+                  $decode.string,
+                  (phonetic) => {
+                    return $decode.success(
+                      new PersonNameVariants(
+                        new Some(alphabetic),
+                        new Some(ideographic),
+                        new Some(phonetic),
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+    return $result.replace_error(
+      _pipe$1,
       new $json_error.JsonInvalid("PersonName value is invalid", path),
     );
   })();
@@ -211,7 +228,7 @@ function read_dicom_json_inline_binary_value(
 ) {
   let inline_binary$1 = (() => {
     let _pipe = inline_binary;
-    let _pipe$1 = $dynamic.string(_pipe);
+    let _pipe$1 = $decode.run(_pipe, $decode.string);
     return $result.replace_error(
       _pipe$1,
       new $json_error.JsonInvalid("InlineBinary is not a string", path),
@@ -282,7 +299,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   if (vr instanceof $value_representation.AgeString) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -311,7 +331,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.ApplicationEntity) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -340,7 +363,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.CodeString) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -369,7 +395,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.Date) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -398,7 +427,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.DateTime) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -427,7 +459,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.LongString) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -456,7 +491,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.LongText) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -485,7 +523,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.ShortString) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -514,7 +555,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.ShortText) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -543,7 +587,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.Time) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -572,7 +619,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.UnlimitedCharacters) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -601,7 +651,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.UnlimitedText) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -630,7 +683,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.UniqueIdentifier) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -659,7 +715,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.UniversalResourceIdentifier) {
     let value$1 = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.optional($dynamic.string))(_pipe);
+      let _pipe$1 = $decode.run(
+        _pipe,
+        $decode.list($decode.optional($decode.string)),
+      );
       return $result.map_error(
         _pipe$1,
         (_) => {
@@ -687,19 +746,19 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
     );
   } else if (vr instanceof $value_representation.DecimalString) {
     let _pipe = value;
-    let _pipe$1 = $dynamic.list($dynamic.dynamic)(_pipe);
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
     let _pipe$2 = $result.then$(
       _pipe$1,
       (lst) => {
         let _pipe$2 = $list.map(
           lst,
           (i) => {
-            let $ = $dynamic.float(i);
+            let $ = $decode.run(i, $decode.float);
             if ($.isOk()) {
               let i$1 = $[0];
               return new Ok(i$1);
             } else {
-              let $1 = $dynamic.int(i);
+              let $1 = $decode.run(i, $decode.int);
               if ($1.isOk()) {
                 let i$1 = $1[0];
                 return new Ok($int.to_float(i$1));
@@ -727,7 +786,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.IntegerString) {
     let ints = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.int)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid("IntegerString value is invalid", path),
@@ -757,7 +816,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.SignedLong) {
     let ints = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.int)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid("SignedLong value is invalid", path),
@@ -796,7 +855,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.SignedShort) {
     let ints = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.int)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid("Short value is invalid", path),
@@ -860,7 +919,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.UnsignedShort) {
     let ints = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.int)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid("Short value is invalid", path),
@@ -924,7 +983,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.SignedVeryLong) {
     let values = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.dynamic)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid("Very long value is not a list", path),
@@ -938,12 +997,12 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
           let _pipe$1 = $list.map(
             _pipe,
             (i) => {
-              let $ = $dynamic.int(i);
+              let $ = $decode.run(i, $decode.int);
               if ($.isOk()) {
                 let i$1 = $[0];
                 return new Ok($bigi.from_int(i$1));
               } else {
-                let $1 = $dynamic.string(i);
+                let $1 = $decode.run(i, $decode.string);
                 if ($1.isOk()) {
                   let i$1 = $1[0];
                   return $bigi.from_string(i$1);
@@ -1005,7 +1064,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.UnsignedVeryLong) {
     let values = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.dynamic)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid("Very long value is not a list", path),
@@ -1019,12 +1078,12 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
           let _pipe$1 = $list.map(
             _pipe,
             (i) => {
-              let $ = $dynamic.int(i);
+              let $ = $decode.run(i, $decode.int);
               if ($.isOk()) {
                 let i$1 = $[0];
                 return new Ok($bigi.from_int(i$1));
               } else {
-                let $1 = $dynamic.string(i);
+                let $1 = $decode.run(i, $decode.string);
                 if ($1.isOk()) {
                   let i$1 = $1[0];
                   return $bigi.from_string(i$1);
@@ -1086,7 +1145,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.UnsignedLong) {
     let ints = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.int)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid("UnsignedLong value is invalid", path),
@@ -1125,7 +1184,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.FloatingPointDouble) {
     let floats = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list(decode_ieee_float)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list(decode_ieee_float()));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid(
@@ -1149,7 +1208,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.FloatingPointSingle) {
     let floats = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list(decode_ieee_float)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list(decode_ieee_float()));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid(
@@ -1173,7 +1232,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.AttributeTag) {
     let tags = (() => {
       let _pipe = value;
-      let _pipe$1 = $dynamic.list($dynamic.string)(_pipe);
+      let _pipe$1 = $decode.run(_pipe, $decode.list($decode.string));
       return $result.replace_error(
         _pipe$1,
         new $json_error.JsonInvalid("AttributeTag value is invalid", path),
@@ -1221,7 +1280,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
     );
   } else if (vr instanceof $value_representation.Sequence) {
     let _pipe = value;
-    let _pipe$1 = $dynamic.list($dynamic.dynamic)(_pipe);
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
     let _pipe$2 = $result.replace_error(
       _pipe$1,
       new $json_error.JsonInvalid("Sequence value is invalid", path),
@@ -1254,9 +1313,13 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
 
 export function convert_json_to_data_set(in$, path) {
   let raw_dict = (() => {
-    let _pipe = $dynamic.dict($dynamic.string, $dynamic.dynamic)(in$);
-    return $result.replace_error(
+    let _pipe = in$;
+    let _pipe$1 = $decode.run(
       _pipe,
+      $decode.dict($decode.string, $decode.dynamic),
+    );
+    return $result.replace_error(
+      _pipe$1,
       new $json_error.JsonInvalid("Data set is not an object", path),
     );
   })();
@@ -1292,7 +1355,7 @@ export function convert_json_to_data_set(in$, path) {
                     throw makeError(
                       "let_assert",
                       "dcmfx_json/internal/json_to_data_set",
-                      56,
+                      57,
                       "",
                       "Pattern match failed, no pattern matched the value.",
                       { value: $ }
@@ -1342,9 +1405,13 @@ export function convert_json_to_data_set(in$, path) {
 
 function convert_json_to_data_element(in$, tag, transfer_syntax, path) {
   let raw_value = (() => {
-    let _pipe = $dynamic.dict($dynamic.string, $dynamic.dynamic)(in$);
-    return $result.replace_error(
+    let _pipe = in$;
+    let _pipe$1 = $decode.run(
       _pipe,
+      $decode.dict($decode.string, $decode.dynamic),
+    );
+    return $result.replace_error(
+      _pipe$1,
       new $json_error.JsonInvalid("Data element is not an object", path),
     );
   })();

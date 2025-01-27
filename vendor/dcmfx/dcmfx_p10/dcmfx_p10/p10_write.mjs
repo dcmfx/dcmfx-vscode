@@ -94,6 +94,7 @@ export function with_config(context, config) {
 export function read_bytes(context) {
   let p10_bytes = $list.reverse(context.p10_bytes);
   return [
+    p10_bytes,
     (() => {
       let _record = context;
       return new P10WriteContext(
@@ -107,7 +108,6 @@ export function read_bytes(context) {
         _record.sequence_item_counts,
       );
     })(),
-    p10_bytes,
   ];
 }
 
@@ -235,14 +235,14 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
   );
   let process_part = (context, part) => {
     let $1 = $p10_filter_transform.add_part(context[1], part);
-    if (!$1[1]) {
-      let filter_transform = $1[0];
+    if (!$1[0]) {
+      let filter_transform = $1[1];
       return new Ok([context[0], filter_transform, context[2]]);
     } else {
-      let filter_transform = $1[0];
+      let filter_transform = $1[1];
       let $2 = $p10_insert_transform.add_part(context[2], part);
-      let insert_transform = $2[0];
-      let parts = $2[1];
+      let parts = $2[0];
+      let insert_transform = $2[1];
       return $result.try$(
         $list.try_fold(parts, context[0], part_callback),
         (callback_context) => {
@@ -940,8 +940,8 @@ export function data_set_to_bytes(data_set, context, bytes_callback, config) {
       write_part(write_context$1, part),
       (write_context) => {
         let $ = read_bytes(write_context);
-        let write_context$1 = $[0];
-        let bytes = $[1];
+        let bytes = $[0];
+        let write_context$1 = $[1];
         return $result.map(
           $list.try_fold(bytes, context$1, bytes_callback),
           (context) => { return [context, write_context$1]; },

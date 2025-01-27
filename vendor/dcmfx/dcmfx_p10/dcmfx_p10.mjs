@@ -303,8 +303,8 @@ export function write_parts_to_stream(parts, stream, context) {
     ),
     (context) => {
       let $ = $p10_write.read_bytes(context);
-      let context$1 = $[0];
-      let p10_bytes = $[1];
+      let p10_bytes = $[0];
+      let context$1 = $[1];
       return $result.try$(
         $list.try_fold(
           p10_bytes,

@@ -45,6 +45,6 @@ export type P10PrintTransform$ = P10PrintTransform;
 export function new$(print_options: $data_set_print.DataSetPrintOptions$): P10PrintTransform$;
 
 export function add_part(context: P10PrintTransform$, part: $p10_part.P10Part$): [
-  P10PrintTransform$,
-  string
+  string,
+  P10PrintTransform$
 ];

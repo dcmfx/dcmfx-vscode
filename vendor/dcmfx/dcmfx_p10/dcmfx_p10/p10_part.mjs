@@ -129,6 +129,16 @@ export function to_string(part) {
   }
 }
 
+export function is_header_part(part) {
+  if (part instanceof FilePreambleAndDICMPrefix) {
+    return true;
+  } else if (part instanceof FileMetaInformation) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export function data_element_to_parts(tag, value, context, part_callback) {
   let vr = $data_element_value.value_representation(value);
   let $ = $data_element_value.bytes(value);
@@ -193,7 +203,7 @@ export function data_element_to_parts(tag, value, context, part_callback) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_part",
-          199,
+          210,
           "data_element_to_parts",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }

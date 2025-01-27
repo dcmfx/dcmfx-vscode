@@ -29,6 +29,6 @@ export function new$(
 ): P10InsertTransform$;
 
 export function add_part(context: P10InsertTransform$, part: $p10_part.P10Part$): [
-  P10InsertTransform$,
-  _.List<$p10_part.P10Part$>
+  _.List<$p10_part.P10Part$>,
+  P10InsertTransform$
 ];

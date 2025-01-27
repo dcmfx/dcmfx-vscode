@@ -110,17 +110,17 @@ function begin(transform, file_meta_information) {
             return ("\"00020010\":{\"vr\":\"UI\",\"Value\":[\"" + transfer_syntax_uid$1) + "\"]}";
           }
         })();
-        return [transform$1, json$1];
+        return [json$1, transform$1];
       } else {
-        return [transform, ""];
+        return ["", transform];
       }
     } else {
-      return [transform, ""];
+      return ["", transform];
     }
   })();
-  let transform$1 = $[0];
-  let transfer_syntax_json = $[1];
-  return [transform$1, json + transfer_syntax_json];
+  let transfer_syntax_json = $[0];
+  let transform$1 = $[1];
+  return [json + transfer_syntax_json, transform$1];
 }
 
 function write_data_element_header(transform, tag, vr, length) {
@@ -140,7 +140,7 @@ function write_data_element_header(transform, tag, vr, length) {
           _record.sequence_item_counts,
         );
       })();
-      return [transform$1, ""];
+      return ["", transform$1];
     },
     () => {
       let json = (() => {
@@ -207,7 +207,7 @@ function write_data_element_header(transform, tag, vr, length) {
               _record.sequence_item_counts,
             );
           })();
-          return [transform$2, json$2];
+          return [json$2, transform$2];
         },
         () => {
           let json$2 = json$1 + (() => {
@@ -269,7 +269,7 @@ function write_data_element_header(transform, tag, vr, length) {
               }
             }
           })();
-          return [transform$1, json$2];
+          return [json$2, transform$1];
         },
       );
     },
@@ -330,7 +330,7 @@ function write_sequence_start(transform, tag, vr) {
         return ("\"" + $data_element_tag.to_hex_string(tag)) + "\":{\"vr\":\"SQ\",\"Value\":[";
       }
     })();
-    return new Ok([transform$2, json$1]);
+    return new Ok([json$1, transform$2]);
   } else {
     return $bool.lazy_guard(
       !transform$1.config.store_encapsulated_pixel_data,
@@ -374,7 +374,7 @@ function write_sequence_start(transform, tag, vr) {
             )) + "\",\"InlineBinary\":\"";
           }
         })();
-        return new Ok([transform$2, json$1]);
+        return new Ok([json$1, transform$2]);
       },
     );
   }
@@ -410,7 +410,7 @@ function write_sequence_item_start(transform) {
       return "{";
     }
   })();
-  return [transform$1, json$1];
+  return [json$1, transform$1];
 }
 
 function write_sequence_item_end(transform) {
@@ -435,7 +435,7 @@ function write_sequence_item_end(transform) {
       return "}";
     }
   })();
-  return [transform$1, json];
+  return [json, transform$1];
 }
 
 function end(transform) {
@@ -468,7 +468,7 @@ function write_base64(transform, input, finish) {
           _record.sequence_item_counts,
         );
       })();
-      return [transform$1, ""];
+      return ["", transform$1];
     },
     () => {
       let input_bytes_consumed = (() => {
@@ -522,7 +522,7 @@ function write_base64(transform, input, finish) {
           _record.sequence_item_counts,
         );
       })();
-      return [transform$1, json];
+      return [json, transform$1];
     },
   );
 }
@@ -544,8 +544,8 @@ function write_sequence_end(transform) {
       );
     })();
     let $1 = write_base64(transform$1, toBitArray([]), true);
-    let transform$2 = $1[0];
-    let json = $1[1];
+    let json = $1[0];
+    let transform$2 = $1[1];
     let json$1 = json + (() => {
       let $2 = transform$2.config.pretty_print;
       if ($2) {
@@ -554,7 +554,7 @@ function write_sequence_end(transform) {
         return "\"}";
       }
     })();
-    return [transform$2, json$1];
+    return [json$1, transform$2];
   } else {
     let transform$1 = (() => {
       let _record = transform;
@@ -580,7 +580,7 @@ function write_sequence_end(transform) {
         return "]}";
       }
     })();
-    return [transform$1, json];
+    return [json, transform$1];
   }
 }
 
@@ -1102,7 +1102,7 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
           _record.sequence_item_counts,
         );
       })();
-      return new Ok([transform$1, ""]);
+      return new Ok(["", transform$1]);
     },
     () => {
       let is_inline_binary = ((((((isEqual(
@@ -1126,8 +1126,8 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
             data,
             (bytes_remaining === 0) && !transform.in_encapsulated_pixel_data,
           );
-          let transform$1 = $[0];
-          let json = $[1];
+          let json = $[0];
+          let transform$1 = $[1];
           let json$1 = json + (() => {
             let $1 = (bytes_remaining === 0) && !transform$1.in_encapsulated_pixel_data;
             if ($1) {
@@ -1141,12 +1141,12 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
               return "";
             }
           })();
-          return new Ok([transform$1, json$1]);
+          return new Ok([json$1, transform$1]);
         },
         () => {
           return $bool.guard(
             ($bit_array.byte_size(data) === 0) && (bytes_remaining === 0),
-            new Ok([transform, ""]),
+            new Ok(["", transform]),
             () => {
               let transform$1 = (() => {
                 let _record = transform;
@@ -1166,7 +1166,7 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
               })();
               return $bool.guard(
                 bytes_remaining > 0,
-                new Ok([transform$1, ""]),
+                new Ok(["", transform$1]),
                 () => {
                   let bytes = $bit_array.concat(
                     transform$1.current_data_element[1],
@@ -1207,7 +1207,7 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
                           return $string.join(json_values, ",") + "]}";
                         }
                       })();
-                      return [transform$1, json];
+                      return [json, transform$1];
                     },
                   );
                 },
@@ -1230,7 +1230,7 @@ export function add_part(transform, part) {
     return new $json_error.P10Error(_pipe);
   };
   if (part instanceof $p10_part.FilePreambleAndDICMPrefix) {
-    return new Ok([transform, ""]);
+    return new Ok(["", transform]);
   } else if (part instanceof $p10_part.FileMetaInformation) {
     let data_set = part.data_set;
     return new Ok(begin(transform, data_set));
@@ -1239,8 +1239,8 @@ export function add_part(transform, part) {
     let vr = part.vr;
     let length = part.length;
     let $ = write_data_element_header(transform, tag, vr, length);
-    let transform$1 = $[0];
-    let json = $[1];
+    let json = $[0];
+    let transform$1 = $[1];
     return $result.map(
       (() => {
         let _pipe = $data_set_path.add_data_element(
@@ -1263,7 +1263,7 @@ export function add_part(transform, part) {
             _record.sequence_item_counts,
           );
         })();
-        return [transform$2, json];
+        return [json, transform$2];
       },
     );
   } else if (part instanceof $p10_part.DataElementValueBytes) {
@@ -1273,8 +1273,8 @@ export function add_part(transform, part) {
     return $result.try$(
       write_data_element_value_bytes(transform, vr, data, bytes_remaining),
       (_use0) => {
-        let transform$1 = _use0[0];
-        let json = _use0[1];
+        let json = _use0[0];
+        let transform$1 = _use0[1];
         let transform$2 = (() => {
           if (bytes_remaining === 0) {
             let _pipe = $data_set_path.pop(transform$1.data_set_path);
@@ -1301,7 +1301,7 @@ export function add_part(transform, part) {
         })();
         return $result.map(
           transform$2,
-          (transform) => { return [transform, json]; },
+          (transform) => { return [json, transform]; },
         );
       },
     );
@@ -1311,8 +1311,8 @@ export function add_part(transform, part) {
     return $result.try$(
       write_sequence_start(transform, tag, vr),
       (_use0) => {
-        let transform$1 = _use0[0];
-        let json = _use0[1];
+        let json = _use0[0];
+        let transform$1 = _use0[1];
         let path = (() => {
           let _pipe = $data_set_path.add_data_element(
             transform$1.data_set_path,
@@ -1336,15 +1336,15 @@ export function add_part(transform, part) {
                 listPrepend(0, transform$1.sequence_item_counts),
               );
             })();
-            return [transform$2, json];
+            return [json, transform$2];
           },
         );
       },
     );
   } else if (part instanceof $p10_part.SequenceDelimiter) {
     let $ = write_sequence_end(transform);
-    let transform$1 = $[0];
-    let json = $[1];
+    let json = $[0];
+    let transform$1 = $[1];
     let path = (() => {
       let _pipe = $data_set_path.pop(transform$1.data_set_path);
       return $result.map_error(_pipe, part_stream_invalid_error);
@@ -1369,7 +1369,7 @@ export function add_part(transform, part) {
             sequence_item_counts,
           );
         })();
-        return new Ok([transform$2, json]);
+        return new Ok([json, transform$2]);
       },
     );
   } else if (part instanceof $p10_part.SequenceItemStart) {
@@ -1412,8 +1412,8 @@ export function add_part(transform, part) {
     );
   } else if (part instanceof $p10_part.SequenceItemDelimiter) {
     let $ = write_sequence_item_end(transform);
-    let transform$1 = $[0];
-    let json = $[1];
+    let json = $[0];
+    let transform$1 = $[1];
     let path = (() => {
       let _pipe = $data_set_path.pop(transform$1.data_set_path);
       return $result.map_error(_pipe, part_stream_invalid_error);
@@ -1434,7 +1434,7 @@ export function add_part(transform, part) {
             _record.sequence_item_counts,
           );
         })();
-        return new Ok([transform$2, json]);
+        return new Ok([json, transform$2]);
       },
     );
   } else if (part instanceof $p10_part.PixelDataItem) {
@@ -1477,6 +1477,6 @@ export function add_part(transform, part) {
       },
     );
   } else {
-    return new Ok([transform, end(transform)]);
+    return new Ok([end(transform), transform]);
   }
 }

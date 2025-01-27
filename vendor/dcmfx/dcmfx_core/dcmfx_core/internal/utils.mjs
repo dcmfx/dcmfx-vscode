@@ -201,10 +201,10 @@ export function inspect_bit_array(bits, max_length) {
       { value: $ }
     )
   }
-  let bits$1 = $[0];
-  let s = do_inspect_bit_array(bits$1, "[");
+  let sliced_bits = $[0];
+  let s = do_inspect_bit_array(sliced_bits, "[");
   let suffix = (() => {
-    let $1 = byte_count === $bit_array.byte_size(bits$1);
+    let $1 = byte_count === $bit_array.byte_size(bits);
     if ($1) {
       return "]";
     } else {

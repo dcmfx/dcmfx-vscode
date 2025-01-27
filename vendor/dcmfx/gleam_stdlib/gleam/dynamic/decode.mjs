@@ -5,16 +5,26 @@ import {
   toList,
   prepend as listPrepend,
   CustomType as $CustomType,
-  toBitArray,
+  isEqual,
 } from "../../gleam.mjs";
+import * as $bit_array from "../../gleam/bit_array.mjs";
 import * as $dict from "../../gleam/dict.mjs";
 import * as $dynamic from "../../gleam/dynamic.mjs";
 import * as $int from "../../gleam/int.mjs";
 import * as $list from "../../gleam/list.mjs";
 import * as $option from "../../gleam/option.mjs";
 import { None, Some } from "../../gleam/option.mjs";
-import * as $result from "../../gleam/result.mjs";
-import { strict_index as bare_index, list as decode_list, dict as decode_dict } from "../../gleam_stdlib_decode_ffi.mjs";
+import { identity as cast } from "../../gleam_stdlib.mjs";
+import {
+  index as bare_index,
+  int as dynamic_int,
+  float as dynamic_float,
+  bit_array as dynamic_bit_array,
+  list as decode_list,
+  dict as decode_dict,
+  is_null,
+  string as dynamic_string,
+} from "../../gleam_stdlib_decode_ffi.mjs";
 
 export class DecodeError extends $CustomType {
   constructor(expected, found, path) {
@@ -140,26 +150,12 @@ export function recursive(inner) {
   );
 }
 
-export const dynamic = /* @__PURE__ */ new Decoder(decode_dynamic);
-
-export function decode_error(expected, found) {
-  return toList([
-    new DecodeError(expected, $dynamic.classify(found), toList([])),
-  ]);
-}
-
 export function optional(inner) {
   return new Decoder(
     (data) => {
-      let $ = $dynamic.optional((var0) => { return new Ok(var0); })(data);
-      if ($.isOk() && $[0] instanceof $option.None) {
+      let $ = is_null(data);
+      if ($) {
         return [new $option.None(), toList([])];
-      } else if ($.isOk() && $[0] instanceof $option.Some) {
-        let data$1 = $[0][0];
-        let $1 = inner.function(data$1);
-        let data$2 = $1[0];
-        let errors = $1[1];
-        return [new $option.Some(data$2), errors];
       } else {
         let $1 = inner.function(data);
         let data$1 = $1[0];
@@ -168,6 +164,54 @@ export function optional(inner) {
       }
     },
   );
+}
+
+export const dynamic = /* @__PURE__ */ new Decoder(decode_dynamic);
+
+export function decode_error(expected, found) {
+  return toList([
+    new DecodeError(expected, $dynamic.classify(found), toList([])),
+  ]);
+}
+
+function run_dynamic_function(data, name, f) {
+  let $ = f(data);
+  if ($.isOk()) {
+    let data$1 = $[0];
+    return [data$1, toList([])];
+  } else {
+    let zero = $[0];
+    return [
+      zero,
+      toList([new DecodeError(name, $dynamic.classify(data), toList([]))]),
+    ];
+  }
+}
+
+function decode_bool(data) {
+  let $ = isEqual(cast(true), data);
+  if ($) {
+    return [true, toList([])];
+  } else {
+    let $1 = isEqual(cast(false), data);
+    if ($1) {
+      return [false, toList([])];
+    } else {
+      return [false, decode_error("Bool", data)];
+    }
+  }
+}
+
+function decode_int(data) {
+  return run_dynamic_function(data, "Int", dynamic_int);
+}
+
+function decode_float(data) {
+  return run_dynamic_function(data, "Float", dynamic_float);
+}
+
+function decode_bit_array(data) {
+  return run_dynamic_function(data, "BitArray", dynamic_bit_array);
 }
 
 export function collapse_errors(decoder, name) {
@@ -207,6 +251,20 @@ export function new_primitive_decoder(name, decoding_function) {
     },
   );
 }
+
+export const bool = /* @__PURE__ */ new Decoder(decode_bool);
+
+export const int = /* @__PURE__ */ new Decoder(decode_int);
+
+export const float = /* @__PURE__ */ new Decoder(decode_float);
+
+export const bit_array = /* @__PURE__ */ new Decoder(decode_bit_array);
+
+function decode_string(data) {
+  return run_dynamic_function(data, "String", dynamic_string);
+}
+
+export const string = /* @__PURE__ */ new Decoder(decode_string);
 
 function fold_dict(acc, key, value, key_decoder, value_decoder) {
   let $ = key_decoder(key);
@@ -267,17 +325,20 @@ export function list(inner) {
 }
 
 function push_path(layer, path) {
-  let decoder = $dynamic.any(
+  let decoder = one_of(
+    string,
     toList([
-      $dynamic.string,
-      (x) => { return $result.map($dynamic.int(x), $int.to_string); },
+      (() => {
+        let _pipe = int;
+        return map(_pipe, $int.to_string);
+      })(),
     ]),
   );
   let path$1 = $list.map(
     path,
     (key) => {
-      let key$1 = $dynamic.from(key);
-      let $ = decoder(key$1);
+      let key$1 = cast(key);
+      let $ = run(key$1, decoder);
       if ($.isOk()) {
         let key$2 = $[0];
         return key$2;
@@ -439,48 +500,3 @@ export function optionally_at(path, default$, inner) {
     },
   );
 }
-
-function run_dynamic_function(data, zero, f) {
-  let $ = f(data);
-  if ($.isOk()) {
-    let data$1 = $[0];
-    return [data$1, toList([])];
-  } else {
-    let errors = $[0];
-    let errors$1 = $list.map(
-      errors,
-      (e) => { return new DecodeError(e.expected, e.found, e.path); },
-    );
-    return [zero, errors$1];
-  }
-}
-
-function decode_string(data) {
-  return run_dynamic_function(data, "", $dynamic.string);
-}
-
-function decode_bool(data) {
-  return run_dynamic_function(data, false, $dynamic.bool);
-}
-
-function decode_int(data) {
-  return run_dynamic_function(data, 0, $dynamic.int);
-}
-
-function decode_float(data) {
-  return run_dynamic_function(data, 0.0, $dynamic.float);
-}
-
-function decode_bit_array(data) {
-  return run_dynamic_function(data, toBitArray([]), $dynamic.bit_array);
-}
-
-export const string = /* @__PURE__ */ new Decoder(decode_string);
-
-export const bool = /* @__PURE__ */ new Decoder(decode_bool);
-
-export const int = /* @__PURE__ */ new Decoder(decode_int);
-
-export const float = /* @__PURE__ */ new Decoder(decode_float);
-
-export const bit_array = /* @__PURE__ */ new Decoder(decode_bit_array);

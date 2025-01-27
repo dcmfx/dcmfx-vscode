@@ -49,13 +49,13 @@ export function add_part(context, part) {
   if (part instanceof $p10_part.FileMetaInformation) {
     let data_set = part.data_set;
     return [
-      context,
       $data_set.to_lines(
         data_set,
         context.print_options,
         "",
         (s, line) => { return (s + line) + "\n"; },
       ),
+      context,
     ];
   } else if (part instanceof $p10_part.DataElementHeader) {
     let tag = part.tag;
@@ -107,7 +107,7 @@ export function add_part(context, part) {
         last_data_element_private_creator_tag,
       );
     })();
-    return [new_context, s];
+    return [s, new_context];
   } else if (part instanceof $p10_part.DataElementValueBytes &&
   (!context.ignore_data_element_value_bytes)) {
     let vr = part.vr;
@@ -153,7 +153,7 @@ export function add_part(context, part) {
         _record.last_data_element_private_creator_tag,
       );
     })();
-    return [new_context, s];
+    return [s, new_context];
   } else if (part instanceof $p10_part.SequenceStart) {
     let tag = part.tag;
     let vr = part.vr;
@@ -189,7 +189,7 @@ export function add_part(context, part) {
         _record.last_data_element_private_creator_tag,
       );
     })();
-    return [new_context, s + "\n"];
+    return [s + "\n", new_context];
   } else if (part instanceof $p10_part.SequenceDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
       $dictionary.sequence_delimitation_item.tag,
@@ -211,7 +211,7 @@ export function add_part(context, part) {
         _record.last_data_element_private_creator_tag,
       );
     })();
-    return [new_context, s + "\n"];
+    return [s + "\n", new_context];
   } else if (part instanceof $p10_part.SequenceItemStart) {
     let s = $data_set_print.format_data_element_prefix(
       $dictionary.item.tag,
@@ -233,7 +233,7 @@ export function add_part(context, part) {
         _record.last_data_element_private_creator_tag,
       );
     })();
-    return [new_context, s + "\n"];
+    return [s + "\n", new_context];
   } else if (part instanceof $p10_part.SequenceItemDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
       $dictionary.item_delimitation_item.tag,
@@ -258,7 +258,7 @@ export function add_part(context, part) {
         _record.last_data_element_private_creator_tag,
       );
     })();
-    return [new_context, s + "\n"];
+    return [s + "\n", new_context];
   } else if (part instanceof $p10_part.PixelDataItem) {
     let length = part.length;
     let $ = $data_set_print.format_data_element_prefix(
@@ -285,8 +285,8 @@ export function add_part(context, part) {
         _record.last_data_element_private_creator_tag,
       );
     })();
-    return [new_context, s];
+    return [s, new_context];
   } else {
-    return [context, ""];
+    return ["", context];
   }
 }

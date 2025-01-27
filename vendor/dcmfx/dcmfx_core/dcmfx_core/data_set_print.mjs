@@ -122,18 +122,11 @@ export function format_data_element_prefix(
   let length$1 = (() => {
     if (length instanceof Some) {
       let length$1 = length[0];
-      return (("[" + (() => {
+      return ("[" + (() => {
         let _pipe = length$1;
         let _pipe$1 = $int.to_string(_pipe);
         return $utils.pad_start(_pipe$1, 6, " ");
-      })()) + " bytes]") + (() => {
-        let $ = $option.is_some(vr);
-        if ($) {
-          return " ";
-        } else {
-          return "";
-        }
-      })();
+      })()) + " bytes] ";
     } else {
       return "";
     }

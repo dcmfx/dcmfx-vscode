@@ -263,5 +263,5 @@ export function add_part(context, part) {
       data_set_builder,
     );
   })();
-  return [context$2, filter_result];
+  return [filter_result, context$2];
 }

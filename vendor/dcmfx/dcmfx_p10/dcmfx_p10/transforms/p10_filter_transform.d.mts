@@ -63,6 +63,6 @@ export function data_set(context: P10FilterTransform$): _.Result<
 >;
 
 export function add_part(context: P10FilterTransform$, part: $p10_part.P10Part$): [
-  P10FilterTransform$,
-  boolean
+  boolean,
+  P10FilterTransform$
 ];

@@ -171,7 +171,7 @@ function* printDicom(
 
           for (const part of parts.toArray()) {
             if (outputFormat === "dcmfx-print") {
-              const [newPrintTransform, s] = p10_print_transform.add_part(
+              const [s, newPrintTransform] = p10_print_transform.add_part(
                 p10PrintTransform,
                 part,
               );
@@ -179,7 +179,7 @@ function* printDicom(
               p10PrintTransform = newPrintTransform;
               output += s;
             } else if (outputFormat === "json") {
-              const [newJsonTransform, s] = yield* pipe(
+              const [s, newJsonTransform] = yield* pipe(
                 gleamResultToEffect(
                   p10_json_transform.add_part(p10JsonTransform, part),
                 ),

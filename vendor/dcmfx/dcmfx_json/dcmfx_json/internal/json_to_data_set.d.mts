@@ -5,6 +5,7 @@ import type * as $transfer_syntax from "../../../dcmfx_core/dcmfx_core/transfer_
 import type * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.d.mts";
 import type * as $dict from "../../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $dynamic from "../../../gleam_stdlib/gleam/dynamic.d.mts";
+import type * as $decode from "../../../gleam_stdlib/gleam/dynamic/decode.d.mts";
 import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
 import type * as $ieee_float from "../../../ieee_float/ieee_float.d.mts";
 import type * as $json_error from "../../dcmfx_json/json_error.d.mts";

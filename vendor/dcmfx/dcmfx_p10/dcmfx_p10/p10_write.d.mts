@@ -49,8 +49,8 @@ export function new_write_context(): P10WriteContext$;
 export function with_config(context: P10WriteContext$, config: P10WriteConfig$): P10WriteContext$;
 
 export function read_bytes(context: P10WriteContext$): [
-  P10WriteContext$,
-  _.List<_.BitArray>
+  _.List<_.BitArray>,
+  P10WriteContext$
 ];
 
 export function data_element_header_to_bytes(
@@ -59,29 +59,29 @@ export function data_element_header_to_bytes(
   context: P10WriteContext$
 ): _.Result<_.BitArray, $p10_error.P10Error$>;
 
-export function data_set_to_parts<CBEF, CBEG>(
+export function data_set_to_parts<CBCV, CBCW>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  callback_context: CBEF,
-  part_callback: (x0: CBEF, x1: $p10_part.P10Part$) => _.Result<CBEF, CBEG>
-): _.Result<CBEF, CBEG>;
+  callback_context: CBCV,
+  part_callback: (x0: CBCV, x1: $p10_part.P10Part$) => _.Result<CBCV, CBCW>
+): _.Result<CBCV, CBCW>;
 
 export function write_part(context: P10WriteContext$, part: $p10_part.P10Part$): _.Result<
   P10WriteContext$,
   $p10_error.P10Error$
 >;
 
-export function data_set_to_bytes<CBEL>(
+export function data_set_to_bytes<CBDB>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: CBEL,
-  bytes_callback: (x0: CBEL, x1: _.BitArray) => _.Result<
-    CBEL,
+  context: CBDB,
+  bytes_callback: (x0: CBDB, x1: _.BitArray) => _.Result<
+    CBDB,
     $p10_error.P10Error$
   >,
   config: P10WriteConfig$
-): _.Result<CBEL, $p10_error.P10Error$>;
+): _.Result<CBDB, $p10_error.P10Error$>;

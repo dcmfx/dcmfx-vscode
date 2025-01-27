@@ -76,18 +76,20 @@ export type P10Part$ = FilePreambleAndDICMPrefix | FileMetaInformation | DataEle
 
 export function to_string(part: P10Part$): string;
 
-export function data_element_to_parts<BZGR, BZGS>(
+export function is_header_part(part: P10Part$): boolean;
+
+export function data_element_to_parts<BZFG, BZFH>(
   tag: $data_element_tag.DataElementTag$,
   value: $data_element_value.DataElementValue$,
-  context: BZGR,
-  part_callback: (x0: BZGR, x1: P10Part$) => _.Result<BZGR, BZGS>
-): _.Result<BZGR, BZGS>;
+  context: BZFG,
+  part_callback: (x0: BZFG, x1: P10Part$) => _.Result<BZFG, BZFH>
+): _.Result<BZFG, BZFH>;
 
-export function data_elements_to_parts<BZGL, BZGM>(
+export function data_elements_to_parts<BZFA, BZFB>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: BZGL,
-  part_callback: (x0: BZGL, x1: P10Part$) => _.Result<BZGL, BZGM>
-): _.Result<BZGL, BZGM>;
+  context: BZFA,
+  part_callback: (x0: BZFA, x1: P10Part$) => _.Result<BZFA, BZFB>
+): _.Result<BZFA, BZFB>;

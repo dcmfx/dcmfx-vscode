@@ -87,14 +87,14 @@ function parts_to_insert_before_tag(tag, data_elements_to_insert, acc) {
 export function add_part(context, part) {
   return $bool.guard(
     isEqual(context.data_elements_to_insert, toList([])),
-    [context, toList([part])],
+    [toList([part]), context],
     () => {
       let is_at_root = $p10_filter_transform.is_at_root(
         context.filter_transform,
       );
       let $ = $p10_filter_transform.add_part(context.filter_transform, part);
-      let filter_transform = $[0];
-      let filter_result = $[1];
+      let filter_result = $[0];
+      let filter_transform = $[1];
       let context$1 = (() => {
         let _record = context;
         return new P10InsertTransform(
@@ -104,11 +104,11 @@ export function add_part(context, part) {
       })();
       return $bool.guard(
         !filter_result,
-        [context$1, toList([])],
+        [toList([]), context$1],
         () => {
           return $bool.guard(
             !is_at_root,
-            [context$1, toList([part])],
+            [toList([part]), context$1],
             () => {
               if (part instanceof $p10_part.SequenceStart) {
                 let tag = part.tag;
@@ -130,7 +130,7 @@ export function add_part(context, part) {
                   let _pipe = listPrepend(part, parts_to_insert);
                   return $list.reverse(_pipe);
                 })();
-                return [context$2, parts];
+                return [parts, context$2];
               } else if (part instanceof $p10_part.DataElementHeader) {
                 let tag = part.tag;
                 let $1 = parts_to_insert_before_tag(
@@ -151,7 +151,7 @@ export function add_part(context, part) {
                   let _pipe = listPrepend(part, parts_to_insert);
                   return $list.reverse(_pipe);
                 })();
-                return [context$2, parts];
+                return [parts, context$2];
               } else if (part instanceof $p10_part.End) {
                 let parts = (() => {
                   let _pipe = context$1.data_elements_to_insert;
@@ -174,9 +174,9 @@ export function add_part(context, part) {
                   let _pipe = listPrepend(new $p10_part.End(), parts);
                   return $list.reverse(_pipe);
                 })();
-                return [context$2, parts$1];
+                return [parts$1, context$2];
               } else {
-                return [context$1, toList([part])];
+                return [toList([part]), context$1];
               }
             },
           );
