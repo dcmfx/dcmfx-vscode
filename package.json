@@ -43,19 +43,23 @@
     "commands": [
       {
         "command": "dcmfx.print",
-        "title": "DCMfx: Print DICOM data set"
+        "title": "DCMfx: Print data set"
       },
       {
         "command": "dcmfx.printJson",
-        "title": "DCMfx: Print DICOM data set as JSON"
+        "title": "DCMfx: Print data set as JSON"
       },
       {
         "command": "dcmfx.rewriteP10",
-        "title": "DCMfx: Rewrite DICOM file"
+        "title": "DCMfx: Rewrite DICOM"
       },
       {
         "command": "dcmfx.convertJsonToP10",
-        "title": "DCMfx: Convert to DICOM file"
+        "title": "DCMfx: Convert to DICOM"
+      },
+      {
+        "command": "dcmfx.extractPixelData",
+        "title": "DCMfx: Extract pixel data"
       }
     ],
     "menus": {
@@ -79,6 +83,11 @@
           "command": "dcmfx.convertJsonToP10",
           "group": "dcmfx",
           "when": "resourceLangId == json || config.dcmfx.alwaysShowContextMenuItems"
+        },
+        {
+          "command": "dcmfx.extractPixelData",
+          "group": "dcmfx",
+          "when": "resourceLangId == dicom || resourceLangId == json || config.dcmfx.alwaysShowContextMenuItems"
         }
       ]
     },

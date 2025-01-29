@@ -7,6 +7,7 @@ import {
 } from "./commands/print.mjs";
 import { convertJsonToP10 } from "./commands/convert-json-to-p10.mjs";
 import { rewriteP10 } from "./commands/rewrite-p10.mjs";
+import { extractPixelData } from "./commands/extract-pixel-data.mjs";
 
 export function activate(context: vscode.ExtensionContext): void {
   const printContentProvider =
@@ -35,6 +36,11 @@ export function activate(context: vscode.ExtensionContext): void {
     convertJsonToP10(),
   );
 
+  const extractPixelDataCommand = vscode.commands.registerCommand(
+    "dcmfx.extractPixelData",
+    extractPixelData(),
+  );
+
   const printHoverProvider = vscode.languages.registerHoverProvider(
     { language: "dcmfx-print" },
     new DcmfxPrintHoverProvider(),
@@ -46,6 +52,7 @@ export function activate(context: vscode.ExtensionContext): void {
     printJsonCommand,
     rewriteCommand,
     convertToP10Command,
+    extractPixelDataCommand,
     printHoverProvider,
   );
 }

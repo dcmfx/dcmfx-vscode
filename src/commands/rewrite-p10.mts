@@ -10,8 +10,8 @@ import { gleamResultToEffect, readDicomDataSet } from "./utils.mjs";
  *
  * Doing this may correct errors in the file and allow it to be read by other
  * DICOM software that is less forgiving of malformed DICOM P10 data. It will
- * also convert all text to UTF-8, and all defined length sequences and items to
- * undefined length sequences and items.
+ * also convert to the UTF-8 character set, and convert all defined length
+ * sequences and items to undefined length sequences and items.
  */
 export function rewriteP10(): (uri: vscode.Uri) => Promise<void> {
   return async (uri: vscode.Uri) => {

@@ -86,8 +86,8 @@ export function* openReadStream(uri: vscode.Uri) {
 }
 
 /**
- * Reads all available bytes from the read stream and writes them into the P10
- * read context.
+ * Reads up to 1 MiB from the read stream and writes it into the P10 read
+ * context.
  */
 export function* writeDataToReadContext(
   readStream: Readable,
@@ -97,7 +97,7 @@ export function* writeDataToReadContext(
     yield* Effect.fail([`Read stream error: ${readStream.errored.message}`]);
   }
 
-  const data = readStream.read() as Buffer | null;
+  const data = readStream.read(1024 * 1024) as Buffer | null;
 
   let p10Bytes: Uint8Array;
   let dataComplete = false;

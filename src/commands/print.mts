@@ -102,12 +102,10 @@ export class DcmfxPrintContentProvider
   }
 }
 
-/**
- * Returns the print options to use when displaying a DICOM data set.
- */
+/** Returns the print options to use when displaying a DICOM data set. */
 function getPrintOptions() {
   const styled = false;
-  const maxWidth = 999;
+  const maxWidth = 1000;
 
   return new data_set_print.DataSetPrintOptions(styled, maxWidth);
 }

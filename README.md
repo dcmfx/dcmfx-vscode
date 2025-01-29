@@ -33,7 +33,9 @@ Theia, VSCodium, Gitpod, and other IDEs that use Open VSX.
 
 2. Convert between DICOM files and DICOM JSON files.
 
-3. Rewrite DICOM files to ensure they have correct headers, change their string
+3. Extract pixel data from DICOM and DICOM JSON files.
+
+4. Rewrite DICOM files to ensure they have correct headers, change their string
    encoding to UTF-8, and correct errors that may prevent use in other software.
 
 ## Implementation Notes
