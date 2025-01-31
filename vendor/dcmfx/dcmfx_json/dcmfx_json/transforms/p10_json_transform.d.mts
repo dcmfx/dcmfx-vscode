@@ -3,7 +3,7 @@ import type * as $data_element_value from "../../../dcmfx_core/dcmfx_core/data_e
 import type * as $data_error from "../../../dcmfx_core/dcmfx_core/data_error.d.mts";
 import type * as $data_set_path from "../../../dcmfx_core/dcmfx_core/data_set_path.d.mts";
 import type * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.d.mts";
-import type * as $p10_part from "../../../dcmfx_p10/dcmfx_p10/p10_part.d.mts";
+import type * as $p10_token from "../../../dcmfx_p10/dcmfx_p10/p10_token.d.mts";
 import type * as $dict from "../../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $ieee_float from "../../../ieee_float/ieee_float.d.mts";
 import type * as $json_config from "../../dcmfx_json/json_config.d.mts";
@@ -39,7 +39,7 @@ export type P10JsonTransform$ = P10JsonTransform;
 
 export function new$(config: $json_config.DicomJsonConfig$): P10JsonTransform$;
 
-export function add_part(transform: P10JsonTransform$, part: $p10_part.P10Part$): _.Result<
-  [string, P10JsonTransform$],
-  $json_error.JsonSerializeError$
->;
+export function add_token(
+  transform: P10JsonTransform$,
+  token: $p10_token.P10Token$
+): _.Result<[string, P10JsonTransform$], $json_error.JsonSerializeError$>;

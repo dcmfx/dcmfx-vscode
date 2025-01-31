@@ -8,7 +8,7 @@ import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
 import * as $data_set_builder from "../../dcmfx_p10/data_set_builder.mjs";
 import * as $p10_error from "../../dcmfx_p10/p10_error.mjs";
-import * as $p10_part from "../../dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../../dcmfx_p10/p10_token.mjs";
 import {
   Ok,
   Error,
@@ -64,7 +64,7 @@ export function data_set(context) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/transforms/p10_filter_transform",
-        68,
+        69,
         "data_set",
         "Pattern match failed, no pattern matched the value.",
         { value: $1 }
@@ -80,11 +80,11 @@ export function data_set(context) {
   }
 }
 
-export function add_part(context, part) {
+export function add_token(context, token) {
   let $ = (() => {
-    if (part instanceof $p10_part.SequenceStart) {
-      let tag = part.tag;
-      let vr = part.vr;
+    if (token instanceof $p10_token.SequenceStart) {
+      let tag = token.tag;
+      let vr = token.vr;
       let filter_result = (() => {
         let $1 = context.location;
         if ($1.hasLength(0)) {
@@ -110,9 +110,9 @@ export function add_part(context, part) {
         );
       })();
       return [filter_result, new_context];
-    } else if (part instanceof $p10_part.DataElementHeader) {
-      let tag = part.tag;
-      let vr = part.vr;
+    } else if (token instanceof $p10_token.DataElementHeader) {
+      let tag = token.tag;
+      let vr = token.vr;
       let filter_result = (() => {
         let $1 = context.location;
         if ($1.hasLength(0)) {
@@ -138,7 +138,7 @@ export function add_part(context, part) {
         );
       })();
       return [filter_result, new_context];
-    } else if (part instanceof $p10_part.PixelDataItem) {
+    } else if (token instanceof $p10_token.PixelDataItem) {
       let filter_result = (() => {
         let $1 = context.location;
         if ($1.atLeastLength(1) && $1.head instanceof LocationEntry) {
@@ -161,7 +161,7 @@ export function add_part(context, part) {
         );
       })();
       return [filter_result, new_context];
-    } else if (part instanceof $p10_part.SequenceDelimiter) {
+    } else if (token instanceof $p10_token.SequenceDelimiter) {
       let filter_result = (() => {
         let $1 = context.location;
         if ($1.atLeastLength(1) && $1.head instanceof LocationEntry) {
@@ -176,8 +176,8 @@ export function add_part(context, part) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/transforms/p10_filter_transform",
-          134,
-          "add_part",
+          135,
+          "add_token",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
         )
@@ -192,8 +192,8 @@ export function add_part(context, part) {
         );
       })();
       return [filter_result, new_context];
-    } else if (part instanceof $p10_part.DataElementValueBytes &&
-    part.bytes_remaining === 0) {
+    } else if (token instanceof $p10_token.DataElementValueBytes &&
+    token.bytes_remaining === 0) {
       let filter_result = (() => {
         let $1 = context.location;
         if ($1.atLeastLength(1) && $1.head instanceof LocationEntry) {
@@ -208,8 +208,8 @@ export function add_part(context, part) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/transforms/p10_filter_transform",
-          134,
-          "add_part",
+          135,
+          "add_token",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
         )
@@ -242,10 +242,10 @@ export function add_part(context, part) {
       let $1 = context$1.data_set_builder;
       if ($1 instanceof Some && $1[0].isOk()) {
         let builder = $1[0][0];
-        if (part instanceof $p10_part.FileMetaInformation) {
+        if (token instanceof $p10_token.FileMetaInformation) {
           return new Some(new Ok(builder));
         } else {
-          return new Some($data_set_builder.add_part(builder, part));
+          return new Some($data_set_builder.add_token(builder, token));
         }
       } else {
         let a = $1;

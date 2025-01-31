@@ -9,18 +9,18 @@ import type * as $byte_stream from "../dcmfx_p10/internal/byte_stream.d.mts";
 import type * as $data_element_header from "../dcmfx_p10/internal/data_element_header.d.mts";
 import type * as $p10_location from "../dcmfx_p10/internal/p10_location.d.mts";
 import type * as $p10_error from "../dcmfx_p10/p10_error.d.mts";
-import type * as $p10_part from "../dcmfx_p10/p10_part.d.mts";
+import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 export class P10ReadConfig extends _.CustomType {
   constructor(
-    max_part_size: number,
+    max_token_size: number,
     max_string_size: number,
     max_sequence_depth: number,
     require_ordered_data_elements: boolean
   );
   
-  max_part_size: number;
+  max_token_size: number;
   max_string_size: number;
   max_sequence_depth: number;
   require_ordered_data_elements: boolean;
@@ -66,14 +66,14 @@ declare class ReadDataElementValueBytes extends _.CustomType {
     vr: $value_representation.ValueRepresentation$,
     length: number,
     bytes_remaining: number,
-    emit_parts: boolean
+    emit_tokens: boolean
   );
   
   tag: $data_element_tag.DataElementTag$;
   vr: $value_representation.ValueRepresentation$;
   length: number;
   bytes_remaining: number;
-  emit_parts: boolean;
+  emit_tokens: boolean;
 }
 
 declare class ReadPixelDataItem extends _.CustomType {
@@ -103,7 +103,7 @@ export function write_bytes(
   done: boolean
 ): _.Result<P10ReadContext$, $p10_error.P10Error$>;
 
-export function read_parts(context: P10ReadContext$): _.Result<
-  [_.List<$p10_part.P10Part$>, P10ReadContext$],
+export function read_tokens(context: P10ReadContext$): _.Result<
+  [_.List<$p10_token.P10Token$>, P10ReadContext$],
   $p10_error.P10Error$
 >;

@@ -11,7 +11,7 @@ import * as $dictionary from "../../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $utils from "../../../dcmfx_core/dcmfx_core/internal/utils.mjs";
 import * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $p10_error from "../../../dcmfx_p10/dcmfx_p10/p10_error.mjs";
-import * as $p10_part from "../../../dcmfx_p10/dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../../../dcmfx_p10/dcmfx_p10/p10_token.mjs";
 import * as $json from "../../../gleam_json/gleam/json.mjs";
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
@@ -486,7 +486,7 @@ function write_base64(transform, input, finish) {
         throw makeError(
           "let_assert",
           "dcmfx_json/transforms/p10_json_transform",
-          705,
+          706,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -816,7 +816,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            845,
+            846,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -828,7 +828,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            846,
+            847,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -849,7 +849,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_json/transforms/p10_json_transform",
-                  855,
+                  856,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $4 }
@@ -874,7 +874,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            845,
+            846,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -886,7 +886,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
           throw makeError(
             "let_assert",
             "dcmfx_json/transforms/p10_json_transform",
-            846,
+            847,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $2 }
@@ -907,7 +907,7 @@ function convert_binary_value_to_json(value, bytes, transform) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_json/transforms/p10_json_transform",
-                  855,
+                  856,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $4 }
@@ -1220,24 +1220,24 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
   );
 }
 
-export function add_part(transform, part) {
-  let part_stream_invalid_error = (_) => {
-    let _pipe = new $p10_error.PartStreamInvalid(
-      "Adding part to JSON transform",
-      "The transform was not able to write this part",
-      part,
+export function add_token(transform, token) {
+  let token_stream_invalid_error = (_) => {
+    let _pipe = new $p10_error.TokenStreamInvalid(
+      "Adding token to JSON transform",
+      "The transform was not able to write this token",
+      token,
     );
     return new $json_error.P10Error(_pipe);
   };
-  if (part instanceof $p10_part.FilePreambleAndDICMPrefix) {
+  if (token instanceof $p10_token.FilePreambleAndDICMPrefix) {
     return new Ok(["", transform]);
-  } else if (part instanceof $p10_part.FileMetaInformation) {
-    let data_set = part.data_set;
+  } else if (token instanceof $p10_token.FileMetaInformation) {
+    let data_set = token.data_set;
     return new Ok(begin(transform, data_set));
-  } else if (part instanceof $p10_part.DataElementHeader) {
-    let tag = part.tag;
-    let vr = part.vr;
-    let length = part.length;
+  } else if (token instanceof $p10_token.DataElementHeader) {
+    let tag = token.tag;
+    let vr = token.vr;
+    let length = token.length;
     let $ = write_data_element_header(transform, tag, vr, length);
     let json = $[0];
     let transform$1 = $[1];
@@ -1247,7 +1247,7 @@ export function add_part(transform, part) {
           transform$1.data_set_path,
           tag,
         );
-        return $result.map_error(_pipe, part_stream_invalid_error);
+        return $result.map_error(_pipe, token_stream_invalid_error);
       })(),
       (path) => {
         let transform$2 = (() => {
@@ -1266,10 +1266,10 @@ export function add_part(transform, part) {
         return [json, transform$2];
       },
     );
-  } else if (part instanceof $p10_part.DataElementValueBytes) {
-    let vr = part.vr;
-    let data = part.data;
-    let bytes_remaining = part.bytes_remaining;
+  } else if (token instanceof $p10_token.DataElementValueBytes) {
+    let vr = token.vr;
+    let data = token.data;
+    let bytes_remaining = token.bytes_remaining;
     return $result.try$(
       write_data_element_value_bytes(transform, vr, data, bytes_remaining),
       (_use0) => {
@@ -1278,7 +1278,7 @@ export function add_part(transform, part) {
         let transform$2 = (() => {
           if (bytes_remaining === 0) {
             let _pipe = $data_set_path.pop(transform$1.data_set_path);
-            let _pipe$1 = $result.map_error(_pipe, part_stream_invalid_error);
+            let _pipe$1 = $result.map_error(_pipe, token_stream_invalid_error);
             return $result.map(
               _pipe$1,
               (path) => {
@@ -1305,9 +1305,9 @@ export function add_part(transform, part) {
         );
       },
     );
-  } else if (part instanceof $p10_part.SequenceStart) {
-    let tag = part.tag;
-    let vr = part.vr;
+  } else if (token instanceof $p10_token.SequenceStart) {
+    let tag = token.tag;
+    let vr = token.vr;
     return $result.try$(
       write_sequence_start(transform, tag, vr),
       (_use0) => {
@@ -1318,7 +1318,7 @@ export function add_part(transform, part) {
             transform$1.data_set_path,
             tag,
           );
-          return $result.map_error(_pipe, part_stream_invalid_error);
+          return $result.map_error(_pipe, token_stream_invalid_error);
         })();
         return $result.map(
           path,
@@ -1341,13 +1341,13 @@ export function add_part(transform, part) {
         );
       },
     );
-  } else if (part instanceof $p10_part.SequenceDelimiter) {
+  } else if (token instanceof $p10_token.SequenceDelimiter) {
     let $ = write_sequence_end(transform);
     let json = $[0];
     let transform$1 = $[1];
     let path = (() => {
       let _pipe = $data_set_path.pop(transform$1.data_set_path);
-      return $result.map_error(_pipe, part_stream_invalid_error);
+      return $result.map_error(_pipe, token_stream_invalid_error);
     })();
     return $result.try$(
       path,
@@ -1372,7 +1372,7 @@ export function add_part(transform, part) {
         return new Ok([json, transform$2]);
       },
     );
-  } else if (part instanceof $p10_part.SequenceItemStart) {
+  } else if (token instanceof $p10_token.SequenceItemStart) {
     let path_and_item_counts = (() => {
       let $ = transform.sequence_item_counts;
       if ($.atLeastLength(1)) {
@@ -1380,7 +1380,7 @@ export function add_part(transform, part) {
         let rest = $.tail;
         let _pipe = transform.data_set_path;
         let _pipe$1 = $data_set_path.add_sequence_item(_pipe, count);
-        let _pipe$2 = $result.map_error(_pipe$1, part_stream_invalid_error);
+        let _pipe$2 = $result.map_error(_pipe$1, token_stream_invalid_error);
         return $result.map(
           _pipe$2,
           (path) => { return [path, listPrepend(count + 1, rest)]; },
@@ -1410,13 +1410,13 @@ export function add_part(transform, part) {
         return write_sequence_item_start(transform$1);
       },
     );
-  } else if (part instanceof $p10_part.SequenceItemDelimiter) {
+  } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let $ = write_sequence_item_end(transform);
     let json = $[0];
     let transform$1 = $[1];
     let path = (() => {
       let _pipe = $data_set_path.pop(transform$1.data_set_path);
-      return $result.map_error(_pipe, part_stream_invalid_error);
+      return $result.map_error(_pipe, token_stream_invalid_error);
     })();
     return $result.try$(
       path,
@@ -1437,8 +1437,8 @@ export function add_part(transform, part) {
         return new Ok([json, transform$2]);
       },
     );
-  } else if (part instanceof $p10_part.PixelDataItem) {
-    let length = part.length;
+  } else if (token instanceof $p10_token.PixelDataItem) {
+    let length = token.length;
     let path_and_item_counts = (() => {
       let $ = transform.sequence_item_counts;
       if ($.atLeastLength(1)) {
@@ -1446,7 +1446,7 @@ export function add_part(transform, part) {
         let rest = $.tail;
         let _pipe = transform.data_set_path;
         let _pipe$1 = $data_set_path.add_sequence_item(_pipe, count);
-        let _pipe$2 = $result.map_error(_pipe$1, part_stream_invalid_error);
+        let _pipe$2 = $result.map_error(_pipe$1, token_stream_invalid_error);
         return $result.map(
           _pipe$2,
           (path) => { return [path, listPrepend(count + 1, rest)]; },

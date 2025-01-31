@@ -1,7 +1,7 @@
 import type * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag.d.mts";
 import type * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.d.mts";
 import type * as $data_error from "../../dcmfx_core/dcmfx_core/data_error.d.mts";
-import type * as $p10_part from "../../dcmfx_p10/dcmfx_p10/p10_part.d.mts";
+import type * as $p10_token from "../../dcmfx_p10/dcmfx_p10/p10_token.d.mts";
 import type * as $p10_filter_transform from "../../dcmfx_p10/dcmfx_p10/transforms/p10_filter_transform.d.mts";
 import type * as $deque from "../../gleam_deque/gleam/deque.d.mts";
 import type * as $dict from "../../gleam_stdlib/gleam/dict.d.mts";
@@ -43,7 +43,7 @@ export type PixelDataFilter$ = PixelDataFilter;
 
 export function new$(): PixelDataFilter$;
 
-export function add_part(filter: PixelDataFilter$, part: $p10_part.P10Part$): _.Result<
+export function add_token(filter: PixelDataFilter$, token: $p10_token.P10Token$): _.Result<
   [_.List<$pixel_data_frame.PixelDataFrame$>, PixelDataFilter$],
   $data_error.DataError$
 >;

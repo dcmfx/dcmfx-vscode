@@ -8,8 +8,8 @@ import * as $option from "../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../gleam_stdlib/gleam/result.mjs";
 import * as $data_set_builder from "./dcmfx_p10/data_set_builder.mjs";
 import * as $p10_error from "./dcmfx_p10/p10_error.mjs";
-import * as $p10_part from "./dcmfx_p10/p10_part.mjs";
 import * as $p10_read from "./dcmfx_p10/p10_read.mjs";
+import * as $p10_token from "./dcmfx_p10/p10_token.mjs";
 import * as $p10_write from "./dcmfx_p10/p10_write.mjs";
 import { Ok, Error, toList, prepend as listPrepend, makeError, toBitArray } from "./gleam.mjs";
 
@@ -51,19 +51,19 @@ export function is_valid_file(filename) {
   return $result.unwrap(_pipe$2, false);
 }
 
-export function read_parts_from_stream(loop$stream, loop$context) {
+export function read_tokens_from_stream(loop$stream, loop$context) {
   while (true) {
     let stream = loop$stream;
     let context = loop$context;
-    let $ = $p10_read.read_parts(context);
+    let $ = $p10_read.read_tokens(context);
     if ($.isOk() && $[0][0].hasLength(0)) {
       let context$1 = $[0][1];
       loop$stream = stream;
       loop$context = context$1;
     } else if ($.isOk()) {
-      let parts = $[0][0];
+      let tokens = $[0][0];
       let context$1 = $[0][1];
-      return new Ok([parts, context$1]);
+      return new Ok([tokens, context$1]);
     } else if (!$.isOk() && $[0] instanceof $p10_error.DataRequired) {
       let $1 = $file_stream.read_bytes(stream, 64 * 1024);
       if ($1.isOk()) {
@@ -105,20 +105,20 @@ function do_read_stream(loop$stream, loop$context, loop$builder) {
     let stream = loop$stream;
     let context = loop$context;
     let builder = loop$builder;
-    let parts_and_context = (() => {
-      let _pipe = read_parts_from_stream(stream, context);
+    let tokens_and_context = (() => {
+      let _pipe = read_tokens_from_stream(stream, context);
       return $result.map_error(_pipe, (e) => { return [e, builder]; });
     })();
-    if (parts_and_context.isOk()) {
-      let parts = parts_and_context[0][0];
-      let context$1 = parts_and_context[0][1];
+    if (tokens_and_context.isOk()) {
+      let tokens = tokens_and_context[0][0];
+      let context$1 = tokens_and_context[0][1];
       let builder$1 = (() => {
-        let _pipe = parts;
+        let _pipe = tokens;
         return $list.try_fold(
           _pipe,
           builder,
-          (builder, part) => {
-            let _pipe$1 = $data_set_builder.add_part(builder, part);
+          (builder, token) => {
+            let _pipe$1 = $data_set_builder.add_token(builder, token);
             return $result.map_error(_pipe$1, (e) => { return [e, builder]; });
           },
         );
@@ -139,7 +139,7 @@ function do_read_stream(loop$stream, loop$context, loop$builder) {
         return new Error(e);
       }
     } else {
-      let e = parts_and_context[0];
+      let e = tokens_and_context[0];
       return new Error(e);
     }
   }
@@ -176,17 +176,17 @@ function do_read_bytes(loop$context, loop$builder) {
   while (true) {
     let context = loop$context;
     let builder = loop$builder;
-    let $ = $p10_read.read_parts(context);
+    let $ = $p10_read.read_tokens(context);
     if ($.isOk()) {
-      let parts = $[0][0];
+      let tokens = $[0][0];
       let context$1 = $[0][1];
       let new_builder = (() => {
-        let _pipe = parts;
+        let _pipe = tokens;
         return $list.try_fold(
           _pipe,
           builder,
-          (builder, part) => {
-            return $data_set_builder.add_part(builder, part);
+          (builder, token) => {
+            return $data_set_builder.add_token(builder, token);
           },
         );
       })();
@@ -294,12 +294,12 @@ export function write_bytes(data_set, config) {
   );
 }
 
-export function write_parts_to_stream(parts, stream, context) {
+export function write_tokens_to_stream(tokens, stream, context) {
   return $result.try$(
     $list.try_fold(
-      parts,
+      tokens,
       context,
-      (context, part) => { return $p10_write.write_part(context, part); },
+      (context, token) => { return $p10_write.write_token(context, token); },
     ),
     (context) => {
       let $ = $p10_write.read_bytes(context);
@@ -320,8 +320,8 @@ export function write_parts_to_stream(parts, stream, context) {
           },
         ),
         (_) => {
-          let $1 = $list.last(parts);
-          if ($1.isOk() && $1[0] instanceof $p10_part.End) {
+          let $1 = $list.last(tokens);
+          if ($1.isOk() && $1[0] instanceof $p10_token.End) {
             let _pipe = $file_stream.sync(stream);
             let _pipe$1 = $result.map_error(
               _pipe,

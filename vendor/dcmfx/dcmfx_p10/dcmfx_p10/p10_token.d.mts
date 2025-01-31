@@ -72,24 +72,24 @@ export class PixelDataItem extends _.CustomType {
 
 export class End extends _.CustomType {}
 
-export type P10Part$ = FilePreambleAndDICMPrefix | FileMetaInformation | DataElementHeader | DataElementValueBytes | SequenceStart | SequenceDelimiter | SequenceItemStart | SequenceItemDelimiter | PixelDataItem | End;
+export type P10Token$ = FilePreambleAndDICMPrefix | FileMetaInformation | DataElementHeader | DataElementValueBytes | SequenceStart | SequenceDelimiter | SequenceItemStart | SequenceItemDelimiter | PixelDataItem | End;
 
-export function to_string(part: P10Part$): string;
+export function to_string(token: P10Token$): string;
 
-export function is_header_part(part: P10Part$): boolean;
+export function is_header_token(token: P10Token$): boolean;
 
-export function data_element_to_parts<BZFG, BZFH>(
+export function data_element_to_tokens<BZFG, BZFH>(
   tag: $data_element_tag.DataElementTag$,
   value: $data_element_value.DataElementValue$,
   context: BZFG,
-  part_callback: (x0: BZFG, x1: P10Part$) => _.Result<BZFG, BZFH>
+  token_callback: (x0: BZFG, x1: P10Token$) => _.Result<BZFG, BZFH>
 ): _.Result<BZFG, BZFH>;
 
-export function data_elements_to_parts<BZFA, BZFB>(
+export function data_elements_to_tokens<BZFA, BZFB>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   context: BZFA,
-  part_callback: (x0: BZFA, x1: P10Part$) => _.Result<BZFA, BZFB>
+  token_callback: (x0: BZFA, x1: P10Token$) => _.Result<BZFA, BZFB>
 ): _.Result<BZFA, BZFB>;

@@ -14,14 +14,14 @@ import * as $p10_json_transform from "./dcmfx_json/transforms/p10_json_transform
 export function data_set_to_json(data_set, config) {
   let transform = $p10_json_transform.new$(config);
   let context = ["", transform];
-  let _pipe = $p10_write.data_set_to_parts(
+  let _pipe = $p10_write.data_set_to_tokens(
     data_set,
     context,
-    (context, part) => {
+    (context, token) => {
       let json = context[0];
       let transform$1 = context[1];
       return $result.map(
-        $p10_json_transform.add_part(transform$1, part),
+        $p10_json_transform.add_token(transform$1, token),
         (_use0) => {
           let new_json = _use0[0];
           let transform$2 = _use0[1];

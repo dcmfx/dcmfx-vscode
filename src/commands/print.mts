@@ -11,7 +11,7 @@ import * as json_config from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/json_conf
 import * as json_error from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/json_error.mjs";
 import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
 import * as p10_json_transform from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/transforms/p10_json_transform.mjs";
-import * as p10_part from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_part.mjs";
+import * as p10_token from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_token.mjs";
 import * as p10_print_transform from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/transforms/p10_print_transform.mjs";
 import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
 import * as value_representation from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/value_representation.mjs";
@@ -134,20 +134,20 @@ function* printDicom(
   outputFormat: "dcmfx-print" | "json",
   token: vscode.CancellationToken,
 ) {
-  // Construct DICOM P10 read context with a max part size of 1 MiB to keep
+  // Construct DICOM P10 read context with a max token size of 1 MiB to keep
   // the read context's memory usage low while printing the DICOM
   let readContext = p10_read.new_read_context();
-  const maxPartSize = 1024 * 1024;
+  const maxTokenSize = 1024 * 1024;
   readContext = p10_read.with_config(
     readContext,
-    new p10_read.P10ReadConfig(maxPartSize, 0xfffffffe, 10_000, false),
+    new p10_read.P10ReadConfig(maxTokenSize, 0xfffffffe, 10_000, false),
   );
 
-  // Construct print transform to convert the stream of DICOM P10 parts into a
+  // Construct print transform to convert the stream of DICOM P10 tokens into a
   // human-readable DICOM data set
   let p10PrintTransform = p10_print_transform.new$(getPrintOptions());
 
-  // Construct print transform to convert the stream of DICOM P10 parts into a
+  // Construct print transform to convert the stream of DICOM P10 tokens into a
   // human-readable DICOM data set
   const config = vscode.workspace.getConfiguration("dcmfx");
   const prettyPrint = config.get<boolean>("dicomJsonPrettyPrint") ?? true;
@@ -158,20 +158,20 @@ function* printDicom(
   let ended = false;
 
   while (!ended && !token.isCancellationRequested) {
-    const readResult = p10_read.read_parts(readContext);
+    const readResult = p10_read.read_tokens(readContext);
 
     yield* Effect.matchEffect(gleamResultToEffect(readResult), {
-      // On success, pass all the read P10 parts through the active transform
+      // On success, pass all the read P10 tokens through the active transform
       // and accumulate the output
-      onSuccess: ([parts, newReadContext]) =>
+      onSuccess: ([tokens, newReadContext]) =>
         Effect.gen(function* () {
           readContext = newReadContext;
 
-          for (const part of parts.toArray()) {
+          for (const token of tokens.toArray()) {
             if (outputFormat === "dcmfx-print") {
-              const [s, newPrintTransform] = p10_print_transform.add_part(
+              const [s, newPrintTransform] = p10_print_transform.add_token(
                 p10PrintTransform,
-                part,
+                token,
               );
 
               p10PrintTransform = newPrintTransform;
@@ -179,7 +179,7 @@ function* printDicom(
             } else if (outputFormat === "json") {
               const [s, newJsonTransform] = yield* pipe(
                 gleamResultToEffect(
-                  p10_json_transform.add_part(p10JsonTransform, part),
+                  p10_json_transform.add_token(p10JsonTransform, token),
                 ),
                 Effect.mapError((e) =>
                   json_error.serialize_error_to_lines(e, "").toArray(),
@@ -190,7 +190,7 @@ function* printDicom(
               output += s;
             }
 
-            if (part instanceof p10_part.End) {
+            if (token instanceof p10_token.End) {
               ended = true;
             }
           }

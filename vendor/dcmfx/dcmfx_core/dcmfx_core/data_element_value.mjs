@@ -549,7 +549,7 @@ export function get_ints(value) {
     let _pipe = $bit_array_utils.to_int32_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Int32 list"),
+      $data_error.new_value_invalid("Invalid Int32 data"),
     );
   } else if (value instanceof BinaryValue &&
   value.vr instanceof $value_representation.SignedShort) {
@@ -557,7 +557,7 @@ export function get_ints(value) {
     let _pipe = $bit_array_utils.to_int16_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Int16 list"),
+      $data_error.new_value_invalid("Invalid Int16 data"),
     );
   } else if (value instanceof BinaryValue &&
   value.vr instanceof $value_representation.UnsignedLong) {
@@ -565,7 +565,7 @@ export function get_ints(value) {
     let _pipe = $bit_array_utils.to_uint32_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Uint32 list"),
+      $data_error.new_value_invalid("Invalid Uint32 data"),
     );
   } else if (value instanceof BinaryValue &&
   value.vr instanceof $value_representation.UnsignedShort) {
@@ -573,7 +573,7 @@ export function get_ints(value) {
     let _pipe = $bit_array_utils.to_uint16_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Uint16 list"),
+      $data_error.new_value_invalid("Invalid Uint16 data"),
     );
   } else if (value instanceof LookupTableDescriptorValue) {
     let vr = value.vr;
@@ -620,7 +620,7 @@ export function get_big_ints(value) {
     let _pipe = $bit_array_utils.to_int64_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Int64 list"),
+      $data_error.new_value_invalid("Invalid Int64 data"),
     );
   } else if (value instanceof BinaryValue &&
   value.vr instanceof $value_representation.UnsignedVeryLong) {
@@ -629,7 +629,7 @@ export function get_big_ints(value) {
     let _pipe$1 = $bit_array_utils.to_uint64_list(_pipe);
     return $result.replace_error(
       _pipe$1,
-      $data_error.new_value_invalid("Invalid Uint64 list"),
+      $data_error.new_value_invalid("Invalid Uint64 data"),
     );
   } else {
     return new Error($data_error.new_value_not_present());
@@ -666,7 +666,7 @@ export function get_floats(value) {
     let _pipe = $bit_array_utils.to_float64_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Float64 list"),
+      $data_error.new_value_invalid("Invalid Float64 data"),
     );
   } else if (value instanceof BinaryValue &&
   value.vr instanceof $value_representation.OtherDoubleString) {
@@ -674,7 +674,7 @@ export function get_floats(value) {
     let _pipe = $bit_array_utils.to_float64_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Float64 list"),
+      $data_error.new_value_invalid("Invalid Float64 data"),
     );
   } else if (value instanceof BinaryValue &&
   value.vr instanceof $value_representation.FloatingPointSingle) {
@@ -682,7 +682,7 @@ export function get_floats(value) {
     let _pipe = $bit_array_utils.to_float32_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Float32 list"),
+      $data_error.new_value_invalid("Invalid Float32 data"),
     );
   } else if (value instanceof BinaryValue &&
   value.vr instanceof $value_representation.OtherFloatString) {
@@ -690,7 +690,7 @@ export function get_floats(value) {
     let _pipe = $bit_array_utils.to_float32_list(bytes$1);
     return $result.replace_error(
       _pipe,
-      $data_error.new_value_invalid("Invalid Float32 list"),
+      $data_error.new_value_invalid("Invalid Float32 data"),
     );
   } else {
     return new Error($data_error.new_value_not_present());

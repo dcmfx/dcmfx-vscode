@@ -5,7 +5,7 @@ import type * as $dict from "../../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
 import type * as $value_length from "../../dcmfx_p10/internal/value_length.d.mts";
 import type * as $p10_error from "../../dcmfx_p10/p10_error.d.mts";
-import type * as $p10_part from "../../dcmfx_p10/p10_part.d.mts";
+import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class RootDataSet extends _.CustomType {
@@ -79,13 +79,13 @@ export function check_data_element_ordering(
 
 export function is_implicit_vr_forced(location: _.List<LocationEntry$>): boolean;
 
-export function next_delimiter_part(
+export function next_delimiter_token(
   location: _.List<LocationEntry$>,
   bytes_read: number
-): _.Result<[$p10_part.P10Part$, _.List<LocationEntry$>], undefined>;
+): _.Result<[$p10_token.P10Token$, _.List<LocationEntry$>], undefined>;
 
-export function pending_delimiter_parts(location: _.List<LocationEntry$>): _.List<
-  $p10_part.P10Part$
+export function pending_delimiter_tokens(location: _.List<LocationEntry$>): _.List<
+  $p10_token.P10Token$
 >;
 
 export function end_sequence(location: _.List<LocationEntry$>): _.Result<

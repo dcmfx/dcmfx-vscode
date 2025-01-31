@@ -22,7 +22,7 @@ import { DataElementHeader } from "../dcmfx_p10/internal/data_element_header.mjs
 import * as $p10_location from "../dcmfx_p10/internal/p10_location.mjs";
 import * as $value_length from "../dcmfx_p10/internal/value_length.mjs";
 import * as $p10_error from "../dcmfx_p10/p10_error.mjs";
-import * as $p10_part from "../dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../dcmfx_p10/p10_token.mjs";
 import {
   Ok,
   Error,
@@ -35,9 +35,9 @@ import {
 } from "../gleam.mjs";
 
 export class P10ReadConfig extends $CustomType {
-  constructor(max_part_size, max_string_size, max_sequence_depth, require_ordered_data_elements) {
+  constructor(max_token_size, max_string_size, max_sequence_depth, require_ordered_data_elements) {
     super();
-    this.max_part_size = max_part_size;
+    this.max_token_size = max_token_size;
     this.max_string_size = max_string_size;
     this.max_sequence_depth = max_sequence_depth;
     this.require_ordered_data_elements = require_ordered_data_elements;
@@ -69,13 +69,13 @@ class ReadFileMetaInformation extends $CustomType {
 class ReadDataElementHeader extends $CustomType {}
 
 class ReadDataElementValueBytes extends $CustomType {
-  constructor(tag, vr, length, bytes_remaining, emit_parts) {
+  constructor(tag, vr, length, bytes_remaining, emit_tokens) {
     super();
     this.tag = tag;
     this.vr = vr;
     this.length = length;
     this.bytes_remaining = bytes_remaining;
-    this.emit_parts = emit_parts;
+    this.emit_tokens = emit_tokens;
   }
 }
 
@@ -91,14 +91,14 @@ export function default_config() {
 }
 
 export function with_config(context, config) {
-  let max_part_size = (divideInt(config.max_part_size, 8)) * 8;
-  let max_string_size = $int.max(config.max_string_size, max_part_size);
+  let max_token_size = (divideInt(config.max_token_size, 8)) * 8;
+  let max_string_size = $int.max(config.max_string_size, max_token_size);
   let max_sequence_depth = $int.max(0, config.max_sequence_depth);
-  let max_read_size = $int.max(config.max_string_size, config.max_part_size);
+  let max_read_size = $int.max(config.max_string_size, config.max_token_size);
   let config$1 = (() => {
     let _record = config;
     return new P10ReadConfig(
-      max_part_size,
+      max_token_size,
       max_string_size,
       max_sequence_depth,
       _record.require_ordered_data_elements,
@@ -145,42 +145,42 @@ export function new_read_context() {
   );
 }
 
-function next_delimiter_part(context) {
+function next_delimiter_token(context) {
   let bytes_read = $byte_stream.bytes_read(context.stream);
-  let $ = $p10_location.next_delimiter_part(context.location, bytes_read);
+  let $ = $p10_location.next_delimiter_token(context.location, bytes_read);
   if ($.isOk()) {
-    let part = $[0][0];
+    let token = $[0][0];
     let new_location = $[0][1];
     let new_sequence_depth = (() => {
-      if (part instanceof $p10_part.SequenceDelimiter) {
+      if (token instanceof $p10_token.SequenceDelimiter) {
         return context.sequence_depth - 1;
       } else {
         return context.sequence_depth;
       }
     })();
     let new_path = (() => {
-      if (part instanceof $p10_part.SequenceDelimiter) {
+      if (token instanceof $p10_token.SequenceDelimiter) {
         let $1 = $data_set_path.pop(context.path);
         if (!$1.isOk()) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
             349,
-            "next_delimiter_part",
+            "next_delimiter_token",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
           )
         }
         let path = $1[0];
         return path;
-      } else if (part instanceof $p10_part.SequenceItemDelimiter) {
+      } else if (token instanceof $p10_token.SequenceItemDelimiter) {
         let $1 = $data_set_path.pop(context.path);
         if (!$1.isOk()) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
             349,
-            "next_delimiter_part",
+            "next_delimiter_token",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
           )
@@ -203,7 +203,7 @@ function next_delimiter_part(context) {
         new_sequence_depth,
       );
     })();
-    return [toList([part]), new_context];
+    return [toList([token]), new_context];
   } else {
     return [toList([]), context];
   }
@@ -321,8 +321,8 @@ export function write_bytes(context, bytes, done) {
   }
 }
 
-function read_file_preamble_and_dicm_prefix_part(context) {
-  let r = (() => {
+function read_file_preamble_and_dicm_prefix_token(context) {
+  let preamble_and_stream = (() => {
     let $ = $byte_stream.peek(context.stream, 132);
     if ($.isOk()) {
       let data = $[0];
@@ -338,7 +338,7 @@ function read_file_preamble_and_dicm_prefix_part(context) {
             "let_assert",
             "dcmfx_p10/p10_read",
             382,
-            "read_file_preamble_and_dicm_prefix_part",
+            "read_file_preamble_and_dicm_prefix_token",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
           )
@@ -356,11 +356,11 @@ function read_file_preamble_and_dicm_prefix_part(context) {
     }
   })();
   return $result.try$(
-    r,
+    preamble_and_stream,
     (_use0) => {
       let preamble = _use0[0];
       let new_stream = _use0[1];
-      let part = new $p10_part.FilePreambleAndDICMPrefix(preamble);
+      let token = new $p10_token.FilePreambleAndDICMPrefix(preamble);
       let new_context = (() => {
         let _record = context;
         return new P10ReadContext(
@@ -373,7 +373,7 @@ function read_file_preamble_and_dicm_prefix_part(context) {
           _record.sequence_depth,
         );
       })();
-      return new Ok([toList([part]), new_context]);
+      return new Ok([toList([token]), new_context]);
     },
   );
 }
@@ -525,12 +525,12 @@ function read_file_meta_information_data_set(
                               let value_length = _use0[1];
                               let data_element_size = value_offset + value_length;
                               return $bool.lazy_guard(
-                                ($data_set.total_byte_size(fmi_data_set) + data_element_size) > context.config.max_part_size,
+                                ($data_set.total_byte_size(fmi_data_set) + data_element_size) > context.config.max_token_size,
                                 () => {
                                   return new Error(
                                     new $p10_error.MaximumExceeded(
-                                      ("File Meta Information exceeds the max part size of " + $int.to_string(
-                                        context.config.max_part_size,
+                                      ("File Meta Information exceeds the max token size of " + $int.to_string(
+                                        context.config.max_token_size,
                                       )) + " bytes",
                                       $data_set_path.new_with_data_element(tag),
                                       $byte_stream.bytes_read(context.stream),
@@ -754,7 +754,7 @@ function read_file_meta_information_data_set(
   );
 }
 
-function read_file_meta_information_part(context, starts_at) {
+function read_file_meta_information_token(context, starts_at) {
   return $result.try$(
     read_file_meta_information_data_set(
       context,
@@ -1136,7 +1136,7 @@ function read_data_element_header(context) {
   );
 }
 
-function read_data_element_header_part(context) {
+function read_data_element_header_token(context) {
   return $result.try$(
     read_data_element_header(context),
     (_use0) => {
@@ -1180,7 +1180,7 @@ function read_data_element_header_part(context) {
           if (vr instanceof Some &&
           vr[0] instanceof $value_representation.Sequence) {
             let tag = $;
-            let part = new $p10_part.SequenceStart(
+            let token = new $p10_token.SequenceStart(
               tag,
               new $value_representation.Sequence(),
             );
@@ -1260,7 +1260,7 @@ function read_data_element_header_part(context) {
                         context.sequence_depth + 1,
                       );
                     })();
-                    return new Ok([toList([part]), new_context]);
+                    return new Ok([toList([token]), new_context]);
                   },
                 );
               },
@@ -1269,7 +1269,7 @@ function read_data_element_header_part(context) {
           vr[0] instanceof $value_representation.Unknown &&
           $1 instanceof $value_length.Undefined) {
             let tag = $;
-            let part = new $p10_part.SequenceStart(
+            let token = new $p10_token.SequenceStart(
               tag,
               new $value_representation.Sequence(),
             );
@@ -1349,14 +1349,14 @@ function read_data_element_header_part(context) {
                         context.sequence_depth + 1,
                       );
                     })();
-                    return new Ok([toList([part]), new_context]);
+                    return new Ok([toList([token]), new_context]);
                   },
                 );
               },
             );
           } else if (vr instanceof None && (isEqual($, $dictionary.item.tag))) {
             let tag = $;
-            let part = new $p10_part.SequenceItemStart();
+            let token = new $p10_token.SequenceItemStart();
             let ends_at = (() => {
               let $2 = header.length;
               if ($2 instanceof $value_length.Defined) {
@@ -1418,7 +1418,7 @@ function read_data_element_header_part(context) {
                     _record.sequence_depth,
                   );
                 })();
-                return new Ok([toList([part]), new_context]);
+                return new Ok([toList([token]), new_context]);
               },
             );
           } else if (vr instanceof Some &&
@@ -1427,7 +1427,7 @@ function read_data_element_header_part(context) {
           (isEqual($, $dictionary.pixel_data.tag))) {
             let tag = $;
             let vr$1 = vr[0];
-            let part = new $p10_part.SequenceStart(tag, vr$1);
+            let token = new $p10_token.SequenceStart(tag, vr$1);
             let new_location = (() => {
               let _pipe = $p10_location.add_sequence(
                 context.location,
@@ -1474,7 +1474,7 @@ function read_data_element_header_part(context) {
                     _record.sequence_depth,
                   );
                 })();
-                return new Ok([toList([part]), new_context]);
+                return new Ok([toList([token]), new_context]);
               },
             );
           } else if (vr instanceof Some &&
@@ -1483,7 +1483,7 @@ function read_data_element_header_part(context) {
           (isEqual($, $dictionary.pixel_data.tag))) {
             let tag = $;
             let vr$1 = vr[0];
-            let part = new $p10_part.SequenceStart(tag, vr$1);
+            let token = new $p10_token.SequenceStart(tag, vr$1);
             let new_location = (() => {
               let _pipe = $p10_location.add_sequence(
                 context.location,
@@ -1530,7 +1530,7 @@ function read_data_element_header_part(context) {
                     _record.sequence_depth,
                   );
                 })();
-                return new Ok([toList([part]), new_context]);
+                return new Ok([toList([token]), new_context]);
               },
             );
           } else if (vr instanceof None &&
@@ -1556,7 +1556,7 @@ function read_data_element_header_part(context) {
                 let new_path = $4[0];
                 let new_sequence_depth = context.sequence_depth - 1;
                 return [
-                  toList([new $p10_part.SequenceDelimiter()]),
+                  toList([new $p10_token.SequenceDelimiter()]),
                   new_path,
                   new_location,
                   new_sequence_depth,
@@ -1570,7 +1570,7 @@ function read_data_element_header_part(context) {
                 ];
               }
             })();
-            let parts = $2[0];
+            let tokens = $2[0];
             let new_path = $2[1];
             let new_location = $2[2];
             let new_sequence_depth = $2[3];
@@ -1586,13 +1586,13 @@ function read_data_element_header_part(context) {
                 new_sequence_depth,
               );
             })();
-            return new Ok([parts, new_context]);
+            return new Ok([tokens, new_context]);
           } else if (vr instanceof None &&
           $1 instanceof $value_length.Defined &&
           $1.length === 0 &&
           (isEqual($, $dictionary.item_delimitation_item.tag))) {
             let tag = $;
-            let part = new $p10_part.SequenceItemDelimiter();
+            let token = new $p10_token.SequenceItemDelimiter();
             let new_location = (() => {
               let _pipe = $p10_location.end_item(context.location);
               return $result.map_error(
@@ -1634,7 +1634,7 @@ function read_data_element_header_part(context) {
                     _record.sequence_depth,
                   );
                 })();
-                return new Ok([toList([part]), new_context]);
+                return new Ok([toList([token]), new_context]);
               },
             );
           } else if (vr instanceof Some && $1 instanceof $value_length.Defined) {
@@ -1670,15 +1670,15 @@ function read_data_element_header_part(context) {
             return $result.try$(
               max_size_check_result,
               (_) => {
-                let emit_parts = (!isEqual(
+                let emit_tokens = (!isEqual(
                   header.tag,
                   $dictionary.data_set_trailing_padding.tag
                 )) && (header.tag.element !== 0x0);
-                let parts = (() => {
-                  let $2 = emit_parts && !materialized_value_required;
+                let tokens = (() => {
+                  let $2 = emit_tokens && !materialized_value_required;
                   if ($2) {
                     return toList([
-                      new $p10_part.DataElementHeader(header.tag, vr$1, length),
+                      new $p10_token.DataElementHeader(header.tag, vr$1, length),
                     ]);
                   } else {
                     return toList([]);
@@ -1689,7 +1689,7 @@ function read_data_element_header_part(context) {
                   vr$1,
                   length,
                   length,
-                  emit_parts,
+                  emit_tokens,
                 );
                 let new_location = (() => {
                   let _pipe = $p10_location.check_data_element_ordering(
@@ -1747,7 +1747,7 @@ function read_data_element_header_part(context) {
                             _record.sequence_depth,
                           );
                         })();
-                        return new Ok([parts, new_context]);
+                        return new Ok([tokens, new_context]);
                       },
                     );
                   },
@@ -1772,13 +1772,13 @@ function read_data_element_header_part(context) {
   );
 }
 
-function read_data_element_value_bytes_part(
+function read_data_element_value_bytes_token(
   context,
   tag,
   vr,
   value_length,
   bytes_remaining,
-  emit_parts
+  emit_tokens
 ) {
   let materialized_value_required = is_materialized_value_required(
     context,
@@ -1789,7 +1789,7 @@ function read_data_element_value_bytes_part(
     if (materialized_value_required) {
       return value_length;
     } else {
-      return $int.min(bytes_remaining, context.config.max_part_size);
+      return $int.min(bytes_remaining, context.config.max_token_size);
     }
   })();
   let $ = $byte_stream.read(context.stream, bytes_to_read);
@@ -1817,9 +1817,9 @@ function read_data_element_value_bytes_part(
       (_use0) => {
         let data$2 = _use0[0];
         let new_location = _use0[1];
-        let parts = (() => {
-          if (emit_parts) {
-            let value_bytes_part = new $p10_part.DataElementValueBytes(
+        let tokens = (() => {
+          if (emit_tokens) {
+            let value_bytes_token = new $p10_token.DataElementValueBytes(
               vr,
               data$2,
               bytes_remaining$1,
@@ -1837,8 +1837,8 @@ function read_data_element_value_bytes_part(
               if ($1) {
                 return new Ok(
                   toList([
-                    new $p10_part.DataElementHeader(tag, vr, length),
-                    value_bytes_part,
+                    new $p10_token.DataElementHeader(tag, vr, length),
+                    value_bytes_token,
                   ]),
                 );
               } else {
@@ -1854,15 +1854,15 @@ function read_data_element_value_bytes_part(
                 );
               }
             } else {
-              return new Ok(toList([value_bytes_part]));
+              return new Ok(toList([value_bytes_token]));
             }
           } else {
             return new Ok(toList([]));
           }
         })();
         return $result.try$(
-          parts,
-          (parts) => {
+          tokens,
+          (tokens) => {
             let next_action = (() => {
               if (bytes_remaining$1 === 0) {
                 let $1 = isEqual(tag, $dictionary.item.tag);
@@ -1877,7 +1877,7 @@ function read_data_element_value_bytes_part(
                   vr,
                   value_length,
                   bytes_remaining$1,
-                  emit_parts,
+                  emit_tokens,
                 );
               }
             })();
@@ -1912,7 +1912,7 @@ function read_data_element_value_bytes_part(
                 _record.sequence_depth,
               );
             })();
-            return new Ok([parts, new_context]);
+            return new Ok([tokens, new_context]);
           },
         );
       },
@@ -1926,7 +1926,7 @@ function read_data_element_value_bytes_part(
   }
 }
 
-function read_pixel_data_item_part(context, vr) {
+function read_pixel_data_item_token(context, vr) {
   let $ = read_data_element_header(context);
   if ($.isOk()) {
     let header = $[0][0];
@@ -1937,7 +1937,7 @@ function read_pixel_data_item_part(context, vr) {
     ((isEqual(header.tag, $dictionary.item.tag)) && (header.length.length !== 0xFFFFFFFF))) {
       let tag = header.tag;
       let length = header.length.length;
-      let part = new $p10_part.PixelDataItem(length);
+      let token = new $p10_token.PixelDataItem(length);
       let next_action = new ReadDataElementValueBytes(
         $dictionary.item.tag,
         vr,
@@ -1955,7 +1955,7 @@ function read_pixel_data_item_part(context, vr) {
           "let_assert",
           "dcmfx_p10/p10_read",
           1467,
-          "read_pixel_data_item_part",
+          "read_pixel_data_item_token",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
         )
@@ -1973,14 +1973,14 @@ function read_pixel_data_item_part(context, vr) {
           _record.sequence_depth,
         );
       })();
-      return new Ok([toList([part]), new_context]);
+      return new Ok([toList([token]), new_context]);
     } else if (header instanceof DataElementHeader &&
     header.vr instanceof None &&
     header.length instanceof $value_length.Defined &&
     header.length.length === 0 &&
     (isEqual(header.tag, $dictionary.sequence_delimitation_item.tag))) {
       let tag = header.tag;
-      let part = new $p10_part.SequenceDelimiter();
+      let token = new $p10_token.SequenceDelimiter();
       let new_location = (() => {
         let _pipe = $p10_location.end_sequence(context.location);
         return $result.map_error(
@@ -2023,7 +2023,7 @@ function read_pixel_data_item_part(context, vr) {
               _record.sequence_depth,
             );
           })();
-          return new Ok([toList([part]), new_context]);
+          return new Ok([toList([token]), new_context]);
         },
       );
     } else {
@@ -2042,35 +2042,35 @@ function read_pixel_data_item_part(context, vr) {
   }
 }
 
-export function read_parts(context) {
+export function read_tokens(context) {
   let $ = context.next_action;
   if ($ instanceof ReadFilePreambleAndDICMPrefix) {
-    return read_file_preamble_and_dicm_prefix_part(context);
+    return read_file_preamble_and_dicm_prefix_token(context);
   } else if ($ instanceof ReadFileMetaInformation) {
     let starts_at = $.starts_at;
     return $result.map(
-      read_file_meta_information_part(context, starts_at),
+      read_file_meta_information_token(context, starts_at),
       (_use0) => {
         let fmi_data_set = _use0[0];
         let new_context = _use0[1];
         return [
-          toList([new $p10_part.FileMetaInformation(fmi_data_set)]),
+          toList([new $p10_token.FileMetaInformation(fmi_data_set)]),
           new_context,
         ];
       },
     );
   } else if ($ instanceof ReadDataElementHeader) {
-    let delimiter_part = next_delimiter_part(context);
+    let delimiter_token = next_delimiter_token(context);
     return $bool.guard(
-      !isEqual(delimiter_part[0], toList([])),
-      new Ok(delimiter_part),
+      !isEqual(delimiter_token[0], toList([])),
+      new Ok(delimiter_token),
       () => {
         let $1 = $byte_stream.is_fully_consumed(context.stream);
         if ($1) {
-          let parts = $p10_location.pending_delimiter_parts(context.location);
-          return new Ok([parts, context]);
+          let tokens = $p10_location.pending_delimiter_tokens(context.location);
+          return new Ok([tokens, context]);
         } else {
-          return read_data_element_header_part(context);
+          return read_data_element_header_token(context);
         }
       },
     );
@@ -2079,17 +2079,17 @@ export function read_parts(context) {
     let vr = $.vr;
     let value_length = $.length;
     let bytes_remaining = $.bytes_remaining;
-    let emit_parts = $.emit_parts;
-    return read_data_element_value_bytes_part(
+    let emit_tokens = $.emit_tokens;
+    return read_data_element_value_bytes_token(
       context,
       tag,
       vr,
       value_length,
       bytes_remaining,
-      emit_parts,
+      emit_tokens,
     );
   } else {
     let vr = $.vr;
-    return read_pixel_data_item_part(context, vr);
+    return read_pixel_data_item_token(context, vr);
   }
 }

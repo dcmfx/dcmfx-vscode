@@ -4,7 +4,7 @@ import * as $data_element_value from "../../../dcmfx_core/dcmfx_core/data_elemen
 import * as $data_set from "../../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
 import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
-import * as $p10_part from "../../dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../../dcmfx_p10/p10_token.mjs";
 import * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filter_transform.mjs";
 import {
   Ok,
@@ -40,30 +40,30 @@ export function new$(data_elements_to_insert) {
   );
 }
 
-function prepend_data_element_parts(data_element, acc) {
+function prepend_data_element_tokens(data_element, acc) {
   let tag = data_element[0];
   let value = data_element[1];
-  let $ = $p10_part.data_element_to_parts(
+  let $ = $p10_token.data_element_to_tokens(
     tag,
     value,
     acc,
-    (acc, part) => { return new Ok(listPrepend(part, acc)); },
+    (acc, token) => { return new Ok(listPrepend(token, acc)); },
   );
   if (!$.isOk()) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/transforms/p10_insert_transform",
       133,
-      "prepend_data_element_parts",
+      "prepend_data_element_tokens",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
     )
   }
-  let parts = $[0];
-  return parts;
+  let tokens = $[0];
+  return tokens;
 }
 
-function parts_to_insert_before_tag(tag, data_elements_to_insert, acc) {
+function tokens_to_insert_before_tag(tag, data_elements_to_insert, acc) {
   if (data_elements_to_insert.atLeastLength(1)) {
     let data_element = data_elements_to_insert.head;
     let rest = data_elements_to_insert.tail;
@@ -72,9 +72,9 @@ function parts_to_insert_before_tag(tag, data_elements_to_insert, acc) {
     );
     if ($) {
       let _pipe = data_element;
-      let _pipe$1 = prepend_data_element_parts(_pipe, acc);
+      let _pipe$1 = prepend_data_element_tokens(_pipe, acc);
       return ((_capture) => {
-        return parts_to_insert_before_tag(tag, rest, _capture);
+        return tokens_to_insert_before_tag(tag, rest, _capture);
       })(_pipe$1);
     } else {
       return [acc, data_elements_to_insert];
@@ -84,15 +84,15 @@ function parts_to_insert_before_tag(tag, data_elements_to_insert, acc) {
   }
 }
 
-export function add_part(context, part) {
+export function add_token(context, token) {
   return $bool.guard(
     isEqual(context.data_elements_to_insert, toList([])),
-    [toList([part]), context],
+    [toList([token]), context],
     () => {
       let is_at_root = $p10_filter_transform.is_at_root(
         context.filter_transform,
       );
-      let $ = $p10_filter_transform.add_part(context.filter_transform, part);
+      let $ = $p10_filter_transform.add_token(context.filter_transform, token);
       let filter_result = $[0];
       let filter_transform = $[1];
       let context$1 = (() => {
@@ -108,16 +108,16 @@ export function add_part(context, part) {
         () => {
           return $bool.guard(
             !is_at_root,
-            [toList([part]), context$1],
+            [toList([token]), context$1],
             () => {
-              if (part instanceof $p10_part.SequenceStart) {
-                let tag = part.tag;
-                let $1 = parts_to_insert_before_tag(
+              if (token instanceof $p10_token.SequenceStart) {
+                let tag = token.tag;
+                let $1 = tokens_to_insert_before_tag(
                   tag,
                   context$1.data_elements_to_insert,
                   toList([]),
                 );
-                let parts_to_insert = $1[0];
+                let tokens_to_insert = $1[0];
                 let data_elements_to_insert = $1[1];
                 let context$2 = (() => {
                   let _record = context$1;
@@ -126,19 +126,19 @@ export function add_part(context, part) {
                     _record.filter_transform,
                   );
                 })();
-                let parts = (() => {
-                  let _pipe = listPrepend(part, parts_to_insert);
+                let tokens = (() => {
+                  let _pipe = listPrepend(token, tokens_to_insert);
                   return $list.reverse(_pipe);
                 })();
-                return [parts, context$2];
-              } else if (part instanceof $p10_part.DataElementHeader) {
-                let tag = part.tag;
-                let $1 = parts_to_insert_before_tag(
+                return [tokens, context$2];
+              } else if (token instanceof $p10_token.DataElementHeader) {
+                let tag = token.tag;
+                let $1 = tokens_to_insert_before_tag(
                   tag,
                   context$1.data_elements_to_insert,
                   toList([]),
                 );
-                let parts_to_insert = $1[0];
+                let tokens_to_insert = $1[0];
                 let data_elements_to_insert = $1[1];
                 let context$2 = (() => {
                   let _record = context$1;
@@ -147,19 +147,19 @@ export function add_part(context, part) {
                     _record.filter_transform,
                   );
                 })();
-                let parts = (() => {
-                  let _pipe = listPrepend(part, parts_to_insert);
+                let tokens = (() => {
+                  let _pipe = listPrepend(token, tokens_to_insert);
                   return $list.reverse(_pipe);
                 })();
-                return [parts, context$2];
-              } else if (part instanceof $p10_part.End) {
-                let parts = (() => {
+                return [tokens, context$2];
+              } else if (token instanceof $p10_token.End) {
+                let tokens = (() => {
                   let _pipe = context$1.data_elements_to_insert;
                   return $list.fold(
                     _pipe,
                     toList([]),
                     (acc, data_element) => {
-                      return prepend_data_element_parts(data_element, acc);
+                      return prepend_data_element_tokens(data_element, acc);
                     },
                   );
                 })();
@@ -170,13 +170,13 @@ export function add_part(context, part) {
                     _record.filter_transform,
                   );
                 })();
-                let parts$1 = (() => {
-                  let _pipe = listPrepend(new $p10_part.End(), parts);
+                let tokens$1 = (() => {
+                  let _pipe = listPrepend(new $p10_token.End(), tokens);
                   return $list.reverse(_pipe);
                 })();
-                return [parts$1, context$2];
+                return [tokens$1, context$2];
               } else {
-                return [toList([part]), context$1];
+                return [toList([token]), context$1];
               }
             },
           );

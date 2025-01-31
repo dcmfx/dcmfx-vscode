@@ -5,7 +5,7 @@ import * as $int from "../../gleam_stdlib/gleam/int.mjs";
 import * as $io from "../../gleam_stdlib/gleam/io.mjs";
 import * as $list from "../../gleam_stdlib/gleam/list.mjs";
 import * as $string from "../../gleam_stdlib/gleam/string.mjs";
-import * as $p10_part from "../dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../dcmfx_p10/p10_token.mjs";
 import { toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
 
 export class TransferSyntaxNotSupported extends $CustomType {
@@ -58,12 +58,12 @@ export class MaximumExceeded extends $CustomType {
   }
 }
 
-export class PartStreamInvalid extends $CustomType {
-  constructor(when, details, part) {
+export class TokenStreamInvalid extends $CustomType {
+  constructor(when, details, token) {
     super();
     this.when = when;
     this.details = details;
-    this.part = part;
+    this.token = token;
   }
 }
 
@@ -98,8 +98,8 @@ export function name(error) {
     return "Invalid data";
   } else if (error instanceof MaximumExceeded) {
     return "Maximum exceeded";
-  } else if (error instanceof PartStreamInvalid) {
-    return "P10 part stream invalid";
+  } else if (error instanceof TokenStreamInvalid) {
+    return "P10 token stream invalid";
   } else if (error instanceof WriteAfterCompletion) {
     return "Write after completion";
   } else if (error instanceof FileStreamError) {
@@ -123,7 +123,7 @@ export function to_lines(error, task_description) {
     } else if (error instanceof DataInvalid) {
       let when = error.when;
       return listPrepend("  When: " + when, lines$1);
-    } else if (error instanceof PartStreamInvalid) {
+    } else if (error instanceof TokenStreamInvalid) {
       let when = error.when;
       return listPrepend("  When: " + when, lines$1);
     } else if (error instanceof FileStreamError) {
@@ -144,11 +144,11 @@ export function to_lines(error, task_description) {
         "  Details: " + details,
         listPrepend("  Specific character set: " + charset, lines$2),
       );
-    } else if (error instanceof PartStreamInvalid) {
+    } else if (error instanceof TokenStreamInvalid) {
       let details = error.details;
-      let part = error.part;
+      let token = error.token;
       return listPrepend(
-        "  Part: " + $p10_part.to_string(part),
+        "  Token: " + $p10_token.to_string(token),
         listPrepend("  Details: " + details, lines$2),
       );
     } else if (error instanceof FileStreamError) {

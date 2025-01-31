@@ -5,7 +5,7 @@ import type * as $dict from "../../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
 import type * as $data_set_builder from "../../dcmfx_p10/data_set_builder.d.mts";
 import type * as $p10_error from "../../dcmfx_p10/p10_error.d.mts";
-import type * as $p10_part from "../../dcmfx_p10/p10_part.d.mts";
+import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class P10FilterTransform extends _.CustomType {
@@ -62,7 +62,7 @@ export function data_set(context: P10FilterTransform$): _.Result<
   $p10_error.P10Error$
 >;
 
-export function add_part(context: P10FilterTransform$, part: $p10_part.P10Part$): [
-  boolean,
-  P10FilterTransform$
-];
+export function add_token(
+  context: P10FilterTransform$,
+  token: $p10_token.P10Token$
+): [boolean, P10FilterTransform$];

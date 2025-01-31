@@ -11,7 +11,7 @@ import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
-import * as $p10_part from "../../dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../../dcmfx_p10/p10_token.mjs";
 import {
   toList,
   prepend as listPrepend,
@@ -45,9 +45,9 @@ export function new$(print_options) {
   );
 }
 
-export function add_part(context, part) {
-  if (part instanceof $p10_part.FileMetaInformation) {
-    let data_set = part.data_set;
+export function add_token(context, token) {
+  if (token instanceof $p10_token.FileMetaInformation) {
+    let data_set = token.data_set;
     return [
       $data_set.to_lines(
         data_set,
@@ -57,17 +57,17 @@ export function add_part(context, part) {
       ),
       context,
     ];
-  } else if (part instanceof $p10_part.DataElementHeader) {
-    let tag = part.tag;
-    let vr = part.vr;
-    let length = part.length;
+  } else if (token instanceof $p10_token.DataElementHeader) {
+    let tag = token.tag;
+    let vr = token.vr;
+    let length = token.length;
     let $ = $list.first(context.private_creators);
     if (!$.isOk()) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/transforms/p10_print_transform",
         63,
-        "add_part",
+        "add_token",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
       )
@@ -108,10 +108,10 @@ export function add_part(context, part) {
       );
     })();
     return [s, new_context];
-  } else if (part instanceof $p10_part.DataElementValueBytes &&
+  } else if (token instanceof $p10_token.DataElementValueBytes &&
   (!context.ignore_data_element_value_bytes)) {
-    let vr = part.vr;
-    let data = part.data;
+    let vr = token.vr;
+    let data = token.data;
     let value = $data_element_value.new_binary_unchecked(vr, data);
     let ignore_data_element_value_bytes = true;
     let private_creators = (() => {
@@ -154,16 +154,16 @@ export function add_part(context, part) {
       );
     })();
     return [s, new_context];
-  } else if (part instanceof $p10_part.SequenceStart) {
-    let tag = part.tag;
-    let vr = part.vr;
+  } else if (token instanceof $p10_token.SequenceStart) {
+    let tag = token.tag;
+    let vr = token.vr;
     let $ = $list.first(context.private_creators);
     if (!$.isOk()) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/transforms/p10_print_transform",
         152,
-        "add_part",
+        "add_token",
         "Pattern match failed, no pattern matched the value.",
         { value: $ }
       )
@@ -190,7 +190,7 @@ export function add_part(context, part) {
       );
     })();
     return [s + "\n", new_context];
-  } else if (part instanceof $p10_part.SequenceDelimiter) {
+  } else if (token instanceof $p10_token.SequenceDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
       $dictionary.sequence_delimitation_item.tag,
       $dictionary.sequence_delimitation_item.name,
@@ -212,7 +212,7 @@ export function add_part(context, part) {
       );
     })();
     return [s + "\n", new_context];
-  } else if (part instanceof $p10_part.SequenceItemStart) {
+  } else if (token instanceof $p10_token.SequenceItemStart) {
     let s = $data_set_print.format_data_element_prefix(
       $dictionary.item.tag,
       $dictionary.item.name,
@@ -234,7 +234,7 @@ export function add_part(context, part) {
       );
     })();
     return [s + "\n", new_context];
-  } else if (part instanceof $p10_part.SequenceItemDelimiter) {
+  } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
       $dictionary.item_delimitation_item.tag,
       $dictionary.item_delimitation_item.name,
@@ -259,8 +259,8 @@ export function add_part(context, part) {
       );
     })();
     return [s + "\n", new_context];
-  } else if (part instanceof $p10_part.PixelDataItem) {
-    let length = part.length;
+  } else if (token instanceof $p10_token.PixelDataItem) {
+    let length = token.length;
     let $ = $data_set_print.format_data_element_prefix(
       $dictionary.item.tag,
       $dictionary.item.name,

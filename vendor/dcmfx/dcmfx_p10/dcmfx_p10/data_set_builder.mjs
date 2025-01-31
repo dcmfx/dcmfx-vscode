@@ -15,7 +15,7 @@ import * as $string from "../../gleam_stdlib/gleam/string.mjs";
 import * as $data_element_header from "../dcmfx_p10/internal/data_element_header.mjs";
 import { DataElementHeader } from "../dcmfx_p10/internal/data_element_header.mjs";
 import * as $p10_error from "../dcmfx_p10/p10_error.mjs";
-import * as $p10_part from "../dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../dcmfx_p10/p10_token.mjs";
 import {
   Ok,
   Error,
@@ -207,22 +207,22 @@ function location_to_string(loop$location, loop$acc) {
   }
 }
 
-function unexpected_part_error(part, builder) {
+function unexpected_token_error(token, builder) {
   return new Error(
-    new $p10_error.PartStreamInvalid(
+    new $p10_error.TokenStreamInvalid(
       "Building data set",
-      "Received unexpected P10 part at location: " + location_to_string(
+      "Received unexpected P10 token at location: " + location_to_string(
         builder.location,
         toList([]),
       ),
-      part,
+      token,
     ),
   );
 }
 
-function add_part_in_sequence(builder, part) {
+function add_token_to_sequence(builder, token) {
   let $ = builder.location;
-  if (part instanceof $p10_part.SequenceItemStart &&
+  if (token instanceof $p10_token.SequenceItemStart &&
   $.hasLength(1) &&
   $.head instanceof RootDataSet) {
     return new Ok(
@@ -237,7 +237,7 @@ function add_part_in_sequence(builder, part) {
         );
       })(),
     );
-  } else if (part instanceof $p10_part.SequenceItemStart &&
+  } else if (token instanceof $p10_token.SequenceItemStart &&
   $.atLeastLength(1) &&
   $.head instanceof Sequence) {
     return new Ok(
@@ -252,7 +252,7 @@ function add_part_in_sequence(builder, part) {
         );
       })(),
     );
-  } else if (part instanceof $p10_part.SequenceDelimiter &&
+  } else if (token instanceof $p10_token.SequenceDelimiter &&
   $.atLeastLength(1) &&
   $.head instanceof Sequence) {
     let tag = $.head.tag;
@@ -281,14 +281,14 @@ function add_part_in_sequence(builder, part) {
       })(),
     );
   } else {
-    let part$1 = part;
-    return unexpected_part_error(part$1, builder);
+    let token$1 = token;
+    return unexpected_token_error(token$1, builder);
   }
 }
 
-function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
+function add_token_to_encapsulated_pixel_data_sequence(builder, token) {
   let $ = builder.location;
-  if (part instanceof $p10_part.PixelDataItem) {
+  if (token instanceof $p10_token.PixelDataItem) {
     let _pipe = (() => {
       let _record = builder;
       return new DataSetBuilder(
@@ -306,7 +306,7 @@ function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
       );
     })();
     return new Ok(_pipe);
-  } else if (part instanceof $p10_part.SequenceDelimiter &&
+  } else if (token instanceof $p10_token.SequenceDelimiter &&
   $.atLeastLength(1) &&
   $.head instanceof EncapsulatedPixelDataSequence) {
     let vr = $.head.vr;
@@ -324,7 +324,7 @@ function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
         "let_assert",
         "dcmfx_p10/data_set_builder",
         244,
-        "add_part_in_encapsulated_pixel_data_sequence",
+        "add_token_to_encapsulated_pixel_data_sequence",
         "Pattern match failed, no pattern matched the value.",
         { value: $1 }
       )
@@ -348,14 +348,14 @@ function add_part_in_encapsulated_pixel_data_sequence(builder, part) {
       })(),
     );
   } else {
-    return unexpected_part_error(part, builder);
+    return unexpected_token_error(token, builder);
   }
 }
 
-function add_part_in_data_set(builder, part) {
-  if (part instanceof $p10_part.DataElementHeader) {
-    let tag = part.tag;
-    let vr = part.vr;
+function add_token_to_data_set(builder, token) {
+  if (token instanceof $p10_token.DataElementHeader) {
+    let tag = token.tag;
+    let vr = token.vr;
     let _pipe = (() => {
       let _record = builder;
       return new DataSetBuilder(
@@ -367,9 +367,9 @@ function add_part_in_data_set(builder, part) {
       );
     })();
     return new Ok(_pipe);
-  } else if (part instanceof $p10_part.SequenceStart) {
-    let tag = part.tag;
-    let vr = part.vr;
+  } else if (token instanceof $p10_token.SequenceStart) {
+    let tag = token.tag;
+    let vr = token.vr;
     let new_location = (() => {
       if (vr instanceof $value_representation.OtherByteString) {
         return new EncapsulatedPixelDataSequence(vr, toList([]));
@@ -390,7 +390,7 @@ function add_part_in_data_set(builder, part) {
       );
     })();
     return new Ok(_pipe);
-  } else if (part instanceof $p10_part.SequenceItemDelimiter) {
+  } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let $ = builder.location;
     if ($.atLeastLength(2) &&
     $.head instanceof SequenceItem &&
@@ -417,14 +417,14 @@ function add_part_in_data_set(builder, part) {
       );
     } else {
       return new Error(
-        new $p10_error.PartStreamInvalid(
+        new $p10_error.TokenStreamInvalid(
           "Building data set",
-          "Received sequence item delimiter part outside of an item",
-          part,
+          "Received sequence item delimiter token outside of an item",
+          token,
         ),
       );
     }
-  } else if (part instanceof $p10_part.End) {
+  } else if (token instanceof $p10_token.End) {
     let $ = builder.location;
     if ($.hasLength(1) && $.head instanceof RootDataSet) {
       return new Ok(
@@ -441,24 +441,24 @@ function add_part_in_data_set(builder, part) {
       );
     } else {
       return new Error(
-        new $p10_error.PartStreamInvalid(
+        new $p10_error.TokenStreamInvalid(
           "Building data set",
-          "Received end part outside of the root data set",
-          part,
+          "Received end token outside of the root data set",
+          token,
         ),
       );
     }
   } else {
-    let part$1 = part;
-    return unexpected_part_error(part$1, builder);
+    let token$1 = token;
+    return unexpected_token_error(token$1, builder);
   }
 }
 
-function add_part_in_pending_data_element(builder, part) {
+function add_token_to_pending_data_element(builder, token) {
   let $ = builder.pending_data_element;
-  if (part instanceof $p10_part.DataElementValueBytes && $ instanceof Some) {
-    let data = part.data;
-    let bytes_remaining = part.bytes_remaining;
+  if (token instanceof $p10_token.DataElementValueBytes && $ instanceof Some) {
+    let data = token.data;
+    let bytes_remaining = token.bytes_remaining;
     let pending_data_element = $[0];
     let tag = pending_data_element.tag;
     let vr = pending_data_element.vr;
@@ -495,29 +495,29 @@ function add_part_in_pending_data_element(builder, part) {
       return new Ok(_pipe);
     }
   } else {
-    let part$1 = part;
-    return unexpected_part_error(part$1, builder);
+    let token$1 = token;
+    return unexpected_token_error(token$1, builder);
   }
 }
 
-export function add_part(builder, part) {
+export function add_token(builder, token) {
   return $bool.guard(
     builder.is_complete,
     new Error(
-      new $p10_error.PartStreamInvalid(
+      new $p10_error.TokenStreamInvalid(
         "Building data set",
-        "Part received after the part stream has ended",
-        part,
+        "Token received after the token stream has ended",
+        token,
       ),
     ),
     () => {
       return $bool.lazy_guard(
         !isEqual(builder.pending_data_element, new None()),
-        () => { return add_part_in_pending_data_element(builder, part); },
+        () => { return add_token_to_pending_data_element(builder, token); },
         () => {
           let $ = builder.location;
-          if (part instanceof $p10_part.FilePreambleAndDICMPrefix) {
-            let preamble = part.preamble;
+          if (token instanceof $p10_token.FilePreambleAndDICMPrefix) {
+            let preamble = token.preamble;
             return new Ok(
               (() => {
                 let _record = builder;
@@ -530,8 +530,8 @@ export function add_part(builder, part) {
                 );
               })(),
             );
-          } else if (part instanceof $p10_part.FileMetaInformation) {
-            let data_set = part.data_set;
+          } else if (token instanceof $p10_token.FileMetaInformation) {
+            let data_set = token.data_set;
             return new Ok(
               (() => {
                 let _record = builder;
@@ -545,12 +545,12 @@ export function add_part(builder, part) {
               })(),
             );
           } else if ($.atLeastLength(1) && $.head instanceof Sequence) {
-            return add_part_in_sequence(builder, part);
+            return add_token_to_sequence(builder, token);
           } else if ($.atLeastLength(1) &&
           $.head instanceof EncapsulatedPixelDataSequence) {
-            return add_part_in_encapsulated_pixel_data_sequence(builder, part);
+            return add_token_to_encapsulated_pixel_data_sequence(builder, token);
           } else {
-            return add_part_in_data_set(builder, part);
+            return add_token_to_data_set(builder, token);
           }
         },
       );
@@ -573,22 +573,22 @@ export function force_end(builder) {
           _record.is_complete,
         );
       })();
-      let part = (() => {
+      let token = (() => {
         let $ = builder$1.location;
         if ($.atLeastLength(1) && $.head instanceof Sequence) {
-          return new $p10_part.SequenceDelimiter();
+          return new $p10_token.SequenceDelimiter();
         } else if ($.atLeastLength(1) &&
         $.head instanceof EncapsulatedPixelDataSequence) {
-          return new $p10_part.SequenceDelimiter();
+          return new $p10_token.SequenceDelimiter();
         } else if ($.atLeastLength(1) && $.head instanceof SequenceItem) {
-          return new $p10_part.SequenceItemDelimiter();
+          return new $p10_token.SequenceItemDelimiter();
         } else {
-          return new $p10_part.End();
+          return new $p10_token.End();
         }
       })();
       let $ = (() => {
         let _pipe = builder$1;
-        return add_part(_pipe, part);
+        return add_token(_pipe, token);
       })();
       if (!$.isOk()) {
         throw makeError(

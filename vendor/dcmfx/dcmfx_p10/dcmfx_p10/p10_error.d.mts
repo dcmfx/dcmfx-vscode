@@ -1,6 +1,6 @@
 import type * as $data_set_path from "../../dcmfx_core/dcmfx_core/data_set_path.d.mts";
 import type * as $file_stream_error from "../../file_streams/file_streams/file_stream_error.d.mts";
-import type * as $p10_part from "../dcmfx_p10/p10_part.d.mts";
+import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 export class TransferSyntaxNotSupported extends _.CustomType {
@@ -56,12 +56,12 @@ export class MaximumExceeded extends _.CustomType {
   offset: number;
 }
 
-export class PartStreamInvalid extends _.CustomType {
-  constructor(when: string, details: string, part: $p10_part.P10Part$);
+export class TokenStreamInvalid extends _.CustomType {
+  constructor(when: string, details: string, token: $p10_token.P10Token$);
   
   when: string;
   details: string;
-  part: $p10_part.P10Part$;
+  token: $p10_token.P10Token$;
 }
 
 export class WriteAfterCompletion extends _.CustomType {}
@@ -80,7 +80,7 @@ export class OtherError extends _.CustomType {
   details: string;
 }
 
-export type P10Error$ = TransferSyntaxNotSupported | SpecificCharacterSetInvalid | DataRequired | DataEndedUnexpectedly | DataInvalid | MaximumExceeded | PartStreamInvalid | WriteAfterCompletion | FileStreamError | OtherError;
+export type P10Error$ = TransferSyntaxNotSupported | SpecificCharacterSetInvalid | DataRequired | DataEndedUnexpectedly | DataInvalid | MaximumExceeded | TokenStreamInvalid | WriteAfterCompletion | FileStreamError | OtherError;
 
 export function name(error: P10Error$): string;
 

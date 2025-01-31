@@ -35,14 +35,14 @@ export function get_pixel_data_frames(data_set) {
   })();
   let context = [toList([]), $pixel_data_filter.new$()];
   let _pipe = ds;
-  let _pipe$1 = $p10_write.data_set_to_parts(
+  let _pipe$1 = $p10_write.data_set_to_tokens(
     _pipe,
     context,
-    (context, part) => {
+    (context, token) => {
       let frames = context[0];
       let filter = context[1];
       return $result.map(
-        $pixel_data_filter.add_part(filter, part),
+        $pixel_data_filter.add_token(filter, token),
         (_use0) => {
           let new_frames = _use0[0];
           let filter$1 = _use0[1];

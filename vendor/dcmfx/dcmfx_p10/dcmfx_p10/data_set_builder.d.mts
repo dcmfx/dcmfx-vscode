@@ -4,7 +4,7 @@ import type * as $value_representation from "../../dcmfx_core/dcmfx_core/value_r
 import type * as $dict from "../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $p10_error from "../dcmfx_p10/p10_error.d.mts";
-import type * as $p10_part from "../dcmfx_p10/p10_part.d.mts";
+import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 declare class DataSetBuilder extends _.CustomType {
@@ -126,7 +126,7 @@ export function final_data_set(builder: DataSetBuilder$): _.Result<
   undefined
 >;
 
-export function add_part(builder: DataSetBuilder$, part: $p10_part.P10Part$): _.Result<
+export function add_token(builder: DataSetBuilder$, token: $p10_token.P10Token$): _.Result<
   DataSetBuilder$,
   $p10_error.P10Error$
 >;

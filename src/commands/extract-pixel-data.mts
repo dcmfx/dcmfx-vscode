@@ -11,7 +11,7 @@ import * as dcmfx_pixel_data from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pix
 import * as pixel_data_filter from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/pixel_data_filter.mjs";
 import * as pixel_data_frame from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/pixel_data_frame.mjs";
 import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
-import * as p10_part from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_part.mjs";
+import * as p10_token from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_token.mjs";
 import * as data_error from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_error.mjs";
 import * as data_set from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set.mjs";
 import * as transfer_syntax from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/transfer_syntax.mjs";
@@ -68,13 +68,13 @@ function* doExtractDicomPixelData(
 ) {
   const readStream = yield* openReadStream(uri);
 
-  // Construct DICOM P10 read context with a max part size of 1 MiB to keep
+  // Construct DICOM P10 read context with a max token size of 1 MiB to keep
   // the read context's memory usage low while extracting pixel data frames
   let readContext = p10_read.new_read_context();
-  const maxPartSize = 1024 * 1024;
+  const maxTokenSize = 1024 * 1024;
   readContext = p10_read.with_config(
     readContext,
-    new p10_read.P10ReadConfig(maxPartSize, 0xfffffffe, 10_000, false),
+    new p10_read.P10ReadConfig(maxTokenSize, 0xfffffffe, 10_000, false),
   );
 
   let pixelDataFilter = pixel_data_filter.new$();
@@ -84,18 +84,18 @@ function* doExtractDicomPixelData(
   let ended = false;
 
   while (!ended) {
-    const readResult = p10_read.read_parts(readContext);
+    const readResult = p10_read.read_tokens(readContext);
 
     yield* Effect.matchEffect(gleamResultToEffect(readResult), {
-      onSuccess: ([parts, newReadContext]) =>
+      onSuccess: ([tokens, newReadContext]) =>
         Effect.gen(function* () {
           readContext = newReadContext;
 
-          for (const part of parts.toArray()) {
+          for (const token of tokens.toArray()) {
             // Update the file extension to use when a transfer syntax is
             // specified in the File Meta Information
-            if (part instanceof p10_part.FileMetaInformation) {
-              const ts = data_set.get_transfer_syntax(part.data_set);
+            if (token instanceof p10_token.FileMetaInformation) {
+              const ts = data_set.get_transfer_syntax(token.data_set);
               if (ts instanceof gleam.Ok) {
                 fileExtension =
                   dcmfx_pixel_data.file_extension_for_transfer_syntax(
@@ -104,11 +104,11 @@ function* doExtractDicomPixelData(
               }
             }
 
-            // Add the part to the pixel data filter, collecting any frames that
-            // are now complete and can be written out to a file
+            // Add the token to the pixel data filter, collecting any frames
+            // that are now complete and can be written out to a file
             const [frames, newPixelDataFilter] = yield* pipe(
               gleamResultToEffect(
-                pixel_data_filter.add_part(pixelDataFilter, part),
+                pixel_data_filter.add_token(pixelDataFilter, token),
               ),
               Effect.mapError((e) => data_error.to_lines(e, "").toArray()),
             );
@@ -125,7 +125,7 @@ function* doExtractDicomPixelData(
               );
             }
 
-            if (part instanceof p10_part.End) {
+            if (token instanceof p10_token.End) {
               ended = true;
             }
           }

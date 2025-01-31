@@ -7,7 +7,7 @@ import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $data_element_header from "../dcmfx_p10/internal/data_element_header.d.mts";
 import type * as $zlib from "../dcmfx_p10/internal/zlib.d.mts";
 import type * as $p10_error from "../dcmfx_p10/p10_error.d.mts";
-import type * as $p10_part from "../dcmfx_p10/p10_part.d.mts";
+import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 export class P10WriteConfig extends _.CustomType {
@@ -59,19 +59,19 @@ export function data_element_header_to_bytes(
   context: P10WriteContext$
 ): _.Result<_.BitArray, $p10_error.P10Error$>;
 
-export function data_set_to_parts<CBCV, CBCW>(
+export function data_set_to_tokens<CBCV, CBCW>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   callback_context: CBCV,
-  part_callback: (x0: CBCV, x1: $p10_part.P10Part$) => _.Result<CBCV, CBCW>
+  token_callback: (x0: CBCV, x1: $p10_token.P10Token$) => _.Result<CBCV, CBCW>
 ): _.Result<CBCV, CBCW>;
 
-export function write_part(context: P10WriteContext$, part: $p10_part.P10Part$): _.Result<
-  P10WriteContext$,
-  $p10_error.P10Error$
->;
+export function write_token(
+  context: P10WriteContext$,
+  token: $p10_token.P10Token$
+): _.Result<P10WriteContext$, $p10_error.P10Error$>;
 
 export function data_set_to_bytes<CBDB>(
   data_set: $dict.Dict$<

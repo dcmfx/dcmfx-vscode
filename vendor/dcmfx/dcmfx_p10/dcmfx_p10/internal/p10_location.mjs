@@ -15,7 +15,7 @@ import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $value_length from "../../dcmfx_p10/internal/value_length.mjs";
 import * as $p10_error from "../../dcmfx_p10/p10_error.mjs";
-import * as $p10_part from "../../dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../../dcmfx_p10/p10_token.mjs";
 import {
   Ok,
   Error,
@@ -175,41 +175,41 @@ export function is_implicit_vr_forced(loop$location) {
   }
 }
 
-export function next_delimiter_part(location, bytes_read) {
+export function next_delimiter_token(location, bytes_read) {
   if (location.atLeastLength(1) &&
   location.head instanceof Sequence &&
   location.head.ends_at instanceof Some &&
   (location.head.ends_at[0] <= bytes_read)) {
     let ends_at = location.head.ends_at[0];
     let rest = location.tail;
-    return new Ok([new $p10_part.SequenceDelimiter(), rest]);
+    return new Ok([new $p10_token.SequenceDelimiter(), rest]);
   } else if (location.atLeastLength(1) &&
   location.head instanceof Item &&
   location.head.ends_at instanceof Some &&
   (location.head.ends_at[0] <= bytes_read)) {
     let ends_at = location.head.ends_at[0];
     let rest = location.tail;
-    return new Ok([new $p10_part.SequenceItemDelimiter(), rest]);
+    return new Ok([new $p10_token.SequenceItemDelimiter(), rest]);
   } else {
     return new Error(undefined);
   }
 }
 
-export function pending_delimiter_parts(location) {
+export function pending_delimiter_tokens(location) {
   if (location.atLeastLength(1) && location.head instanceof Sequence) {
     let rest = location.tail;
     return listPrepend(
-      new $p10_part.SequenceDelimiter(),
-      pending_delimiter_parts(rest),
+      new $p10_token.SequenceDelimiter(),
+      pending_delimiter_tokens(rest),
     );
   } else if (location.atLeastLength(1) && location.head instanceof Item) {
     let rest = location.tail;
     return listPrepend(
-      new $p10_part.SequenceItemDelimiter(),
-      pending_delimiter_parts(rest),
+      new $p10_token.SequenceItemDelimiter(),
+      pending_delimiter_tokens(rest),
     );
   } else {
-    return toList([new $p10_part.End()]);
+    return toList([new $p10_token.End()]);
   }
 }
 

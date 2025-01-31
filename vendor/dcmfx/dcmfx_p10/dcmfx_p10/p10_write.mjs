@@ -20,7 +20,7 @@ import * as $value_length from "../dcmfx_p10/internal/value_length.mjs";
 import * as $zlib from "../dcmfx_p10/internal/zlib.mjs";
 import * as $flush_command from "../dcmfx_p10/internal/zlib/flush_command.mjs";
 import * as $p10_error from "../dcmfx_p10/p10_error.mjs";
-import * as $p10_part from "../dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../dcmfx_p10/p10_token.mjs";
 import * as $p10_filter_transform from "../dcmfx_p10/transforms/p10_filter_transform.mjs";
 import * as $p10_insert_transform from "../dcmfx_p10/transforms/p10_insert_transform.mjs";
 import * as $uids from "../dcmfx_p10/uids.mjs";
@@ -206,7 +206,7 @@ export function data_element_header_to_bytes(header, endianness, context) {
   );
 }
 
-export function data_set_to_parts(data_set, callback_context, part_callback) {
+export function data_set_to_tokens(data_set, callback_context, token_callback) {
   let remove_fmi_transform = $p10_filter_transform.new$(
     (tag, _, _1) => { return tag.group !== 2; },
     false,
@@ -223,8 +223,8 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      553,
-      "data_set_to_parts",
+      554,
+      "data_set_to_tokens",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
     )
@@ -233,18 +233,18 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
   let insert_specific_character_set_transform = $p10_insert_transform.new$(
     data_elements_to_insert,
   );
-  let process_part = (context, part) => {
-    let $1 = $p10_filter_transform.add_part(context[1], part);
+  let process_token = (context, token) => {
+    let $1 = $p10_filter_transform.add_token(context[1], token);
     if (!$1[0]) {
       let filter_transform = $1[1];
       return new Ok([context[0], filter_transform, context[2]]);
     } else {
       let filter_transform = $1[1];
-      let $2 = $p10_insert_transform.add_part(context[2], part);
-      let parts = $2[0];
+      let $2 = $p10_insert_transform.add_token(context[2], token);
+      let tokens = $2[0];
       let insert_transform = $2[1];
       return $result.try$(
-        $list.try_fold(parts, context[0], part_callback),
+        $list.try_fold(tokens, context[0], token_callback),
         (callback_context) => {
           return new Ok([callback_context, filter_transform, insert_transform]);
         },
@@ -256,27 +256,27 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
     remove_fmi_transform,
     insert_specific_character_set_transform,
   ];
-  let preamble_part = (() => {
+  let preamble_token = (() => {
     let _pipe = $list.repeat(toBitArray([0]), 128);
     let _pipe$1 = $bit_array.concat(_pipe);
-    return new $p10_part.FilePreambleAndDICMPrefix(_pipe$1);
+    return new $p10_token.FilePreambleAndDICMPrefix(_pipe$1);
   })();
   return $result.try$(
-    process_part(context, preamble_part),
+    process_token(context, preamble_token),
     (context) => {
-      let fmi_part = (() => {
+      let fmi_token = (() => {
         let _pipe = data_set;
         let _pipe$1 = $data_set.file_meta_information(_pipe);
-        return new $p10_part.FileMetaInformation(_pipe$1);
+        return new $p10_token.FileMetaInformation(_pipe$1);
       })();
       return $result.try$(
-        process_part(context, fmi_part),
+        process_token(context, fmi_token),
         (context) => {
           return $result.try$(
-            $p10_part.data_elements_to_parts(data_set, context, process_part),
+            $p10_token.data_elements_to_tokens(data_set, context, process_token),
             (context) => {
               return $result.map(
-                process_part(context, new $p10_part.End()),
+                process_token(context, new $p10_token.End()),
                 (context) => { return context[0]; },
               );
             },
@@ -287,14 +287,14 @@ export function data_set_to_parts(data_set, callback_context, part_callback) {
   );
 }
 
-function prepare_file_meta_information_part_data_set(file_meta_information) {
+function prepare_file_meta_information_token_data_set(file_meta_information) {
   let $ = $data_element_value.new_other_byte_string(toBitArray([0, 1]));
   if (!$.isOk()) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      649,
-      "prepare_file_meta_information_part_data_set",
+      650,
+      "prepare_file_meta_information_token_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
     )
@@ -307,8 +307,8 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      651,
-      "prepare_file_meta_information_part_data_set",
+      652,
+      "prepare_file_meta_information_token_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $1 }
     )
@@ -321,8 +321,8 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      655,
-      "prepare_file_meta_information_part_data_set",
+      656,
+      "prepare_file_meta_information_token_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $2 }
     )
@@ -346,10 +346,10 @@ function prepare_file_meta_information_part_data_set(file_meta_information) {
   );
 }
 
-function part_to_bytes(part, context) {
+function token_to_bytes(token, context) {
   let transfer_syntax = context.transfer_syntax;
-  if (part instanceof $p10_part.FilePreambleAndDICMPrefix) {
-    let preamble = part.preamble;
+  if (token instanceof $p10_token.FilePreambleAndDICMPrefix) {
+    let preamble = token.preamble;
     let preamble_length = $bit_array.byte_size(preamble);
     if (preamble_length === 128) {
       return new Ok(
@@ -367,11 +367,11 @@ function part_to_bytes(part, context) {
         ),
       );
     }
-  } else if (part instanceof $p10_part.FileMetaInformation) {
-    let file_meta_information = part.data_set;
+  } else if (token instanceof $p10_token.FileMetaInformation) {
+    let file_meta_information = token.data_set;
     let fmi_bytes = (() => {
       let _pipe = file_meta_information;
-      let _pipe$1 = prepare_file_meta_information_part_data_set(_pipe);
+      let _pipe$1 = prepare_file_meta_information_token_data_set(_pipe);
       let _pipe$2 = $data_set.map(
         _pipe$1,
         (tag, value) => {
@@ -434,10 +434,10 @@ function part_to_bytes(part, context) {
         return $bit_array.concat(toList([fmi_length_bytes, fmi_bytes]));
       },
     );
-  } else if (part instanceof $p10_part.DataElementHeader) {
-    let tag = part.tag;
-    let vr = part.vr;
-    let length = part.length;
+  } else if (token instanceof $p10_token.DataElementHeader) {
+    let tag = token.tag;
+    let vr = token.vr;
+    let length = token.length;
     let vr$1 = (() => {
       let $ = transfer_syntax.vr_serialization;
       if ($ instanceof $transfer_syntax.VrExplicit) {
@@ -452,9 +452,9 @@ function part_to_bytes(part, context) {
       transfer_syntax.endianness,
       context,
     );
-  } else if (part instanceof $p10_part.DataElementValueBytes) {
-    let vr = part.vr;
-    let data = part.data;
+  } else if (token instanceof $p10_token.DataElementValueBytes) {
+    let vr = token.vr;
+    let data = token.data;
     let _pipe = (() => {
       let $ = transfer_syntax.endianness;
       if ($ instanceof LittleEndian) {
@@ -464,9 +464,9 @@ function part_to_bytes(part, context) {
       }
     })();
     return new Ok(_pipe);
-  } else if (part instanceof $p10_part.SequenceStart) {
-    let tag = part.tag;
-    let vr = part.vr;
+  } else if (token instanceof $p10_token.SequenceStart) {
+    let tag = token.tag;
+    let vr = token.vr;
     let vr$1 = (() => {
       let $ = transfer_syntax.vr_serialization;
       if ($ instanceof $transfer_syntax.VrExplicit) {
@@ -481,7 +481,7 @@ function part_to_bytes(part, context) {
       transfer_syntax.endianness,
       context,
     );
-  } else if (part instanceof $p10_part.SequenceDelimiter) {
+  } else if (token instanceof $p10_token.SequenceDelimiter) {
     let _pipe = new DataElementHeader(
       $dictionary.sequence_delimitation_item.tag,
       new None(),
@@ -492,7 +492,7 @@ function part_to_bytes(part, context) {
       transfer_syntax.endianness,
       context,
     );
-  } else if (part instanceof $p10_part.SequenceItemStart) {
+  } else if (token instanceof $p10_token.SequenceItemStart) {
     let _pipe = new DataElementHeader(
       $dictionary.item.tag,
       new None(),
@@ -503,7 +503,7 @@ function part_to_bytes(part, context) {
       transfer_syntax.endianness,
       context,
     );
-  } else if (part instanceof $p10_part.SequenceItemDelimiter) {
+  } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let _pipe = new DataElementHeader(
       $dictionary.item_delimitation_item.tag,
       new None(),
@@ -514,8 +514,8 @@ function part_to_bytes(part, context) {
       transfer_syntax.endianness,
       context,
     );
-  } else if (part instanceof $p10_part.PixelDataItem) {
-    let length = part.length;
+  } else if (token instanceof $p10_token.PixelDataItem) {
+    let length = token.length;
     let _pipe = new DataElementHeader(
       $dictionary.item.tag,
       new None(),
@@ -531,19 +531,19 @@ function part_to_bytes(part, context) {
   }
 }
 
-export function write_part(context, part) {
+export function write_token(context, token) {
   return $bool.guard(
     context.is_ended,
     new Error(
-      new $p10_error.PartStreamInvalid(
-        "Writing DICOM P10 part",
-        "Received a further DICOM P10 part after the write was completed",
-        part,
+      new $p10_error.TokenStreamInvalid(
+        "Writing DICOM P10 token",
+        "Received a further DICOM P10 token after the write was " + "completed",
+        token,
       ),
     ),
     () => {
-      if (part instanceof $p10_part.FileMetaInformation) {
-        let file_meta_information = part.data_set;
+      if (token instanceof $p10_token.FileMetaInformation) {
+        let file_meta_information = token.data_set;
         let transfer_syntax_uid = (() => {
           let _pipe = file_meta_information;
           let _pipe$1 = $data_set.get_string(
@@ -601,14 +601,14 @@ export function write_part(context, part) {
               );
             })();
             return $result.map(
-              part_to_bytes(part, new_context),
-              (part_bytes) => {
+              token_to_bytes(token, new_context),
+              (token_bytes) => {
                 let _record = new_context;
                 return new P10WriteContext(
                   _record.config,
-                  listPrepend(part_bytes, new_context.p10_bytes),
+                  listPrepend(token_bytes, new_context.p10_bytes),
                   context.p10_total_byte_count + $bit_array.byte_size(
-                    part_bytes,
+                    token_bytes,
                   ),
                   _record.is_ended,
                   _record.transfer_syntax,
@@ -620,7 +620,7 @@ export function write_part(context, part) {
             );
           },
         );
-      } else if (part instanceof $p10_part.End) {
+      } else if (token instanceof $p10_token.End) {
         let $ = context.zlib_stream;
         if ($ instanceof Some) {
           let zlib_stream = $[0];
@@ -667,8 +667,8 @@ export function write_part(context, part) {
       } else {
         let context$1 = (() => {
           let _pipe = (() => {
-            if (part instanceof $p10_part.DataElementHeader) {
-              let tag = part.tag;
+            if (token instanceof $p10_token.DataElementHeader) {
+              let tag = token.tag;
               let _pipe = $data_set_path.add_data_element(context.path, tag);
               return $result.map(
                 _pipe,
@@ -686,8 +686,8 @@ export function write_part(context, part) {
                   );
                 },
               );
-            } else if (part instanceof $p10_part.SequenceStart) {
-              let tag = part.tag;
+            } else if (token instanceof $p10_token.SequenceStart) {
+              let tag = token.tag;
               let _pipe = $data_set_path.add_data_element(context.path, tag);
               return $result.map(
                 _pipe,
@@ -705,13 +705,13 @@ export function write_part(context, part) {
                   );
                 },
               );
-            } else if (part instanceof $p10_part.SequenceItemStart) {
+            } else if (token instanceof $p10_token.SequenceItemStart) {
               let $ = context.sequence_item_counts;
               if (!$.atLeastLength(1)) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_write",
-                  233,
+                  234,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $ }
@@ -737,13 +737,13 @@ export function write_part(context, part) {
                   );
                 },
               );
-            } else if (part instanceof $p10_part.PixelDataItem) {
+            } else if (token instanceof $p10_token.PixelDataItem) {
               let $ = context.sequence_item_counts;
               if (!$.atLeastLength(1)) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_write",
-                  233,
+                  234,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $ }
@@ -776,10 +776,10 @@ export function write_part(context, part) {
           return $result.map_error(
             _pipe,
             (_) => {
-              return new $p10_error.PartStreamInvalid(
-                "Writing part to context",
-                "The data set path is not in a valid state for this part",
-                part,
+              return new $p10_error.TokenStreamInvalid(
+                "Writing token to context",
+                "The data set path is not in a valid state for this token",
+                token,
               );
             },
           );
@@ -788,12 +788,12 @@ export function write_part(context, part) {
           context$1,
           (context) => {
             return $result.try$(
-              part_to_bytes(part, context),
-              (part_bytes) => {
+              token_to_bytes(token, context),
+              (token_bytes) => {
                 let context$1 = (() => {
                   let _pipe = (() => {
-                    if (part instanceof $p10_part.DataElementValueBytes &&
-                    part.bytes_remaining === 0) {
+                    if (token instanceof $p10_token.DataElementValueBytes &&
+                    token.bytes_remaining === 0) {
                       let _pipe = $data_set_path.pop(context.path);
                       return $result.map(
                         _pipe,
@@ -811,7 +811,7 @@ export function write_part(context, part) {
                           );
                         },
                       );
-                    } else if (part instanceof $p10_part.SequenceItemDelimiter) {
+                    } else if (token instanceof $p10_token.SequenceItemDelimiter) {
                       let _pipe = $data_set_path.pop(context.path);
                       return $result.map(
                         _pipe,
@@ -829,13 +829,13 @@ export function write_part(context, part) {
                           );
                         },
                       );
-                    } else if (part instanceof $p10_part.SequenceDelimiter) {
+                    } else if (token instanceof $p10_token.SequenceDelimiter) {
                       let $ = $list.rest(context.sequence_item_counts);
                       if (!$.isOk()) {
                         throw makeError(
                           "let_assert",
                           "dcmfx_p10/p10_write",
-                          267,
+                          268,
                           "",
                           "Pattern match failed, no pattern matched the value.",
                           { value: $ }
@@ -866,10 +866,10 @@ export function write_part(context, part) {
                   return $result.map_error(
                     _pipe,
                     (_) => {
-                      return new $p10_error.PartStreamInvalid(
-                        "Writing part to context",
+                      return new $p10_error.TokenStreamInvalid(
+                        "Writing token to context",
                         "The data set path is empty",
-                        part,
+                        token,
                       );
                     },
                   );
@@ -884,7 +884,7 @@ export function write_part(context, part) {
                         let _pipe = zlib_stream;
                         let _pipe$1 = $zlib.deflate(
                           _pipe,
-                          part_bytes,
+                          token_bytes,
                           new $flush_command.None(),
                         );
                         return $bit_array.concat(_pipe$1);
@@ -906,9 +906,9 @@ export function write_part(context, part) {
                       let _record = context;
                       return new P10WriteContext(
                         _record.config,
-                        listPrepend(part_bytes, context.p10_bytes),
+                        listPrepend(token_bytes, context.p10_bytes),
                         context.p10_total_byte_count + $bit_array.byte_size(
-                          part_bytes,
+                          token_bytes,
                         ),
                         _record.is_ended,
                         _record.transfer_syntax,
@@ -933,11 +933,11 @@ export function data_set_to_bytes(data_set, context, bytes_callback, config) {
     let _pipe = new_write_context();
     return with_config(_pipe, config);
   })();
-  let process_part = (context, part) => {
+  let process_token = (context, token) => {
     let context$1 = context[0];
     let write_context$1 = context[1];
     return $result.try$(
-      write_part(write_context$1, part),
+      write_token(write_context$1, token),
       (write_context) => {
         let $ = read_bytes(write_context);
         let bytes = $[0];
@@ -949,10 +949,10 @@ export function data_set_to_bytes(data_set, context, bytes_callback, config) {
       },
     );
   };
-  let _pipe = data_set_to_parts(
+  let _pipe = data_set_to_tokens(
     data_set,
     [context, write_context],
-    process_part,
+    process_token,
   );
   return $result.map(_pipe, (x) => { return x[0]; });
 }

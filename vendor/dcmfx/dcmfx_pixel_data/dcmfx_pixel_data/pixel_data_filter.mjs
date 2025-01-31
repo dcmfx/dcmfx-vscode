@@ -5,7 +5,7 @@ import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/dcmfx_core/internal/bit_array_utils.mjs";
 import * as $value_representation from "../../dcmfx_core/dcmfx_core/value_representation.mjs";
-import * as $p10_part from "../../dcmfx_p10/dcmfx_p10/p10_part.mjs";
+import * as $p10_token from "../../dcmfx_p10/dcmfx_p10/p10_token.mjs";
 import * as $p10_filter_transform from "../../dcmfx_p10/dcmfx_p10/transforms/p10_filter_transform.mjs";
 import * as $deque from "../../gleam_deque/gleam/deque.mjs";
 import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
@@ -696,9 +696,9 @@ function get_pending_encapsulated_frames(filter) {
   }
 }
 
-function process_next_pixel_data_part(filter, part) {
-  if (part instanceof $p10_part.DataElementHeader) {
-    let length = part.length;
+function process_next_pixel_data_token(filter, token) {
+  if (token instanceof $p10_token.DataElementHeader) {
+    let length = token.length;
     return $result.try$(
       get_number_of_frames(filter),
       (number_of_frames) => {
@@ -735,7 +735,7 @@ function process_next_pixel_data_part(filter, part) {
         );
       },
     );
-  } else if (part instanceof $p10_part.SequenceStart) {
+  } else if (token instanceof $p10_token.SequenceStart) {
     let filter$1 = (() => {
       let _record = filter;
       return new PixelDataFilter(
@@ -751,7 +751,7 @@ function process_next_pixel_data_part(filter, part) {
       );
     })();
     return new Ok([toList([]), filter$1]);
-  } else if (part instanceof $p10_part.SequenceDelimiter) {
+  } else if (token instanceof $p10_token.SequenceDelimiter) {
     let frames = (() => {
       let $ = (() => {
         let _pipe = filter.pixel_data;
@@ -788,7 +788,7 @@ function process_next_pixel_data_part(filter, part) {
       }
     })();
     return $result.map(frames, (frames) => { return [frames, filter]; });
-  } else if (part instanceof $p10_part.PixelDataItem) {
+  } else if (token instanceof $p10_token.PixelDataItem) {
     let filter$1 = (() => {
       let _record = filter;
       return new PixelDataFilter(
@@ -804,9 +804,9 @@ function process_next_pixel_data_part(filter, part) {
       );
     })();
     return new Ok([toList([]), filter$1]);
-  } else if (part instanceof $p10_part.DataElementValueBytes) {
-    let data = part.data;
-    let bytes_remaining = part.bytes_remaining;
+  } else if (token instanceof $p10_token.DataElementValueBytes) {
+    let data = token.data;
+    let bytes_remaining = token.bytes_remaining;
     let pixel_data = (() => {
       let _pipe = filter.pixel_data;
       return $deque.push_back(_pipe, data);
@@ -848,12 +848,12 @@ function process_next_pixel_data_part(filter, part) {
   }
 }
 
-export function add_part(filter, part) {
+export function add_token(filter, token) {
   let details_filter = (() => {
     let $ = filter.details_filter;
     if ($ instanceof Some) {
       let details_filter = $[0];
-      return new Some($p10_filter_transform.add_part(details_filter, part)[1]);
+      return new Some($p10_filter_transform.add_token(details_filter, token)[1]);
     } else {
       return new None();
     }
@@ -873,11 +873,11 @@ export function add_part(filter, part) {
     );
   })();
   return $bool.guard(
-    $p10_part.is_header_part(part),
+    $p10_token.is_header_token(token),
     new Ok([toList([]), filter$1]),
     () => {
-      let $ = $p10_filter_transform.add_part(filter$1.pixel_data_filter, part);
-      let is_pixel_data_part = $[0];
+      let $ = $p10_filter_transform.add_token(filter$1.pixel_data_filter, token);
+      let is_pixel_data_token = $[0];
       let pixel_data_filter = $[1];
       let filter$2 = (() => {
         let _record = filter$1;
@@ -894,7 +894,7 @@ export function add_part(filter, part) {
         );
       })();
       return $bool.guard(
-        !is_pixel_data_part,
+        !is_pixel_data_token,
         new Ok([toList([]), filter$2]),
         () => {
           let filter$3 = (() => {
@@ -922,7 +922,7 @@ export function add_part(filter, part) {
               return filter$2;
             }
           })();
-          return process_next_pixel_data_part(filter$3, part);
+          return process_next_pixel_data_token(filter$3, token);
         },
       );
     },

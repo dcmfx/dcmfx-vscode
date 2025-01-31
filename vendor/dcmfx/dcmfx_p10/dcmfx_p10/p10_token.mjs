@@ -1,4 +1,4 @@
-/// <reference types="./p10_part.d.mts" />
+/// <reference types="./p10_token.d.mts" />
 import * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import { DataElementTag } from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
@@ -71,11 +71,11 @@ export class PixelDataItem extends $CustomType {
 
 export class End extends $CustomType {}
 
-export function to_string(part) {
-  if (part instanceof FilePreambleAndDICMPrefix) {
+export function to_string(token) {
+  if (token instanceof FilePreambleAndDICMPrefix) {
     return "FilePreambleAndDICMPrefix";
-  } else if (part instanceof FileMetaInformation) {
-    let data_set = part.data_set;
+  } else if (token instanceof FileMetaInformation) {
+    let data_set = token.data_set;
     return "FileMetaInformation: " + (() => {
       let _pipe = $data_set.map(
         data_set,
@@ -92,68 +92,68 @@ export function to_string(part) {
       );
       return $string.join(_pipe, ", ");
     })();
-  } else if (part instanceof DataElementHeader) {
-    let tag = part.tag;
-    let vr = part.vr;
-    let length = part.length;
+  } else if (token instanceof DataElementHeader) {
+    let tag = token.tag;
+    let vr = token.vr;
+    let length = token.length;
     return ((((((("DataElementHeader: " + $data_element_tag.to_string(tag)) + ", name: ") + $dictionary.tag_name(
       tag,
       new None(),
     )) + ", vr: ") + $value_representation.to_string(vr)) + ", length: ") + $int.to_string(
       length,
     )) + " bytes";
-  } else if (part instanceof DataElementValueBytes) {
-    let data = part.data;
-    let bytes_remaining = part.bytes_remaining;
+  } else if (token instanceof DataElementValueBytes) {
+    let data = token.data;
+    let bytes_remaining = token.bytes_remaining;
     return ((("DataElementValueBytes: " + $int.to_string(
       $bit_array.byte_size(data),
     )) + " bytes of data, ") + $int.to_string(bytes_remaining)) + " bytes remaining";
-  } else if (part instanceof SequenceStart) {
-    let tag = part.tag;
-    let vr = part.vr;
+  } else if (token instanceof SequenceStart) {
+    let tag = token.tag;
+    let vr = token.vr;
     return (((("SequenceStart: " + $data_element_tag.to_string(tag)) + ", name: ") + $dictionary.tag_name(
       tag,
       new None(),
     )) + ", vr: ") + $value_representation.to_string(vr);
-  } else if (part instanceof SequenceDelimiter) {
+  } else if (token instanceof SequenceDelimiter) {
     return "SequenceDelimiter";
-  } else if (part instanceof SequenceItemStart) {
+  } else if (token instanceof SequenceItemStart) {
     return "SequenceItemStart";
-  } else if (part instanceof SequenceItemDelimiter) {
+  } else if (token instanceof SequenceItemDelimiter) {
     return "SequenceItemDelimiter";
-  } else if (part instanceof PixelDataItem) {
-    let length = part.length;
+  } else if (token instanceof PixelDataItem) {
+    let length = token.length;
     return ("PixelDataItem: " + $int.to_string(length)) + " bytes";
   } else {
     return "End";
   }
 }
 
-export function is_header_part(part) {
-  if (part instanceof FilePreambleAndDICMPrefix) {
+export function is_header_token(token) {
+  if (token instanceof FilePreambleAndDICMPrefix) {
     return true;
-  } else if (part instanceof FileMetaInformation) {
+  } else if (token instanceof FileMetaInformation) {
     return true;
   } else {
     return false;
   }
 }
 
-export function data_element_to_parts(tag, value, context, part_callback) {
+export function data_element_to_tokens(tag, value, context, token_callback) {
   let vr = $data_element_value.value_representation(value);
   let $ = $data_element_value.bytes(value);
   if ($.isOk()) {
     let bytes = $[0];
-    let header_part = new DataElementHeader(
+    let header_token = new DataElementHeader(
       tag,
       vr,
       $bit_array.byte_size(bytes),
     );
     return $result.try$(
-      part_callback(context, header_part),
+      token_callback(context, header_token),
       (context) => {
         let _pipe = new DataElementValueBytes(vr, bytes, 0);
-        return ((_capture) => { return part_callback(context, _capture); })(
+        return ((_capture) => { return token_callback(context, _capture); })(
           _pipe,
         );
       },
@@ -162,9 +162,9 @@ export function data_element_to_parts(tag, value, context, part_callback) {
     let $1 = $data_element_value.encapsulated_pixel_data(value);
     if ($1.isOk()) {
       let items = $1[0];
-      let header_part = new SequenceStart(tag, vr);
+      let header_token = new SequenceStart(tag, vr);
       return $result.try$(
-        part_callback(context, header_part),
+        token_callback(context, header_token),
         (context) => {
           let context$1 = (() => {
             let _pipe = items;
@@ -173,17 +173,17 @@ export function data_element_to_parts(tag, value, context, part_callback) {
               context,
               (context, item) => {
                 let length = $bit_array.byte_size(item);
-                let item_header_part = new PixelDataItem(length);
-                let context$1 = part_callback(context, item_header_part);
+                let item_header_token = new PixelDataItem(length);
+                let context$1 = token_callback(context, item_header_token);
                 return $result.try$(
                   context$1,
                   (context) => {
-                    let value_bytes_part = new DataElementValueBytes(
+                    let value_bytes_token = new DataElementValueBytes(
                       vr,
                       item,
                       0,
                     );
-                    return part_callback(context, value_bytes_part);
+                    return token_callback(context, value_bytes_token);
                   },
                 );
               },
@@ -192,7 +192,7 @@ export function data_element_to_parts(tag, value, context, part_callback) {
           return $result.try$(
             context$1,
             (context) => {
-              return part_callback(context, new SequenceDelimiter());
+              return token_callback(context, new SequenceDelimiter());
             },
           );
         },
@@ -202,17 +202,17 @@ export function data_element_to_parts(tag, value, context, part_callback) {
       if (!$2.isOk()) {
         throw makeError(
           "let_assert",
-          "dcmfx_p10/p10_part",
+          "dcmfx_p10/p10_token",
           210,
-          "data_element_to_parts",
+          "data_element_to_tokens",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }
         )
       }
       let items = $2[0];
-      let header_part = new SequenceStart(tag, vr);
+      let header_token = new SequenceStart(tag, vr);
       return $result.try$(
-        part_callback(context, header_part),
+        token_callback(context, header_token),
         (context) => {
           let context$1 = (() => {
             let _pipe = items;
@@ -220,16 +220,16 @@ export function data_element_to_parts(tag, value, context, part_callback) {
               _pipe,
               context,
               (context, item) => {
-                let item_start_part = new SequenceItemStart();
-                let context$1 = part_callback(context, item_start_part);
+                let item_start_token = new SequenceItemStart();
+                let context$1 = token_callback(context, item_start_token);
                 return $result.try$(
                   context$1,
                   (context) => {
                     return $result.try$(
-                      data_elements_to_parts(item, context, part_callback),
+                      data_elements_to_tokens(item, context, token_callback),
                       (context) => {
-                        let item_delimiter_part = new SequenceItemDelimiter();
-                        return part_callback(context, item_delimiter_part);
+                        let item_delimiter_token = new SequenceItemDelimiter();
+                        return token_callback(context, item_delimiter_token);
                       },
                     );
                   },
@@ -240,7 +240,7 @@ export function data_element_to_parts(tag, value, context, part_callback) {
           return $result.try$(
             context$1,
             (context) => {
-              return part_callback(context, new SequenceDelimiter());
+              return token_callback(context, new SequenceDelimiter());
             },
           );
         },
@@ -249,13 +249,13 @@ export function data_element_to_parts(tag, value, context, part_callback) {
   }
 }
 
-export function data_elements_to_parts(data_set, context, part_callback) {
+export function data_elements_to_tokens(data_set, context, token_callback) {
   let _pipe = data_set;
   return $data_set.try_fold(
     _pipe,
     context,
     (context, tag, value) => {
-      return data_element_to_parts(tag, value, context, part_callback);
+      return data_element_to_tokens(tag, value, context, token_callback);
     },
   );
 }
