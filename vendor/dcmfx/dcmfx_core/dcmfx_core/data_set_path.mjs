@@ -121,7 +121,7 @@ export function pop(path) {
     let rest = $.tail;
     return new Ok(new DataSetPath(rest));
   } else {
-    return new Error(undefined);
+    return new Error("Data set path is empty");
   }
 }
 

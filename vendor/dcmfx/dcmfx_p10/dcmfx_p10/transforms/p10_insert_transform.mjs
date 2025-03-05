@@ -32,7 +32,6 @@ export function new$(data_elements_to_insert) {
         tag,
       );
     },
-    false,
   );
   return new P10InsertTransform(
     $data_set.to_list(data_elements_to_insert),
@@ -53,7 +52,7 @@ function prepend_data_element_tokens(data_element, acc) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/transforms/p10_insert_transform",
-      133,
+      130,
       "prepend_data_element_tokens",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }

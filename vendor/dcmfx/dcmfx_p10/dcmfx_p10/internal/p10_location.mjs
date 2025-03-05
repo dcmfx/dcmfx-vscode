@@ -13,6 +13,7 @@ import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
+import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $value_length from "../../dcmfx_p10/internal/value_length.mjs";
 import * as $p10_error from "../../dcmfx_p10/p10_error.mjs";
 import * as $p10_token from "../../dcmfx_p10/p10_token.mjs";
@@ -37,8 +38,9 @@ class RootDataSet extends $CustomType {
 }
 
 class Sequence extends $CustomType {
-  constructor(is_implicit_vr, ends_at, item_count) {
+  constructor(tag, is_implicit_vr, ends_at, item_count) {
     super();
+    this.tag = tag;
     this.is_implicit_vr = is_implicit_vr;
     this.ends_at = ends_at;
     this.item_count = item_count;
@@ -101,7 +103,7 @@ function default_clarifying_data_elements() {
     throw makeError(
       "let_assert",
       "dcmfx_p10/internal/p10_location",
-      109,
+      115,
       "default_clarifying_data_elements",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -180,9 +182,10 @@ export function next_delimiter_token(location, bytes_read) {
   location.head instanceof Sequence &&
   location.head.ends_at instanceof Some &&
   (location.head.ends_at[0] <= bytes_read)) {
+    let tag = location.head.tag;
     let ends_at = location.head.ends_at[0];
     let rest = location.tail;
-    return new Ok([new $p10_token.SequenceDelimiter(), rest]);
+    return new Ok([new $p10_token.SequenceDelimiter(tag), rest]);
   } else if (location.atLeastLength(1) &&
   location.head instanceof Item &&
   location.head.ends_at instanceof Some &&
@@ -197,9 +200,10 @@ export function next_delimiter_token(location, bytes_read) {
 
 export function pending_delimiter_tokens(location) {
   if (location.atLeastLength(1) && location.head instanceof Sequence) {
+    let tag = location.head.tag;
     let rest = location.tail;
     return listPrepend(
-      new $p10_token.SequenceDelimiter(),
+      new $p10_token.SequenceDelimiter(tag),
       pending_delimiter_tokens(rest),
     );
   } else if (location.atLeastLength(1) && location.head instanceof Item) {
@@ -215,8 +219,9 @@ export function pending_delimiter_tokens(location) {
 
 export function end_sequence(location) {
   if (location.atLeastLength(1) && location.head instanceof Sequence) {
+    let tag = location.head.tag;
     let rest = location.tail;
-    return new Ok(rest);
+    return new Ok([tag, rest]);
   } else {
     return new Error("Sequence delimiter encountered outside of a sequence");
   }
@@ -256,7 +261,7 @@ function active_clarifying_data_elements(loop$location) {
       throw makeError(
         "panic",
         "dcmfx_p10/internal/p10_location",
-        306,
+        361,
         "active_clarifying_data_elements",
         "P10 location does not contain the root data set",
         {}
@@ -265,14 +270,46 @@ function active_clarifying_data_elements(loop$location) {
   }
 }
 
+export function bits_allocated(location) {
+  return active_clarifying_data_elements(location).bits_allocated;
+}
+
+export function swap_endianness(location, tag, vr, data) {
+  let vr$1 = (() => {
+    if (vr instanceof $value_representation.OtherWordString) {
+      let bits_allocated$1 = (() => {
+        if (isEqual(tag, $dictionary.pixel_data.tag)) {
+          let tag$1 = tag;
+          return active_clarifying_data_elements(location).bits_allocated;
+        } else if (isEqual(tag, $dictionary.waveform_data.tag)) {
+          let tag$1 = tag;
+          return active_clarifying_data_elements(location).waveform_bits_allocated;
+        } else {
+          return new None();
+        }
+      })();
+      if (bits_allocated$1 instanceof Some && bits_allocated$1[0] === 32) {
+        return new $value_representation.UnsignedLong();
+      } else if (bits_allocated$1 instanceof Some && bits_allocated$1[0] === 64) {
+        return new $value_representation.UnsignedVeryLong();
+      } else {
+        return vr;
+      }
+    } else {
+      return vr;
+    }
+  })();
+  return $value_representation.swap_endianness(vr$1, data);
+}
+
 export function add_sequence(location, tag, is_implicit_vr, ends_at) {
   if (location.hasLength(1) && location.head instanceof RootDataSet) {
     return new Ok(
-      listPrepend(new Sequence(is_implicit_vr, ends_at, 0), location),
+      listPrepend(new Sequence(tag, is_implicit_vr, ends_at, 0), location),
     );
   } else if (location.atLeastLength(1) && location.head instanceof Item) {
     return new Ok(
-      listPrepend(new Sequence(is_implicit_vr, ends_at, 0), location),
+      listPrepend(new Sequence(tag, is_implicit_vr, ends_at, 0), location),
     );
   } else {
     let private_creator = private_creator_for_tag(
@@ -290,28 +327,28 @@ export function add_sequence(location, tag, is_implicit_vr, ends_at) {
 
 export function add_item(location, ends_at, length) {
   if (location.atLeastLength(1) && location.head instanceof Sequence) {
+    let tag = location.head.tag;
     let is_implicit_vr = location.head.is_implicit_vr;
     let sequence_ends_at = location.head.ends_at;
     let item_count = location.head.item_count;
     let rest = location.tail;
-    return new Ok(
+    let entries = listPrepend(
+      new Item(
+        active_clarifying_data_elements(location),
+        $data_element_tag.zero,
+        ends_at,
+      ),
       listPrepend(
-        new Item(
-          active_clarifying_data_elements(location),
-          $data_element_tag.zero,
-          ends_at,
-        ),
-        listPrepend(
-          new Sequence(is_implicit_vr, sequence_ends_at, item_count + 1),
-          rest,
-        ),
+        new Sequence(tag, is_implicit_vr, sequence_ends_at, item_count + 1),
+        rest,
       ),
     );
+    return new Ok([item_count, entries]);
   } else {
     return new Error(
-      ("Item encountered outside of a sequence, length: " + $value_length.to_string(
+      "Item encountered outside of a sequence, length: " + $value_length.to_string(
         length,
-      )) + " bytes",
+      ),
     );
   }
 }
@@ -364,10 +401,10 @@ function update_specific_character_set_clarifying_data_element(
         let _pipe$1 = $dcmfx_character_set.from_string(_pipe);
         return $result.map_error(
           _pipe$1,
-          (error) => {
+          (_) => {
             return new $p10_error.SpecificCharacterSetInvalid(
-              specific_character_set,
-              error,
+              $string.slice(specific_character_set, 0, 100),
+              "",
             );
           },
         );

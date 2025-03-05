@@ -45,7 +45,17 @@ declare class ValueLengthInvalid extends _.CustomType {
   path: $option.Option$<$data_set_path.DataSetPath$>;
 }
 
-export type DataError$ = TagNotPresent | ValueNotPresent | MultiplicityMismatch | ValueInvalid | ValueLengthInvalid;
+declare class ValueUnsupported extends _.CustomType {
+  constructor(
+    details: string,
+    path: $option.Option$<$data_set_path.DataSetPath$>
+  );
+  
+  details: string;
+  path: $option.Option$<$data_set_path.DataSetPath$>;
+}
+
+export type DataError$ = TagNotPresent | ValueNotPresent | MultiplicityMismatch | ValueInvalid | ValueLengthInvalid | ValueUnsupported;
 
 export function to_string(error: DataError$): string;
 
@@ -62,6 +72,8 @@ export function new_value_length_invalid(
   length: number,
   details: string
 ): DataError$;
+
+export function new_value_unsupported(details: string): DataError$;
 
 export function path(error: DataError$): $option.Option$<
   $data_set_path.DataSetPath$

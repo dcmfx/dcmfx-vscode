@@ -1,6 +1,7 @@
 import type * as $bigi from "../../bigi/bigi.d.mts";
 import type * as $dict from "../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $list from "../../gleam_stdlib/gleam/list.d.mts";
+import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $ieee_float from "../../ieee_float/ieee_float.d.mts";
 import type * as $data_element_tag from "../dcmfx_core/data_element_tag.d.mts";
 import type * as $data_element_value from "../dcmfx_core/data_element_value.d.mts";
@@ -128,10 +129,13 @@ export function delete$(
     $data_element_value.DataElementValue$
   >,
   tag: $data_element_tag.DataElementTag$
-): $dict.Dict$<
-  $data_element_tag.DataElementTag$,
-  $data_element_value.DataElementValue$
->;
+): [
+  $option.Option$<$data_element_value.DataElementValue$>,
+  $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >
+];
 
 export function tags(
   data_set: $dict.Dict$<
@@ -149,7 +153,7 @@ export function to_list(
   [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
 >;
 
-export function map<BXNV>(
+export function map<BXOR>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -157,8 +161,8 @@ export function map<BXNV>(
   callback: (
     x0: $data_element_tag.DataElementTag$,
     x1: $data_element_value.DataElementValue$
-  ) => BXNV
-): _.List<BXNV>;
+  ) => BXOR
+): _.List<BXOR>;
 
 export function map_values(
   data_set: $dict.Dict$<
@@ -188,44 +192,44 @@ export function filter(
   $data_element_value.DataElementValue$
 >;
 
-export function fold<BXNX>(
+export function fold<BXOT>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BXNX,
+  initial: BXOT,
   callback: (
-    x0: BXNX,
+    x0: BXOT,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => BXNX
-): BXNX;
+  ) => BXOT
+): BXOT;
 
-export function try_fold<BXNY, BXNZ>(
+export function try_fold<BXOU, BXOV>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BXNY,
+  initial: BXOU,
   callback: (
-    x0: BXNY,
+    x0: BXOU,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => _.Result<BXNY, BXNZ>
-): _.Result<BXNY, BXNZ>;
+  ) => _.Result<BXOU, BXOV>
+): _.Result<BXOU, BXOV>;
 
-export function fold_until<BXOE>(
+export function fold_until<BXPA>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BXOE,
+  initial: BXPA,
   callback: (
-    x0: BXOE,
+    x0: BXPA,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => $list.ContinueOrStop$<BXOE>
-): BXOE;
+  ) => $list.ContinueOrStop$<BXPA>
+): BXPA;
 
 export function partition(
   data_set: $dict.Dict$<
@@ -279,8 +283,16 @@ export function get_value_bytes(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
+  tag: $data_element_tag.DataElementTag$
+): _.Result<_.BitArray, $data_error.DataError$>;
+
+export function get_value_vr_bytes(
+  data_set: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
   tag: $data_element_tag.DataElementTag$,
-  vr: $value_representation.ValueRepresentation$
+  allowed_vrs: _.List<$value_representation.ValueRepresentation$>
 ): _.Result<_.BitArray, $data_error.DataError$>;
 
 export function get_string(
@@ -324,6 +336,14 @@ export function get_ints(
   >,
   tag: $data_element_tag.DataElementTag$
 ): _.Result<_.List<number>, $data_error.DataError$>;
+
+export function get_lookup_table_descriptor(
+  data_set: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+  tag: $data_element_tag.DataElementTag$
+): _.Result<[number, number, number], $data_error.DataError$>;
 
 export function get_big_int(
   data_set: $dict.Dict$<
@@ -405,6 +425,22 @@ export function get_person_names(
   tag: $data_element_tag.DataElementTag$
 ): _.Result<_.List<$person_name.StructuredPersonName$>, $data_error.DataError$>;
 
+export function get_sequence_items(
+  data_set: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+  tag: $data_element_tag.DataElementTag$
+): _.Result<
+  _.List<
+    $dict.Dict$<
+      $data_element_tag.DataElementTag$,
+      $data_element_value.DataElementValue$
+    >
+  >,
+  $data_error.DataError$
+>;
+
 export function get_transfer_syntax(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
@@ -435,15 +471,15 @@ export function tag_name(
   tag: $data_element_tag.DataElementTag$
 ): string;
 
-export function to_lines<BXOG>(
+export function to_lines<BXPC>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   print_options: $data_set_print.DataSetPrintOptions$,
-  context: BXOG,
-  callback: (x0: BXOG, x1: string) => BXOG
-): BXOG;
+  context: BXPC,
+  callback: (x0: BXPC, x1: string) => BXPC
+): BXPC;
 
 export function print_with_options(
   data_set: $dict.Dict$<

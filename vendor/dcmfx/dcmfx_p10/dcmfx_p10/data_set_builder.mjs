@@ -155,7 +155,7 @@ function insert_data_element_at_current_location(location, tag, value) {
     throw makeError(
       "panic",
       "dcmfx_p10/data_set_builder",
-      412,
+      419,
       "insert_data_element_at_current_location",
       "Internal error: unable to insert at current location",
       {}
@@ -323,7 +323,7 @@ function add_token_to_encapsulated_pixel_data_sequence(builder, token) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/data_set_builder",
-        244,
+        247,
         "add_token_to_encapsulated_pixel_data_sequence",
         "Pattern match failed, no pattern matched the value.",
         { value: $1 }
@@ -576,10 +576,11 @@ export function force_end(builder) {
       let token = (() => {
         let $ = builder$1.location;
         if ($.atLeastLength(1) && $.head instanceof Sequence) {
-          return new $p10_token.SequenceDelimiter();
+          let tag = $.head.tag;
+          return new $p10_token.SequenceDelimiter(tag);
         } else if ($.atLeastLength(1) &&
         $.head instanceof EncapsulatedPixelDataSequence) {
-          return new $p10_token.SequenceDelimiter();
+          return new $p10_token.SequenceDelimiter($dictionary.pixel_data.tag);
         } else if ($.atLeastLength(1) && $.head instanceof SequenceItem) {
           return new $p10_token.SequenceItemDelimiter();
         } else {
@@ -594,7 +595,7 @@ export function force_end(builder) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/data_set_builder",
-          131,
+          133,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }

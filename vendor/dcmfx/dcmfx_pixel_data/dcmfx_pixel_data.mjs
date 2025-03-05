@@ -1,5 +1,4 @@
 /// <reference types="./dcmfx_pixel_data.d.mts" />
-import * as $data_error from "../dcmfx_core/dcmfx_core/data_error.mjs";
 import * as $data_set from "../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $dictionary from "../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $transfer_syntax from "../dcmfx_core/dcmfx_core/transfer_syntax.mjs";

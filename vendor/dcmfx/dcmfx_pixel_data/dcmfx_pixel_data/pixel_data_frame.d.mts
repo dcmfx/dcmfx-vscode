@@ -1,15 +1,22 @@
 import type * as _ from "../gleam.d.mts";
 
 declare class PixelDataFrame extends _.CustomType {
-  constructor(fragments: _.List<_.BitArray>, length: number);
+  constructor(
+    frame_index: number,
+    fragments: _.List<_.BitArray>,
+    length: number
+  );
   
+  frame_index: number;
   fragments: _.List<_.BitArray>;
   length: number;
 }
 
 export type PixelDataFrame$ = PixelDataFrame;
 
-export function new$(): PixelDataFrame$;
+export function new$(frame_index: number): PixelDataFrame$;
+
+export function index(frame: PixelDataFrame$): number;
 
 export function push_fragment(frame: PixelDataFrame$, data: _.BitArray): PixelDataFrame$;
 

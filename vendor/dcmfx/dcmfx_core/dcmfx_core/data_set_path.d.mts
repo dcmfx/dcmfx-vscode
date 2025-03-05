@@ -50,7 +50,7 @@ export function add_sequence_item(path: DataSetPath$, index: number): _.Result<
   string
 >;
 
-export function pop(path: DataSetPath$): _.Result<DataSetPath$, undefined>;
+export function pop(path: DataSetPath$): _.Result<DataSetPath$, string>;
 
 export function from_string(s: string): _.Result<DataSetPath$, string>;
 

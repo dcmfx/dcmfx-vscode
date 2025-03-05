@@ -100,7 +100,12 @@ export function from_list(data_elements) {
 }
 
 export function delete$(data_set, tag) {
-  return $dict.delete$(data_set, tag);
+  let deleted_value = (() => {
+    let _pipe = $dict.get(data_set, tag);
+    return $option.from_result(_pipe);
+  })();
+  let data_set$1 = $dict.delete$(data_set, tag);
+  return [deleted_value, data_set$1];
 }
 
 export function tags(data_set) {
@@ -154,7 +159,7 @@ export function map(data_set, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          484,
+          494,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -187,7 +192,7 @@ export function fold(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          521,
+          531,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -211,7 +216,7 @@ export function try_fold(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          540,
+          550,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -235,7 +240,7 @@ export function fold_until(data_set, initial, callback) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          560,
+          570,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }
@@ -356,40 +361,35 @@ export function get_data_set_at_path(data_set, path) {
   }
 }
 
-export function get_value_bytes(data_set, tag, vr) {
-  let value = (() => {
-    let _pipe = data_set;
-    return get_value(_pipe, tag);
-  })();
-  return $result.try$(
-    value,
-    (value) => {
-      let $ = isEqual($data_element_value.value_representation(value), vr);
-      if ($) {
-        let _pipe = $data_element_value.bytes(value);
-        let _pipe$1 = $result.map_error(
-          _pipe,
-          (_) => {
-            let _pipe$1 = $data_error.new_value_not_present();
-            let _pipe$2 = $data_error.with_path(
-              _pipe$1,
-              $data_set_path.new_with_data_element(tag),
-            );
-            return new Error(_pipe$2);
-          },
-        );
-        return $result.replace_error(
-          _pipe$1,
-          $data_error.new_value_not_present(),
-        );
-      } else {
-        let _pipe = $data_error.new_value_not_present();
-        let _pipe$1 = $data_error.with_path(
-          _pipe,
-          $data_set_path.new_with_data_element(tag),
-        );
-        return new Error(_pipe$1);
-      }
+export function get_value_bytes(data_set, tag) {
+  let _pipe = data_set;
+  let _pipe$1 = get_value(_pipe, tag);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.bytes);
+  return $result.map_error(
+    _pipe$2,
+    (_capture) => {
+      return $data_error.with_path(
+        _capture,
+        $data_set_path.new_with_data_element(tag),
+      );
+    },
+  );
+}
+
+export function get_value_vr_bytes(data_set, tag, allowed_vrs) {
+  let _pipe = data_set;
+  let _pipe$1 = get_value(_pipe, tag);
+  let _pipe$2 = $result.then$(
+    _pipe$1,
+    (_capture) => { return $data_element_value.vr_bytes(_capture, allowed_vrs); },
+  );
+  return $result.map_error(
+    _pipe$2,
+    (_capture) => {
+      return $data_error.with_path(
+        _capture,
+        $data_set_path.new_with_data_element(tag),
+      );
     },
   );
 }
@@ -483,6 +483,24 @@ export function get_ints(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
   let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_ints);
+  return $result.map_error(
+    _pipe$2,
+    (_capture) => {
+      return $data_error.with_path(
+        _capture,
+        $data_set_path.new_with_data_element(tag),
+      );
+    },
+  );
+}
+
+export function get_lookup_table_descriptor(data_set, tag) {
+  let _pipe = data_set;
+  let _pipe$1 = get_value(_pipe, tag);
+  let _pipe$2 = $result.then$(
+    _pipe$1,
+    $data_element_value.get_lookup_table_descriptor,
+  );
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -632,7 +650,31 @@ export function get_person_name(data_set, tag) {
 export function get_person_names(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  return $result.then$(_pipe$1, $data_element_value.get_person_names);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_person_names);
+  return $result.map_error(
+    _pipe$2,
+    (_capture) => {
+      return $data_error.with_path(
+        _capture,
+        $data_set_path.new_with_data_element(tag),
+      );
+    },
+  );
+}
+
+export function get_sequence_items(data_set, tag) {
+  let _pipe = data_set;
+  let _pipe$1 = get_value(_pipe, tag);
+  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.sequence_items);
+  return $result.map_error(
+    _pipe$2,
+    (_capture) => {
+      return $data_error.with_path(
+        _capture,
+        $data_set_path.new_with_data_element(tag),
+      );
+    },
+  );
 }
 
 export function get_transfer_syntax(data_set) {
@@ -714,7 +756,7 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
         throw makeError(
           "let_assert",
           "dcmfx_core/data_set",
-          620,
+          630,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $ }

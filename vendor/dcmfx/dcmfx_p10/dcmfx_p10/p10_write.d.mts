@@ -5,6 +5,7 @@ import type * as $transfer_syntax from "../../dcmfx_core/dcmfx_core/transfer_syn
 import type * as $dict from "../../gleam_stdlib/gleam/dict.d.mts";
 import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $data_element_header from "../dcmfx_p10/internal/data_element_header.d.mts";
+import type * as $p10_location from "../dcmfx_p10/internal/p10_location.d.mts";
 import type * as $zlib from "../dcmfx_p10/internal/zlib.d.mts";
 import type * as $p10_error from "../dcmfx_p10/p10_error.d.mts";
 import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
@@ -26,8 +27,8 @@ declare class P10WriteContext extends _.CustomType {
     is_ended: boolean,
     transfer_syntax: $transfer_syntax.TransferSyntax$,
     zlib_stream: $option.Option$<$zlib.ZlibStream$>,
-    path: $data_set_path.DataSetPath$,
-    sequence_item_counts: _.List<number>
+    location: _.List<$p10_location.LocationEntry$>,
+    path: $data_set_path.DataSetPath$
   );
   
   config: P10WriteConfig$;
@@ -36,8 +37,8 @@ declare class P10WriteContext extends _.CustomType {
   is_ended: boolean;
   transfer_syntax: $transfer_syntax.TransferSyntax$;
   zlib_stream: $option.Option$<$zlib.ZlibStream$>;
+  location: _.List<$p10_location.LocationEntry$>;
   path: $data_set_path.DataSetPath$;
-  sequence_item_counts: _.List<number>;
 }
 
 export type P10WriteContext$ = P10WriteContext;
@@ -59,29 +60,29 @@ export function data_element_header_to_bytes(
   context: P10WriteContext$
 ): _.Result<_.BitArray, $p10_error.P10Error$>;
 
-export function data_set_to_tokens<CBCV, CBCW>(
+export function data_set_to_tokens<CBDN, CBDO>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  callback_context: CBCV,
-  token_callback: (x0: CBCV, x1: $p10_token.P10Token$) => _.Result<CBCV, CBCW>
-): _.Result<CBCV, CBCW>;
+  callback_context: CBDN,
+  token_callback: (x0: CBDN, x1: $p10_token.P10Token$) => _.Result<CBDN, CBDO>
+): _.Result<CBDN, CBDO>;
 
 export function write_token(
   context: P10WriteContext$,
   token: $p10_token.P10Token$
 ): _.Result<P10WriteContext$, $p10_error.P10Error$>;
 
-export function data_set_to_bytes<CBDB>(
+export function data_set_to_bytes<CBDT>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: CBDB,
-  bytes_callback: (x0: CBDB, x1: _.BitArray) => _.Result<
-    CBDB,
+  context: CBDT,
+  bytes_callback: (x0: CBDT, x1: _.BitArray) => _.Result<
+    CBDT,
     $p10_error.P10Error$
   >,
   config: P10WriteConfig$
-): _.Result<CBDB, $p10_error.P10Error$>;
+): _.Result<CBDT, $p10_error.P10Error$>;

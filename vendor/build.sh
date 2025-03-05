@@ -1,5 +1,5 @@
 # This script rebuilds the vendored JavaScript build of DCMfx's Gleam
-# implementation stored under dcmfx/
+# implementation.
 
 set -e
 

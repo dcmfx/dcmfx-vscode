@@ -1,11 +1,14 @@
 /// <reference types="./pixel_data_filter.d.mts" />
 import * as $bigi from "../../bigi/bigi.mjs";
+import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
 import * as $data_error from "../../dcmfx_core/dcmfx_core/data_error.mjs";
 import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/dcmfx_core/internal/bit_array_utils.mjs";
 import * as $value_representation from "../../dcmfx_core/dcmfx_core/value_representation.mjs";
+import * as $p10_error from "../../dcmfx_p10/dcmfx_p10/p10_error.mjs";
 import * as $p10_token from "../../dcmfx_p10/dcmfx_p10/p10_token.mjs";
+import * as $p10_custom_type_transform from "../../dcmfx_p10/dcmfx_p10/transforms/p10_custom_type_transform.mjs";
 import * as $p10_filter_transform from "../../dcmfx_p10/dcmfx_p10/transforms/p10_filter_transform.mjs";
 import * as $deque from "../../gleam_deque/gleam/deque.mjs";
 import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
@@ -29,11 +32,10 @@ import {
   toBitArray,
 } from "../gleam.mjs";
 
-export class PixelDataFilter extends $CustomType {
-  constructor(is_encapsulated, details_filter, details, pixel_data_filter, native_pixel_data_frame_size, pixel_data, pixel_data_write_offset, pixel_data_read_offset, offset_table) {
+class PixelDataFilter extends $CustomType {
+  constructor(is_encapsulated, details, pixel_data_filter, native_pixel_data_frame_size, pixel_data, pixel_data_write_offset, pixel_data_read_offset, offset_table, next_frame_index) {
     super();
     this.is_encapsulated = is_encapsulated;
-    this.details_filter = details_filter;
     this.details = details;
     this.pixel_data_filter = pixel_data_filter;
     this.native_pixel_data_frame_size = native_pixel_data_frame_size;
@@ -41,21 +43,51 @@ export class PixelDataFilter extends $CustomType {
     this.pixel_data_write_offset = pixel_data_write_offset;
     this.pixel_data_read_offset = pixel_data_read_offset;
     this.offset_table = offset_table;
+    this.next_frame_index = next_frame_index;
   }
 }
 
+class PixelDataFilterDetails extends $CustomType {
+  constructor(number_of_frames, extended_offset_table, extended_offset_table_lengths) {
+    super();
+    this.number_of_frames = number_of_frames;
+    this.extended_offset_table = extended_offset_table;
+    this.extended_offset_table_lengths = extended_offset_table_lengths;
+  }
+}
+
+export class P10Error extends $CustomType {
+  constructor(x0) {
+    super();
+    this[0] = x0;
+  }
+}
+
+export class DataError extends $CustomType {
+  constructor(x0) {
+    super();
+    this[0] = x0;
+  }
+}
+
+function pixel_data_filter_details_from_data_set(data_set) {
+  return new Ok(
+    new PixelDataFilterDetails(
+      $data_set.delete$(data_set, $dictionary.number_of_frames.tag)[0],
+      $data_set.delete$(data_set, $dictionary.extended_offset_table.tag)[0],
+      $data_set.delete$(data_set, $dictionary.extended_offset_table_lengths.tag)[0],
+    ),
+  );
+}
+
 export function new$() {
-  let details_filter = $p10_filter_transform.new$(
-    (tag, vr, location) => {
-      return ((((isEqual(tag, $dictionary.number_of_frames.tag)) || (isEqual(
-        tag,
-        $dictionary.extended_offset_table.tag
-      ))) || (isEqual(tag, $dictionary.extended_offset_table_lengths.tag))) && (!isEqual(
-        vr,
-        new $value_representation.Sequence()
-      ))) && (isEqual(location, toList([])));
-    },
-    true,
+  let details = $p10_custom_type_transform.new$(
+    toList([
+      $dictionary.number_of_frames.tag,
+      $dictionary.extended_offset_table.tag,
+      $dictionary.extended_offset_table_lengths.tag,
+    ]),
+    pixel_data_filter_details_from_data_set,
   );
   let pixel_data_filter = $p10_filter_transform.new$(
     (tag, _, location) => {
@@ -64,48 +96,51 @@ export function new$() {
         toList([])
       ));
     },
-    false,
   );
   return new PixelDataFilter(
     false,
-    new Some(details_filter),
-    $data_set.new$(),
+    details,
     pixel_data_filter,
     0,
     $deque.new$(),
     0,
     0,
     new None(),
+    0,
   );
 }
 
 function get_number_of_frames(filter) {
-  return $bool.guard(
-    !$data_set.has(filter.details, $dictionary.number_of_frames.tag),
-    new Ok(1),
-    () => {
-      let number_of_frames = (() => {
-        let _pipe = filter.details;
-        return $data_set.get_int(_pipe, $dictionary.number_of_frames.tag);
-      })();
-      return $result.try$(
-        number_of_frames,
-        (number_of_frames) => {
-          return $bool.guard(
-            number_of_frames < 0,
-            new Error(
+  let $ = $p10_custom_type_transform.get_output(filter.details);
+  if ($ instanceof Some &&
+  $[0] instanceof PixelDataFilterDetails &&
+  $[0].number_of_frames instanceof Some) {
+    let number_of_frames = $[0].number_of_frames[0];
+    let number_of_frames$1 = (() => {
+      let _pipe = $data_element_value.get_int(number_of_frames);
+      return $result.map_error(_pipe, (var0) => { return new DataError(var0); });
+    })();
+    return $result.try$(
+      number_of_frames$1,
+      (number_of_frames) => {
+        return $bool.guard(
+          number_of_frames < 0,
+          new Error(
+            new DataError(
               $data_error.new_value_invalid(
                 "Invalid number of frames value: " + $int.to_string(
                   number_of_frames,
                 ),
               ),
             ),
-            () => { return new Ok(number_of_frames); },
-          );
-        },
-      );
-    },
-  );
+          ),
+          () => { return new Ok(number_of_frames); },
+        );
+      },
+    );
+  } else {
+    return new Ok(1);
+  }
 }
 
 function get_pending_native_frame(loop$filter, loop$frame) {
@@ -124,7 +159,7 @@ function get_pending_native_frame(loop$filter, loop$frame) {
         throw makeError(
           "let_assert",
           "dcmfx_pixel_data/pixel_data_filter",
-          300,
+          346,
           "get_pending_native_frame",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
@@ -137,7 +172,6 @@ function get_pending_native_frame(loop$filter, loop$frame) {
         let _record = filter;
         return new PixelDataFilter(
           _record.is_encapsulated,
-          _record.details_filter,
           _record.details,
           _record.pixel_data_filter,
           _record.native_pixel_data_frame_size,
@@ -145,6 +179,7 @@ function get_pending_native_frame(loop$filter, loop$frame) {
           _record.pixel_data_write_offset,
           _record.pixel_data_read_offset,
           _record.offset_table,
+          _record.next_frame_index,
         );
       })();
       let $2 = chunk_length <= (frame_size - frame_length);
@@ -154,7 +189,6 @@ function get_pending_native_frame(loop$filter, loop$frame) {
           let _record = filter$1;
           return new PixelDataFilter(
             _record.is_encapsulated,
-            _record.details_filter,
             _record.details,
             _record.pixel_data_filter,
             _record.native_pixel_data_frame_size,
@@ -162,6 +196,7 @@ function get_pending_native_frame(loop$filter, loop$frame) {
             _record.pixel_data_write_offset,
             filter$1.pixel_data_read_offset + chunk_length,
             _record.offset_table,
+            _record.next_frame_index,
           );
         })();
         loop$filter = filter$2;
@@ -173,7 +208,7 @@ function get_pending_native_frame(loop$filter, loop$frame) {
           throw makeError(
             "let_assert",
             "dcmfx_pixel_data/pixel_data_filter",
-            328,
+            374,
             "get_pending_native_frame",
             "Pattern match failed, no pattern matched the value.",
             { value: $3 }
@@ -189,7 +224,7 @@ function get_pending_native_frame(loop$filter, loop$frame) {
           throw makeError(
             "let_assert",
             "dcmfx_pixel_data/pixel_data_filter",
-            333,
+            379,
             "get_pending_native_frame",
             "Pattern match failed, no pattern matched the value.",
             { value: $4 }
@@ -204,7 +239,6 @@ function get_pending_native_frame(loop$filter, loop$frame) {
           let _record = filter$1;
           return new PixelDataFilter(
             _record.is_encapsulated,
-            _record.details_filter,
             _record.details,
             _record.pixel_data_filter,
             _record.native_pixel_data_frame_size,
@@ -212,6 +246,7 @@ function get_pending_native_frame(loop$filter, loop$frame) {
             _record.pixel_data_write_offset,
             filter$1.pixel_data_read_offset + length,
             _record.offset_table,
+            _record.next_frame_index,
           );
         })();
         return [frame$1, filter$2];
@@ -230,10 +265,28 @@ function get_pending_native_frames(loop$filter, loop$frames) {
     if ($) {
       return new Ok([$list.reverse(frames), filter]);
     } else {
-      let $1 = get_pending_native_frame(filter, $pixel_data_frame.new$());
+      let frame_index = filter.next_frame_index;
+      let filter$1 = (() => {
+        let _record = filter;
+        return new PixelDataFilter(
+          _record.is_encapsulated,
+          _record.details,
+          _record.pixel_data_filter,
+          _record.native_pixel_data_frame_size,
+          _record.pixel_data,
+          _record.pixel_data_write_offset,
+          _record.pixel_data_read_offset,
+          _record.offset_table,
+          frame_index + 1,
+        );
+      })();
+      let $1 = get_pending_native_frame(
+        filter$1,
+        $pixel_data_frame.new$(frame_index),
+      );
       let frame = $1[0];
-      let filter$1 = $1[1];
-      loop$filter = filter$1;
+      let filter$2 = $1[1];
+      loop$filter = filter$2;
       loop$frames = listPrepend(frame, frames);
     }
   }
@@ -265,7 +318,6 @@ function get_pending_encapsulated_frame(
           let _record = filter;
           return new PixelDataFilter(
             _record.is_encapsulated,
-            _record.details_filter,
             _record.details,
             _record.pixel_data_filter,
             _record.native_pixel_data_frame_size,
@@ -273,6 +325,7 @@ function get_pending_encapsulated_frame(
             _record.pixel_data_write_offset,
             pixel_data_read_offset,
             _record.offset_table,
+            _record.next_frame_index,
           );
         })();
         loop$filter = filter$1;
@@ -296,13 +349,13 @@ function apply_length_to_frame(frame, frame_length) {
     let len = $;
     return new Ok($pixel_data_frame.drop_end_bytes(frame, len - frame_length));
   } else {
-    return new Error(
-      $data_error.new_value_invalid(
-        ((("Extended Offset Table Length value '" + $int.to_string(frame_length)) + "' is invalid for frame of length '") + $int.to_string(
-          $pixel_data_frame.length(frame),
-        )) + "'",
-      ),
+    let _pipe = $data_error.new_value_invalid(
+      ((("Extended Offset Table Length value '" + $int.to_string(frame_length)) + "' is invalid for frame of length '") + $int.to_string(
+        $pixel_data_frame.length(frame),
+      )) + "'",
     );
+    let _pipe$1 = new DataError(_pipe);
+    return new Error(_pipe$1);
   }
 }
 
@@ -318,30 +371,44 @@ function get_pending_encapsulated_frames_using_offset_table(
       filter.pixel_data_write_offset < offset,
       new Ok([frames, filter]),
       () => {
+        let frame_index = filter.next_frame_index;
+        let filter$1 = (() => {
+          let _record = filter;
+          return new PixelDataFilter(
+            _record.is_encapsulated,
+            _record.details,
+            _record.pixel_data_filter,
+            _record.native_pixel_data_frame_size,
+            _record.pixel_data,
+            _record.pixel_data_write_offset,
+            _record.pixel_data_read_offset,
+            _record.offset_table,
+            frame_index + 1,
+          );
+        })();
         let $ = get_pending_encapsulated_frame(
-          filter,
-          $pixel_data_frame.new$(),
+          filter$1,
+          $pixel_data_frame.new$(frame_index),
           offset,
         );
         let frame = $[0];
-        let filter$1 = $[1];
+        let filter$2 = $[1];
         let $1 = $list.rest(offset_table);
         if (!$1.isOk()) {
           throw makeError(
             "let_assert",
             "dcmfx_pixel_data/pixel_data_filter",
-            433,
+            493,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
           )
         }
         let offset_table$1 = $1[0];
-        let filter$2 = (() => {
-          let _record = filter$1;
+        let filter$3 = (() => {
+          let _record = filter$2;
           return new PixelDataFilter(
             _record.is_encapsulated,
-            _record.details_filter,
             _record.details,
             _record.pixel_data_filter,
             _record.native_pixel_data_frame_size,
@@ -349,13 +416,16 @@ function get_pending_encapsulated_frames_using_offset_table(
             _record.pixel_data_write_offset,
             _record.pixel_data_read_offset,
             new Some(offset_table$1),
+            _record.next_frame_index,
           );
         })();
         return $bool.guard(
-          filter$2.pixel_data_read_offset !== offset,
+          filter$3.pixel_data_read_offset !== offset,
           new Error(
-            $data_error.new_value_invalid(
-              "Pixel data offset table is malformed",
+            new DataError(
+              $data_error.new_value_invalid(
+                "Pixel data offset table is malformed",
+              ),
             ),
           ),
           () => {
@@ -371,7 +441,7 @@ function get_pending_encapsulated_frames_using_offset_table(
               frame$1,
               (frame) => {
                 return get_pending_encapsulated_frames_using_offset_table(
-                  filter$2,
+                  filter$3,
                   offset_table$1,
                   listPrepend(frame, frames),
                 );
@@ -420,8 +490,10 @@ function read_basic_offset_table(filter) {
         return $result.map_error(
           _pipe,
           (_) => {
-            return $data_error.new_value_invalid(
-              "Basic Offset Table length is not a multiple of 4",
+            return new DataError(
+              $data_error.new_value_invalid(
+                "Basic Offset Table length is not a multiple of 4",
+              ),
             );
           },
         );
@@ -432,16 +504,20 @@ function read_basic_offset_table(filter) {
           return $bool.guard(
             !isEqual($list.first(offsets), new Ok(0)),
             new Error(
-              $data_error.new_value_invalid(
-                "Basic Offset Table first value must be zero",
+              new DataError(
+                $data_error.new_value_invalid(
+                  "Basic Offset Table first value must be zero",
+                ),
               ),
             ),
             () => {
               return $bool.guard(
                 !is_list_sorted(offsets),
                 new Error(
-                  $data_error.new_value_invalid(
-                    "Basic Offset Table values are not sorted",
+                  new DataError(
+                    $data_error.new_value_invalid(
+                      "Basic Offset Table values are not sorted",
+                    ),
                   ),
                 ),
                 () => {
@@ -462,137 +538,158 @@ function read_basic_offset_table(filter) {
 }
 
 function read_extended_offset_table(filter) {
-  return $bool.guard(
-    !$data_set.has(filter.details, $dictionary.extended_offset_table.tag),
-    new Ok(new None()),
-    () => {
-      let extended_offset_table = (() => {
-        let _pipe = $data_set.get_value_bytes(
-          filter.details,
-          $dictionary.extended_offset_table.tag,
-          new $value_representation.OtherVeryLongString(),
-        );
-        return $result.then$(
-          _pipe,
-          (bytes) => {
-            let _pipe$1 = $bit_array_utils.to_uint64_list(bytes);
-            return $result.replace_error(
-              _pipe$1,
-              $data_error.new_value_invalid(
-                "Extended Offset Table has invalid size",
-              ),
-            );
-          },
-        );
-      })();
-      return $result.try$(
-        extended_offset_table,
-        (extended_offset_table) => {
-          let extended_offset_table$1 = (() => {
-            let _pipe = extended_offset_table;
-            let _pipe$1 = $list.map(_pipe, $bigi.to_int);
-            let _pipe$2 = $result.all(_pipe$1);
-            return $result.replace_error(
-              _pipe$2,
+  let $ = $p10_custom_type_transform.get_output(filter.details);
+  if ($ instanceof Some &&
+  $[0] instanceof PixelDataFilterDetails &&
+  $[0].extended_offset_table instanceof Some &&
+  $[0].extended_offset_table_lengths instanceof Some) {
+    let extended_offset_table = $[0].extended_offset_table[0];
+    let extended_offset_table_lengths = $[0].extended_offset_table_lengths[0];
+    let extended_offset_table$1 = (() => {
+      let _pipe = extended_offset_table;
+      let _pipe$1 = $data_element_value.vr_bytes(
+        _pipe,
+        toList([new $value_representation.OtherVeryLongString()]),
+      );
+      let _pipe$2 = $result.then$(
+        _pipe$1,
+        (bytes) => {
+          let _pipe$2 = $bit_array_utils.to_uint64_list(bytes);
+          return $result.replace_error(
+            _pipe$2,
+            $data_error.new_value_invalid(
+              "Extended Offset Table has invalid size",
+            ),
+          );
+        },
+      );
+      return $result.map_error(
+        _pipe$2,
+        (var0) => { return new DataError(var0); },
+      );
+    })();
+    return $result.try$(
+      extended_offset_table$1,
+      (extended_offset_table) => {
+        let extended_offset_table$1 = (() => {
+          let _pipe = extended_offset_table;
+          let _pipe$1 = $list.map(_pipe, $bigi.to_int);
+          let _pipe$2 = $result.all(_pipe$1);
+          return $result.replace_error(
+            _pipe$2,
+            new DataError(
               $data_error.new_value_invalid(
                 "Extended Offset Table has a value greater than 2^53 - 1",
               ),
-            );
-          })();
-          return $result.try$(
-            extended_offset_table$1,
-            (extended_offset_table) => {
-              let extended_offset_table_lengths = (() => {
-                let _pipe = filter.details;
-                let _pipe$1 = $data_set.get_value_bytes(
-                  _pipe,
-                  $dictionary.extended_offset_table_lengths.tag,
-                  new $value_representation.OtherVeryLongString(),
-                );
-                return $result.then$(
-                  _pipe$1,
-                  (bytes) => {
-                    let _pipe$2 = $bit_array_utils.to_uint64_list(bytes);
-                    return $result.replace_error(
-                      _pipe$2,
-                      $data_error.new_value_invalid(
-                        "Extended Offset Table Lengths has invalid size",
-                      ),
-                    );
-                  },
-                );
-              })();
-              return $result.try$(
-                extended_offset_table_lengths,
-                (extended_offset_table_lengths) => {
-                  let extended_offset_table_lengths$1 = (() => {
-                    let _pipe = extended_offset_table_lengths;
-                    let _pipe$1 = $list.map(_pipe, $bigi.to_int);
-                    let _pipe$2 = $result.all(_pipe$1);
-                    return $result.replace_error(
-                      _pipe$2,
+            ),
+          );
+        })();
+        return $result.try$(
+          extended_offset_table$1,
+          (extended_offset_table) => {
+            let extended_offset_table_lengths$1 = (() => {
+              let _pipe = extended_offset_table_lengths;
+              let _pipe$1 = $data_element_value.vr_bytes(
+                _pipe,
+                toList([new $value_representation.OtherVeryLongString()]),
+              );
+              let _pipe$2 = $result.then$(
+                _pipe$1,
+                (bytes) => {
+                  let _pipe$2 = $bit_array_utils.to_uint64_list(bytes);
+                  return $result.replace_error(
+                    _pipe$2,
+                    $data_error.new_value_invalid(
+                      "Extended Offset Table Lengths has invalid size",
+                    ),
+                  );
+                },
+              );
+              return $result.map_error(
+                _pipe$2,
+                (var0) => { return new DataError(var0); },
+              );
+            })();
+            return $result.try$(
+              extended_offset_table_lengths$1,
+              (extended_offset_table_lengths) => {
+                let extended_offset_table_lengths$1 = (() => {
+                  let _pipe = extended_offset_table_lengths;
+                  let _pipe$1 = $list.map(_pipe, $bigi.to_int);
+                  let _pipe$2 = $result.all(_pipe$1);
+                  return $result.replace_error(
+                    _pipe$2,
+                    new DataError(
                       $data_error.new_value_invalid(
                         "Extended Offset Table Lengths has a value greater than 2^53 - 1",
                       ),
-                    );
-                  })();
-                  return $result.try$(
-                    extended_offset_table_lengths$1,
-                    (extended_offset_table_lengths) => {
-                      return $bool.guard(
-                        $list.length(extended_offset_table) !== $list.length(
-                          extended_offset_table_lengths,
-                        ),
-                        new Error(
+                    ),
+                  );
+                })();
+                return $result.try$(
+                  extended_offset_table_lengths$1,
+                  (extended_offset_table_lengths) => {
+                    return $bool.guard(
+                      $list.length(extended_offset_table) !== $list.length(
+                        extended_offset_table_lengths,
+                      ),
+                      new Error(
+                        new DataError(
                           $data_error.new_value_invalid(
                             "Extended Offset Table and Lengths don't have the same number of items",
                           ),
                         ),
-                        () => {
-                          return $bool.guard(
-                            (() => {
-                              let _pipe = $list.first(extended_offset_table);
-                              return $result.unwrap(_pipe, 0);
-                            })() !== 0,
-                            new Error(
+                      ),
+                      () => {
+                        return $bool.guard(
+                          (() => {
+                            let _pipe = $list.first(extended_offset_table);
+                            return $result.unwrap(_pipe, 0);
+                          })() !== 0,
+                          new Error(
+                            new DataError(
                               $data_error.new_value_invalid(
                                 "Extended Offset Table first value must be zero",
                               ),
                             ),
-                            () => {
-                              return $bool.guard(
-                                !is_list_sorted(extended_offset_table),
-                                new Error(
+                          ),
+                          () => {
+                            return $bool.guard(
+                              !is_list_sorted(extended_offset_table),
+                              new Error(
+                                new DataError(
                                   $data_error.new_value_invalid(
                                     "Extended Offset Table values are not sorted",
                                   ),
                                 ),
-                                () => {
-                                  let _pipe = $list.map2(
-                                    extended_offset_table,
-                                    extended_offset_table_lengths,
-                                    (offset, length) => {
-                                      return [offset, new Some(length)];
-                                    },
-                                  );
-                                  let _pipe$1 = new Some(_pipe);
-                                  return new Ok(_pipe$1);
-                                },
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                  );
-                },
-              );
-            },
-          );
-        },
-      );
-    },
-  );
+                              ),
+                              () => {
+                                let _pipe = $list.map2(
+                                  extended_offset_table,
+                                  extended_offset_table_lengths,
+                                  (offset, length) => {
+                                    return [offset, new Some(length)];
+                                  },
+                                );
+                                let _pipe$1 = new Some(_pipe);
+                                return new Ok(_pipe$1);
+                              },
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  } else {
+    return new Ok(new None());
+  }
 }
 
 function read_offset_table(filter) {
@@ -610,8 +707,10 @@ function read_offset_table(filter) {
             return $bool.guard(
               $option.is_some(extended_offset_table),
               new Error(
-                $data_error.new_value_invalid(
-                  "Extended Offset Table must be absent when there is a Basic Offset " + "Table",
+                new DataError(
+                  $data_error.new_value_invalid(
+                    "Extended Offset Table must be absent when there is a Basic Offset " + "Table",
+                  ),
                 ),
               ),
               () => { return new Ok(basic_offset_table); },
@@ -633,7 +732,6 @@ function get_pending_encapsulated_frames(filter) {
           let _record = filter;
           return new PixelDataFilter(
             _record.is_encapsulated,
-            _record.details_filter,
             _record.details,
             _record.pixel_data_filter,
             _record.native_pixel_data_frame_size,
@@ -641,6 +739,7 @@ function get_pending_encapsulated_frames(filter) {
             0,
             0,
             new Some(offset_table),
+            _record.next_frame_index,
           );
         })();
         return new Ok([toList([]), filter$1]);
@@ -654,32 +753,47 @@ function get_pending_encapsulated_frames(filter) {
         (number_of_frames) => {
           let $1 = number_of_frames > 1;
           if ($1) {
+            let frame_index = filter.next_frame_index;
+            let filter$1 = (() => {
+              let _record = filter;
+              return new PixelDataFilter(
+                _record.is_encapsulated,
+                _record.details,
+                _record.pixel_data_filter,
+                _record.native_pixel_data_frame_size,
+                _record.pixel_data,
+                _record.pixel_data_write_offset,
+                _record.pixel_data_read_offset,
+                _record.offset_table,
+                frame_index + 1,
+              );
+            })();
             let frame = (() => {
-              let _pipe = filter.pixel_data;
+              let _pipe = filter$1.pixel_data;
               let _pipe$1 = $deque.to_list(_pipe);
               return $list.fold(
                 _pipe$1,
-                $pixel_data_frame.new$(),
+                $pixel_data_frame.new$(frame_index),
                 (frame, chunk) => {
                   return $pixel_data_frame.push_fragment(frame, chunk);
                 },
               );
             })();
-            let filter$1 = (() => {
-              let _record = filter;
+            let filter$2 = (() => {
+              let _record = filter$1;
               return new PixelDataFilter(
                 _record.is_encapsulated,
-                _record.details_filter,
                 _record.details,
                 _record.pixel_data_filter,
                 _record.native_pixel_data_frame_size,
                 $deque.new$(),
                 _record.pixel_data_write_offset,
-                filter.pixel_data_write_offset,
+                filter$1.pixel_data_write_offset,
                 _record.offset_table,
+                _record.next_frame_index,
               );
             })();
-            return [toList([frame]), filter$1];
+            return [toList([frame]), filter$2];
           } else {
             return [toList([]), filter];
           }
@@ -703,24 +817,29 @@ function process_next_pixel_data_token(filter, token) {
       get_number_of_frames(filter),
       (number_of_frames) => {
         return $bool.guard(
-          (remainderInt(length, number_of_frames)) !== 0,
+          (number_of_frames !== 0) && ((remainderInt(length, number_of_frames)) !== 0),
           new Error(
-            $data_error.new_value_invalid(
-              ((("Multi-frame pixel data of length " + $int.to_string(length)) + " bytes does not divide evenly into ") + $int.to_string(
-                number_of_frames,
-              )) + " frames",
+            new DataError(
+              $data_error.new_value_invalid(
+                ((("Multi-frame pixel data of length " + $int.to_string(length)) + " bytes does not divide evenly into ") + $int.to_string(
+                  number_of_frames,
+                )) + " frames",
+              ),
             ),
           ),
           () => {
-            let native_pixel_data_frame_size = divideInt(
-              length,
-              number_of_frames
-            );
+            let native_pixel_data_frame_size = (() => {
+              let $ = number_of_frames === 0;
+              if ($) {
+                return 0;
+              } else {
+                return divideInt(length, number_of_frames);
+              }
+            })();
             let filter$1 = (() => {
               let _record = filter;
               return new PixelDataFilter(
                 false,
-                _record.details_filter,
                 _record.details,
                 _record.pixel_data_filter,
                 native_pixel_data_frame_size,
@@ -728,6 +847,7 @@ function process_next_pixel_data_token(filter, token) {
                 _record.pixel_data_write_offset,
                 _record.pixel_data_read_offset,
                 _record.offset_table,
+                _record.next_frame_index,
               );
             })();
             return new Ok([toList([]), filter$1]);
@@ -740,7 +860,6 @@ function process_next_pixel_data_token(filter, token) {
       let _record = filter;
       return new PixelDataFilter(
         true,
-        _record.details_filter,
         _record.details,
         _record.pixel_data_filter,
         _record.native_pixel_data_frame_size,
@@ -748,6 +867,7 @@ function process_next_pixel_data_token(filter, token) {
         _record.pixel_data_write_offset,
         _record.pixel_data_read_offset,
         _record.offset_table,
+        _record.next_frame_index,
       );
     })();
     return new Ok([toList([]), filter$1]);
@@ -760,17 +880,32 @@ function process_next_pixel_data_token(filter, token) {
       if ($) {
         return new Ok(toList([]));
       } else {
+        let frame_index = filter.next_frame_index;
+        let filter$1 = (() => {
+          let _record = filter;
+          return new PixelDataFilter(
+            _record.is_encapsulated,
+            _record.details,
+            _record.pixel_data_filter,
+            _record.native_pixel_data_frame_size,
+            _record.pixel_data,
+            _record.pixel_data_write_offset,
+            _record.pixel_data_read_offset,
+            _record.offset_table,
+            frame_index + 1,
+          );
+        })();
         let frame = (() => {
-          let _pipe = filter.pixel_data;
+          let _pipe = filter$1.pixel_data;
           let _pipe$1 = $deque.to_list(_pipe);
           return $list.fold(
             _pipe$1,
-            $pixel_data_frame.new$(),
+            $pixel_data_frame.new$(frame_index),
             $pixel_data_frame.push_fragment,
           );
         })();
         let frame$1 = (() => {
-          let $1 = filter.offset_table;
+          let $1 = filter$1.offset_table;
           if ($1 instanceof Some) {
             let offset_table = $1[0];
             if (offset_table.atLeastLength(1) &&
@@ -793,7 +928,6 @@ function process_next_pixel_data_token(filter, token) {
       let _record = filter;
       return new PixelDataFilter(
         _record.is_encapsulated,
-        _record.details_filter,
         _record.details,
         _record.pixel_data_filter,
         _record.native_pixel_data_frame_size,
@@ -801,6 +935,7 @@ function process_next_pixel_data_token(filter, token) {
         filter.pixel_data_write_offset + 8,
         _record.pixel_data_read_offset,
         _record.offset_table,
+        _record.next_frame_index,
       );
     })();
     return new Ok([toList([]), filter$1]);
@@ -818,7 +953,6 @@ function process_next_pixel_data_token(filter, token) {
       let _record = filter;
       return new PixelDataFilter(
         _record.is_encapsulated,
-        _record.details_filter,
         _record.details,
         _record.pixel_data_filter,
         _record.native_pixel_data_frame_size,
@@ -826,6 +960,7 @@ function process_next_pixel_data_token(filter, token) {
         pixel_data_write_offset,
         _record.pixel_data_read_offset,
         _record.offset_table,
+        _record.next_frame_index,
       );
     })();
     let $ = filter$1.is_encapsulated;
@@ -849,80 +984,67 @@ function process_next_pixel_data_token(filter, token) {
 }
 
 export function add_token(filter, token) {
-  let details_filter = (() => {
-    let $ = filter.details_filter;
-    if ($ instanceof Some) {
-      let details_filter = $[0];
-      return new Some($p10_filter_transform.add_token(details_filter, token)[1]);
-    } else {
-      return new None();
-    }
-  })();
-  let filter$1 = (() => {
-    let _record = filter;
-    return new PixelDataFilter(
-      _record.is_encapsulated,
-      details_filter,
-      _record.details,
-      _record.pixel_data_filter,
-      _record.native_pixel_data_frame_size,
-      _record.pixel_data,
-      _record.pixel_data_write_offset,
-      _record.pixel_data_read_offset,
-      _record.offset_table,
+  let details = (() => {
+    let _pipe = $p10_custom_type_transform.add_token(filter.details, token);
+    return $result.map_error(
+      _pipe,
+      (e) => {
+        if (e instanceof $p10_custom_type_transform.DataError) {
+          let e$1 = e[0];
+          return new DataError(e$1);
+        } else {
+          let e$1 = e[0];
+          return new P10Error(e$1);
+        }
+      },
     );
   })();
-  return $bool.guard(
-    $p10_token.is_header_token(token),
-    new Ok([toList([]), filter$1]),
-    () => {
-      let $ = $p10_filter_transform.add_token(filter$1.pixel_data_filter, token);
-      let is_pixel_data_token = $[0];
-      let pixel_data_filter = $[1];
-      let filter$2 = (() => {
-        let _record = filter$1;
+  return $result.try$(
+    details,
+    (details) => {
+      let filter$1 = (() => {
+        let _record = filter;
         return new PixelDataFilter(
           _record.is_encapsulated,
-          _record.details_filter,
-          _record.details,
-          pixel_data_filter,
+          details,
+          _record.pixel_data_filter,
           _record.native_pixel_data_frame_size,
           _record.pixel_data,
           _record.pixel_data_write_offset,
           _record.pixel_data_read_offset,
           _record.offset_table,
+          _record.next_frame_index,
         );
       })();
       return $bool.guard(
-        !is_pixel_data_token,
-        new Ok([toList([]), filter$2]),
+        $p10_token.is_header_token(token),
+        new Ok([toList([]), filter$1]),
         () => {
-          let filter$3 = (() => {
-            let $1 = filter$2.details_filter;
-            if ($1 instanceof Some) {
-              let details_filter$1 = $1[0];
-              let details = (() => {
-                let _pipe = details_filter$1;
-                let _pipe$1 = $p10_filter_transform.data_set(_pipe);
-                return $result.unwrap(_pipe$1, $data_set.new$());
-              })();
-              let _record = filter$2;
-              return new PixelDataFilter(
-                _record.is_encapsulated,
-                new None(),
-                details,
-                _record.pixel_data_filter,
-                _record.native_pixel_data_frame_size,
-                _record.pixel_data,
-                _record.pixel_data_write_offset,
-                _record.pixel_data_read_offset,
-                _record.offset_table,
-              );
-            } else {
-              return filter$2;
-            }
+          let $ = $p10_filter_transform.add_token(
+            filter$1.pixel_data_filter,
+            token,
+          );
+          let is_pixel_data_token = $[0];
+          let pixel_data_filter = $[1];
+          let filter$2 = (() => {
+            let _record = filter$1;
+            return new PixelDataFilter(
+              _record.is_encapsulated,
+              _record.details,
+              pixel_data_filter,
+              _record.native_pixel_data_frame_size,
+              _record.pixel_data,
+              _record.pixel_data_write_offset,
+              _record.pixel_data_read_offset,
+              _record.offset_table,
+              _record.next_frame_index,
+            );
           })();
-          return process_next_pixel_data_token(filter$3, token);
+          return $bool.guard(
+            !is_pixel_data_token,
+            new Ok([toList([]), filter$2]),
+            () => { return process_next_pixel_data_token(filter$2, token); },
+          );
         },
       );
     },

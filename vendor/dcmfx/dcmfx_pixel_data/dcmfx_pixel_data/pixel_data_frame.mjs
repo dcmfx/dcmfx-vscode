@@ -11,19 +11,25 @@ import {
 } from "../gleam.mjs";
 
 class PixelDataFrame extends $CustomType {
-  constructor(fragments, length) {
+  constructor(frame_index, fragments, length) {
     super();
+    this.frame_index = frame_index;
     this.fragments = fragments;
     this.length = length;
   }
 }
 
-export function new$() {
-  return new PixelDataFrame(toList([]), 0);
+export function new$(frame_index) {
+  return new PixelDataFrame(frame_index, toList([]), 0);
+}
+
+export function index(frame) {
+  return frame.frame_index;
 }
 
 export function push_fragment(frame, data) {
   return new PixelDataFrame(
+    frame.frame_index,
     listPrepend(data, frame.fragments),
     frame.length + $bit_array.byte_size(data),
   );
@@ -61,7 +67,7 @@ function do_drop_end_bytes(loop$frame, loop$target_length) {
             throw makeError(
               "let_assert",
               "dcmfx_pixel_data/pixel_data_frame",
-              75,
+              89,
               "do_drop_end_bytes",
               "Pattern match failed, no pattern matched the value.",
               { value: $3 }
@@ -69,11 +75,16 @@ function do_drop_end_bytes(loop$frame, loop$target_length) {
           }
           let new_fragment = $3[0];
           return new PixelDataFrame(
+            frame.frame_index,
             listPrepend(new_fragment, fragments$1),
             target_length,
           );
         } else {
-          let _pipe = new PixelDataFrame(fragments$1, length$1);
+          let _pipe = new PixelDataFrame(
+            frame.frame_index,
+            fragments$1,
+            length$1,
+          );
           loop$frame = _pipe;
           loop$target_length = target_length;
         }

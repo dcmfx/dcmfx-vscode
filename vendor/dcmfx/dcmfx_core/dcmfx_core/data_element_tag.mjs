@@ -1,6 +1,7 @@
 /// <reference types="./data_element_tag.d.mts" />
 import * as $bool from "../../gleam_stdlib/gleam/bool.mjs";
 import * as $int from "../../gleam_stdlib/gleam/int.mjs";
+import * as $order from "../../gleam_stdlib/gleam/order.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../gleam_stdlib/gleam/string.mjs";
 import * as $utils from "../dcmfx_core/internal/utils.mjs";
@@ -24,6 +25,10 @@ export function is_private_creator(tag) {
 
 export function to_int(tag) {
   return tag.group * 65_536 + tag.element;
+}
+
+export function compare(lhs, rhs) {
+  return $int.compare(to_int(lhs), to_int(rhs));
 }
 
 export function from_hex_string(tag) {

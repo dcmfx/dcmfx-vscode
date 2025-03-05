@@ -97,6 +97,11 @@ export function bytes(value: DataElementValue$): _.Result<
   $data_error.DataError$
 >;
 
+export function vr_bytes(
+  value: DataElementValue$,
+  allowed_vrs: _.List<$value_representation.ValueRepresentation$>
+): _.Result<_.BitArray, $data_error.DataError$>;
+
 export function encapsulated_pixel_data(value: DataElementValue$): _.Result<
   _.List<_.BitArray>,
   $data_error.DataError$
@@ -116,6 +121,11 @@ export function get_strings(value: DataElementValue$): _.Result<
 
 export function get_string(value: DataElementValue$): _.Result<
   string,
+  $data_error.DataError$
+>;
+
+export function get_lookup_table_descriptor(value: DataElementValue$): _.Result<
+  [number, number, number],
   $data_error.DataError$
 >;
 

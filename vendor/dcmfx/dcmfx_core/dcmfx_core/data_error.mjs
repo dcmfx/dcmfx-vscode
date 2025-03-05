@@ -49,6 +49,14 @@ class ValueLengthInvalid extends $CustomType {
   }
 }
 
+class ValueUnsupported extends $CustomType {
+  constructor(details, path) {
+    super();
+    this.details = details;
+    this.path = path;
+  }
+}
+
 export function to_string(error) {
   let optional_path_to_string = (path) => {
     let _pipe = path;
@@ -69,10 +77,13 @@ export function to_string(error) {
       let details = error.details;
       let path$1 = error.path;
       return (("Invalid value at " + optional_path_to_string(path$1)) + ", details: ") + details;
-    } else {
+    } else if (error instanceof ValueLengthInvalid) {
       let details = error.details;
       let path$1 = error.path;
       return (("Invalid value length at " + optional_path_to_string(path$1)) + ", details: ") + details;
+    } else {
+      let details = error.details;
+      return "Value unsupported, details: " + details;
     }
   })();
 }
@@ -97,6 +108,10 @@ export function new_value_length_invalid(vr, length, details) {
   return new ValueLengthInvalid(vr, length, details, new None());
 }
 
+export function new_value_unsupported(details) {
+  return new ValueUnsupported(details, new None());
+}
+
 export function path(error) {
   if (error instanceof TagNotPresent) {
     let path$1 = error.path;
@@ -108,6 +123,9 @@ export function path(error) {
     let path$1 = error.path;
     return path$1;
   } else if (error instanceof ValueInvalid) {
+    let path$1 = error.path;
+    return path$1;
+  } else if (error instanceof ValueLengthInvalid) {
     let path$1 = error.path;
     return path$1;
   } else {
@@ -134,11 +152,14 @@ export function with_path(error, path) {
   } else if (error instanceof ValueInvalid) {
     let details = error.details;
     return new ValueInvalid(details, new Some(path));
-  } else {
+  } else if (error instanceof ValueLengthInvalid) {
     let vr = error.vr;
     let length = error.length;
     let details = error.details;
     return new ValueLengthInvalid(vr, length, details, new Some(path));
+  } else {
+    let details = error.details;
+    return new ValueUnsupported(details, new Some(path));
   }
 }
 
@@ -150,9 +171,11 @@ export function name(error) {
   } else if (error instanceof MultiplicityMismatch) {
     return "Multiplicity mismatch";
   } else if (error instanceof ValueInvalid) {
-    return "Value is invalid";
+    return "Invalid value";
+  } else if (error instanceof ValueLengthInvalid) {
+    return "Invalid value length";
   } else {
-    return "Value length is invalid";
+    return "Unsupported value";
   }
 }
 
@@ -251,6 +274,9 @@ export function to_lines(error, task_description) {
         ("  Length: " + $int.to_string(length)) + " bytes",
         "  Details: " + details,
       ]);
+    } else if (error instanceof ValueUnsupported) {
+      let details = error.details;
+      return toList(["  Details: " + details]);
     } else {
       return toList([]);
     }

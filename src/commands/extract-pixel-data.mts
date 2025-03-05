@@ -110,7 +110,13 @@ function* doExtractDicomPixelData(
               gleamResultToEffect(
                 pixel_data_filter.add_token(pixelDataFilter, token),
               ),
-              Effect.mapError((e) => data_error.to_lines(e, "").toArray()),
+              Effect.mapError((e) => {
+                if (e instanceof pixel_data_filter.P10Error) {
+                  return p10_error.to_lines(e[0], "").toArray();
+                } else {
+                  return data_error.to_lines(e[0], "").toArray();
+                }
+              }),
             );
 
             pixelDataFilter = newPixelDataFilter;
@@ -157,7 +163,13 @@ function* doExtractDicomJsonPixelData(
   const dataSet = yield* readDicomJsonDataSet(uri);
   const frames = yield* pipe(
     gleamResultToEffect(dcmfx_pixel_data.get_pixel_data_frames(dataSet)),
-    Effect.mapError((e) => data_error.to_lines(e, "").toArray()),
+    Effect.mapError((e) => {
+      if (e instanceof pixel_data_filter.P10Error) {
+        return p10_error.to_lines(e[0], "").toArray();
+      } else {
+        return data_error.to_lines(e[0], "").toArray();
+      }
+    }),
   );
 
   const transferSyntax = yield* pipe(

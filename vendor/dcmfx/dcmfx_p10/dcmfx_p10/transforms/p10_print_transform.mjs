@@ -20,7 +20,7 @@ import {
   isEqual,
 } from "../../gleam.mjs";
 
-export class P10PrintTransform extends $CustomType {
+class P10PrintTransform extends $CustomType {
   constructor(print_options, indent, current_data_element, ignore_data_element_value_bytes, value_max_width, private_creators, last_data_element_private_creator_tag) {
     super();
     this.print_options = print_options;

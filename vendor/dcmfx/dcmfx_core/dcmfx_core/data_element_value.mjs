@@ -177,6 +177,15 @@ export function bytes(value) {
   }
 }
 
+export function vr_bytes(value, allowed_vrs) {
+  let $ = $list.contains(allowed_vrs, value_representation(value));
+  if ($) {
+    return bytes(value);
+  } else {
+    return new Error($data_error.new_value_not_present());
+  }
+}
+
 export function encapsulated_pixel_data(value) {
   if (value instanceof EncapsulatedPixelDataValue) {
     let items = value.items;
@@ -538,6 +547,31 @@ export function get_string(value) {
   }
 }
 
+export function get_lookup_table_descriptor(value) {
+  if (value instanceof LookupTableDescriptorValue) {
+    let vr = value.vr;
+    let bytes$1 = value.bytes;
+    if (vr instanceof $value_representation.SignedShort && bytes$1.length == 6) {
+      let entry_count = bytes$1.intFromSlice(0, 2, false, false);
+      let first_input_value = bytes$1.intFromSlice(2, 4, false, true);
+      let bits_per_entry = bytes$1.intFromSlice(4, 6, false, false);
+      return new Ok([entry_count, first_input_value, bits_per_entry]);
+    } else if (vr instanceof $value_representation.UnsignedShort &&
+    bytes$1.length == 6) {
+      let entry_count = bytes$1.intFromSlice(0, 2, false, false);
+      let first_input_value = bytes$1.intFromSlice(2, 4, false, false);
+      let bits_per_entry = bytes$1.intFromSlice(4, 6, false, false);
+      return new Ok([entry_count, first_input_value, bits_per_entry]);
+    } else {
+      return new Error(
+        $data_error.new_value_invalid("Invalid lookup table descriptor"),
+      );
+    }
+  } else {
+    return new Error($data_error.new_value_not_present());
+  }
+}
+
 export function get_ints(value) {
   if (value instanceof BinaryValue &&
   value.vr instanceof $value_representation.IntegerString) {
@@ -576,24 +610,15 @@ export function get_ints(value) {
       $data_error.new_value_invalid("Invalid Uint16 data"),
     );
   } else if (value instanceof LookupTableDescriptorValue) {
-    let vr = value.vr;
-    let bytes$1 = value.bytes;
-    if (vr instanceof $value_representation.SignedShort && bytes$1.length == 6) {
-      let entry_count = bytes$1.intFromSlice(0, 2, false, false);
-      let first_input_value = bytes$1.intFromSlice(2, 4, false, true);
-      let bits_per_entry = bytes$1.intFromSlice(4, 6, false, false);
-      return new Ok(toList([entry_count, first_input_value, bits_per_entry]));
-    } else if (vr instanceof $value_representation.UnsignedShort &&
-    bytes$1.length == 6) {
-      let entry_count = bytes$1.intFromSlice(0, 2, false, false);
-      let first_input_value = bytes$1.intFromSlice(2, 4, false, false);
-      let bits_per_entry = bytes$1.intFromSlice(4, 6, false, false);
-      return new Ok(toList([entry_count, first_input_value, bits_per_entry]));
-    } else {
-      return new Error(
-        $data_error.new_value_invalid("Invalid lookup table descriptor"),
-      );
-    }
+    return $result.map(
+      get_lookup_table_descriptor(value),
+      (_use0) => {
+        let entry_count = _use0[0];
+        let first_input_value = _use0[1];
+        let bits_per_entry = _use0[2];
+        return toList([entry_count, first_input_value, bits_per_entry]);
+      },
+    );
   } else {
     return new Error($data_error.new_value_not_present());
   }

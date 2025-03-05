@@ -13,9 +13,11 @@ import * as $int from "../../gleam_stdlib/gleam/int.mjs";
 import * as $list from "../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
+import * as $pair from "../../gleam_stdlib/gleam/pair.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
 import * as $data_element_header from "../dcmfx_p10/internal/data_element_header.mjs";
 import { DataElementHeader } from "../dcmfx_p10/internal/data_element_header.mjs";
+import * as $p10_location from "../dcmfx_p10/internal/p10_location.mjs";
 import * as $value_length from "../dcmfx_p10/internal/value_length.mjs";
 import * as $zlib from "../dcmfx_p10/internal/zlib.mjs";
 import * as $flush_command from "../dcmfx_p10/internal/zlib/flush_command.mjs";
@@ -31,6 +33,7 @@ import {
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
+  isEqual,
   toBitArray,
   sizedInt,
   stringBits,
@@ -44,7 +47,7 @@ export class P10WriteConfig extends $CustomType {
 }
 
 class P10WriteContext extends $CustomType {
-  constructor(config, p10_bytes, p10_total_byte_count, is_ended, transfer_syntax, zlib_stream, path, sequence_item_counts) {
+  constructor(config, p10_bytes, p10_total_byte_count, is_ended, transfer_syntax, zlib_stream, location, path) {
     super();
     this.config = config;
     this.p10_bytes = p10_bytes;
@@ -52,8 +55,8 @@ class P10WriteContext extends $CustomType {
     this.is_ended = is_ended;
     this.transfer_syntax = transfer_syntax;
     this.zlib_stream = zlib_stream;
+    this.location = location;
     this.path = path;
-    this.sequence_item_counts = sequence_item_counts;
   }
 }
 
@@ -69,8 +72,8 @@ export function new_write_context() {
     false,
     $transfer_syntax.implicit_vr_little_endian,
     new None(),
+    $p10_location.new$(),
     $data_set_path.new$(),
-    toList([]),
   );
 }
 
@@ -86,8 +89,8 @@ export function with_config(context, config) {
     _record.is_ended,
     _record.transfer_syntax,
     _record.zlib_stream,
+    _record.location,
     _record.path,
-    _record.sequence_item_counts,
   );
 }
 
@@ -104,8 +107,8 @@ export function read_bytes(context) {
         _record.is_ended,
         _record.transfer_syntax,
         _record.zlib_stream,
+        _record.location,
         _record.path,
-        _record.sequence_item_counts,
       );
     })(),
   ];
@@ -209,7 +212,6 @@ export function data_element_header_to_bytes(header, endianness, context) {
 export function data_set_to_tokens(data_set, callback_context, token_callback) {
   let remove_fmi_transform = $p10_filter_transform.new$(
     (tag, _, _1) => { return tag.group !== 2; },
-    false,
   );
   let $ = (() => {
     let _pipe = $data_set.new$();
@@ -223,7 +225,7 @@ export function data_set_to_tokens(data_set, callback_context, token_callback) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      554,
+      599,
       "data_set_to_tokens",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -293,7 +295,7 @@ function prepare_file_meta_information_token_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      650,
+      695,
       "prepare_file_meta_information_token_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -307,7 +309,7 @@ function prepare_file_meta_information_token_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      652,
+      697,
       "prepare_file_meta_information_token_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $1 }
@@ -321,7 +323,7 @@ function prepare_file_meta_information_token_data_set(file_meta_information) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      656,
+      701,
       "prepare_file_meta_information_token_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $2 }
@@ -453,6 +455,7 @@ function token_to_bytes(token, context) {
       context,
     );
   } else if (token instanceof $p10_token.DataElementValueBytes) {
+    let tag = token.tag;
     let vr = token.vr;
     let data = token.data;
     let _pipe = (() => {
@@ -460,7 +463,7 @@ function token_to_bytes(token, context) {
       if ($ instanceof LittleEndian) {
         return data;
       } else {
-        return $value_representation.swap_endianness(vr, data);
+        return $p10_location.swap_endianness(context.location, tag, vr, data);
       }
     })();
     return new Ok(_pipe);
@@ -596,8 +599,8 @@ export function write_token(context, token) {
                 _record.is_ended,
                 new_transfer_syntax,
                 zlib_stream,
+                _record.location,
                 _record.path,
-                _record.sequence_item_counts,
               );
             })();
             return $result.map(
@@ -613,8 +616,8 @@ export function write_token(context, token) {
                   _record.is_ended,
                   _record.transfer_syntax,
                   _record.zlib_stream,
+                  _record.location,
                   _record.path,
-                  _record.sequence_item_counts,
                 );
               },
             );
@@ -642,8 +645,8 @@ export function write_token(context, token) {
               true,
               _record.transfer_syntax,
               new None(),
+              _record.location,
               _record.path,
-              _record.sequence_item_counts,
             );
           })();
           return new Ok(_pipe);
@@ -658,114 +661,159 @@ export function write_token(context, token) {
                 true,
                 _record.transfer_syntax,
                 _record.zlib_stream,
+                _record.location,
                 _record.path,
-                _record.sequence_item_counts,
               );
             })(),
           );
         }
       } else {
+        let map_to_p10_token_stream_error = (_capture) => {
+          return $result.map_error(
+            _capture,
+            (details) => {
+              return new $p10_error.TokenStreamInvalid(
+                "Writing token to context",
+                details,
+                token,
+              );
+            },
+          );
+        };
         let context$1 = (() => {
           let _pipe = (() => {
             if (token instanceof $p10_token.DataElementHeader) {
               let tag = token.tag;
-              let _pipe = $data_set_path.add_data_element(context.path, tag);
-              return $result.map(
-                _pipe,
+              let path = $data_set_path.add_data_element(context.path, tag);
+              return $result.try$(
+                path,
                 (path) => {
-                  let _record = context;
-                  return new P10WriteContext(
-                    _record.config,
-                    _record.p10_bytes,
-                    _record.p10_total_byte_count,
-                    _record.is_ended,
-                    _record.transfer_syntax,
-                    _record.zlib_stream,
-                    path,
-                    _record.sequence_item_counts,
+                  return new Ok(
+                    (() => {
+                      let _record = context;
+                      return new P10WriteContext(
+                        _record.config,
+                        _record.p10_bytes,
+                        _record.p10_total_byte_count,
+                        _record.is_ended,
+                        _record.transfer_syntax,
+                        _record.zlib_stream,
+                        _record.location,
+                        path,
+                      );
+                    })(),
                   );
                 },
               );
             } else if (token instanceof $p10_token.SequenceStart) {
               let tag = token.tag;
-              let _pipe = $data_set_path.add_data_element(context.path, tag);
-              return $result.map(
-                _pipe,
-                (path) => {
-                  let _record = context;
-                  return new P10WriteContext(
-                    _record.config,
-                    _record.p10_bytes,
-                    _record.p10_total_byte_count,
-                    _record.is_ended,
-                    _record.transfer_syntax,
-                    _record.zlib_stream,
+              let location = (() => {
+                let _pipe = context.location;
+                return $p10_location.add_sequence(_pipe, tag, false, new None());
+              })();
+              return $result.try$(
+                location,
+                (location) => {
+                  let path = $data_set_path.add_data_element(context.path, tag);
+                  return $result.try$(
                     path,
-                    listPrepend(0, context.sequence_item_counts),
+                    (path) => {
+                      return new Ok(
+                        (() => {
+                          let _record = context;
+                          return new P10WriteContext(
+                            _record.config,
+                            _record.p10_bytes,
+                            _record.p10_total_byte_count,
+                            _record.is_ended,
+                            _record.transfer_syntax,
+                            _record.zlib_stream,
+                            location,
+                            path,
+                          );
+                        })(),
+                      );
+                    },
                   );
                 },
               );
             } else if (token instanceof $p10_token.SequenceItemStart) {
-              let $ = context.sequence_item_counts;
-              if (!$.atLeastLength(1)) {
-                throw makeError(
-                  "let_assert",
-                  "dcmfx_p10/p10_write",
-                  234,
-                  "",
-                  "Pattern match failed, no pattern matched the value.",
-                  { value: $ }
-                )
-              }
-              let count = $.head;
-              let rest = $.tail;
-              let _pipe = $data_set_path.add_sequence_item(context.path, count);
-              return $result.map(
-                _pipe,
-                (path) => {
-                  let sequence_item_counts = listPrepend(count + 1, rest);
-                  let _record = context;
-                  return new P10WriteContext(
-                    _record.config,
-                    _record.p10_bytes,
-                    _record.p10_total_byte_count,
-                    _record.is_ended,
-                    _record.transfer_syntax,
-                    _record.zlib_stream,
+              let location = (() => {
+                let _pipe = context.location;
+                return $p10_location.add_item(
+                  _pipe,
+                  new None(),
+                  new $value_length.Undefined(),
+                );
+              })();
+              return $result.try$(
+                location,
+                (_use0) => {
+                  let item_index = _use0[0];
+                  let location$1 = _use0[1];
+                  let path = $data_set_path.add_sequence_item(
+                    context.path,
+                    item_index,
+                  );
+                  return $result.try$(
                     path,
-                    sequence_item_counts,
+                    (path) => {
+                      return new Ok(
+                        (() => {
+                          let _record = context;
+                          return new P10WriteContext(
+                            _record.config,
+                            _record.p10_bytes,
+                            _record.p10_total_byte_count,
+                            _record.is_ended,
+                            _record.transfer_syntax,
+                            _record.zlib_stream,
+                            location$1,
+                            path,
+                          );
+                        })(),
+                      );
+                    },
                   );
                 },
               );
             } else if (token instanceof $p10_token.PixelDataItem) {
-              let $ = context.sequence_item_counts;
-              if (!$.atLeastLength(1)) {
-                throw makeError(
-                  "let_assert",
-                  "dcmfx_p10/p10_write",
-                  234,
-                  "",
-                  "Pattern match failed, no pattern matched the value.",
-                  { value: $ }
-                )
-              }
-              let count = $.head;
-              let rest = $.tail;
-              let _pipe = $data_set_path.add_sequence_item(context.path, count);
-              return $result.map(
-                _pipe,
-                (path) => {
-                  let sequence_item_counts = listPrepend(count + 1, rest);
-                  let _record = context;
-                  return new P10WriteContext(
-                    _record.config,
-                    _record.p10_bytes,
-                    _record.p10_total_byte_count,
-                    _record.is_ended,
-                    _record.transfer_syntax,
-                    _record.zlib_stream,
+              let location = (() => {
+                let _pipe = context.location;
+                return $p10_location.add_item(
+                  _pipe,
+                  new None(),
+                  new $value_length.Undefined(),
+                );
+              })();
+              return $result.try$(
+                location,
+                (_use0) => {
+                  let item_index = _use0[0];
+                  let location$1 = _use0[1];
+                  let path = $data_set_path.add_sequence_item(
+                    context.path,
+                    item_index,
+                  );
+                  return $result.try$(
                     path,
-                    sequence_item_counts,
+                    (path) => {
+                      return new Ok(
+                        (() => {
+                          let _record = context;
+                          return new P10WriteContext(
+                            _record.config,
+                            _record.p10_bytes,
+                            _record.p10_total_byte_count,
+                            _record.is_ended,
+                            _record.transfer_syntax,
+                            _record.zlib_stream,
+                            location$1,
+                            path,
+                          );
+                        })(),
+                      );
+                    },
                   );
                 },
               );
@@ -773,16 +821,7 @@ export function write_token(context, token) {
               return new Ok(context);
             }
           })();
-          return $result.map_error(
-            _pipe,
-            (_) => {
-              return new $p10_error.TokenStreamInvalid(
-                "Writing token to context",
-                "The data set path is not in a valid state for this token",
-                token,
-              );
-            },
-          );
+          return map_to_p10_token_stream_error(_pipe);
         })();
         return $result.try$(
           context$1,
@@ -791,88 +830,138 @@ export function write_token(context, token) {
               token_to_bytes(token, context),
               (token_bytes) => {
                 let context$1 = (() => {
-                  let _pipe = (() => {
-                    if (token instanceof $p10_token.DataElementValueBytes &&
-                    token.bytes_remaining === 0) {
-                      let _pipe = $data_set_path.pop(context.path);
-                      return $result.map(
-                        _pipe,
-                        (path) => {
-                          let _record = context;
-                          return new P10WriteContext(
-                            _record.config,
-                            _record.p10_bytes,
-                            _record.p10_total_byte_count,
-                            _record.is_ended,
-                            _record.transfer_syntax,
-                            _record.zlib_stream,
-                            path,
-                            _record.sequence_item_counts,
-                          );
-                        },
-                      );
-                    } else if (token instanceof $p10_token.SequenceItemDelimiter) {
-                      let _pipe = $data_set_path.pop(context.path);
-                      return $result.map(
-                        _pipe,
-                        (path) => {
-                          let _record = context;
-                          return new P10WriteContext(
-                            _record.config,
-                            _record.p10_bytes,
-                            _record.p10_total_byte_count,
-                            _record.is_ended,
-                            _record.transfer_syntax,
-                            _record.zlib_stream,
-                            path,
-                            _record.sequence_item_counts,
-                          );
-                        },
-                      );
-                    } else if (token instanceof $p10_token.SequenceDelimiter) {
-                      let $ = $list.rest(context.sequence_item_counts);
-                      if (!$.isOk()) {
-                        throw makeError(
-                          "let_assert",
-                          "dcmfx_p10/p10_write",
-                          268,
-                          "",
-                          "Pattern match failed, no pattern matched the value.",
-                          { value: $ }
-                        )
+                  if (token instanceof $p10_token.DataElementValueBytes &&
+                  token.bytes_remaining === 0) {
+                    let tag = token.tag;
+                    let vr = token.vr;
+                    let data = token.data;
+                    let is_pixel_or_waveform_data = (isEqual(
+                      tag,
+                      $dictionary.bits_allocated.tag
+                    )) || (isEqual(tag, $dictionary.waveform_bits_allocated.tag));
+                    let location = (() => {
+                      if (is_pixel_or_waveform_data) {
+                        let _pipe = $p10_location.add_clarifying_data_element(
+                          context.location,
+                          tag,
+                          vr,
+                          data,
+                        );
+                        return $result.map(_pipe, $pair.second);
+                      } else {
+                        return new Ok(context.location);
                       }
-                      let sequence_item_counts = $[0];
-                      let _pipe = $data_set_path.pop(context.path);
-                      return $result.map(
-                        _pipe,
-                        (path) => {
-                          let _record = context;
-                          return new P10WriteContext(
-                            _record.config,
-                            _record.p10_bytes,
-                            _record.p10_total_byte_count,
-                            _record.is_ended,
-                            _record.transfer_syntax,
-                            _record.zlib_stream,
+                    })();
+                    return $result.try$(
+                      location,
+                      (location) => {
+                        let _pipe = (() => {
+                          let location$1 = (() => {
+                            let $ = isEqual(tag, $dictionary.item.tag);
+                            if ($) {
+                              return $p10_location.end_item(location);
+                            } else {
+                              return new Ok(location);
+                            }
+                          })();
+                          return $result.try$(
+                            location$1,
+                            (location) => {
+                              let path = $data_set_path.pop(context.path);
+                              return $result.try$(
+                                path,
+                                (path) => {
+                                  return new Ok(
+                                    (() => {
+                                      let _record = context;
+                                      return new P10WriteContext(
+                                        _record.config,
+                                        _record.p10_bytes,
+                                        _record.p10_total_byte_count,
+                                        _record.is_ended,
+                                        _record.transfer_syntax,
+                                        _record.zlib_stream,
+                                        location,
+                                        path,
+                                      );
+                                    })(),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        })();
+                        return map_to_p10_token_stream_error(_pipe);
+                      },
+                    );
+                  } else if (token instanceof $p10_token.SequenceItemDelimiter) {
+                    let _pipe = (() => {
+                      let location = $p10_location.end_item(context.location);
+                      return $result.try$(
+                        location,
+                        (location) => {
+                          let path = $data_set_path.pop(context.path);
+                          return $result.try$(
                             path,
-                            sequence_item_counts,
+                            (path) => {
+                              return new Ok(
+                                (() => {
+                                  let _record = context;
+                                  return new P10WriteContext(
+                                    _record.config,
+                                    _record.p10_bytes,
+                                    _record.p10_total_byte_count,
+                                    _record.is_ended,
+                                    _record.transfer_syntax,
+                                    _record.zlib_stream,
+                                    location,
+                                    path,
+                                  );
+                                })(),
+                              );
+                            },
                           );
                         },
                       );
-                    } else {
-                      return new Ok(context);
-                    }
-                  })();
-                  return $result.map_error(
-                    _pipe,
-                    (_) => {
-                      return new $p10_error.TokenStreamInvalid(
-                        "Writing token to context",
-                        "The data set path is empty",
-                        token,
+                    })();
+                    return map_to_p10_token_stream_error(_pipe);
+                  } else if (token instanceof $p10_token.SequenceDelimiter) {
+                    let _pipe = (() => {
+                      let location = $p10_location.end_sequence(
+                        context.location,
                       );
-                    },
-                  );
+                      return $result.try$(
+                        location,
+                        (_use0) => {
+                          let location$1 = _use0[1];
+                          let path = $data_set_path.pop(context.path);
+                          return $result.try$(
+                            path,
+                            (path) => {
+                              return new Ok(
+                                (() => {
+                                  let _record = context;
+                                  return new P10WriteContext(
+                                    _record.config,
+                                    _record.p10_bytes,
+                                    _record.p10_total_byte_count,
+                                    _record.is_ended,
+                                    _record.transfer_syntax,
+                                    _record.zlib_stream,
+                                    location$1,
+                                    path,
+                                  );
+                                })(),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    })();
+                    return map_to_p10_token_stream_error(_pipe);
+                  } else {
+                    return new Ok(context);
+                  }
                 })();
                 return $result.map(
                   context$1,
@@ -899,8 +988,8 @@ export function write_token(context, token) {
                         _record.is_ended,
                         _record.transfer_syntax,
                         _record.zlib_stream,
+                        _record.location,
                         _record.path,
-                        _record.sequence_item_counts,
                       );
                     } else {
                       let _record = context;
@@ -913,8 +1002,8 @@ export function write_token(context, token) {
                         _record.is_ended,
                         _record.transfer_syntax,
                         _record.zlib_stream,
+                        _record.location,
                         _record.path,
-                        _record.sequence_item_counts,
                       );
                     }
                   },

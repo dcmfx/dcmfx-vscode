@@ -140,9 +140,18 @@ export function to_lines(error, task_description) {
     } else if (error instanceof SpecificCharacterSetInvalid) {
       let charset = error.specific_character_set;
       let details = error.details;
-      return listPrepend(
-        "  Details: " + details,
-        listPrepend("  Specific character set: " + charset, lines$2),
+      return $list.flatten(
+        toList([
+          (() => {
+            if (details === "") {
+              return toList([]);
+            } else {
+              return toList(["  Details: " + details]);
+            }
+          })(),
+          toList(["  Specific character set: " + charset]),
+          lines$2,
+        ]),
       );
     } else if (error instanceof TokenStreamInvalid) {
       let details = error.details;

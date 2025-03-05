@@ -6,7 +6,7 @@ import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
 import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
-export class P10PrintTransform extends _.CustomType {
+declare class P10PrintTransform extends _.CustomType {
   constructor(
     print_options: $data_set_print.DataSetPrintOptions$,
     indent: number,

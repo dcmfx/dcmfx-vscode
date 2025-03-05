@@ -20,11 +20,13 @@ declare class RootDataSet extends _.CustomType {
 
 declare class Sequence extends _.CustomType {
   constructor(
+    tag: $data_element_tag.DataElementTag$,
     is_implicit_vr: boolean,
     ends_at: $option.Option$<number>,
     item_count: number
   );
   
+  tag: $data_element_tag.DataElementTag$;
   is_implicit_vr: boolean;
   ends_at: $option.Option$<number>;
   item_count: number;
@@ -89,7 +91,7 @@ export function pending_delimiter_tokens(location: _.List<LocationEntry$>): _.Li
 >;
 
 export function end_sequence(location: _.List<LocationEntry$>): _.Result<
-  _.List<LocationEntry$>,
+  [$data_element_tag.DataElementTag$, _.List<LocationEntry$>],
   string
 >;
 
@@ -103,6 +105,17 @@ export function end_item(location: _.List<LocationEntry$>): _.Result<
   string
 >;
 
+export function bits_allocated(location: _.List<LocationEntry$>): $option.Option$<
+  number
+>;
+
+export function swap_endianness(
+  location: _.List<LocationEntry$>,
+  tag: $data_element_tag.DataElementTag$,
+  vr: $value_representation.ValueRepresentation$,
+  data: _.BitArray
+): _.BitArray;
+
 export function add_sequence(
   location: _.List<LocationEntry$>,
   tag: $data_element_tag.DataElementTag$,
@@ -114,7 +127,7 @@ export function add_item(
   location: _.List<LocationEntry$>,
   ends_at: $option.Option$<number>,
   length: $value_length.ValueLength$
-): _.Result<_.List<LocationEntry$>, string>;
+): _.Result<[number, _.List<LocationEntry$>], string>;
 
 export function add_clarifying_data_element(
   location: _.List<LocationEntry$>,

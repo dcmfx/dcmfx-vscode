@@ -40,8 +40,9 @@ export class DataElementHeader extends $CustomType {
 }
 
 export class DataElementValueBytes extends $CustomType {
-  constructor(vr, data, bytes_remaining) {
+  constructor(tag, vr, data, bytes_remaining) {
     super();
+    this.tag = tag;
     this.vr = vr;
     this.data = data;
     this.bytes_remaining = bytes_remaining;
@@ -56,7 +57,12 @@ export class SequenceStart extends $CustomType {
   }
 }
 
-export class SequenceDelimiter extends $CustomType {}
+export class SequenceDelimiter extends $CustomType {
+  constructor(tag) {
+    super();
+    this.tag = tag;
+  }
+}
 
 export class SequenceItemStart extends $CustomType {}
 
@@ -152,7 +158,7 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
     return $result.try$(
       token_callback(context, header_token),
       (context) => {
-        let _pipe = new DataElementValueBytes(vr, bytes, 0);
+        let _pipe = new DataElementValueBytes(tag, vr, bytes, 0);
         return ((_capture) => { return token_callback(context, _capture); })(
           _pipe,
         );
@@ -179,6 +185,7 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
                   context$1,
                   (context) => {
                     let value_bytes_token = new DataElementValueBytes(
+                      $dictionary.item.tag,
                       vr,
                       item,
                       0,
@@ -192,7 +199,7 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
           return $result.try$(
             context$1,
             (context) => {
-              return token_callback(context, new SequenceDelimiter());
+              return token_callback(context, new SequenceDelimiter(tag));
             },
           );
         },
@@ -203,7 +210,7 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_token",
-          210,
+          212,
           "data_element_to_tokens",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }
@@ -240,7 +247,7 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
           return $result.try$(
             context$1,
             (context) => {
-              return token_callback(context, new SequenceDelimiter());
+              return token_callback(context, new SequenceDelimiter(tag));
             },
           );
         },
