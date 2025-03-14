@@ -72,15 +72,13 @@ export function to_base36(x) {
 }
 
 export function power(base, exponent) {
-  let _pipe = base;
-  let _pipe$1 = to_float(_pipe);
-  return $float.power(_pipe$1, exponent);
+  let _pipe = to_float(base);
+  return $float.power(_pipe, exponent);
 }
 
 export function square_root(x) {
-  let _pipe = x;
-  let _pipe$1 = to_float(_pipe);
-  return $float.square_root(_pipe$1);
+  let _pipe = to_float(x);
+  return $float.square_root(_pipe);
 }
 
 export function compare(a, b) {
@@ -138,10 +136,10 @@ function sum_loop(loop$numbers, loop$initial) {
     let numbers = loop$numbers;
     let initial = loop$initial;
     if (numbers.atLeastLength(1)) {
-      let x = numbers.head;
+      let first = numbers.head;
       let rest = numbers.tail;
       loop$numbers = rest;
-      loop$initial = x + initial;
+      loop$initial = first + initial;
     } else {
       return initial;
     }
@@ -157,10 +155,10 @@ function product_loop(loop$numbers, loop$initial) {
     let numbers = loop$numbers;
     let initial = loop$initial;
     if (numbers.atLeastLength(1)) {
-      let x = numbers.head;
+      let first = numbers.head;
       let rest = numbers.tail;
       loop$numbers = rest;
-      loop$initial = x * initial;
+      loop$initial = first * initial;
     } else {
       return initial;
     }
@@ -168,11 +166,7 @@ function product_loop(loop$numbers, loop$initial) {
 }
 
 export function product(numbers) {
-  if (numbers.hasLength(0)) {
-    return 1;
-  } else {
-    return product_loop(numbers, 1);
-  }
+  return product_loop(numbers, 1);
 }
 
 function digits_loop(loop$x, loop$base, loop$acc) {

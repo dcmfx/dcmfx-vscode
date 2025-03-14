@@ -1,4 +1,5 @@
 import type * as $dynamic from "../../../gleam_stdlib/gleam/dynamic.d.mts";
+import type * as $decode from "../../../gleam_stdlib/gleam/dynamic/decode.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 export type Atom$ = unknown;
@@ -15,5 +16,5 @@ export function to_string(a: Atom$): string;
 
 export function from_dynamic(from: $dynamic.Dynamic$): _.Result<
   Atom$,
-  _.List<$dynamic.DecodeError$>
+  _.List<$decode.DecodeError$>
 >;

@@ -13,7 +13,7 @@ import {
 export { get, new$, size, to_list };
 
 export function is_empty(dict) {
-  return isEqual(dict, new$());
+  return size(dict) === 0;
 }
 
 function do_has_key(key, dict) {
@@ -35,10 +35,11 @@ function from_list_loop(loop$list, loop$initial) {
     if (list.hasLength(0)) {
       return initial;
     } else {
-      let x = list.head;
+      let key = list.head[0];
+      let value = list.head[1];
       let rest = list.tail;
       loop$list = rest;
-      loop$initial = insert(initial, x[0], x[1]);
+      loop$initial = insert(initial, key, value);
     }
   }
 }
@@ -54,10 +55,10 @@ function reverse_and_concat(loop$remaining, loop$accumulator) {
     if (remaining.hasLength(0)) {
       return accumulator;
     } else {
-      let item = remaining.head;
+      let first = remaining.head;
       let rest = remaining.tail;
       loop$remaining = rest;
-      loop$accumulator = listPrepend(item, accumulator);
+      loop$accumulator = listPrepend(first, accumulator);
     }
   }
 }
@@ -69,17 +70,16 @@ function do_keys_loop(loop$list, loop$acc) {
     if (list.hasLength(0)) {
       return reverse_and_concat(acc, toList([]));
     } else {
-      let first = list.head;
+      let key = list.head[0];
       let rest = list.tail;
       loop$list = rest;
-      loop$acc = listPrepend(first[0], acc);
+      loop$acc = listPrepend(key, acc);
     }
   }
 }
 
 export function keys(dict) {
-  let list_of_pairs = to_list(dict);
-  return do_keys_loop(list_of_pairs, toList([]));
+  return do_keys_loop(to_list(dict), toList([]));
 }
 
 function do_values_loop(loop$list, loop$acc) {
@@ -89,10 +89,10 @@ function do_values_loop(loop$list, loop$acc) {
     if (list.hasLength(0)) {
       return reverse_and_concat(acc, toList([]));
     } else {
-      let first = list.head;
+      let value = list.head[1];
       let rest = list.tail;
       loop$list = rest;
-      loop$acc = listPrepend(first[1], acc);
+      loop$acc = listPrepend(value, acc);
     }
   }
 }
@@ -181,11 +181,13 @@ export function drop(loop$dict, loop$disallowed_keys) {
 }
 
 export function upsert(dict, key, fun) {
-  let _pipe = dict;
-  let _pipe$1 = get(_pipe, key);
-  let _pipe$2 = $option.from_result(_pipe$1);
-  let _pipe$3 = fun(_pipe$2);
-  return ((_capture) => { return insert(dict, key, _capture); })(_pipe$3);
+  let $ = get(dict, key);
+  if ($.isOk()) {
+    let value = $[0];
+    return insert(dict, key, fun(new $option.Some(value)));
+  } else {
+    return insert(dict, key, fun(new $option.None()));
+  }
 }
 
 function fold_loop(loop$list, loop$initial, loop$fun) {

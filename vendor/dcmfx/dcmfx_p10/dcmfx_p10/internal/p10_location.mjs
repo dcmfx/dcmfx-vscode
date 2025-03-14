@@ -26,6 +26,7 @@ import {
   makeError,
   isEqual,
   toBitArray,
+  bitArraySliceToInt,
   stringBits,
 } from "../../gleam.mjs";
 
@@ -554,8 +555,8 @@ export function add_clarifying_data_element(location, tag, vr, value_bytes) {
       value_bytes,
     );
   } else if (vr instanceof $value_representation.UnsignedShort &&
-  value_bytes.length == 2) {
-    let value = value_bytes.intFromSlice(0, 2, false, false);
+  value_bytes.bitSize == 16) {
+    let value = bitArraySliceToInt(value_bytes, 0, 16, false, false);
     let location$1 = update_unsigned_short_clarifying_data_element(
       location,
       tag,

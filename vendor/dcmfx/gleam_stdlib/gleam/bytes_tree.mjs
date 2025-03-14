@@ -29,6 +29,8 @@ export function append_tree(first, second) {
   if (second instanceof Many) {
     let trees = second[0];
     return new Many(listPrepend(first, trees));
+  } else if (second instanceof Text) {
+    return new Many(toList([first, second]));
   } else {
     return new Many(toList([first, second]));
   }

@@ -3,9 +3,9 @@ import type * as $order from "../gleam/order.d.mts";
 
 export function from_string(x: string): _.BitArray;
 
-export function byte_size(x: _.BitArray): number;
-
 export function bit_size(x: _.BitArray): number;
+
+export function byte_size(x: _.BitArray): number;
 
 export function pad_to_bytes(x: _.BitArray): _.BitArray;
 

@@ -13,47 +13,47 @@ export class DecodeError extends _.CustomType {
 
 export type DecodeError$ = DecodeError;
 
-declare class Decoder<DNR> extends _.CustomType {
+declare class Decoder<DOZ> extends _.CustomType {
   constructor(function$: (x0: $dynamic.Dynamic$) => [any, _.List<DecodeError$>]);
   
   function$: (x0: $dynamic.Dynamic$) => [any, _.List<DecodeError$>];
 }
 
-export type Decoder$<DNR> = Decoder<DNR>;
+export type Decoder$<DOZ> = Decoder<DOZ>;
 
 export type Dynamic = $dynamic.Dynamic$;
 
-export function run<DNZ>(data: $dynamic.Dynamic$, decoder: Decoder$<DNZ>): _.Result<
-  DNZ,
+export function run<DPH>(data: $dynamic.Dynamic$, decoder: Decoder$<DPH>): _.Result<
+  DPH,
   _.List<DecodeError$>
 >;
 
-export function success<DPA>(data: DPA): Decoder$<DPA>;
+export function success<DQI>(data: DQI): Decoder$<DQI>;
 
-export function map<DRX, DRZ>(
-  decoder: Decoder$<DRX>,
-  transformer: (x0: DRX) => DRZ
-): Decoder$<DRZ>;
+export function map<DTF, DTH>(
+  decoder: Decoder$<DTF>,
+  transformer: (x0: DTF) => DTH
+): Decoder$<DTH>;
 
-export function map_errors<DSB>(
-  decoder: Decoder$<DSB>,
+export function map_errors<DTJ>(
+  decoder: Decoder$<DTJ>,
   transformer: (x0: _.List<DecodeError$>) => _.List<DecodeError$>
-): Decoder$<DSB>;
+): Decoder$<DTJ>;
 
-export function then$<DSJ, DSL>(
-  decoder: Decoder$<DSJ>,
-  next: (x0: DSJ) => Decoder$<DSL>
-): Decoder$<DSL>;
+export function then$<DTR, DTT>(
+  decoder: Decoder$<DTR>,
+  next: (x0: DTR) => Decoder$<DTT>
+): Decoder$<DTT>;
 
-export function one_of<DSO>(
-  first: Decoder$<DSO>,
-  alternatives: _.List<Decoder$<DSO>>
-): Decoder$<DSO>;
+export function one_of<DTW>(
+  first: Decoder$<DTW>,
+  alternatives: _.List<Decoder$<DTW>>
+): Decoder$<DTW>;
 
-export function recursive<DTE>(inner: () => Decoder$<DTE>): Decoder$<DTE>;
+export function recursive<DUM>(inner: () => Decoder$<DUM>): Decoder$<DUM>;
 
-export function optional<DRT>(inner: Decoder$<DRT>): Decoder$<
-  $option.Option$<DRT>
+export function optional<DTB>(inner: Decoder$<DTB>): Decoder$<
+  $option.Option$<DTB>
 >;
 
 export const dynamic: Decoder$<$dynamic.Dynamic$>;
@@ -62,16 +62,16 @@ export function decode_error(expected: string, found: $dynamic.Dynamic$): _.List
   DecodeError$
 >;
 
-export function collapse_errors<DSG>(decoder: Decoder$<DSG>, name: string): Decoder$<
-  DSG
+export function collapse_errors<DTO>(decoder: Decoder$<DTO>, name: string): Decoder$<
+  DTO
 >;
 
-export function failure<DSY>(zero: DSY, expected: string): Decoder$<DSY>;
+export function failure<DUG>(zero: DUG, expected: string): Decoder$<DUG>;
 
-export function new_primitive_decoder<DTA>(
+export function new_primitive_decoder<DUI>(
   name: string,
-  decoding_function: (x0: $dynamic.Dynamic$) => _.Result<DTA, DTA>
-): Decoder$<DTA>;
+  decoding_function: (x0: $dynamic.Dynamic$) => _.Result<DUI, DUI>
+): Decoder$<DUI>;
 
 export const bool: Decoder$<boolean>;
 
@@ -83,35 +83,35 @@ export const bit_array: Decoder$<_.BitArray>;
 
 export const string: Decoder$<string>;
 
-export function dict<DQY, DRA>(key: Decoder$<DQY>, value: Decoder$<DRA>): Decoder$<
-  $dict.Dict$<DQY, DRA>
+export function dict<DSG, DSI>(key: Decoder$<DSG>, value: Decoder$<DSI>): Decoder$<
+  $dict.Dict$<DSG, DSI>
 >;
 
-export function list<DQM>(inner: Decoder$<DQM>): Decoder$<_.List<DQM>>;
+export function list<DRU>(inner: Decoder$<DRU>): Decoder$<_.List<DRU>>;
 
-export function subfield<DNU, DNW>(
+export function subfield<DPC, DPE>(
   field_path: _.List<any>,
-  field_decoder: Decoder$<DNU>,
-  next: (x0: DNU) => Decoder$<DNW>
-): Decoder$<DNW>;
+  field_decoder: Decoder$<DPC>,
+  next: (x0: DPC) => Decoder$<DPE>
+): Decoder$<DPE>;
 
-export function at<DOG>(path: _.List<any>, inner: Decoder$<DOG>): Decoder$<DOG>;
+export function at<DPO>(path: _.List<any>, inner: Decoder$<DPO>): Decoder$<DPO>;
 
-export function field<DPE, DPG>(
+export function field<DQM, DQO>(
   field_name: any,
-  field_decoder: Decoder$<DPE>,
-  next: (x0: DPE) => Decoder$<DPG>
-): Decoder$<DPG>;
+  field_decoder: Decoder$<DQM>,
+  next: (x0: DQM) => Decoder$<DQO>
+): Decoder$<DQO>;
 
-export function optional_field<DPK, DPM>(
+export function optional_field<DQS, DQU>(
   key: any,
-  default$: DPK,
-  field_decoder: Decoder$<DPK>,
-  next: (x0: DPK) => Decoder$<DPM>
-): Decoder$<DPM>;
+  default$: DQS,
+  field_decoder: Decoder$<DQS>,
+  next: (x0: DQS) => Decoder$<DQU>
+): Decoder$<DQU>;
 
-export function optionally_at<DPR>(
+export function optionally_at<DQZ>(
   path: _.List<any>,
-  default$: DPR,
-  inner: Decoder$<DPR>
-): Decoder$<DPR>;
+  default$: DQZ,
+  inner: Decoder$<DQZ>
+): Decoder$<DQZ>;

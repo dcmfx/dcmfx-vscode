@@ -35,31 +35,31 @@ export class UnableToDecode extends _.CustomType {
 
 export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnexpectedFormat | UnableToDecode;
 
-export function decode<CCEA>(
+export function decode<CCFR>(
   json: string,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCEA,
+    CCFR,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCEA, DecodeError$>;
+): _.Result<CCFR, DecodeError$>;
 
-export function parse<CCEE>(json: string, decoder: $decode.Decoder$<CCEE>): _.Result<
-  CCEE,
+export function parse<CCFV>(json: string, decoder: $decode.Decoder$<CCFV>): _.Result<
+  CCFV,
   DecodeError$
 >;
 
-export function decode_bits<CCES>(
+export function decode_bits<CCGJ>(
   json: _.BitArray,
   decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCES,
+    CCGJ,
     _.List<$dynamic.DecodeError$>
   >
-): _.Result<CCES, DecodeError$>;
+): _.Result<CCGJ, DecodeError$>;
 
-export function parse_bits<CCEW>(
+export function parse_bits<CCGN>(
   json: _.BitArray,
-  decoder: $decode.Decoder$<CCEW>
-): _.Result<CCEW, DecodeError$>;
+  decoder: $decode.Decoder$<CCGN>
+): _.Result<CCGN, DecodeError$>;
 
 export function to_string(json: Json$): string;
 
@@ -77,22 +77,22 @@ export function float(input: number): Json$;
 
 export function null$(): Json$;
 
-export function nullable<CCFC>(
-  input: $option.Option$<CCFC>,
-  inner_type: (x0: CCFC) => Json$
+export function nullable<CCGT>(
+  input: $option.Option$<CCGT>,
+  inner_type: (x0: CCGT) => Json$
 ): Json$;
 
 export function object(entries: _.List<[string, Json$]>): Json$;
 
 export function preprocessed_array(from: _.List<Json$>): Json$;
 
-export function array<CCFG>(
-  entries: _.List<CCFG>,
-  inner_type: (x0: CCFG) => Json$
+export function array<CCGX>(
+  entries: _.List<CCGX>,
+  inner_type: (x0: CCGX) => Json$
 ): Json$;
 
-export function dict<CCFK, CCFL>(
-  dict: $dict.Dict$<CCFK, CCFL>,
-  keys: (x0: CCFK) => string,
-  values: (x0: CCFL) => Json$
+export function dict<CCHB, CCHC>(
+  dict: $dict.Dict$<CCHB, CCHC>,
+  keys: (x0: CCHB) => string,
+  values: (x0: CCHC) => Json$
 ): Json$;

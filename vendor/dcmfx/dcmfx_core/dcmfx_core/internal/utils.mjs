@@ -4,7 +4,7 @@ import * as $float from "../../../gleam_stdlib/gleam/float.mjs";
 import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
-import { Ok, Error, toList, makeError } from "../../gleam.mjs";
+import { Ok, Error, toList, makeError, bitArraySlice } from "../../gleam.mjs";
 import {
   utils__string_fast_length as string_fast_length,
   utils__pad_start as pad_start,
@@ -16,9 +16,9 @@ function do_trim_ascii_start(loop$s, loop$ascii_character) {
   while (true) {
     let s = loop$s;
     let ascii_character = loop$ascii_character;
-    if (s.length >= 1) {
+    if ((s.bitSize >= 8 && (s.bitSize - 8) % 8 === 0)) {
       let x = s.byteAt(0);
-      let rest = s.sliceAfter(1);
+      let rest = bitArraySlice(s, 8);
       let $ = x === ascii_character;
       if ($) {
         loop$s = rest;
@@ -58,7 +58,7 @@ function do_trim_end_codepoints(loop$s, loop$length, loop$ascii_character) {
       return "";
     } else {
       let $ = $bit_array.slice(s, length - 1, 1);
-      if (!$.isOk() || !($[0].length == 1)) {
+      if (!$.isOk() || !($[0].bitSize == 8)) {
         throw makeError(
           "let_assert",
           "dcmfx_core/internal/utils",
@@ -165,11 +165,11 @@ function do_inspect_bit_array(loop$input, loop$acc) {
   while (true) {
     let input = loop$input;
     let acc = loop$acc;
-    if (input.length >= 1) {
+    if ((input.bitSize >= 8 && (input.bitSize - 8) % 8 === 0)) {
       let x = input.byteAt(0);
-      let rest = input.sliceAfter(1);
+      let rest = bitArraySlice(input, 8);
       let suffix = (() => {
-        if (rest.length == 0) {
+        if (rest.bitSize == 0) {
           return "";
         } else {
           return " ";

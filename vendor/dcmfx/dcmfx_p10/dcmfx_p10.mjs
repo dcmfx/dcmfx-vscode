@@ -11,20 +11,28 @@ import * as $p10_error from "./dcmfx_p10/p10_error.mjs";
 import * as $p10_read from "./dcmfx_p10/p10_read.mjs";
 import * as $p10_token from "./dcmfx_p10/p10_token.mjs";
 import * as $p10_write from "./dcmfx_p10/p10_write.mjs";
-import { Ok, Error, toList, prepend as listPrepend, makeError, toBitArray } from "./gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  prepend as listPrepend,
+  makeError,
+  toBitArray,
+  bitArraySlice,
+} from "./gleam.mjs";
 
 export function is_valid_bytes(bytes) {
-  if (bytes.byteAt(128) === 0x44 &&
-  bytes.byteAt(129) === 0x49 &&
-  bytes.byteAt(130) === 0x43 &&
-  bytes.byteAt(131) === 0x4D &&
+  if (bytes.byteAt(128) === 68 &&
+  bytes.byteAt(129) === 73 &&
+  bytes.byteAt(130) === 67 &&
+  bytes.byteAt(131) === 77 &&
   bytes.byteAt(132) === 2 &&
   bytes.byteAt(133) === 0 &&
   bytes.byteAt(134) === 0 &&
   bytes.byteAt(135) === 0 &&
-  bytes.byteAt(136) === 0x55 &&
-  bytes.byteAt(137) === 0x4C &&
-  bytes.length >= 138) {
+  bytes.byteAt(136) === 85 &&
+  bytes.byteAt(137) === 76 &&
+  (bytes.bitSize >= 1104 && (bytes.bitSize - 1104) % 8 === 0)) {
     return true;
   } else {
     return false;

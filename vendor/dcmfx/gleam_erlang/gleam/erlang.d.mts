@@ -1,4 +1,5 @@
 import type * as $dynamic from "../../gleam_stdlib/gleam/dynamic.d.mts";
+import type * as $decode from "../../gleam_stdlib/gleam/dynamic/decode.d.mts";
 import type * as _ from "../gleam.d.mts";
 import type * as $atom from "../gleam/erlang/atom.d.mts";
 import type * as $charlist from "../gleam/erlang/charlist.d.mts";
@@ -70,7 +71,7 @@ export function system_time(a: TimeUnit$): number;
 
 export function erlang_timestamp(): [number, number, number];
 
-export function rescue<FNZ>(a: () => FNZ): _.Result<FNZ, Crash$>;
+export function rescue<FPL>(a: () => FPL): _.Result<FPL, Crash$>;
 
 export function binary_to_term(binary: _.BitArray): _.Result<
   $dynamic.Dynamic$,
@@ -93,7 +94,7 @@ export function make_reference(): Reference$;
 
 export function reference_from_dynamic(from: $dynamic.Dynamic$): _.Result<
   Reference$,
-  _.List<$dynamic.DecodeError$>
+  _.List<$decode.DecodeError$>
 >;
 
 export function priv_directory(name: string): _.Result<string, undefined>;

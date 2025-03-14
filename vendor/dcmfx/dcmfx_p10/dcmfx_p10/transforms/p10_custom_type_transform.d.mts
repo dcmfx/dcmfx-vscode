@@ -9,7 +9,7 @@ import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filter_transform.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
-declare class P10CustomTypeTransform<CBYP> extends _.CustomType {
+declare class P10CustomTypeTransform<CCAG> extends _.CustomType {
   constructor(
     filter: $option.Option$<
       [
@@ -43,7 +43,7 @@ declare class P10CustomTypeTransform<CBYP> extends _.CustomType {
   target: $option.Option$<any>;
 }
 
-export type P10CustomTypeTransform$<CBYP> = P10CustomTypeTransform<CBYP>;
+export type P10CustomTypeTransform$<CCAG> = P10CustomTypeTransform<CCAG>;
 
 export class P10Error extends _.CustomType {
   constructor(argument$0: $p10_error.P10Error$);
@@ -59,21 +59,21 @@ export class DataError extends _.CustomType {
 
 export type P10CustomTypeTransformError$ = P10Error | DataError;
 
-export function new$<CBYR>(
+export function new$<CCAI>(
   tags: _.List<$data_element_tag.DataElementTag$>,
   target_from_data_set: (
     x0: $dict.Dict$<
       $data_element_tag.DataElementTag$,
       $data_element_value.DataElementValue$
     >
-  ) => _.Result<CBYR, $data_error.DataError$>
-): P10CustomTypeTransform$<CBYR>;
+  ) => _.Result<CCAI, $data_error.DataError$>
+): P10CustomTypeTransform$<CCAI>;
 
-export function add_token<CBYV>(
-  transform: P10CustomTypeTransform$<CBYV>,
+export function add_token<CCAM>(
+  transform: P10CustomTypeTransform$<CCAM>,
   token: $p10_token.P10Token$
-): _.Result<P10CustomTypeTransform$<CBYV>, P10CustomTypeTransformError$>;
+): _.Result<P10CustomTypeTransform$<CCAM>, P10CustomTypeTransformError$>;
 
-export function get_output<CBZA>(transform: P10CustomTypeTransform$<CBZA>): $option.Option$<
-  CBZA
+export function get_output<CCAR>(transform: P10CustomTypeTransform$<CCAR>): $option.Option$<
+  CCAR
 >;

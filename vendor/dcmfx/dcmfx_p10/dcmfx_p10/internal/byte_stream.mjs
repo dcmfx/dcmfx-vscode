@@ -214,7 +214,7 @@ function inflate_up_to_max_read_size(stream) {
         let $1 = $zlib.safe_inflate(zlib_stream, toBitArray([]));
         if ($1.isOk() &&
         $1[0] instanceof $inflate_result.Finished &&
-        $1[0][0].length == 0 &&
+        $1[0][0].bitSize == 0 &&
         (stream.is_writing_finished)) {
           return new Ok(
             (() => {
@@ -232,7 +232,7 @@ function inflate_up_to_max_read_size(stream) {
           );
         } else if ($1.isOk() && $1[0] instanceof $inflate_result.Continue) {
           let bytes = $1[0][0];
-          if (bytes.length == 0) {
+          if (bytes.bitSize == 0) {
             return new Ok(stream);
           } else {
             let bytes$1 = bytes;
@@ -252,7 +252,7 @@ function inflate_up_to_max_read_size(stream) {
           }
         } else if ($1.isOk() && $1[0] instanceof $inflate_result.Finished) {
           let bytes = $1[0][0];
-          if (bytes.length == 0) {
+          if (bytes.bitSize == 0) {
             return new Ok(stream);
           } else {
             let bytes$1 = bytes;
@@ -312,7 +312,7 @@ export function write(stream, data, done) {
         new_bytes,
         (new_bytes) => {
           let bytes_queue = (() => {
-            if (new_bytes.length == 0) {
+            if (new_bytes.bitSize == 0) {
               return stream.bytes_queue;
             } else {
               return $deque.push_back(stream.bytes_queue, new_bytes);

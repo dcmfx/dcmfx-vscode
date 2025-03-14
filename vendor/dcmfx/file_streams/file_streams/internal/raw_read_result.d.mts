@@ -1,10 +1,10 @@
 import type * as $file_stream_error from "../../file_streams/file_stream_error.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
-export class Ok<BYNF> extends _.CustomType {
-  constructor(argument$0: BYNF);
+export class Ok<BYOW> extends _.CustomType {
+  constructor(argument$0: BYOW);
   
-  0: BYNF;
+  0: BYOW;
 }
 
 export class Eof extends _.CustomType {}
@@ -15,4 +15,4 @@ export class Error extends _.CustomType {
   error: $file_stream_error.FileStreamError$;
 }
 
-export type RawReadResult$<BYNF> = Ok<BYNF> | Eof | Error;
+export type RawReadResult$<BYOW> = Ok<BYOW> | Eof | Error;

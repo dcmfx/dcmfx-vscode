@@ -44,3 +44,9 @@ export function split(regexp: Regexp$, string: string): _.List<string>;
 export function scan(regexp: Regexp$, string: string): _.List<Match$>;
 
 export function replace(pattern: Regexp$, string: string, substitute: string): string;
+
+export function match_map(
+  pattern: Regexp$,
+  string: string,
+  substitute: (x0: Match$) => string
+): string;

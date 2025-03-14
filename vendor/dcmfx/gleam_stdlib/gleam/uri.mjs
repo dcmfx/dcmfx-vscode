@@ -806,19 +806,6 @@ function parse_scheme_loop(
   }
 }
 
-export function parse(uri_string) {
-  let default_pieces = new Uri(
-    new None(),
-    new None(),
-    new None(),
-    new None(),
-    "",
-    new None(),
-    new None(),
-  );
-  return parse_scheme_loop(uri_string, uri_string, default_pieces, 0);
-}
-
 function extra_required(loop$list, loop$remaining) {
   while (true) {
     let list = loop$list;
@@ -1067,4 +1054,18 @@ export function merge(base, relative) {
   } else {
     return new Error(undefined);
   }
+}
+
+export const empty = /* @__PURE__ */ new Uri(
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+  "",
+  /* @__PURE__ */ new None(),
+  /* @__PURE__ */ new None(),
+);
+
+export function parse(uri_string) {
+  return parse_scheme_loop(uri_string, uri_string, empty, 0);
 }

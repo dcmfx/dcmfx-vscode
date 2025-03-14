@@ -32,6 +32,8 @@ import {
   divideInt,
   isEqual,
   toBitArray,
+  bitArraySlice,
+  bitArraySliceToInt,
 } from "../gleam.mjs";
 
 export class P10ReadConfig extends $CustomType {
@@ -326,12 +328,12 @@ function read_file_preamble_and_dicm_prefix_token(context) {
     let $ = $byte_stream.peek(context.stream, 132);
     if ($.isOk()) {
       let data = $[0];
-      if (data.byteAt(128) === 0x44 &&
-      data.byteAt(129) === 0x49 &&
-      data.byteAt(130) === 0x43 &&
-      data.byteAt(131) === 0x4D &&
-      data.length == 132) {
-        let preamble = data.binaryFromSlice(0, 128);
+      if (data.byteAt(128) === 68 &&
+      data.byteAt(129) === 73 &&
+      data.byteAt(130) === 67 &&
+      data.byteAt(131) === 77 &&
+      data.bitSize == 1056) {
+        let preamble = bitArraySlice(data, 0, 1024);
         let $1 = $byte_stream.read(context.stream, 132);
         if (!$1.isOk()) {
           throw makeError(
@@ -412,7 +414,7 @@ function read_file_meta_information_data_set(
       return $result.try$(
         data,
         (data) => {
-          if (!(data.length >= 6)) {
+          if (!((data.bitSize >= 48 && (data.bitSize - 48) % 8 === 0))) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
@@ -422,8 +424,8 @@ function read_file_meta_information_data_set(
               { value: data }
             )
           }
-          let group = data.intFromSlice(0, 2, false, false);
-          let element = data.intFromSlice(2, 4, false, false);
+          let group = bitArraySliceToInt(data, 0, 16, false, false);
+          let element = bitArraySliceToInt(data, 16, 32, false, false);
           let vr_byte_0 = data.byteAt(4);
           let vr_byte_1 = data.byteAt(5);
           let tag = new DataElementTag(group, element);
@@ -478,7 +480,7 @@ function read_file_meta_information_data_set(
                           let value_result = (() => {
                             let $ = $data_element_header.value_length_size(vr);
                             if ($ instanceof $data_element_header.ValueLengthU16) {
-                              if (!(data.length == 8)) {
+                              if (!(data.bitSize == 64)) {
                                 throw makeError(
                                   "let_assert",
                                   "dcmfx_p10/p10_read",
@@ -488,13 +490,13 @@ function read_file_meta_information_data_set(
                                   { value: data }
                                 )
                               }
-                              let length = data.intFromSlice(6, 8, false, false);
+                              let length = bitArraySliceToInt(data, 48, 64, false, false);
                               return new Ok([8, length]);
                             } else {
                               let $1 = $byte_stream.peek(context.stream, 12);
                               if ($1.isOk()) {
                                 let data$1 = $1[0];
-                                if (!(data$1.length == 12)) {
+                                if (!(data$1.bitSize == 96)) {
                                   throw makeError(
                                     "let_assert",
                                     "dcmfx_p10/p10_read",
@@ -504,7 +506,7 @@ function read_file_meta_information_data_set(
                                     { value: data$1 }
                                   )
                                 }
-                                let length = data$1.intFromSlice(8, 12, false, false);
+                                let length = bitArraySliceToInt(data$1, 64, 96, false, false);
                                 return new Ok([12, length]);
                               } else {
                                 let e = $1[0];
@@ -843,7 +845,7 @@ function read_implicit_vr_and_length(context, tag) {
     let value_length = (() => {
       let $1 = active_transfer_syntax(context).endianness;
       if ($1 instanceof $transfer_syntax.LittleEndian) {
-        if (!(data.length == 8)) {
+        if (!(data.bitSize == 64)) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
@@ -853,10 +855,10 @@ function read_implicit_vr_and_length(context, tag) {
             { value: data }
           )
         }
-        let value_length = data.intFromSlice(4, 8, false, false);
+        let value_length = bitArraySliceToInt(data, 32, 64, false, false);
         return value_length;
       } else {
-        if (!(data.length == 8)) {
+        if (!(data.bitSize == 64)) {
           throw makeError(
             "let_assert",
             "dcmfx_p10/p10_read",
@@ -866,7 +868,7 @@ function read_implicit_vr_and_length(context, tag) {
             { value: data }
           )
         }
-        let value_length = data.intFromSlice(4, 8, true, false);
+        let value_length = bitArraySliceToInt(data, 32, 64, true, false);
         return value_length;
       }
     })();
@@ -900,7 +902,7 @@ function read_explicit_vr_and_length(context, tag) {
     let $ = $byte_stream.peek(context.stream, 6);
     if ($.isOk()) {
       let data = $[0];
-      if (!(data.length == 6)) {
+      if (!(data.bitSize == 48)) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
@@ -910,7 +912,7 @@ function read_explicit_vr_and_length(context, tag) {
           { value: data }
         )
       }
-      let vr_bytes = data.binaryFromSlice(4, 6);
+      let vr_bytes = bitArraySlice(data, 32, 48);
       let $1 = $value_representation.from_bytes(vr_bytes);
       if ($1.isOk()) {
         let vr = $1[0];
@@ -918,7 +920,7 @@ function read_explicit_vr_and_length(context, tag) {
       } else {
         if (vr_bytes.byteAt(0) === 32 &&
         vr_bytes.byteAt(1) === 32 &&
-        vr_bytes.length == 2) {
+        vr_bytes.bitSize == 16) {
           return new Ok(new $value_representation.Unknown());
         } else {
           return new Error(
@@ -964,7 +966,7 @@ function read_explicit_vr_and_length(context, tag) {
           if (header_size === 12) {
             let $1 = active_transfer_syntax(context).endianness;
             if ($1 instanceof $transfer_syntax.LittleEndian) {
-              if (!(data.length == 12)) {
+              if (!(data.bitSize == 96)) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
@@ -974,10 +976,10 @@ function read_explicit_vr_and_length(context, tag) {
                   { value: data }
                 )
               }
-              let length = data.intFromSlice(8, 12, false, false);
+              let length = bitArraySliceToInt(data, 64, 96, false, false);
               return length;
             } else {
-              if (!(data.length == 12)) {
+              if (!(data.bitSize == 96)) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
@@ -987,13 +989,13 @@ function read_explicit_vr_and_length(context, tag) {
                   { value: data }
                 )
               }
-              let length = data.intFromSlice(8, 12, true, false);
+              let length = bitArraySliceToInt(data, 64, 96, true, false);
               return length;
             }
           } else {
             let $1 = active_transfer_syntax(context).endianness;
             if ($1 instanceof $transfer_syntax.LittleEndian) {
-              if (!(data.length == 8)) {
+              if (!(data.bitSize == 64)) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
@@ -1003,10 +1005,10 @@ function read_explicit_vr_and_length(context, tag) {
                   { value: data }
                 )
               }
-              let length = data.intFromSlice(6, 8, false, false);
+              let length = bitArraySliceToInt(data, 48, 64, false, false);
               return length;
             } else {
-              if (!(data.length == 8)) {
+              if (!(data.bitSize == 64)) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
@@ -1016,7 +1018,7 @@ function read_explicit_vr_and_length(context, tag) {
                   { value: data }
                 )
               }
-              let length = data.intFromSlice(6, 8, true, false);
+              let length = bitArraySliceToInt(data, 48, 64, true, false);
               return length;
             }
           }
@@ -1050,7 +1052,7 @@ function read_data_element_header(context) {
       let $1 = (() => {
         let $2 = transfer_syntax$1.endianness;
         if ($2 instanceof $transfer_syntax.LittleEndian) {
-          if (!(data.length == 4)) {
+          if (!(data.bitSize == 32)) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
@@ -1060,11 +1062,11 @@ function read_data_element_header(context) {
               { value: data }
             )
           }
-          let group = data.intFromSlice(0, 2, false, false);
-          let element = data.intFromSlice(2, 4, false, false);
+          let group = bitArraySliceToInt(data, 0, 16, false, false);
+          let element = bitArraySliceToInt(data, 16, 32, false, false);
           return [group, element];
         } else {
-          if (!(data.length == 4)) {
+          if (!(data.bitSize == 32)) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
@@ -1074,8 +1076,8 @@ function read_data_element_header(context) {
               { value: data }
             )
           }
-          let group = data.intFromSlice(0, 2, true, false);
-          let element = data.intFromSlice(2, 4, true, false);
+          let group = bitArraySliceToInt(data, 0, 16, true, false);
+          let element = bitArraySliceToInt(data, 16, 32, true, false);
           return [group, element];
         }
       })();

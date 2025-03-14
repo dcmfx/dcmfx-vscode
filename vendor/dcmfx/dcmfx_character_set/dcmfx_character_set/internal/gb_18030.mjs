@@ -1,7 +1,7 @@
 /// <reference types="./gb_18030.d.mts" />
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $utils from "../../dcmfx_character_set/internal/utils.mjs";
-import { Ok, Error, makeError, toBitArray } from "../../gleam.mjs";
+import { Ok, Error, makeError, toBitArray, bitArraySlice, bitArraySliceToInt } from "../../gleam.mjs";
 
 const gbk_lookup_table = /* @__PURE__ */ toBitArray([
   78, 2,
@@ -24073,19 +24073,20 @@ const gbk_lookup_table = /* @__PURE__ */ toBitArray([
 ]);
 
 export function decode_next_codepoint(bytes) {
-  if (bytes.length >= 1 && (bytes.byteAt(0) <= 0x7F)) {
+  if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0) &&
+  (bytes.byteAt(0) <= 0x7F)) {
     let byte_0 = bytes.byteAt(0);
-    let rest = bytes.sliceAfter(1);
+    let rest = bitArraySlice(bytes, 8);
     let codepoint_value = byte_0;
     return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
-  } else if (bytes.length >= 2 &&
+  } else if ((bytes.bitSize >= 16 && (bytes.bitSize - 16) % 8 === 0) &&
   ((((bytes.byteAt(0) >= 0x81) && (bytes.byteAt(0) <= 0xFE)) && (bytes.byteAt(1) >= 0x40)) && (bytes.byteAt(1) <= 0xFE))) {
     let byte_0 = bytes.byteAt(0);
     let byte_1 = bytes.byteAt(1);
-    let rest = bytes.sliceAfter(2);
+    let rest = bitArraySlice(bytes, 16);
     let index = (byte_0 - 0x81) * 0xBF + (byte_1 - 0x40);
     let $ = $bit_array.slice(gbk_lookup_table, index * 2, 2);
-    if (!$.isOk() || !($[0].length == 2)) {
+    if (!$.isOk() || !($[0].bitSize == 16)) {
       throw makeError(
         "let_assert",
         "dcmfx_character_set/internal/gb_18030",
@@ -24095,15 +24096,15 @@ export function decode_next_codepoint(bytes) {
         { value: $ }
       )
     }
-    let codepoint_value = $[0].intFromSlice(0, 2, true, false);
+    let codepoint_value = bitArraySliceToInt($[0], 0, 16, true, false);
     return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
-  } else if (bytes.length >= 4 &&
+  } else if ((bytes.bitSize >= 32 && (bytes.bitSize - 32) % 8 === 0) &&
   ((((((((bytes.byteAt(0) >= 0x81) && (bytes.byteAt(0) <= 0x84)) && (bytes.byteAt(1) >= 0x30)) && (bytes.byteAt(1) <= 0x39)) && (bytes.byteAt(2) >= 0x81)) && (bytes.byteAt(2) <= 0xFE)) && (bytes.byteAt(3) >= 0x30)) && (bytes.byteAt(3) <= 0x39))) {
     let byte_0 = bytes.byteAt(0);
     let byte_1 = bytes.byteAt(1);
     let byte_2 = bytes.byteAt(2);
     let byte_3 = bytes.byteAt(3);
-    let rest = bytes.sliceAfter(4);
+    let rest = bitArraySlice(bytes, 32);
     let byte_0$1 = byte_0 - 0x81;
     let byte_1$1 = byte_1 - 0x30;
     let byte_2$1 = byte_2 - 0x81;
@@ -24699,13 +24700,13 @@ export function decode_next_codepoint(bytes) {
       }
     })();
     return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
-  } else if (bytes.length >= 4 &&
+  } else if ((bytes.bitSize >= 32 && (bytes.bitSize - 32) % 8 === 0) &&
   ((((((((bytes.byteAt(0) >= 0x90) && (bytes.byteAt(0) <= 0xE3)) && (bytes.byteAt(1) >= 0x30)) && (bytes.byteAt(1) <= 0x39)) && (bytes.byteAt(2) >= 0x81)) && (bytes.byteAt(2) <= 0xFE)) && (bytes.byteAt(3) >= 0x30)) && (bytes.byteAt(3) <= 0x39))) {
     let byte_0 = bytes.byteAt(0);
     let byte_1 = bytes.byteAt(1);
     let byte_2 = bytes.byteAt(2);
     let byte_3 = bytes.byteAt(3);
-    let rest = bytes.sliceAfter(4);
+    let rest = bitArraySlice(bytes, 32);
     let byte_0$1 = byte_0 - 0x90;
     let byte_1$1 = byte_1 - 0x30;
     let byte_2$1 = byte_2 - 0x81;
@@ -24720,16 +24721,16 @@ export function decode_next_codepoint(bytes) {
       }
     })();
     return new Ok([codepoint, rest]);
-  } else if (bytes.length >= 4 &&
+  } else if ((bytes.bitSize >= 32 && (bytes.bitSize - 32) % 8 === 0) &&
   (((((((((bytes.byteAt(0) >= 0x85) && (bytes.byteAt(0) <= 0x8F)) || ((bytes.byteAt(0) >= 0xE4) && (bytes.byteAt(0) <= 0xFE))) && (bytes.byteAt(1) >= 0x30)) && (bytes.byteAt(1) <= 0x39)) && (bytes.byteAt(2) >= 0x81)) && (bytes.byteAt(2) <= 0xFE)) && (bytes.byteAt(3) >= 0x30)) && (bytes.byteAt(3) <= 0x39))) {
     let byte_0 = bytes.byteAt(0);
     let byte_1 = bytes.byteAt(1);
     let byte_2 = bytes.byteAt(2);
     let byte_3 = bytes.byteAt(3);
-    let rest = bytes.sliceAfter(4);
+    let rest = bitArraySlice(bytes, 32);
     return new Ok([$utils.replacement_character(), rest]);
-  } else if (bytes.length >= 1) {
-    let rest = bytes.sliceAfter(1);
+  } else if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0)) {
+    let rest = bitArraySlice(bytes, 8);
     return new Ok([$utils.replacement_character(), rest]);
   } else {
     return new Error(undefined);

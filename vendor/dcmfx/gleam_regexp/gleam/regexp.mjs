@@ -7,9 +7,10 @@ import {
   split as do_split,
   scan as do_scan,
   replace,
+  match_map,
 } from "../gleam_regexp_ffi.mjs";
 
-export { replace };
+export { match_map, replace };
 
 export class Match extends $CustomType {
   constructor(content, submatches) {

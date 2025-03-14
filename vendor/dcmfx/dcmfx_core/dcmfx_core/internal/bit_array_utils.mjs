@@ -12,11 +12,12 @@ import {
   remainderInt,
   divideInt,
   toBitArray,
+  bitArraySliceToInt,
 } from "../../gleam.mjs";
 
 export function to_int16(bytes) {
-  if (bytes.length == 2) {
-    let value = bytes.intFromSlice(0, 2, false, true);
+  if (bytes.bitSize == 16) {
+    let value = bitArraySliceToInt(bytes, 0, 16, false, true);
     return new Ok(value);
   } else {
     return new Error(undefined);
@@ -24,8 +25,8 @@ export function to_int16(bytes) {
 }
 
 export function to_uint16(bytes) {
-  if (bytes.length == 2) {
-    let value = bytes.intFromSlice(0, 2, false, false);
+  if (bytes.bitSize == 16) {
+    let value = bitArraySliceToInt(bytes, 0, 16, false, false);
     return new Ok(value);
   } else {
     return new Error(undefined);
@@ -33,8 +34,8 @@ export function to_uint16(bytes) {
 }
 
 export function to_int32(bytes) {
-  if (bytes.length == 4) {
-    let value = bytes.intFromSlice(0, 4, false, true);
+  if (bytes.bitSize == 32) {
+    let value = bitArraySliceToInt(bytes, 0, 32, false, true);
     return new Ok(value);
   } else {
     return new Error(undefined);
@@ -42,8 +43,8 @@ export function to_int32(bytes) {
 }
 
 export function to_uint32(bytes) {
-  if (bytes.length == 4) {
-    let value = bytes.intFromSlice(0, 4, false, false);
+  if (bytes.bitSize == 32) {
+    let value = bitArraySliceToInt(bytes, 0, 32, false, false);
     return new Ok(value);
   } else {
     return new Error(undefined);
@@ -183,7 +184,7 @@ function do_reverse_index(loop$bytes, loop$predicate, loop$index) {
     let predicate = loop$predicate;
     let index = loop$index;
     let $ = $bit_array.slice(bytes, index, 1);
-    if ($.isOk() && $[0].length == 1) {
+    if ($.isOk() && $[0].bitSize == 8) {
       let final_byte = $[0].byteAt(0);
       let $1 = predicate(final_byte);
       if ($1) {

@@ -34,6 +34,8 @@ import {
   makeError,
   remainderInt,
   isEqual,
+  bitArraySliceToFloat,
+  bitArraySliceToInt,
 } from "../gleam.mjs";
 
 class FileStream extends $CustomType {
@@ -371,7 +373,7 @@ export function read_int8(stream) {
   return $result.map(
     read_bytes_exact(stream, 1),
     (bits) => {
-      if (!(bits.length == 1)) {
+      if (!(bits.bitSize == 8)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -381,7 +383,7 @@ export function read_int8(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 1, true, true);
+      let v = bitArraySliceToInt(bits, 0, 8, true, true);
       return v;
     },
   );
@@ -391,7 +393,7 @@ export function read_uint8(stream) {
   return $result.map(
     read_bytes_exact(stream, 1),
     (bits) => {
-      if (!(bits.length == 1)) {
+      if (!(bits.bitSize == 8)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -411,7 +413,7 @@ export function read_int16_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 2),
     (bits) => {
-      if (!(bits.length == 2)) {
+      if (!(bits.bitSize == 16)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -421,7 +423,7 @@ export function read_int16_le(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 2, false, true);
+      let v = bitArraySliceToInt(bits, 0, 16, false, true);
       return v;
     },
   );
@@ -431,7 +433,7 @@ export function read_int16_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 2),
     (bits) => {
-      if (!(bits.length == 2)) {
+      if (!(bits.bitSize == 16)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -441,7 +443,7 @@ export function read_int16_be(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 2, true, true);
+      let v = bitArraySliceToInt(bits, 0, 16, true, true);
       return v;
     },
   );
@@ -451,7 +453,7 @@ export function read_uint16_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 2),
     (bits) => {
-      if (!(bits.length == 2)) {
+      if (!(bits.bitSize == 16)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -461,7 +463,7 @@ export function read_uint16_le(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 2, false, false);
+      let v = bitArraySliceToInt(bits, 0, 16, false, false);
       return v;
     },
   );
@@ -471,7 +473,7 @@ export function read_uint16_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 2),
     (bits) => {
-      if (!(bits.length == 2)) {
+      if (!(bits.bitSize == 16)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -481,7 +483,7 @@ export function read_uint16_be(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 2, true, false);
+      let v = bitArraySliceToInt(bits, 0, 16, true, false);
       return v;
     },
   );
@@ -491,7 +493,7 @@ export function read_int32_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.length == 4)) {
+      if (!(bits.bitSize == 32)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -501,7 +503,7 @@ export function read_int32_le(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 4, false, true);
+      let v = bitArraySliceToInt(bits, 0, 32, false, true);
       return v;
     },
   );
@@ -511,7 +513,7 @@ export function read_int32_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.length == 4)) {
+      if (!(bits.bitSize == 32)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -521,7 +523,7 @@ export function read_int32_be(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 4, true, true);
+      let v = bitArraySliceToInt(bits, 0, 32, true, true);
       return v;
     },
   );
@@ -531,7 +533,7 @@ export function read_uint32_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.length == 4)) {
+      if (!(bits.bitSize == 32)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -541,7 +543,7 @@ export function read_uint32_le(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 4, false, false);
+      let v = bitArraySliceToInt(bits, 0, 32, false, false);
       return v;
     },
   );
@@ -551,7 +553,7 @@ export function read_uint32_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.length == 4)) {
+      if (!(bits.bitSize == 32)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -561,7 +563,7 @@ export function read_uint32_be(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 4, true, false);
+      let v = bitArraySliceToInt(bits, 0, 32, true, false);
       return v;
     },
   );
@@ -571,7 +573,7 @@ export function read_int64_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.length == 8)) {
+      if (!(bits.bitSize == 64)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -581,7 +583,7 @@ export function read_int64_le(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 8, false, true);
+      let v = bitArraySliceToInt(bits, 0, 64, false, true);
       return v;
     },
   );
@@ -591,7 +593,7 @@ export function read_int64_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.length == 8)) {
+      if (!(bits.bitSize == 64)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -601,7 +603,7 @@ export function read_int64_be(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 8, true, true);
+      let v = bitArraySliceToInt(bits, 0, 64, true, true);
       return v;
     },
   );
@@ -611,7 +613,7 @@ export function read_uint64_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.length == 8)) {
+      if (!(bits.bitSize == 64)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -621,7 +623,7 @@ export function read_uint64_le(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 8, false, false);
+      let v = bitArraySliceToInt(bits, 0, 64, false, false);
       return v;
     },
   );
@@ -631,7 +633,7 @@ export function read_uint64_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.length == 8)) {
+      if (!(bits.bitSize == 64)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -641,7 +643,7 @@ export function read_uint64_be(stream) {
           { value: bits }
         )
       }
-      let v = bits.intFromSlice(0, 8, true, false);
+      let v = bitArraySliceToInt(bits, 0, 64, true, false);
       return v;
     },
   );
@@ -651,7 +653,7 @@ export function read_float32_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.length == 4)) {
+      if (!(bits.bitSize == 32)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -661,7 +663,7 @@ export function read_float32_le(stream) {
           { value: bits }
         )
       }
-      let v = bits.floatFromSlice(0, 4, false);
+      let v = bitArraySliceToFloat(bits, 0, 32, false);
       return v;
     },
   );
@@ -671,7 +673,7 @@ export function read_float32_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.length == 4)) {
+      if (!(bits.bitSize == 32)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -681,7 +683,7 @@ export function read_float32_be(stream) {
           { value: bits }
         )
       }
-      let v = bits.floatFromSlice(0, 4, true);
+      let v = bitArraySliceToFloat(bits, 0, 32, true);
       return v;
     },
   );
@@ -691,7 +693,7 @@ export function read_float64_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.length == 8)) {
+      if (!(bits.bitSize == 64)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -701,7 +703,7 @@ export function read_float64_le(stream) {
           { value: bits }
         )
       }
-      let v = bits.floatFromSlice(0, 8, false);
+      let v = bitArraySliceToFloat(bits, 0, 64, false);
       return v;
     },
   );
@@ -711,7 +713,7 @@ export function read_float64_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.length == 8)) {
+      if (!(bits.bitSize == 64)) {
         throw makeError(
           "let_assert",
           "file_streams/file_stream",
@@ -721,7 +723,7 @@ export function read_float64_be(stream) {
           { value: bits }
         )
       }
-      let v = bits.floatFromSlice(0, 8, true);
+      let v = bitArraySliceToFloat(bits, 0, 64, true);
       return v;
     },
   );

@@ -143,13 +143,9 @@ export function data_element_header_to_bytes(header, endianness, context) {
       let $ = header.vr;
       if ($ instanceof None) {
         if (endianness instanceof LittleEndian) {
-          return new Ok(
-            toBitArray([tag_bytes.buffer, sizedInt(length, 32, false)]),
-          );
+          return new Ok(toBitArray([tag_bytes, sizedInt(length, 32, false)]));
         } else {
-          return new Ok(
-            toBitArray([tag_bytes.buffer, sizedInt(length, 32, true)]),
-          );
+          return new Ok(toBitArray([tag_bytes, sizedInt(length, 32, true)]));
         }
       } else {
         let vr = $[0];
@@ -197,9 +193,9 @@ export function data_element_header_to_bytes(header, endianness, context) {
           (length_bytes) => {
             return new Ok(
               toBitArray([
-                tag_bytes.buffer,
+                tag_bytes,
                 stringBits($value_representation.to_string(vr)),
-                length_bytes.buffer,
+                length_bytes,
               ]),
             );
           },

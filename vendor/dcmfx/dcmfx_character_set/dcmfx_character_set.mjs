@@ -24,6 +24,7 @@ import {
   makeError,
   isEqual,
   toBitArray,
+  bitArraySlice,
 } from "./gleam.mjs";
 
 class SpecificCharacterSet extends $CustomType {
@@ -207,10 +208,11 @@ function decode_iso_2022_bytes(
     let string_type = loop$string_type;
     let active_code_elements = loop$active_code_elements;
     let acc = loop$acc;
-    if (bytes.length == 0) {
+    if (bytes.bitSize == 0) {
       return acc;
-    } else if (bytes.byteAt(0) === 27 && bytes.length >= 1) {
-      let rest = bytes.sliceAfter(1);
+    } else if (bytes.byteAt(0) === 27 &&
+    (bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0)) {
+      let rest = bitArraySlice(bytes, 8);
       let $ = apply_escape_sequence(
         specific_character_set,
         rest,
@@ -225,7 +227,7 @@ function decode_iso_2022_bytes(
       loop$acc = acc;
     } else {
       let decoder = (() => {
-        if (bytes.length >= 1 &&
+        if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0) &&
         active_code_elements[1] instanceof Some &&
         (bytes.byteAt(0) >= 0x80)) {
           let byte = bytes.byteAt(0);
@@ -326,7 +328,7 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
     let i = loop$i;
     let acc = loop$acc;
     let $ = $bit_array.slice(bytes, i, 1);
-    if ($.isOk() && $[0].length == 1) {
+    if ($.isOk() && $[0].bitSize == 8) {
       let byte = $[0].byteAt(0);
       let $1 = byte > 0x7F;
       if ($1) {

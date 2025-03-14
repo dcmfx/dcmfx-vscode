@@ -6,7 +6,7 @@ import * as $data_element_tag from "../../dcmfx_core/data_element_tag.mjs";
 import { DataElementTag } from "../../dcmfx_core/data_element_tag.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs";
-import { Ok, Error, makeError, toBitArray, sizedInt } from "../../gleam.mjs";
+import { Ok, Error, makeError, toBitArray, bitArraySliceToInt, sizedInt } from "../../gleam.mjs";
 
 export function from_bytes(bytes) {
   let _pipe = bytes;
@@ -24,7 +24,7 @@ export function from_bytes(bytes) {
         _capture,
         (tag) => {
           let $ = toBitArray([sizedInt(tag, 32, false)]);
-          if (!($.length == 4)) {
+          if (!($.bitSize == 32)) {
             throw makeError(
               "let_assert",
               "dcmfx_core/data_element_value/attribute_tag",
@@ -34,8 +34,8 @@ export function from_bytes(bytes) {
               { value: $ }
             )
           }
-          let group = $.intFromSlice(0, 2, false, false);
-          let element = $.intFromSlice(2, 4, false, false);
+          let group = bitArraySliceToInt($, 0, 16, false, false);
+          let element = bitArraySliceToInt($, 16, 32, false, false);
           return new DataElementTag(group, element);
         },
       );

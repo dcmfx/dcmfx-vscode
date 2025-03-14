@@ -32,6 +32,8 @@ import {
   makeError,
   isEqual,
   toBitArray,
+  bitArraySlice,
+  bitArraySliceToInt,
   sizedInt,
 } from "../../gleam.mjs";
 
@@ -186,9 +188,9 @@ function read_encapsulated_pixel_data_items(bytes, vr, items) {
   bytes.byteAt(1) === 255 &&
   bytes.byteAt(2) === 0 &&
   bytes.byteAt(3) === 224 &&
-  bytes.length >= 8) {
-    let length = bytes.intFromSlice(4, 8, false, false);
-    let rest = bytes.sliceAfter(8);
+  (bytes.bitSize >= 64 && (bytes.bitSize - 64) % 8 === 0)) {
+    let length = bitArraySliceToInt(bytes, 32, 64, false, false);
+    let rest = bitArraySlice(bytes, 64);
     return $result.try$(
       $bit_array.slice(rest, 0, length),
       (item) => {
@@ -204,7 +206,7 @@ function read_encapsulated_pixel_data_items(bytes, vr, items) {
         );
       },
     );
-  } else if (bytes.length == 0) {
+  } else if (bytes.bitSize == 0) {
     let _pipe = items;
     let _pipe$1 = $list.reverse(_pipe);
     let _pipe$2 = ((_capture) => {

@@ -16,21 +16,25 @@ export function from_string(string) {
 }
 
 export function from_bytes(bit_array, endianness, signedness) {
+  if (bit_array.bitSize % 8 !== 0) {
+    return new Error(undefined);
+  }
+
   let value = 0n;
 
   // Read bytes as an unsigned integer value
   if (endianness instanceof BigEndian) {
-    for (let i = 0; i < bit_array.length; i++) {
+    for (let i = 0; i < bit_array.byteSize; i++) {
       value = value * 256n + BigInt(bit_array.byteAt(i));
     }
   } else {
-    for (let i = bit_array.length - 1; i >= 0; i--) {
+    for (let i = bit_array.byteSize - 1; i >= 0; i--) {
       value = value * 256n + BigInt(bit_array.byteAt(i));
     }
   }
 
   if (signedness instanceof Signed) {
-    const byteSize = BigInt(bit_array.length);
+    const byteSize = BigInt(bit_array.byteSize);
 
     const highBit = 2n ** (byteSize * 8n - 1n);
 

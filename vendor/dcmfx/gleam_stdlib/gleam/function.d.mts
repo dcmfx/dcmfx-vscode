@@ -1,8 +1,8 @@
-export function flip<EEG, EEH, EEI>(fun: (x0: EEG, x1: EEH) => EEI): (
-  x0: EEH,
-  x1: EEG
-) => EEI;
+export function flip<EFO, EFP, EFQ>(fun: (x0: EFO, x1: EFP) => EFQ): (
+  x0: EFP,
+  x1: EFO
+) => EFQ;
 
-export function identity<EEJ>(x: EEJ): EEJ;
+export function identity<EFR>(x: EFR): EFR;
 
-export function tap<EEK>(arg: EEK, effect: (x0: EEK) => any): EEK;
+export function tap<EFS>(arg: EFS, effect: (x0: EFS) => any): EFS;

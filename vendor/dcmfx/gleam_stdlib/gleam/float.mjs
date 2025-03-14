@@ -122,10 +122,10 @@ function sum_loop(loop$numbers, loop$initial) {
     let numbers = loop$numbers;
     let initial = loop$initial;
     if (numbers.atLeastLength(1)) {
-      let x = numbers.head;
+      let first = numbers.head;
       let rest = numbers.tail;
       loop$numbers = rest;
-      loop$initial = x + initial;
+      loop$initial = first + initial;
     } else {
       return initial;
     }
@@ -141,10 +141,10 @@ function product_loop(loop$numbers, loop$initial) {
     let numbers = loop$numbers;
     let initial = loop$initial;
     if (numbers.atLeastLength(1)) {
-      let x = numbers.head;
+      let first = numbers.head;
       let rest = numbers.tail;
       loop$numbers = rest;
-      loop$initial = x * initial;
+      loop$initial = first * initial;
     } else {
       return initial;
     }
@@ -152,11 +152,7 @@ function product_loop(loop$numbers, loop$initial) {
 }
 
 export function product(numbers) {
-  if (numbers.hasLength(0)) {
-    return 1.0;
-  } else {
-    return product_loop(numbers, 1.0);
-  }
+  return product_loop(numbers, 1.0);
 }
 
 export function modulo(dividend, divisor) {

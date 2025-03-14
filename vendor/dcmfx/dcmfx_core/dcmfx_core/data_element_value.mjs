@@ -34,6 +34,8 @@ import {
   remainderInt,
   divideInt,
   toBitArray,
+  bitArraySlice,
+  bitArraySliceToInt,
   sizedInt,
 } from "../gleam.mjs";
 
@@ -71,12 +73,12 @@ class SequenceValue extends $CustomType {
 function validate_default_charset_bytes(loop$bytes) {
   while (true) {
     let bytes = loop$bytes;
-    if (bytes.length >= 1 &&
+    if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0) &&
     (((((((bytes.byteAt(0) !== 0x0) && (bytes.byteAt(0) !== 0x9)) && (bytes.byteAt(0) !== 0xA)) && (bytes.byteAt(0) !== 0xC)) && (bytes.byteAt(0) !== 0xD)) && (bytes.byteAt(0) !== 0x1B)) && ((bytes.byteAt(0) < 0x20) || (bytes.byteAt(0) > 0x7E)))) {
       let b = bytes.byteAt(0);
       return new Error(b);
-    } else if (bytes.length >= 1) {
-      let rest = bytes.sliceAfter(1);
+    } else if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0)) {
+      let rest = bitArraySlice(bytes, 8);
       loop$bytes = rest;
     } else {
       return new Ok(undefined);
@@ -551,16 +553,16 @@ export function get_lookup_table_descriptor(value) {
   if (value instanceof LookupTableDescriptorValue) {
     let vr = value.vr;
     let bytes$1 = value.bytes;
-    if (vr instanceof $value_representation.SignedShort && bytes$1.length == 6) {
-      let entry_count = bytes$1.intFromSlice(0, 2, false, false);
-      let first_input_value = bytes$1.intFromSlice(2, 4, false, true);
-      let bits_per_entry = bytes$1.intFromSlice(4, 6, false, false);
+    if (vr instanceof $value_representation.SignedShort && bytes$1.bitSize == 48) {
+      let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
+      let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, true);
+      let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
       return new Ok([entry_count, first_input_value, bits_per_entry]);
     } else if (vr instanceof $value_representation.UnsignedShort &&
-    bytes$1.length == 6) {
-      let entry_count = bytes$1.intFromSlice(0, 2, false, false);
-      let first_input_value = bytes$1.intFromSlice(2, 4, false, false);
-      let bits_per_entry = bytes$1.intFromSlice(4, 6, false, false);
+    bytes$1.bitSize == 48) {
+      let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
+      let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, false);
+      let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
       return new Ok([entry_count, first_input_value, bits_per_entry]);
     } else {
       return new Error(

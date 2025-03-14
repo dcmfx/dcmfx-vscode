@@ -1,7 +1,7 @@
 /// <reference types="./ks_x_1001.d.mts" />
 import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $utils from "../../dcmfx_character_set/internal/utils.mjs";
-import { Ok, Error, makeError, toBitArray } from "../../gleam.mjs";
+import { Ok, Error, makeError, toBitArray, bitArraySlice, bitArraySliceToInt } from "../../gleam.mjs";
 
 const lookup_table = /* @__PURE__ */ toBitArray([
   48, 0,
@@ -8843,14 +8843,14 @@ const lookup_table = /* @__PURE__ */ toBitArray([
 ]);
 
 export function decode_next_codepoint(bytes) {
-  if (bytes.length >= 2 &&
+  if ((bytes.bitSize >= 16 && (bytes.bitSize - 16) % 8 === 0) &&
   ((((bytes.byteAt(0) >= 0xA1) && (bytes.byteAt(0) <= 0xFE)) && (bytes.byteAt(1) >= 0xA1)) && (bytes.byteAt(1) <= 0xFE))) {
     let byte_0 = bytes.byteAt(0);
     let byte_1 = bytes.byteAt(1);
-    let rest = bytes.sliceAfter(2);
+    let rest = bitArraySlice(bytes, 16);
     let index = (byte_0 - 0xA1) * 0x5E + (byte_1 - 0xA1);
     let $ = $bit_array.slice(lookup_table, index * 2, 2);
-    if (!$.isOk() || !($[0].length == 2)) {
+    if (!$.isOk() || !($[0].bitSize == 16)) {
       throw makeError(
         "let_assert",
         "dcmfx_character_set/internal/ks_x_1001",
@@ -8860,10 +8860,10 @@ export function decode_next_codepoint(bytes) {
         { value: $ }
       )
     }
-    let codepoint_value = $[0].intFromSlice(0, 2, true, false);
+    let codepoint_value = bitArraySliceToInt($[0], 0, 16, true, false);
     return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
-  } else if (bytes.length >= 1) {
-    let rest = bytes.sliceAfter(1);
+  } else if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0)) {
+    let rest = bitArraySlice(bytes, 8);
     return new Ok([$utils.replacement_character(), rest]);
   } else {
     return new Error(undefined);

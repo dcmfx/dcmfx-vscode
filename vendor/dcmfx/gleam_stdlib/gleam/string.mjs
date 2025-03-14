@@ -120,10 +120,6 @@ export function drop_end(string, num_graphemes) {
   }
 }
 
-export function drop_right(string, num_graphemes) {
-  return drop_end(string, num_graphemes);
-}
-
 export function append(first, second) {
   let _pipe = first;
   let _pipe$1 = $string_tree.from_string(_pipe);
@@ -175,10 +171,6 @@ export function pad_start(string, desired_length, pad_string) {
   }
 }
 
-export function pad_left(string, desired_length, pad_string) {
-  return pad_start(string, desired_length, pad_string);
-}
-
 export function pad_end(string, desired_length, pad_string) {
   let current_length = length(string);
   let to_pad_length = desired_length - current_length;
@@ -190,22 +182,10 @@ export function pad_end(string, desired_length, pad_string) {
   }
 }
 
-export function pad_right(string, desired_length, pad_string) {
-  return pad_end(string, desired_length, pad_string);
-}
-
-export function trim_left(string) {
-  return trim_start(string);
-}
-
 export function trim(string) {
   let _pipe = string;
   let _pipe$1 = trim_start(_pipe);
   return trim_end(_pipe$1);
-}
-
-export function trim_right(string) {
-  return trim_end(string);
 }
 
 export function drop_start(loop$string, loop$num_graphemes) {
@@ -226,10 +206,6 @@ export function drop_start(loop$string, loop$num_graphemes) {
       }
     }
   }
-}
-
-export function drop_left(string, num_graphemes) {
-  return drop_start(string, num_graphemes);
 }
 
 function to_graphemes_loop(loop$string, loop$acc) {

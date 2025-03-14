@@ -29,8 +29,6 @@ export function crop(string: string, substring: string): string;
 
 export function drop_end(string: string, num_graphemes: number): string;
 
-export function drop_right(string: string, num_graphemes: number): string;
-
 export function contains(haystack: string, needle: string): boolean;
 
 export function starts_with(string: string, prefix: string): boolean;
@@ -56,19 +54,7 @@ export function pad_start(
   pad_string: string
 ): string;
 
-export function pad_left(
-  string: string,
-  desired_length: number,
-  pad_string: string
-): string;
-
 export function pad_end(
-  string: string,
-  desired_length: number,
-  pad_string: string
-): string;
-
-export function pad_right(
   string: string,
   desired_length: number,
   pad_string: string
@@ -76,13 +62,9 @@ export function pad_right(
 
 export function trim_start(string: string): string;
 
-export function trim_left(string: string): string;
-
 export function trim_end(string: string): string;
 
 export function trim(string: string): string;
-
-export function trim_right(string: string): string;
 
 export function pop_grapheme(string: string): _.Result<
   [string, string],
@@ -90,8 +72,6 @@ export function pop_grapheme(string: string): _.Result<
 >;
 
 export function drop_start(string: string, num_graphemes: number): string;
-
-export function drop_left(string: string, num_graphemes: number): string;
 
 export function to_graphemes(string: string): _.List<string>;
 

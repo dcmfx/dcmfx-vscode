@@ -21,7 +21,7 @@ function all_loop(list, acc) {
   if (list.hasLength(0)) {
     return new Some(acc);
   } else {
-    let x = list.head;
+    let first = list.head;
     let rest = list.tail;
     let accumulate = (acc, item) => {
       if (acc instanceof Some && item instanceof Some) {
@@ -32,7 +32,7 @@ function all_loop(list, acc) {
         return new None();
       }
     };
-    return accumulate(all_loop(rest, acc), x);
+    return accumulate(all_loop(rest, acc), first);
   }
 }
 
