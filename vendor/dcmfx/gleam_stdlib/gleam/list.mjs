@@ -131,14 +131,14 @@ function filter_loop(loop$list, loop$fun, loop$acc) {
     } else {
       let first$1 = list.head;
       let rest$1 = list.tail;
-      let new_acc = (() => {
-        let $ = fun(first$1);
-        if ($) {
-          return listPrepend(first$1, acc);
-        } else {
-          return acc;
-        }
-      })();
+      let _block;
+      let $ = fun(first$1);
+      if ($) {
+        _block = listPrepend(first$1, acc);
+      } else {
+        _block = acc;
+      }
+      let new_acc = _block;
       loop$list = rest$1;
       loop$fun = fun;
       loop$acc = new_acc;
@@ -160,15 +160,15 @@ function filter_map_loop(loop$list, loop$fun, loop$acc) {
     } else {
       let first$1 = list.head;
       let rest$1 = list.tail;
-      let new_acc = (() => {
-        let $ = fun(first$1);
-        if ($.isOk()) {
-          let first$2 = $[0];
-          return listPrepend(first$2, acc);
-        } else {
-          return acc;
-        }
-      })();
+      let _block;
+      let $ = fun(first$1);
+      if ($.isOk()) {
+        let first$2 = $[0];
+        _block = listPrepend(first$2, acc);
+      } else {
+        _block = acc;
+      }
+      let new_acc = _block;
       loop$list = rest$1;
       loop$fun = fun;
       loop$acc = new_acc;
@@ -771,28 +771,28 @@ function sequences(
         loop$prev = new$1;
         loop$acc = acc;
       } else if ($ instanceof $order.Gt && direction instanceof Ascending) {
-        let acc$1 = (() => {
-          if (direction instanceof Ascending) {
-            return listPrepend(reverse(growing$1), acc);
-          } else {
-            return listPrepend(growing$1, acc);
-          }
-        })();
+        let _block;
+        if (direction instanceof Ascending) {
+          _block = listPrepend(reverse(growing$1), acc);
+        } else {
+          _block = listPrepend(growing$1, acc);
+        }
+        let acc$1 = _block;
         if (rest$1.hasLength(0)) {
           return listPrepend(toList([new$1]), acc$1);
         } else {
           let next = rest$1.head;
           let rest$2 = rest$1.tail;
-          let direction$1 = (() => {
-            let $1 = compare(new$1, next);
-            if ($1 instanceof $order.Lt) {
-              return new Ascending();
-            } else if ($1 instanceof $order.Eq) {
-              return new Ascending();
-            } else {
-              return new Descending();
-            }
-          })();
+          let _block$1;
+          let $1 = compare(new$1, next);
+          if ($1 instanceof $order.Lt) {
+            _block$1 = new Ascending();
+          } else if ($1 instanceof $order.Eq) {
+            _block$1 = new Ascending();
+          } else {
+            _block$1 = new Descending();
+          }
+          let direction$1 = _block$1;
           loop$list = rest$2;
           loop$compare = compare;
           loop$growing = toList([new$1]);
@@ -801,28 +801,28 @@ function sequences(
           loop$acc = acc$1;
         }
       } else if ($ instanceof $order.Lt && direction instanceof Descending) {
-        let acc$1 = (() => {
-          if (direction instanceof Ascending) {
-            return listPrepend(reverse(growing$1), acc);
-          } else {
-            return listPrepend(growing$1, acc);
-          }
-        })();
+        let _block;
+        if (direction instanceof Ascending) {
+          _block = listPrepend(reverse(growing$1), acc);
+        } else {
+          _block = listPrepend(growing$1, acc);
+        }
+        let acc$1 = _block;
         if (rest$1.hasLength(0)) {
           return listPrepend(toList([new$1]), acc$1);
         } else {
           let next = rest$1.head;
           let rest$2 = rest$1.tail;
-          let direction$1 = (() => {
-            let $1 = compare(new$1, next);
-            if ($1 instanceof $order.Lt) {
-              return new Ascending();
-            } else if ($1 instanceof $order.Eq) {
-              return new Ascending();
-            } else {
-              return new Descending();
-            }
-          })();
+          let _block$1;
+          let $1 = compare(new$1, next);
+          if ($1 instanceof $order.Lt) {
+            _block$1 = new Ascending();
+          } else if ($1 instanceof $order.Eq) {
+            _block$1 = new Ascending();
+          } else {
+            _block$1 = new Descending();
+          }
+          let direction$1 = _block$1;
           loop$list = rest$2;
           loop$compare = compare;
           loop$growing = toList([new$1]);
@@ -831,28 +831,28 @@ function sequences(
           loop$acc = acc$1;
         }
       } else {
-        let acc$1 = (() => {
-          if (direction instanceof Ascending) {
-            return listPrepend(reverse(growing$1), acc);
-          } else {
-            return listPrepend(growing$1, acc);
-          }
-        })();
+        let _block;
+        if (direction instanceof Ascending) {
+          _block = listPrepend(reverse(growing$1), acc);
+        } else {
+          _block = listPrepend(growing$1, acc);
+        }
+        let acc$1 = _block;
         if (rest$1.hasLength(0)) {
           return listPrepend(toList([new$1]), acc$1);
         } else {
           let next = rest$1.head;
           let rest$2 = rest$1.tail;
-          let direction$1 = (() => {
-            let $1 = compare(new$1, next);
-            if ($1 instanceof $order.Lt) {
-              return new Ascending();
-            } else if ($1 instanceof $order.Eq) {
-              return new Ascending();
-            } else {
-              return new Descending();
-            }
-          })();
+          let _block$1;
+          let $1 = compare(new$1, next);
+          if ($1 instanceof $order.Lt) {
+            _block$1 = new Ascending();
+          } else if ($1 instanceof $order.Eq) {
+            _block$1 = new Ascending();
+          } else {
+            _block$1 = new Descending();
+          }
+          let direction$1 = _block$1;
           loop$list = rest$2;
           loop$compare = compare;
           loop$growing = toList([new$1]);
@@ -1032,16 +1032,16 @@ export function sort(list, compare) {
     let x = list.head;
     let y = list.tail.head;
     let rest$1 = list.tail.tail;
-    let direction = (() => {
-      let $ = compare(x, y);
-      if ($ instanceof $order.Lt) {
-        return new Ascending();
-      } else if ($ instanceof $order.Eq) {
-        return new Ascending();
-      } else {
-        return new Descending();
-      }
-    })();
+    let _block;
+    let $ = compare(x, y);
+    if ($ instanceof $order.Lt) {
+      _block = new Ascending();
+    } else if ($ instanceof $order.Eq) {
+      _block = new Ascending();
+    } else {
+      _block = new Descending();
+    }
+    let direction = _block;
     let sequences$1 = sequences(
       rest$1,
       compare,
@@ -1604,13 +1604,13 @@ export function combinations(items, n) {
     } else {
       let first$1 = items.head;
       let rest$1 = items.tail;
-      let first_combinations = (() => {
-        let _pipe = map(
-          combinations(rest$1, n - 1),
-          (com) => { return listPrepend(first$1, com); },
-        );
-        return reverse(_pipe);
-      })();
+      let _block;
+      let _pipe = map(
+        combinations(rest$1, n - 1),
+        (com) => { return listPrepend(first$1, com); },
+      );
+      _block = reverse(_pipe);
+      let first_combinations = _block;
       return fold(
         first_combinations,
         combinations(rest$1, n),
@@ -1660,11 +1660,11 @@ export function transpose(loop$list_of_list) {
       loop$list_of_list = rest$1;
     } else {
       let rows = list_of_list;
-      let firsts = (() => {
-        let _pipe = rows;
-        let _pipe$1 = map(_pipe, take_first);
-        return flatten(_pipe$1);
-      })();
+      let _block;
+      let _pipe = rows;
+      let _pipe$1 = map(_pipe, take_first);
+      _block = flatten(_pipe$1);
+      let firsts = _block;
       let rest$1 = transpose(
         map(rows, (_capture) => { return drop(_capture, 1); }),
       );
@@ -1751,7 +1751,8 @@ function sample_loop(loop$list, loop$reservoir, loop$k, loop$index, loop$w) {
     let k = loop$k;
     let index = loop$index;
     let w = loop$w;
-    let skip = (() => {
+    let _block;
+    {
       let $ = $float.logarithm(1.0 - w);
       if (!$.isOk()) {
         throw makeError(
@@ -1766,8 +1767,9 @@ function sample_loop(loop$list, loop$reservoir, loop$k, loop$index, loop$w) {
       let log_result = $[0];
       let _pipe = divideFloat(log_random(), log_result);
       let _pipe$1 = $float.floor(_pipe);
-      return $float.round(_pipe$1);
-    })();
+      _block = $float.round(_pipe$1);
+    }
+    let skip = _block;
     let index$1 = (index + skip) + 1;
     let $ = drop(list, skip);
     if ($.hasLength(0)) {
@@ -1800,16 +1802,16 @@ export function sample(list, k) {
     if ($2) {
       return reservoir;
     } else {
-      let reservoir$1 = (() => {
-        let _pipe = reservoir;
-        let _pipe$1 = ((_capture) => {
-          return map2(range(0, k - 1), _capture, (a, b) => { return [a, b]; });
-        })(_pipe);
-        return $dict.from_list(_pipe$1);
-      })();
+      let _block;
+      let _pipe = reservoir;
+      let _pipe$1 = ((_capture) => {
+        return map2(range(0, k - 1), _capture, (a, b) => { return [a, b]; });
+      })(_pipe);
+      _block = $dict.from_list(_pipe$1);
+      let reservoir$1 = _block;
       let w = $float.exponential(divideFloat(log_random(), $int.to_float(k)));
-      let _pipe = sample_loop(list$1, reservoir$1, k, k, w);
-      return $dict.values(_pipe);
+      let _pipe$2 = sample_loop(list$1, reservoir$1, k, k, w);
+      return $dict.values(_pipe$2);
     }
   }
 }

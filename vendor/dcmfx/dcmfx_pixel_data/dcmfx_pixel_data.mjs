@@ -6,42 +6,45 @@ import * as $p10_write from "../dcmfx_p10/dcmfx_p10/p10_write.mjs";
 import * as $list from "../gleam_stdlib/gleam/list.mjs";
 import * as $pair from "../gleam_stdlib/gleam/pair.mjs";
 import * as $result from "../gleam_stdlib/gleam/result.mjs";
-import * as $pixel_data_filter from "./dcmfx_pixel_data/pixel_data_filter.mjs";
+import * as $p10_pixel_data_frame_filter from "./dcmfx_pixel_data/p10_pixel_data_frame_filter.mjs";
 import * as $pixel_data_frame from "./dcmfx_pixel_data/pixel_data_frame.mjs";
 import { toList, isEqual } from "./gleam.mjs";
 
 export function get_pixel_data_frames(data_set) {
-  let ds = (() => {
-    let _pipe = toList([
-      $dictionary.number_of_frames.tag,
-      $dictionary.extended_offset_table.tag,
-      $dictionary.extended_offset_table_lengths.tag,
-      $dictionary.pixel_data.tag,
-    ]);
-    return $list.fold(
-      _pipe,
-      $data_set.new$(),
-      (ds, tag) => {
-        let $ = $data_set.get_value(data_set, tag);
-        if ($.isOk()) {
-          let value = $[0];
-          return $data_set.insert(ds, tag, value);
-        } else {
-          return ds;
-        }
-      },
-    );
-  })();
-  let context = [toList([]), $pixel_data_filter.new$()];
-  let _pipe = ds;
-  let _pipe$1 = $p10_write.data_set_to_tokens(
+  let _block;
+  let _pipe = toList([
+    $dictionary.number_of_frames.tag,
+    $dictionary.rows.tag,
+    $dictionary.columns.tag,
+    $dictionary.bits_allocated.tag,
+    $dictionary.extended_offset_table.tag,
+    $dictionary.extended_offset_table_lengths.tag,
+    $dictionary.pixel_data.tag,
+  ]);
+  _block = $list.fold(
     _pipe,
+    $data_set.new$(),
+    (ds, tag) => {
+      let $ = $data_set.get_value(data_set, tag);
+      if ($.isOk()) {
+        let value = $[0];
+        return $data_set.insert(ds, tag, value);
+      } else {
+        return ds;
+      }
+    },
+  );
+  let ds = _block;
+  let context = [toList([]), $p10_pixel_data_frame_filter.new$()];
+  let _pipe$1 = ds;
+  let _pipe$2 = $p10_write.data_set_to_tokens(
+    _pipe$1,
     context,
     (context, token) => {
       let frames = context[0];
       let filter = context[1];
       return $result.map(
-        $pixel_data_filter.add_token(filter, token),
+        $p10_pixel_data_frame_filter.add_token(filter, token),
         (_use0) => {
           let new_frames = _use0[0];
           let filter$1 = _use0[1];
@@ -51,7 +54,7 @@ export function get_pixel_data_frames(data_set) {
       );
     },
   );
-  return $result.map(_pipe$1, $pair.first);
+  return $result.map(_pipe$2, $pair.first);
 }
 
 export function file_extension_for_transfer_syntax(ts) {
@@ -115,6 +118,12 @@ export function file_extension_for_transfer_syntax(ts) {
   ))) {
     let ts$1 = ts;
     return ".mp4";
+  } else if (((isEqual(ts, $transfer_syntax.jpeg_xl_lossless)) || (isEqual(
+    ts,
+    $transfer_syntax.jpeg_xl_jpeg_recompression
+  ))) || (isEqual(ts, $transfer_syntax.jpeg_xl))) {
+    let ts$1 = ts;
+    return ".jxl";
   } else if (((isEqual(
     ts,
     $transfer_syntax.high_throughput_jpeg_2k_lossless_only
@@ -124,6 +133,9 @@ export function file_extension_for_transfer_syntax(ts) {
   ))) || (isEqual(ts, $transfer_syntax.high_throughput_jpeg_2k))) {
     let ts$1 = ts;
     return ".jph";
+  } else if (isEqual(ts, $transfer_syntax.deflated_image_frame_compression)) {
+    let ts$1 = ts;
+    return ".zz";
   } else {
     return ".bin";
   }

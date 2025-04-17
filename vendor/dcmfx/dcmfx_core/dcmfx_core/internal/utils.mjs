@@ -168,13 +168,13 @@ function do_inspect_bit_array(loop$input, loop$acc) {
     if ((input.bitSize >= 8 && (input.bitSize - 8) % 8 === 0)) {
       let x = input.byteAt(0);
       let rest = bitArraySlice(input, 8);
-      let suffix = (() => {
-        if (rest.bitSize == 0) {
-          return "";
-        } else {
-          return " ";
-        }
-      })();
+      let _block;
+      if (rest.bitSize == 0) {
+        _block = "";
+      } else {
+        _block = " ";
+      }
+      let suffix = _block;
       let acc$1 = (acc + (() => {
         let _pipe = x;
         let _pipe$1 = $int.to_base16(_pipe);
@@ -203,13 +203,13 @@ export function inspect_bit_array(bits, max_length) {
   }
   let sliced_bits = $[0];
   let s = do_inspect_bit_array(sliced_bits, "[");
-  let suffix = (() => {
-    let $1 = byte_count === $bit_array.byte_size(bits);
-    if ($1) {
-      return "]";
-    } else {
-      return " …]";
-    }
-  })();
+  let _block;
+  let $1 = byte_count === $bit_array.byte_size(bits);
+  if ($1) {
+    _block = "]";
+  } else {
+    _block = " …]";
+  }
+  let suffix = _block;
   return s + suffix;
 }

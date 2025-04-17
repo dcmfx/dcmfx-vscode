@@ -1,13 +1,13 @@
 import type * as _ from "../gleam.d.mts";
 import type * as $dict from "../gleam/dict.d.mts";
 
-declare class Set<EGH> extends _.CustomType {
+declare class Set<EGB> extends _.CustomType {
   constructor(dict: $dict.Dict$<any, undefined>);
   
   dict: $dict.Dict$<any, undefined>;
 }
 
-export type Set$<EGH> = Set<EGH>;
+export type Set$<EGB> = Set<EGB>;
 
 export function new$(): Set$<any>;
 
@@ -15,46 +15,46 @@ export function size(set: Set$<any>): number;
 
 export function is_empty(set: Set$<any>): boolean;
 
-export function contains<EGR>(set: Set$<EGR>, member: EGR): boolean;
+export function contains<EGL>(set: Set$<EGL>, member: EGL): boolean;
 
-export function delete$<EGT>(set: Set$<EGT>, member: EGT): Set$<EGT>;
+export function delete$<EGN>(set: Set$<EGN>, member: EGN): Set$<EGN>;
 
-export function to_list<EGW>(set: Set$<EGW>): _.List<EGW>;
+export function to_list<EGQ>(set: Set$<EGQ>): _.List<EGQ>;
 
-export function fold<EHC, EHE>(
-  set: Set$<EHC>,
-  initial: EHE,
-  reducer: (x0: EHE, x1: EHC) => EHE
-): EHE;
+export function fold<EGW, EGY>(
+  set: Set$<EGW>,
+  initial: EGY,
+  reducer: (x0: EGY, x1: EGW) => EGY
+): EGY;
 
-export function filter<EHF>(set: Set$<EHF>, predicate: (x0: EHF) => boolean): Set$<
-  EHF
+export function filter<EGZ>(set: Set$<EGZ>, predicate: (x0: EGZ) => boolean): Set$<
+  EGZ
 >;
 
-export function drop<EHM>(set: Set$<EHM>, disallowed: _.List<EHM>): Set$<EHM>;
+export function drop<EHG>(set: Set$<EHG>, disallowed: _.List<EHG>): Set$<EHG>;
 
-export function take<EHQ>(set: Set$<EHQ>, desired: _.List<EHQ>): Set$<EHQ>;
+export function take<EHK>(set: Set$<EHK>, desired: _.List<EHK>): Set$<EHK>;
 
-export function intersection<EID>(first: Set$<EID>, second: Set$<EID>): Set$<
-  EID
+export function intersection<EHX>(first: Set$<EHX>, second: Set$<EHX>): Set$<
+  EHX
 >;
 
-export function difference<EIH>(first: Set$<EIH>, second: Set$<EIH>): Set$<EIH>;
+export function difference<EIB>(first: Set$<EIB>, second: Set$<EIB>): Set$<EIB>;
 
-export function is_subset<EIL>(first: Set$<EIL>, second: Set$<EIL>): boolean;
+export function is_subset<EIF>(first: Set$<EIF>, second: Set$<EIF>): boolean;
 
-export function is_disjoint<EIO>(first: Set$<EIO>, second: Set$<EIO>): boolean;
+export function is_disjoint<EII>(first: Set$<EII>, second: Set$<EII>): boolean;
 
-export function each<EIV>(set: Set$<EIV>, fun: (x0: EIV) => any): undefined;
+export function each<EIP>(set: Set$<EIP>, fun: (x0: EIP) => any): undefined;
 
-export function insert<EGO>(set: Set$<EGO>, member: EGO): Set$<EGO>;
+export function insert<EGI>(set: Set$<EGI>, member: EGI): Set$<EGI>;
 
-export function from_list<EGZ>(members: _.List<EGZ>): Set$<EGZ>;
+export function from_list<EGT>(members: _.List<EGT>): Set$<EGT>;
 
-export function map<EHI, EHK>(set: Set$<EHI>, fun: (x0: EHI) => EHK): Set$<EHK>;
+export function map<EHC, EHE>(set: Set$<EHC>, fun: (x0: EHC) => EHE): Set$<EHE>;
 
-export function union<EHU>(first: Set$<EHU>, second: Set$<EHU>): Set$<EHU>;
+export function union<EHO>(first: Set$<EHO>, second: Set$<EHO>): Set$<EHO>;
 
-export function symmetric_difference<EIR>(first: Set$<EIR>, second: Set$<EIR>): Set$<
-  EIR
+export function symmetric_difference<EIL>(first: Set$<EIL>, second: Set$<EIL>): Set$<
+  EIL
 >;

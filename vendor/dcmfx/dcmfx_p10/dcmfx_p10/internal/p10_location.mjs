@@ -128,13 +128,16 @@ export function new$() {
 }
 
 export function check_data_element_ordering(location, tag) {
+  let is_tag_ordering_valid = (last_data_element_tag) => {
+    return $data_element_tag.to_int(tag) > $data_element_tag.to_int(
+      last_data_element_tag,
+    );
+  };
   if (location.atLeastLength(1) && location.head instanceof RootDataSet) {
     let clarifying_data_elements = location.head.clarifying_data_elements;
     let last_data_element_tag = location.head.last_data_element_tag;
     let rest = location.tail;
-    let $ = $data_element_tag.to_int(tag) > $data_element_tag.to_int(
-      last_data_element_tag,
-    );
+    let $ = is_tag_ordering_valid(last_data_element_tag);
     if ($) {
       return new Ok(
         listPrepend(new RootDataSet(clarifying_data_elements, tag), rest),
@@ -147,9 +150,7 @@ export function check_data_element_ordering(location, tag) {
     let last_data_element_tag = location.head.last_data_element_tag;
     let ends_at = location.head.ends_at;
     let rest = location.tail;
-    let $ = $data_element_tag.to_int(tag) > $data_element_tag.to_int(
-      last_data_element_tag,
-    );
+    let $ = is_tag_ordering_valid(last_data_element_tag);
     if ($) {
       return new Ok(
         listPrepend(new Item(clarifying_data_elements, tag, ends_at), rest),
@@ -157,6 +158,8 @@ export function check_data_element_ordering(location, tag) {
     } else {
       return new Error(undefined);
     }
+  } else if (location.atLeastLength(1) && location.head instanceof Sequence) {
+    return new Ok(location);
   } else {
     return new Error(undefined);
   }
@@ -262,7 +265,7 @@ function active_clarifying_data_elements(loop$location) {
       throw makeError(
         "panic",
         "dcmfx_p10/internal/p10_location",
-        361,
+        362,
         "active_clarifying_data_elements",
         "P10 location does not contain the root data set",
         {}
@@ -276,30 +279,30 @@ export function bits_allocated(location) {
 }
 
 export function swap_endianness(location, tag, vr, data) {
-  let vr$1 = (() => {
-    if (vr instanceof $value_representation.OtherWordString) {
-      let bits_allocated$1 = (() => {
-        if (isEqual(tag, $dictionary.pixel_data.tag)) {
-          let tag$1 = tag;
-          return active_clarifying_data_elements(location).bits_allocated;
-        } else if (isEqual(tag, $dictionary.waveform_data.tag)) {
-          let tag$1 = tag;
-          return active_clarifying_data_elements(location).waveform_bits_allocated;
-        } else {
-          return new None();
-        }
-      })();
-      if (bits_allocated$1 instanceof Some && bits_allocated$1[0] === 32) {
-        return new $value_representation.UnsignedLong();
-      } else if (bits_allocated$1 instanceof Some && bits_allocated$1[0] === 64) {
-        return new $value_representation.UnsignedVeryLong();
-      } else {
-        return vr;
-      }
+  let _block;
+  if (vr instanceof $value_representation.OtherWordString) {
+    let _block$1;
+    if (isEqual(tag, $dictionary.pixel_data.tag)) {
+      let tag$1 = tag;
+      _block$1 = active_clarifying_data_elements(location).bits_allocated;
+    } else if (isEqual(tag, $dictionary.waveform_data.tag)) {
+      let tag$1 = tag;
+      _block$1 = active_clarifying_data_elements(location).waveform_bits_allocated;
     } else {
-      return vr;
+      _block$1 = new None();
     }
-  })();
+    let bits_allocated$1 = _block$1;
+    if (bits_allocated$1 instanceof Some && bits_allocated$1[0] === 32) {
+      _block = new $value_representation.UnsignedLong();
+    } else if (bits_allocated$1 instanceof Some && bits_allocated$1[0] === 64) {
+      _block = new $value_representation.UnsignedVeryLong();
+    } else {
+      _block = vr;
+    }
+  } else {
+    _block = vr;
+  }
+  let vr$1 = _block;
   return $value_representation.swap_endianness(vr$1, data);
 }
 
@@ -381,35 +384,35 @@ function update_specific_character_set_clarifying_data_element(
   location,
   value_bytes
 ) {
-  let specific_character_set = (() => {
-    let _pipe = value_bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    return $result.map_error(
-      _pipe$1,
-      (_) => {
-        return new $p10_error.SpecificCharacterSetInvalid(
-          $utils.inspect_bit_array(value_bytes, 64),
-          "Invalid UTF-8",
-        );
-      },
-    );
-  })();
+  let _block;
+  let _pipe = value_bytes;
+  let _pipe$1 = $bit_array.to_string(_pipe);
+  _block = $result.map_error(
+    _pipe$1,
+    (_) => {
+      return new $p10_error.SpecificCharacterSetInvalid(
+        $utils.inspect_bit_array(value_bytes, 64),
+        "Invalid UTF-8",
+      );
+    },
+  );
+  let specific_character_set = _block;
   return $result.try$(
     specific_character_set,
     (specific_character_set) => {
-      let charset = (() => {
-        let _pipe = specific_character_set;
-        let _pipe$1 = $dcmfx_character_set.from_string(_pipe);
-        return $result.map_error(
-          _pipe$1,
-          (_) => {
-            return new $p10_error.SpecificCharacterSetInvalid(
-              $string.slice(specific_character_set, 0, 100),
-              "",
-            );
-          },
-        );
-      })();
+      let _block$1;
+      let _pipe$2 = specific_character_set;
+      let _pipe$3 = $dcmfx_character_set.from_string(_pipe$2);
+      _block$1 = $result.map_error(
+        _pipe$3,
+        (_) => {
+          return new $p10_error.SpecificCharacterSetInvalid(
+            $string.slice(specific_character_set, 0, 64),
+            "",
+          );
+        },
+      );
+      let charset = _block$1;
       return $result.try$(
         charset,
         (charset) => {
@@ -513,37 +516,37 @@ function update_private_creator_clarifying_data_element(
   value_bytes,
   tag
 ) {
-  let location$1 = (() => {
-    let $ = $bit_array.to_string(value_bytes);
-    if ($.isOk()) {
-      let private_creator = $[0];
-      let private_creator$1 = (() => {
-        let _pipe = private_creator;
-        return $utils.trim_ascii_end(_pipe, 0x20);
-      })();
-      let _pipe = location;
-      return map_clarifying_data_elements(
-        _pipe,
-        (clarifying_data_elements) => {
-          let _record = clarifying_data_elements;
-          return new ClarifyingDataElements(
-            _record.specific_character_set,
-            _record.bits_allocated,
-            _record.pixel_representation,
-            _record.waveform_bits_stored,
-            _record.waveform_bits_allocated,
-            $dict.insert(
-              clarifying_data_elements.private_creators,
-              tag,
-              private_creator$1,
-            ),
-          );
-        },
-      );
-    } else {
-      return location;
-    }
-  })();
+  let _block;
+  let $ = $bit_array.to_string(value_bytes);
+  if ($.isOk()) {
+    let private_creator = $[0];
+    let _block$1;
+    let _pipe = private_creator;
+    _block$1 = $utils.trim_ascii_end(_pipe, 0x20);
+    let private_creator$1 = _block$1;
+    let _pipe$1 = location;
+    _block = map_clarifying_data_elements(
+      _pipe$1,
+      (clarifying_data_elements) => {
+        let _record = clarifying_data_elements;
+        return new ClarifyingDataElements(
+          _record.specific_character_set,
+          _record.bits_allocated,
+          _record.pixel_representation,
+          _record.waveform_bits_stored,
+          _record.waveform_bits_allocated,
+          $dict.insert(
+            clarifying_data_elements.private_creators,
+            tag,
+            private_creator$1,
+          ),
+        );
+      },
+    );
+  } else {
+    _block = location;
+  }
+  let location$1 = _block;
   return [value_bytes, location$1];
 }
 
@@ -589,19 +592,19 @@ export function is_specific_character_set_utf8_compatible(location) {
 
 export function decode_string_bytes(location, vr, value_bytes) {
   let charset = active_clarifying_data_elements(location).specific_character_set;
-  let string_type = (() => {
-    if (vr instanceof $value_representation.PersonName) {
-      return new $string_type.PersonName();
-    } else if (vr instanceof $value_representation.LongString) {
-      return new $string_type.MultiValue();
-    } else if (vr instanceof $value_representation.ShortString) {
-      return new $string_type.MultiValue();
-    } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-      return new $string_type.MultiValue();
-    } else {
-      return new $string_type.SingleValue();
-    }
-  })();
+  let _block;
+  if (vr instanceof $value_representation.PersonName) {
+    _block = new $string_type.PersonName();
+  } else if (vr instanceof $value_representation.LongString) {
+    _block = new $string_type.MultiValue();
+  } else if (vr instanceof $value_representation.ShortString) {
+    _block = new $string_type.MultiValue();
+  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+    _block = new $string_type.MultiValue();
+  } else {
+    _block = new $string_type.SingleValue();
+  }
+  let string_type = _block;
   let _pipe = charset;
   let _pipe$1 = $dcmfx_character_set.decode_bytes(
     _pipe,
@@ -617,15 +620,15 @@ export function decode_string_bytes(location, vr, value_bytes) {
 export function infer_vr_for_tag(location, tag) {
   let clarifying_data_elements = active_clarifying_data_elements(location);
   let private_creator = private_creator_for_tag(clarifying_data_elements, tag);
-  let allowed_vrs = (() => {
-    let $ = $dictionary.find(tag, private_creator);
-    if ($.isOk() && $[0] instanceof $dictionary.Item) {
-      let vrs = $[0].vrs;
-      return vrs;
-    } else {
-      return toList([]);
-    }
-  })();
+  let _block;
+  let $ = $dictionary.find(tag, private_creator);
+  if ($.isOk() && $[0] instanceof $dictionary.Item) {
+    let vrs = $[0].vrs;
+    _block = vrs;
+  } else {
+    _block = toList([]);
+  }
+  let allowed_vrs = _block;
   if (allowed_vrs.hasLength(1)) {
     let vr = allowed_vrs.head;
     return new Ok(vr);
@@ -671,10 +674,10 @@ export function infer_vr_for_tag(location, tag) {
     tag,
     $dictionary.histogram_first_bin_value.tag
   ))) || (isEqual(tag, $dictionary.histogram_last_bin_value.tag)))) {
-    let $ = clarifying_data_elements.pixel_representation;
-    if ($ instanceof Some && $[0] === 0) {
+    let $1 = clarifying_data_elements.pixel_representation;
+    if ($1 instanceof Some && $1[0] === 0) {
       return new Ok(new $value_representation.UnsignedShort());
-    } else if ($ instanceof Some && $[0] === 1) {
+    } else if ($1 instanceof Some && $1[0] === 1) {
       return new Ok(new $value_representation.SignedShort());
     } else {
       return new Error($dictionary.pixel_representation.tag);
@@ -686,10 +689,10 @@ export function infer_vr_for_tag(location, tag) {
     tag,
     $dictionary.channel_maximum_value.tag
   )))) {
-    let $ = clarifying_data_elements.waveform_bits_stored;
-    if ($ instanceof Some && $[0] === 8) {
+    let $1 = clarifying_data_elements.waveform_bits_stored;
+    if ($1 instanceof Some && $1[0] === 8) {
       return new Ok(new $value_representation.OtherByteString());
-    } else if ($ instanceof Some && $[0] === 16) {
+    } else if ($1 instanceof Some && $1[0] === 16) {
       return new Ok(new $value_representation.OtherWordString());
     } else {
       return new Error($dictionary.waveform_bits_stored.tag);
@@ -701,10 +704,10 @@ export function infer_vr_for_tag(location, tag) {
     tag,
     $dictionary.waveform_data.tag
   )))) {
-    let $ = clarifying_data_elements.waveform_bits_allocated;
-    if ($ instanceof Some && $[0] === 8) {
+    let $1 = clarifying_data_elements.waveform_bits_allocated;
+    if ($1 instanceof Some && $1[0] === 8) {
       return new Ok(new $value_representation.OtherByteString());
-    } else if ($ instanceof Some && $[0] === 16) {
+    } else if ($1 instanceof Some && $1[0] === 16) {
       return new Ok(new $value_representation.OtherWordString());
     } else {
       return new Error($dictionary.waveform_bits_allocated.tag);

@@ -33,13 +33,13 @@ export class StructuredPersonName extends $CustomType {
 }
 
 function parse_person_name_component_group(component_group) {
-  let components = (() => {
-    let _pipe = $string.split(component_group, "^");
-    return $list.map(
-      _pipe,
-      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
-    );
-  })();
+  let _block;
+  let _pipe = $string.split(component_group, "^");
+  _block = $list.map(
+    _pipe,
+    (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
+  );
+  let components = _block;
   let component_count = $list.length(components);
   let is_valid = (component_count > 0) && (component_count <= 5);
   return $bool.guard(
@@ -108,31 +108,31 @@ function parse_person_name_string(person_name_string) {
       ),
     ),
     () => {
-      let person_names = (() => {
-        let _pipe = component_groups;
-        let _pipe$1 = $list.map(_pipe, parse_person_name_component_group);
-        return $result.all(_pipe$1);
-      })();
+      let _block;
+      let _pipe = component_groups;
+      let _pipe$1 = $list.map(_pipe, parse_person_name_component_group);
+      _block = $result.all(_pipe$1);
+      let person_names = _block;
       return $result.try$(
         person_names,
         (person_names) => {
-          let $ = (() => {
-            if (person_names.hasLength(1)) {
-              let alphabetic = person_names.head;
-              return [alphabetic, new None(), new None()];
-            } else if (person_names.hasLength(2)) {
-              let alphabetic = person_names.head;
-              let ideographic = person_names.tail.head;
-              return [alphabetic, ideographic, new None()];
-            } else if (person_names.hasLength(3)) {
-              let alphabetic = person_names.head;
-              let ideographic = person_names.tail.head;
-              let phonetic = person_names.tail.tail.head;
-              return [alphabetic, ideographic, phonetic];
-            } else {
-              return [new None(), new None(), new None()];
-            }
-          })();
+          let _block$1;
+          if (person_names.hasLength(1)) {
+            let alphabetic = person_names.head;
+            _block$1 = [alphabetic, new None(), new None()];
+          } else if (person_names.hasLength(2)) {
+            let alphabetic = person_names.head;
+            let ideographic = person_names.tail.head;
+            _block$1 = [alphabetic, ideographic, new None()];
+          } else if (person_names.hasLength(3)) {
+            let alphabetic = person_names.head;
+            let ideographic = person_names.tail.head;
+            let phonetic = person_names.tail.tail.head;
+            _block$1 = [alphabetic, ideographic, phonetic];
+          } else {
+            _block$1 = [new None(), new None(), new None()];
+          }
+          let $ = _block$1;
           let alphabetic = $[0];
           let ideographic = $[1];
           let phonetic = $[2];
@@ -146,21 +146,21 @@ function parse_person_name_string(person_name_string) {
 }
 
 export function from_bytes(bytes) {
-  let person_name_string = (() => {
-    let _pipe = bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    return $result.replace_error(
-      _pipe$1,
-      $data_error.new_value_invalid("PersonName is invalid UTF-8"),
-    );
-  })();
+  let _block;
+  let _pipe = bytes;
+  let _pipe$1 = $bit_array.to_string(_pipe);
+  _block = $result.replace_error(
+    _pipe$1,
+    $data_error.new_value_invalid("PersonName is invalid UTF-8"),
+  );
+  let person_name_string = _block;
   return $result.try$(
     person_name_string,
     (person_name_string) => {
-      let _pipe = person_name_string;
-      let _pipe$1 = $string.split(_pipe, "\\");
-      let _pipe$2 = $list.map(_pipe$1, parse_person_name_string);
-      return $result.all(_pipe$2);
+      let _pipe$2 = person_name_string;
+      let _pipe$3 = $string.split(_pipe$2, "\\");
+      let _pipe$4 = $list.map(_pipe$3, parse_person_name_string);
+      return $result.all(_pipe$4);
     },
   );
 }
@@ -216,47 +216,43 @@ function components_to_string(components) {
 }
 
 export function to_bytes(value) {
-  let names = (() => {
-    let _pipe = value;
-    let _pipe$1 = $list.map(
-      _pipe,
-      (value) => {
-        let _pipe$1 = toList([
-          value.alphabetic,
-          value.ideographic,
-          value.phonetic,
-        ]);
-        let _pipe$2 = $list.map(
-          _pipe$1,
-          (component_group) => {
-            if (component_group instanceof Some) {
-              let n = component_group[0];
-              return components_to_string(n);
-            } else {
-              return new Ok("");
-            }
-          },
-        );
-        let _pipe$3 = $result.all(_pipe$2);
-        let _pipe$4 = $result.map(
-          _pipe$3,
-          (_capture) => { return $string.join(_capture, "="); },
-        );
-        return $result.map(
-          _pipe$4,
-          (_capture) => { return $utils.trim_ascii_end(_capture, 0x3D); },
-        );
-      },
-    );
-    return $result.all(_pipe$1);
-  })();
+  let _block;
+  let _pipe = value;
+  let _pipe$1 = $list.map(
+    _pipe,
+    (value) => {
+      let _pipe$1 = toList([value.alphabetic, value.ideographic, value.phonetic]);
+      let _pipe$2 = $list.map(
+        _pipe$1,
+        (component_group) => {
+          if (component_group instanceof Some) {
+            let n = component_group[0];
+            return components_to_string(n);
+          } else {
+            return new Ok("");
+          }
+        },
+      );
+      let _pipe$3 = $result.all(_pipe$2);
+      let _pipe$4 = $result.map(
+        _pipe$3,
+        (_capture) => { return $string.join(_capture, "="); },
+      );
+      return $result.map(
+        _pipe$4,
+        (_capture) => { return $utils.trim_ascii_end(_capture, 0x3D); },
+      );
+    },
+  );
+  _block = $result.all(_pipe$1);
+  let names = _block;
   return $result.map(
     names,
     (names) => {
-      let _pipe = names;
-      let _pipe$1 = $string.join(_pipe, "\\");
-      let _pipe$2 = $bit_array.from_string(_pipe$1);
-      return $bit_array_utils.pad_to_even_length(_pipe$2, 0x20);
+      let _pipe$2 = names;
+      let _pipe$3 = $string.join(_pipe$2, "\\");
+      let _pipe$4 = $bit_array.from_string(_pipe$3);
+      return $bit_array_utils.pad_to_even_length(_pipe$4, 0x20);
     },
   );
 }

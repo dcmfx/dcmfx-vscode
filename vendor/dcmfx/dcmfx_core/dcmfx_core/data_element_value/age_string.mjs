@@ -29,46 +29,46 @@ export class StructuredAge extends $CustomType {
 }
 
 export function to_string(age) {
-  let unit = (() => {
-    let $ = age.unit;
-    if ($ instanceof Days) {
-      return "day";
-    } else if ($ instanceof Weeks) {
-      return "week";
-    } else if ($ instanceof Months) {
-      return "month";
-    } else {
-      return "year";
-    }
-  })();
-  let plural = (() => {
-    let $ = age.number;
-    if ($ === 1) {
-      return "";
-    } else {
-      return "s";
-    }
-  })();
+  let _block;
+  let $ = age.unit;
+  if ($ instanceof Days) {
+    _block = "day";
+  } else if ($ instanceof Weeks) {
+    _block = "week";
+  } else if ($ instanceof Months) {
+    _block = "month";
+  } else {
+    _block = "year";
+  }
+  let unit = _block;
+  let _block$1;
+  let $1 = age.number;
+  if ($1 === 1) {
+    _block$1 = "";
+  } else {
+    _block$1 = "s";
+  }
+  let plural = _block$1;
   return (($int.to_string(age.number) + " ") + unit) + plural;
 }
 
 export function from_bytes(bytes) {
-  let age_string = (() => {
-    let _pipe = bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    return $result.replace_error(
-      _pipe$1,
-      $data_error.new_value_invalid("AgeString is invalid UTF-8"),
-    );
-  })();
+  let _block;
+  let _pipe = bytes;
+  let _pipe$1 = $bit_array.to_string(_pipe);
+  _block = $result.replace_error(
+    _pipe$1,
+    $data_error.new_value_invalid("AgeString is invalid UTF-8"),
+  );
+  let age_string = _block;
   return $result.try$(
     age_string,
     (age_string) => {
-      let age_string$1 = (() => {
-        let _pipe = age_string;
-        let _pipe$1 = $utils.trim_ascii(_pipe, 0x0);
-        return $string.trim(_pipe$1);
-      })();
+      let _block$1;
+      let _pipe$2 = age_string;
+      let _pipe$3 = $utils.trim_ascii(_pipe$2, 0x0);
+      _block$1 = $string.trim(_pipe$3);
+      let age_string$1 = _block$1;
       let $ = $regexp.from_string("^(\\d\\d\\d)([DWMY])$");
       if (!$.isOk()) {
         throw makeError(
@@ -101,17 +101,17 @@ export function from_bytes(bytes) {
           )
         }
         let number$1 = $2[0];
-        let unit$1 = (() => {
-          if (unit === "D") {
-            return new Days();
-          } else if (unit === "W") {
-            return new Weeks();
-          } else if (unit === "M") {
-            return new Months();
-          } else {
-            return new Years();
-          }
-        })();
+        let _block$2;
+        if (unit === "D") {
+          _block$2 = new Days();
+        } else if (unit === "W") {
+          _block$2 = new Weeks();
+        } else if (unit === "M") {
+          _block$2 = new Months();
+        } else {
+          _block$2 = new Years();
+        }
+        let unit$1 = _block$2;
         return new Ok(new StructuredAge(number$1, unit$1));
       } else {
         return new Error(
@@ -133,18 +133,18 @@ export function to_bytes(age) {
       ),
     ),
     () => {
-      let unit = (() => {
-        let $ = age.unit;
-        if ($ instanceof Days) {
-          return "D";
-        } else if ($ instanceof Weeks) {
-          return "W";
-        } else if ($ instanceof Months) {
-          return "M";
-        } else {
-          return "Y";
-        }
-      })();
+      let _block;
+      let $ = age.unit;
+      if ($ instanceof Days) {
+        _block = "D";
+      } else if ($ instanceof Weeks) {
+        _block = "W";
+      } else if ($ instanceof Months) {
+        _block = "M";
+      } else {
+        _block = "Y";
+      }
+      let unit = _block;
       let _pipe = age.number;
       let _pipe$1 = $int.to_string(_pipe);
       let _pipe$2 = $utils.pad_start(_pipe$1, 3, "0");

@@ -113,24 +113,24 @@ function do_read_stream(loop$stream, loop$context, loop$builder) {
     let stream = loop$stream;
     let context = loop$context;
     let builder = loop$builder;
-    let tokens_and_context = (() => {
-      let _pipe = read_tokens_from_stream(stream, context);
-      return $result.map_error(_pipe, (e) => { return [e, builder]; });
-    })();
+    let _block;
+    let _pipe = read_tokens_from_stream(stream, context);
+    _block = $result.map_error(_pipe, (e) => { return [e, builder]; });
+    let tokens_and_context = _block;
     if (tokens_and_context.isOk()) {
       let tokens = tokens_and_context[0][0];
       let context$1 = tokens_and_context[0][1];
-      let builder$1 = (() => {
-        let _pipe = tokens;
-        return $list.try_fold(
-          _pipe,
-          builder,
-          (builder, token) => {
-            let _pipe$1 = $data_set_builder.add_token(builder, token);
-            return $result.map_error(_pipe$1, (e) => { return [e, builder]; });
-          },
-        );
-      })();
+      let _block$1;
+      let _pipe$1 = tokens;
+      _block$1 = $list.try_fold(
+        _pipe$1,
+        builder,
+        (builder, token) => {
+          let _pipe$2 = $data_set_builder.add_token(builder, token);
+          return $result.map_error(_pipe$2, (e) => { return [e, builder]; });
+        },
+      );
+      let builder$1 = _block$1;
       if (builder$1.isOk()) {
         let builder$2 = builder$1[0];
         let $ = $data_set_builder.final_data_set(builder$2);
@@ -188,16 +188,16 @@ function do_read_bytes(loop$context, loop$builder) {
     if ($.isOk()) {
       let tokens = $[0][0];
       let context$1 = $[0][1];
-      let new_builder = (() => {
-        let _pipe = tokens;
-        return $list.try_fold(
-          _pipe,
-          builder,
-          (builder, token) => {
-            return $data_set_builder.add_token(builder, token);
-          },
-        );
-      })();
+      let _block;
+      let _pipe = tokens;
+      _block = $list.try_fold(
+        _pipe,
+        builder,
+        (builder, token) => {
+          return $data_set_builder.add_token(builder, token);
+        },
+      );
+      let new_builder = _block;
       if (new_builder.isOk()) {
         let builder$1 = new_builder[0];
         let $1 = $data_set_builder.final_data_set(builder$1);
@@ -220,10 +220,10 @@ function do_read_bytes(loop$context, loop$builder) {
 }
 
 export function read_bytes(bytes) {
-  let $ = (() => {
-    let _pipe = $p10_read.new_read_context();
-    return $p10_read.write_bytes(_pipe, bytes, true);
-  })();
+  let _block;
+  let _pipe = $p10_read.new_read_context();
+  _block = $p10_read.write_bytes(_pipe, bytes, true);
+  let $ = _block;
   if (!$.isOk()) {
     throw makeError(
       "let_assert",
@@ -263,16 +263,14 @@ export function write_stream(stream, data_set, config) {
 }
 
 export function write_file(filename, data_set, config) {
-  let stream = (() => {
-    let _pipe = filename;
-    let _pipe$1 = $file_stream.open_write(_pipe);
-    return $result.map_error(
-      _pipe$1,
-      (e) => {
-        return new $p10_error.FileStreamError("Creating write stream", e);
-      },
-    );
-  })();
+  let _block;
+  let _pipe = filename;
+  let _pipe$1 = $file_stream.open_write(_pipe);
+  _block = $result.map_error(
+    _pipe$1,
+    (e) => { return new $p10_error.FileStreamError("Creating write stream", e); },
+  );
+  let stream = _block;
   return $result.try$(
     stream,
     (stream) => {

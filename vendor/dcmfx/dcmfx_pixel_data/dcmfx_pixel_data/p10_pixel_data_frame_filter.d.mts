@@ -11,7 +11,7 @@ import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as $pixel_data_frame from "../dcmfx_pixel_data/pixel_data_frame.d.mts";
 import type * as _ from "../gleam.d.mts";
 
-declare class PixelDataFilter extends _.CustomType {
+declare class P10PixelDataFrameFilter extends _.CustomType {
   constructor(
     is_encapsulated: boolean,
     details: $p10_custom_type_transform.P10CustomTypeTransform$<
@@ -19,7 +19,7 @@ declare class PixelDataFilter extends _.CustomType {
     >,
     pixel_data_filter: $p10_filter_transform.P10FilterTransform$,
     native_pixel_data_frame_size: number,
-    pixel_data: $deque.Deque$<_.BitArray>,
+    pixel_data: $deque.Deque$<[_.BitArray, number]>,
     pixel_data_write_offset: number,
     pixel_data_read_offset: number,
     offset_table: $option.Option$<_.List<[number, $option.Option$<number>]>>,
@@ -32,18 +32,21 @@ declare class PixelDataFilter extends _.CustomType {
   >;
   pixel_data_filter: $p10_filter_transform.P10FilterTransform$;
   native_pixel_data_frame_size: number;
-  pixel_data: $deque.Deque$<_.BitArray>;
+  pixel_data: $deque.Deque$<[_.BitArray, number]>;
   pixel_data_write_offset: number;
   pixel_data_read_offset: number;
   offset_table: $option.Option$<_.List<[number, $option.Option$<number>]>>;
   next_frame_index: number;
 }
 
-export type PixelDataFilter$ = PixelDataFilter;
+export type P10PixelDataFrameFilter$ = P10PixelDataFrameFilter;
 
 declare class PixelDataFilterDetails extends _.CustomType {
   constructor(
-    number_of_frames: $option.Option$<$data_element_value.DataElementValue$>,
+    number_of_frames: number,
+    rows: number,
+    columns: number,
+    bits_allocated: number,
     extended_offset_table: $option.Option$<
       $data_element_value.DataElementValue$
     >,
@@ -52,7 +55,10 @@ declare class PixelDataFilterDetails extends _.CustomType {
     >
   );
   
-  number_of_frames: $option.Option$<$data_element_value.DataElementValue$>;
+  number_of_frames: number;
+  rows: number;
+  columns: number;
+  bits_allocated: number;
   extended_offset_table: $option.Option$<$data_element_value.DataElementValue$>;
   extended_offset_table_lengths: $option.Option$<
     $data_element_value.DataElementValue$
@@ -73,11 +79,14 @@ export class DataError extends _.CustomType {
   0: $data_error.DataError$;
 }
 
-export type PixelDataFilterError$ = P10Error | DataError;
+export type P10PixelDataFrameFilterError$ = P10Error | DataError;
 
-export function new$(): PixelDataFilter$;
+export function new$(): P10PixelDataFrameFilter$;
 
-export function add_token(filter: PixelDataFilter$, token: $p10_token.P10Token$): _.Result<
-  [_.List<$pixel_data_frame.PixelDataFrame$>, PixelDataFilter$],
-  PixelDataFilterError$
+export function add_token(
+  filter: P10PixelDataFrameFilter$,
+  token: $p10_token.P10Token$
+): _.Result<
+  [_.List<$pixel_data_frame.PixelDataFrame$>, P10PixelDataFrameFilter$],
+  P10PixelDataFrameFilterError$
 >;

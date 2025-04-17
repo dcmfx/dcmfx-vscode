@@ -109,6 +109,12 @@ export function uid_name(uid) {
     return new Ok("HEVC/H.265 Main Profile / Level 5.1");
   } else if (uid === "1.2.840.10008.1.2.4.108") {
     return new Ok("HEVC/H.265 Main 10 Profile / Level 5.1");
+  } else if (uid === "1.2.840.10008.1.2.4.110") {
+    return new Ok("JPEG XL Lossless");
+  } else if (uid === "1.2.840.10008.1.2.4.111") {
+    return new Ok("JPEG XL JPEG Recompression");
+  } else if (uid === "1.2.840.10008.1.2.4.112") {
+    return new Ok("JPEG XL");
   } else if (uid === "1.2.840.10008.1.2.4.201") {
     return new Ok("High-Throughput JPEG 2000 Image Compression (Lossless Only)");
   } else if (uid === "1.2.840.10008.1.2.4.202") {
@@ -179,6 +185,8 @@ export function uid_name(uid) {
     return new Ok("JPIP Referenced Deflate");
   } else if (uid === "1.2.840.10008.1.2.5") {
     return new Ok("RLE Lossless");
+  } else if (uid === "1.2.840.10008.1.2.8.1") {
+    return new Ok("Deflated Image Frame Compression");
   } else if (uid === "1.2.840.10008.1.2.6.1") {
     return new Ok("RFC 2557 MIME encapsulation");
   } else if (uid === "1.2.840.10008.1.2.6.2") {

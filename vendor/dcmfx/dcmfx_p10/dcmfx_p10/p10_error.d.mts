@@ -84,6 +84,8 @@ export type P10Error$ = TransferSyntaxNotSupported | SpecificCharacterSetInvalid
 
 export function name(error: P10Error$): string;
 
+export function details(error: P10Error$): string;
+
 export function to_lines(error: P10Error$, task_description: string): _.List<
   string
 >;

@@ -34,16 +34,16 @@ export function data_set_to_json(data_set, config) {
 }
 
 export function json_to_data_set(data_set_json) {
-  let data_set_json$1 = (() => {
-    let _pipe = $json.parse(data_set_json, $decode.dynamic);
-    return $result.replace_error(
-      _pipe,
-      new $json_error.JsonInvalid(
-        "Input is not valid JSON",
-        $data_set_path.new$(),
-      ),
-    );
-  })();
+  let _block;
+  let _pipe = $json.parse(data_set_json, $decode.dynamic);
+  _block = $result.replace_error(
+    _pipe,
+    new $json_error.JsonInvalid(
+      "Input is not valid JSON",
+      $data_set_path.new$(),
+    ),
+  );
+  let data_set_json$1 = _block;
   return $result.try$(
     data_set_json$1,
     (data_set_json) => {

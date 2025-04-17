@@ -71,7 +71,7 @@ export function system_time(a: TimeUnit$): number;
 
 export function erlang_timestamp(): [number, number, number];
 
-export function rescue<FPL>(a: () => FPL): _.Result<FPL, Crash$>;
+export function rescue<FOG>(a: () => FOG): _.Result<FOG, Crash$>;
 
 export function binary_to_term(binary: _.BitArray): _.Result<
   $dynamic.Dynamic$,

@@ -1,6 +1,5 @@
 /// <reference types="./data_set_builder.d.mts" />
 import * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
-import { DataElementTag } from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
 import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
@@ -12,8 +11,6 @@ import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../gleam_stdlib/gleam/string.mjs";
-import * as $data_element_header from "../dcmfx_p10/internal/data_element_header.mjs";
-import { DataElementHeader } from "../dcmfx_p10/internal/data_element_header.mjs";
 import * as $p10_error from "../dcmfx_p10/p10_error.mjs";
 import * as $p10_token from "../dcmfx_p10/p10_token.mjs";
 import {
@@ -96,23 +93,23 @@ export function file_preamble(builder) {
 }
 
 export function final_data_set(builder) {
-  let root_data_set = (() => {
-    let $ = builder.is_complete;
-    let $1 = builder.location;
-    if ($ && $1.hasLength(1) && $1.head instanceof RootDataSet) {
-      let data_set = $1.head.data_set;
-      return new Ok(data_set);
-    } else {
-      return new Error(undefined);
-    }
-  })();
+  let _block;
+  let $ = builder.is_complete;
+  let $1 = builder.location;
+  if ($ && $1.hasLength(1) && $1.head instanceof RootDataSet) {
+    let data_set = $1.head.data_set;
+    _block = new Ok(data_set);
+  } else {
+    _block = new Error(undefined);
+  }
+  let root_data_set = _block;
   return $result.map(
     root_data_set,
     (root_data_set) => {
-      let file_meta_information = (() => {
-        let _pipe = builder.file_meta_information;
-        return $option.unwrap(_pipe, $data_set.new$());
-      })();
+      let _block$1;
+      let _pipe = builder.file_meta_information;
+      _block$1 = $option.unwrap(_pipe, $data_set.new$());
+      let file_meta_information = _block$1;
       return $data_set.merge(root_data_set, file_meta_information);
     },
   );
@@ -155,7 +152,7 @@ function insert_data_element_at_current_location(location, tag, value) {
     throw makeError(
       "panic",
       "dcmfx_p10/data_set_builder",
-      419,
+      416,
       "insert_data_element_at_current_location",
       "Internal error: unable to insert at current location",
       {}
@@ -164,11 +161,11 @@ function insert_data_element_at_current_location(location, tag, value) {
 }
 
 function build_final_data_element_value(tag, vr, value_bytes) {
-  let final_bytes = (() => {
-    let _pipe = value_bytes;
-    let _pipe$1 = $list.reverse(_pipe);
-    return $bit_array.concat(_pipe$1);
-  })();
+  let _block;
+  let _pipe = value_bytes;
+  let _pipe$1 = $list.reverse(_pipe);
+  _block = $bit_array.concat(_pipe$1);
+  let final_bytes = _block;
   let $ = $dictionary.is_lut_descriptor_tag(tag);
   if ($) {
     return $data_element_value.new_lookup_table_descriptor_unchecked(
@@ -189,18 +186,18 @@ function location_to_string(loop$location, loop$acc) {
     } else {
       let item = location.head;
       let rest = location.tail;
-      let s = (() => {
-        if (item instanceof RootDataSet) {
-          return "RootDataSet";
-        } else if (item instanceof Sequence) {
-          let tag = item.tag;
-          return "Sequence" + $data_element_tag.to_string(tag);
-        } else if (item instanceof SequenceItem) {
-          return "SequenceItem";
-        } else {
-          return "EncapsulatedPixelDataSequence";
-        }
-      })();
+      let _block;
+      if (item instanceof RootDataSet) {
+        _block = "RootDataSet";
+      } else if (item instanceof Sequence) {
+        let tag = item.tag;
+        _block = "Sequence" + $data_element_tag.to_string(tag);
+      } else if (item instanceof SequenceItem) {
+        _block = "SequenceItem";
+      } else {
+        _block = "EncapsulatedPixelDataSequence";
+      }
+      let s = _block;
       loop$location = rest;
       loop$acc = listPrepend(s, acc);
     }
@@ -258,11 +255,11 @@ function add_token_to_sequence(builder, token) {
     let tag = $.head.tag;
     let items = $.head.items;
     let sequence_location = $.tail;
-    let sequence = (() => {
-      let _pipe = items;
-      let _pipe$1 = $list.reverse(_pipe);
-      return $data_element_value.new_sequence(_pipe$1);
-    })();
+    let _block;
+    let _pipe = items;
+    let _pipe$1 = $list.reverse(_pipe);
+    _block = $data_element_value.new_sequence(_pipe$1);
+    let sequence = _block;
     let new_location = insert_data_element_at_current_location(
       sequence_location,
       tag,
@@ -289,22 +286,22 @@ function add_token_to_sequence(builder, token) {
 function add_token_to_encapsulated_pixel_data_sequence(builder, token) {
   let $ = builder.location;
   if (token instanceof $p10_token.PixelDataItem) {
-    let _pipe = (() => {
-      let _record = builder;
-      return new DataSetBuilder(
-        _record.file_preamble,
-        _record.file_meta_information,
-        _record.location,
-        new Some(
-          new PendingDataElement(
-            $dictionary.item.tag,
-            new $value_representation.OtherByteString(),
-            toList([]),
-          ),
+    let _block;
+    let _record = builder;
+    _block = new DataSetBuilder(
+      _record.file_preamble,
+      _record.file_meta_information,
+      _record.location,
+      new Some(
+        new PendingDataElement(
+          $dictionary.item.tag,
+          new $value_representation.OtherByteString(),
+          toList([]),
         ),
-        _record.is_complete,
-      );
-    })();
+      ),
+      _record.is_complete,
+    );
+    let _pipe = _block;
     return new Ok(_pipe);
   } else if (token instanceof $p10_token.SequenceDelimiter &&
   $.atLeastLength(1) &&
@@ -312,18 +309,18 @@ function add_token_to_encapsulated_pixel_data_sequence(builder, token) {
     let vr = $.head.vr;
     let items = $.head.items;
     let sequence_location = $.tail;
-    let $1 = (() => {
-      let _pipe = items;
-      let _pipe$1 = $list.reverse(_pipe);
-      return ((_capture) => {
-        return $data_element_value.new_encapsulated_pixel_data(vr, _capture);
-      })(_pipe$1);
-    })();
+    let _block;
+    let _pipe = items;
+    let _pipe$1 = $list.reverse(_pipe);
+    _block = ((_capture) => {
+      return $data_element_value.new_encapsulated_pixel_data(vr, _capture);
+    })(_pipe$1);
+    let $1 = _block;
     if (!$1.isOk()) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/data_set_builder",
-        247,
+        244,
         "add_token_to_encapsulated_pixel_data_sequence",
         "Pattern match failed, no pattern matched the value.",
         { value: $1 }
@@ -356,39 +353,39 @@ function add_token_to_data_set(builder, token) {
   if (token instanceof $p10_token.DataElementHeader) {
     let tag = token.tag;
     let vr = token.vr;
-    let _pipe = (() => {
-      let _record = builder;
-      return new DataSetBuilder(
-        _record.file_preamble,
-        _record.file_meta_information,
-        _record.location,
-        new Some(new PendingDataElement(tag, vr, toList([]))),
-        _record.is_complete,
-      );
-    })();
+    let _block;
+    let _record = builder;
+    _block = new DataSetBuilder(
+      _record.file_preamble,
+      _record.file_meta_information,
+      _record.location,
+      new Some(new PendingDataElement(tag, vr, toList([]))),
+      _record.is_complete,
+    );
+    let _pipe = _block;
     return new Ok(_pipe);
   } else if (token instanceof $p10_token.SequenceStart) {
     let tag = token.tag;
     let vr = token.vr;
-    let new_location = (() => {
-      if (vr instanceof $value_representation.OtherByteString) {
-        return new EncapsulatedPixelDataSequence(vr, toList([]));
-      } else if (vr instanceof $value_representation.OtherWordString) {
-        return new EncapsulatedPixelDataSequence(vr, toList([]));
-      } else {
-        return new Sequence(tag, toList([]));
-      }
-    })();
-    let _pipe = (() => {
-      let _record = builder;
-      return new DataSetBuilder(
-        _record.file_preamble,
-        _record.file_meta_information,
-        listPrepend(new_location, builder.location),
-        _record.pending_data_element,
-        _record.is_complete,
-      );
-    })();
+    let _block;
+    if (vr instanceof $value_representation.OtherByteString) {
+      _block = new EncapsulatedPixelDataSequence(vr, toList([]));
+    } else if (vr instanceof $value_representation.OtherWordString) {
+      _block = new EncapsulatedPixelDataSequence(vr, toList([]));
+    } else {
+      _block = new Sequence(tag, toList([]));
+    }
+    let new_location = _block;
+    let _block$1;
+    let _record = builder;
+    _block$1 = new DataSetBuilder(
+      _record.file_preamble,
+      _record.file_meta_information,
+      listPrepend(new_location, builder.location),
+      _record.pending_data_element,
+      _record.is_complete,
+    );
+    let _pipe = _block$1;
     return new Ok(_pipe);
   } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let $ = builder.location;
@@ -470,28 +467,28 @@ function add_token_to_pending_data_element(builder, token) {
         tag,
         value,
       );
-      let _pipe = (() => {
-        let _record = builder;
-        return new DataSetBuilder(
-          _record.file_preamble,
-          _record.file_meta_information,
-          new_location,
-          new None(),
-          _record.is_complete,
-        );
-      })();
+      let _block;
+      let _record = builder;
+      _block = new DataSetBuilder(
+        _record.file_preamble,
+        _record.file_meta_information,
+        new_location,
+        new None(),
+        _record.is_complete,
+      );
+      let _pipe = _block;
       return new Ok(_pipe);
     } else {
-      let _pipe = (() => {
-        let _record = builder;
-        return new DataSetBuilder(
-          _record.file_preamble,
-          _record.file_meta_information,
-          _record.location,
-          new Some(new PendingDataElement(tag, vr, data$1)),
-          _record.is_complete,
-        );
-      })();
+      let _block;
+      let _record = builder;
+      _block = new DataSetBuilder(
+        _record.file_preamble,
+        _record.file_meta_information,
+        _record.location,
+        new Some(new PendingDataElement(tag, vr, data$1)),
+        _record.is_complete,
+      );
+      let _pipe = _block;
       return new Ok(_pipe);
     }
   } else {
@@ -563,45 +560,45 @@ export function force_end(builder) {
     builder.is_complete,
     builder,
     () => {
-      let builder$1 = (() => {
-        let _record = builder;
-        return new DataSetBuilder(
-          _record.file_preamble,
-          _record.file_meta_information,
-          _record.location,
-          new None(),
-          _record.is_complete,
-        );
-      })();
-      let token = (() => {
-        let $ = builder$1.location;
-        if ($.atLeastLength(1) && $.head instanceof Sequence) {
-          let tag = $.head.tag;
-          return new $p10_token.SequenceDelimiter(tag);
-        } else if ($.atLeastLength(1) &&
-        $.head instanceof EncapsulatedPixelDataSequence) {
-          return new $p10_token.SequenceDelimiter($dictionary.pixel_data.tag);
-        } else if ($.atLeastLength(1) && $.head instanceof SequenceItem) {
-          return new $p10_token.SequenceItemDelimiter();
-        } else {
-          return new $p10_token.End();
-        }
-      })();
-      let $ = (() => {
-        let _pipe = builder$1;
-        return add_token(_pipe, token);
-      })();
-      if (!$.isOk()) {
+      let _block;
+      let _record = builder;
+      _block = new DataSetBuilder(
+        _record.file_preamble,
+        _record.file_meta_information,
+        _record.location,
+        new None(),
+        _record.is_complete,
+      );
+      let builder$1 = _block;
+      let _block$1;
+      let $ = builder$1.location;
+      if ($.atLeastLength(1) && $.head instanceof Sequence) {
+        let tag = $.head.tag;
+        _block$1 = new $p10_token.SequenceDelimiter(tag);
+      } else if ($.atLeastLength(1) &&
+      $.head instanceof EncapsulatedPixelDataSequence) {
+        _block$1 = new $p10_token.SequenceDelimiter($dictionary.pixel_data.tag);
+      } else if ($.atLeastLength(1) && $.head instanceof SequenceItem) {
+        _block$1 = new $p10_token.SequenceItemDelimiter();
+      } else {
+        _block$1 = new $p10_token.End();
+      }
+      let token = _block$1;
+      let _block$2;
+      let _pipe = builder$1;
+      _block$2 = add_token(_pipe, token);
+      let $1 = _block$2;
+      if (!$1.isOk()) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/data_set_builder",
-          133,
+          130,
           "",
           "Pattern match failed, no pattern matched the value.",
-          { value: $ }
+          { value: $1 }
         )
       }
-      let builder$2 = $[0];
+      let builder$2 = $1[0];
       return force_end(builder$2);
     },
   );

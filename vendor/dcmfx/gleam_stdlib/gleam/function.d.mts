@@ -1,8 +1,8 @@
-export function flip<EFO, EFP, EFQ>(fun: (x0: EFO, x1: EFP) => EFQ): (
-  x0: EFP,
-  x1: EFO
-) => EFQ;
+export function flip<EFI, EFJ, EFK>(fun: (x0: EFI, x1: EFJ) => EFK): (
+  x0: EFJ,
+  x1: EFI
+) => EFK;
 
-export function identity<EFR>(x: EFR): EFR;
+export function identity<EFL>(x: EFL): EFL;
 
-export function tap<EFS>(arg: EFS, effect: (x0: EFS) => any): EFS;
+export function tap<EFM>(arg: EFM, effect: (x0: EFM) => any): EFM;

@@ -184,7 +184,7 @@ export const mpeg2_main_profile_main_level = /* @__PURE__ */ new TransferSyntax(
 );
 
 export const fragmentable_mpeg2_main_profile_main_level = /* @__PURE__ */ new TransferSyntax(
-  "MPEG2 Main Profile @ Main Level",
+  "Fragmentable MPEG2 Main Profile @ Main Level",
   "1.2.840.10008.1.2.4.100.1",
   /* @__PURE__ */ new VrExplicit(),
   /* @__PURE__ */ new LittleEndian(),
@@ -318,6 +318,33 @@ export const hevc_h265_main_10_profile = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+export const jpeg_xl_lossless = /* @__PURE__ */ new TransferSyntax(
+  "JPEG XL Lossless",
+  "1.2.840.10008.1.2.4.110",
+  /* @__PURE__ */ new VrExplicit(),
+  /* @__PURE__ */ new LittleEndian(),
+  false,
+  true,
+);
+
+export const jpeg_xl_jpeg_recompression = /* @__PURE__ */ new TransferSyntax(
+  "JPEG XL JPEG Recompression",
+  "1.2.840.10008.1.2.4.111",
+  /* @__PURE__ */ new VrExplicit(),
+  /* @__PURE__ */ new LittleEndian(),
+  false,
+  true,
+);
+
+export const jpeg_xl = /* @__PURE__ */ new TransferSyntax(
+  "JPEG XL",
+  "1.2.840.10008.1.2.4.112",
+  /* @__PURE__ */ new VrExplicit(),
+  /* @__PURE__ */ new LittleEndian(),
+  false,
+  true,
+);
+
 export const high_throughput_jpeg_2k_lossless_only = /* @__PURE__ */ new TransferSyntax(
   "High-Throughput JPEG 2000 (Lossless Only)",
   "1.2.840.10008.1.2.4.201",
@@ -399,6 +426,15 @@ export const smpte_st_2110_30_pcm_audio = /* @__PURE__ */ new TransferSyntax(
   false,
 );
 
+export const deflated_image_frame_compression = /* @__PURE__ */ new TransferSyntax(
+  "Deflated Image Frame Compression",
+  "1.2.840.10008.1.2.8.1",
+  /* @__PURE__ */ new VrExplicit(),
+  /* @__PURE__ */ new LittleEndian(),
+  false,
+  true,
+);
+
 export function from_uid(uid) {
   if (uid === "1.2.840.10008.1.2") {
     return new Ok(implicit_vr_little_endian);
@@ -466,6 +502,12 @@ export function from_uid(uid) {
     return new Ok(hevc_h265_main_profile);
   } else if (uid === "1.2.840.10008.1.2.4.108") {
     return new Ok(hevc_h265_main_10_profile);
+  } else if (uid === "1.2.840.10008.1.2.4.110") {
+    return new Ok(jpeg_xl_lossless);
+  } else if (uid === "1.2.840.10008.1.2.4.111") {
+    return new Ok(jpeg_xl_jpeg_recompression);
+  } else if (uid === "1.2.840.10008.1.2.4.112") {
+    return new Ok(jpeg_xl);
   } else if (uid === "1.2.840.10008.1.2.4.201") {
     return new Ok(high_throughput_jpeg_2k_lossless_only);
   } else if (uid === "1.2.840.10008.1.2.4.202") {
@@ -484,6 +526,8 @@ export function from_uid(uid) {
     return new Ok(smpte_st_2110_20_uncompressed_interlaced_active_video);
   } else if (uid === "1.2.840.10008.1.2.7.3") {
     return new Ok(smpte_st_2110_30_pcm_audio);
+  } else if (uid === "1.2.840.10008.1.2.8.1") {
+    return new Ok(deflated_image_frame_compression);
   } else {
     return new Error(undefined);
   }
@@ -523,6 +567,9 @@ export const all = /* @__PURE__ */ toList([
   fragmentable_mpeg4_avc_h264_stereo_high_profile,
   hevc_h265_main_profile,
   hevc_h265_main_10_profile,
+  jpeg_xl_lossless,
+  jpeg_xl_jpeg_recompression,
+  jpeg_xl,
   high_throughput_jpeg_2k_lossless_only,
   high_throughput_jpeg_2k_with_rpcl_options_lossless_only,
   high_throughput_jpeg_2k,
@@ -532,4 +579,5 @@ export const all = /* @__PURE__ */ toList([
   smpte_st_2110_20_uncompressed_progressive_active_video,
   smpte_st_2110_20_uncompressed_interlaced_active_video,
   smpte_st_2110_30_pcm_audio,
+  deflated_image_frame_compression,
 ]);

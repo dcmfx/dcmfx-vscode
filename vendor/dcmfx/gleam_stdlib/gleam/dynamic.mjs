@@ -87,24 +87,24 @@ export function optional(decode) {
 }
 
 function at_least_decode_tuple_error(size, data) {
-  let s = (() => {
-    if (size === 1) {
-      return "";
-    } else {
-      return "s";
-    }
-  })();
-  let error = (() => {
-    let _pipe = toList([
-      "Tuple of at least ",
-      $int_mod.to_string(size),
-      " element",
-      s,
-    ]);
-    let _pipe$1 = $string_tree.from_strings(_pipe);
-    let _pipe$2 = $string_tree.to_string(_pipe$1);
-    return new DecodeError(_pipe$2, classify(data), toList([]));
-  })();
+  let _block;
+  if (size === 1) {
+    _block = "";
+  } else {
+    _block = "s";
+  }
+  let s = _block;
+  let _block$1;
+  let _pipe = toList([
+    "Tuple of at least ",
+    $int_mod.to_string(size),
+    " element",
+    s,
+  ]);
+  let _pipe$1 = $string_tree.from_strings(_pipe);
+  let _pipe$2 = $string_tree.to_string(_pipe$1);
+  _block$1 = new DecodeError(_pipe$2, classify(data), toList([]));
+  let error = _block$1;
   return new Error(toList([error]));
 }
 
@@ -136,17 +136,17 @@ function push_path(error, name) {
       (x) => { return $result_mod.map(decode_int(x), $int_mod.to_string); },
     ]),
   );
-  let name$2 = (() => {
-    let $ = decoder(name$1);
-    if ($.isOk()) {
-      let name$2 = $[0];
-      return name$2;
-    } else {
-      let _pipe = toList(["<", classify(name$1), ">"]);
-      let _pipe$1 = $string_tree.from_strings(_pipe);
-      return $string_tree.to_string(_pipe$1);
-    }
-  })();
+  let _block;
+  let $ = decoder(name$1);
+  if ($.isOk()) {
+    let name$2 = $[0];
+    _block = name$2;
+  } else {
+    let _pipe = toList(["<", classify(name$1), ">"]);
+    let _pipe$1 = $string_tree.from_strings(_pipe);
+    _block = $string_tree.to_string(_pipe$1);
+  }
+  let name$2 = _block;
   let _record = error;
   return new DecodeError(
     _record.expected,

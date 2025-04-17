@@ -10,28 +10,28 @@ import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../dcmfx_core/value_representation.mjs";
 import { toList, CustomType as $CustomType } from "../gleam.mjs";
 
-class TagNotPresent extends $CustomType {
+export class TagNotPresent extends $CustomType {
   constructor(path) {
     super();
     this.path = path;
   }
 }
 
-class ValueNotPresent extends $CustomType {
+export class ValueNotPresent extends $CustomType {
   constructor(path) {
     super();
     this.path = path;
   }
 }
 
-class MultiplicityMismatch extends $CustomType {
+export class MultiplicityMismatch extends $CustomType {
   constructor(path) {
     super();
     this.path = path;
   }
 }
 
-class ValueInvalid extends $CustomType {
+export class ValueInvalid extends $CustomType {
   constructor(details, path) {
     super();
     this.details = details;
@@ -39,7 +39,7 @@ class ValueInvalid extends $CustomType {
   }
 }
 
-class ValueLengthInvalid extends $CustomType {
+export class ValueLengthInvalid extends $CustomType {
   constructor(vr, length, details, path) {
     super();
     this.vr = vr;
@@ -49,7 +49,7 @@ class ValueLengthInvalid extends $CustomType {
   }
 }
 
-class ValueUnsupported extends $CustomType {
+export class ValueUnsupported extends $CustomType {
   constructor(details, path) {
     super();
     this.details = details;
@@ -74,16 +74,16 @@ export function to_string(error) {
       let path$1 = error.path;
       return "Multiplicity mismatch at " + optional_path_to_string(path$1);
     } else if (error instanceof ValueInvalid) {
-      let details = error.details;
+      let details$1 = error.details;
       let path$1 = error.path;
-      return (("Invalid value at " + optional_path_to_string(path$1)) + ", details: ") + details;
+      return (("Invalid value at " + optional_path_to_string(path$1)) + ", details: ") + details$1;
     } else if (error instanceof ValueLengthInvalid) {
-      let details = error.details;
+      let details$1 = error.details;
       let path$1 = error.path;
-      return (("Invalid value length at " + optional_path_to_string(path$1)) + ", details: ") + details;
+      return (("Invalid value length at " + optional_path_to_string(path$1)) + ", details: ") + details$1;
     } else {
-      let details = error.details;
-      return "Value unsupported, details: " + details;
+      let details$1 = error.details;
+      return "Value unsupported, details: " + details$1;
     }
   })();
 }
@@ -134,14 +134,6 @@ export function path(error) {
   }
 }
 
-export function is_tag_not_present(error) {
-  if (error instanceof TagNotPresent) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 export function with_path(error, path) {
   if (error instanceof TagNotPresent) {
     return new TagNotPresent(path);
@@ -150,16 +142,16 @@ export function with_path(error, path) {
   } else if (error instanceof MultiplicityMismatch) {
     return new ValueNotPresent(new Some(path));
   } else if (error instanceof ValueInvalid) {
-    let details = error.details;
-    return new ValueInvalid(details, new Some(path));
+    let details$1 = error.details;
+    return new ValueInvalid(details$1, new Some(path));
   } else if (error instanceof ValueLengthInvalid) {
     let vr = error.vr;
     let length = error.length;
-    let details = error.details;
-    return new ValueLengthInvalid(vr, length, details, new Some(path));
+    let details$1 = error.details;
+    return new ValueLengthInvalid(vr, length, details$1, new Some(path));
   } else {
-    let details = error.details;
-    return new ValueUnsupported(details, new Some(path));
+    let details$1 = error.details;
+    return new ValueUnsupported(details$1, new Some(path));
   }
 }
 
@@ -179,108 +171,126 @@ export function name(error) {
   }
 }
 
+export function details(error) {
+  if (error instanceof TagNotPresent) {
+    return "";
+  } else if (error instanceof ValueNotPresent) {
+    return "";
+  } else if (error instanceof MultiplicityMismatch) {
+    return "";
+  } else if (error instanceof ValueInvalid) {
+    let details$1 = error.details;
+    return details$1;
+  } else if (error instanceof ValueLengthInvalid) {
+    let details$1 = error.details;
+    return details$1;
+  } else {
+    let details$1 = error.details;
+    return details$1;
+  }
+}
+
 export function to_lines(error, task_description) {
   let initial_lines = toList([
     "DICOM data error " + task_description,
     "",
     "  Error: " + name(error),
   ]);
-  let path_lines = (() => {
-    if (error instanceof TagNotPresent) {
-      let path$1 = error.path;
-      let path_line = "  Path: " + $data_set_path.to_string(path$1);
-      let $ = $data_set_path.final_data_element(path$1);
-      if ($.isOk()) {
-        let tag = $[0];
-        return toList([
-          "  Tag: " + $data_element_tag.to_string(tag),
-          "  Name: " + $dictionary.tag_name(tag, new None()),
-          path_line,
-        ]);
-      } else {
-        return toList([path_line]);
-      }
-    } else if (error instanceof ValueNotPresent && error.path instanceof Some) {
-      let path$1 = error.path[0];
-      let path_line = "  Path: " + $data_set_path.to_string(path$1);
-      let $ = $data_set_path.final_data_element(path$1);
-      if ($.isOk()) {
-        let tag = $[0];
-        return toList([
-          "  Tag: " + $data_element_tag.to_string(tag),
-          "  Name: " + $dictionary.tag_name(tag, new None()),
-          path_line,
-        ]);
-      } else {
-        return toList([path_line]);
-      }
-    } else if (error instanceof MultiplicityMismatch &&
-    error.path instanceof Some) {
-      let path$1 = error.path[0];
-      let path_line = "  Path: " + $data_set_path.to_string(path$1);
-      let $ = $data_set_path.final_data_element(path$1);
-      if ($.isOk()) {
-        let tag = $[0];
-        return toList([
-          "  Tag: " + $data_element_tag.to_string(tag),
-          "  Name: " + $dictionary.tag_name(tag, new None()),
-          path_line,
-        ]);
-      } else {
-        return toList([path_line]);
-      }
-    } else if (error instanceof ValueInvalid && error.path instanceof Some) {
-      let path$1 = error.path[0];
-      let path_line = "  Path: " + $data_set_path.to_string(path$1);
-      let $ = $data_set_path.final_data_element(path$1);
-      if ($.isOk()) {
-        let tag = $[0];
-        return toList([
-          "  Tag: " + $data_element_tag.to_string(tag),
-          "  Name: " + $dictionary.tag_name(tag, new None()),
-          path_line,
-        ]);
-      } else {
-        return toList([path_line]);
-      }
-    } else if (error instanceof ValueLengthInvalid && error.path instanceof Some) {
-      let path$1 = error.path[0];
-      let path_line = "  Path: " + $data_set_path.to_string(path$1);
-      let $ = $data_set_path.final_data_element(path$1);
-      if ($.isOk()) {
-        let tag = $[0];
-        return toList([
-          "  Tag: " + $data_element_tag.to_string(tag),
-          "  Name: " + $dictionary.tag_name(tag, new None()),
-          path_line,
-        ]);
-      } else {
-        return toList([path_line]);
-      }
-    } else {
-      return toList([]);
-    }
-  })();
-  let details_lines = (() => {
-    if (error instanceof ValueInvalid) {
-      let details = error.details;
-      return toList(["  Details: " + details]);
-    } else if (error instanceof ValueLengthInvalid) {
-      let vr = error.vr;
-      let length = error.length;
-      let details = error.details;
-      return toList([
-        "  VR: " + $value_representation.to_string(vr),
-        ("  Length: " + $int.to_string(length)) + " bytes",
-        "  Details: " + details,
+  let _block;
+  if (error instanceof TagNotPresent) {
+    let path$1 = error.path;
+    let path_line = "  Path: " + $data_set_path.to_string(path$1);
+    let $ = $data_set_path.final_data_element(path$1);
+    if ($.isOk()) {
+      let tag = $[0];
+      _block = toList([
+        "  Tag: " + $data_element_tag.to_string(tag),
+        "  Name: " + $dictionary.tag_name(tag, new None()),
+        path_line,
       ]);
-    } else if (error instanceof ValueUnsupported) {
-      let details = error.details;
-      return toList(["  Details: " + details]);
     } else {
-      return toList([]);
+      _block = toList([path_line]);
     }
-  })();
+  } else if (error instanceof ValueNotPresent && error.path instanceof Some) {
+    let path$1 = error.path[0];
+    let path_line = "  Path: " + $data_set_path.to_string(path$1);
+    let $ = $data_set_path.final_data_element(path$1);
+    if ($.isOk()) {
+      let tag = $[0];
+      _block = toList([
+        "  Tag: " + $data_element_tag.to_string(tag),
+        "  Name: " + $dictionary.tag_name(tag, new None()),
+        path_line,
+      ]);
+    } else {
+      _block = toList([path_line]);
+    }
+  } else if (error instanceof MultiplicityMismatch && error.path instanceof Some) {
+    let path$1 = error.path[0];
+    let path_line = "  Path: " + $data_set_path.to_string(path$1);
+    let $ = $data_set_path.final_data_element(path$1);
+    if ($.isOk()) {
+      let tag = $[0];
+      _block = toList([
+        "  Tag: " + $data_element_tag.to_string(tag),
+        "  Name: " + $dictionary.tag_name(tag, new None()),
+        path_line,
+      ]);
+    } else {
+      _block = toList([path_line]);
+    }
+  } else if (error instanceof ValueInvalid && error.path instanceof Some) {
+    let path$1 = error.path[0];
+    let path_line = "  Path: " + $data_set_path.to_string(path$1);
+    let $ = $data_set_path.final_data_element(path$1);
+    if ($.isOk()) {
+      let tag = $[0];
+      _block = toList([
+        "  Tag: " + $data_element_tag.to_string(tag),
+        "  Name: " + $dictionary.tag_name(tag, new None()),
+        path_line,
+      ]);
+    } else {
+      _block = toList([path_line]);
+    }
+  } else if (error instanceof ValueLengthInvalid && error.path instanceof Some) {
+    let path$1 = error.path[0];
+    let path_line = "  Path: " + $data_set_path.to_string(path$1);
+    let $ = $data_set_path.final_data_element(path$1);
+    if ($.isOk()) {
+      let tag = $[0];
+      _block = toList([
+        "  Tag: " + $data_element_tag.to_string(tag),
+        "  Name: " + $dictionary.tag_name(tag, new None()),
+        path_line,
+      ]);
+    } else {
+      _block = toList([path_line]);
+    }
+  } else {
+    _block = toList([]);
+  }
+  let path_lines = _block;
+  let _block$1;
+  if (error instanceof ValueInvalid) {
+    let details$1 = error.details;
+    _block$1 = toList(["  Details: " + details$1]);
+  } else if (error instanceof ValueLengthInvalid) {
+    let vr = error.vr;
+    let length = error.length;
+    let details$1 = error.details;
+    _block$1 = toList([
+      "  VR: " + $value_representation.to_string(vr),
+      ("  Length: " + $int.to_string(length)) + " bytes",
+      "  Details: " + details$1,
+    ]);
+  } else if (error instanceof ValueUnsupported) {
+    let details$1 = error.details;
+    _block$1 = toList(["  Details: " + details$1]);
+  } else {
+    _block$1 = toList([]);
+  }
+  let details_lines = _block$1;
   return $list.flatten(toList([initial_lines, path_lines, details_lines]));
 }
 

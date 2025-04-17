@@ -207,37 +207,37 @@ export function sequence_items(value) {
 }
 
 export function total_byte_size(value) {
-  let data_size = (() => {
-    if (value instanceof BinaryValue) {
-      let bytes$1 = value.bytes;
-      return $bit_array.byte_size(bytes$1);
-    } else if (value instanceof LookupTableDescriptorValue) {
-      let bytes$1 = value.bytes;
-      return $bit_array.byte_size(bytes$1);
-    } else if (value instanceof EncapsulatedPixelDataValue) {
-      let items = value.items;
-      return $list.length(items) * 8 + $list.fold(
-        items,
-        0,
-        (total, item) => { return total + $bit_array.byte_size(item); },
-      );
-    } else {
-      let items = value.items;
-      let _pipe = items;
-      let _pipe$1 = $list.map(
-        _pipe,
-        (item) => {
-          let _pipe$1 = item;
-          return $dict.fold(
-            _pipe$1,
-            0,
-            (total, _, value) => { return total + total_byte_size(value); },
-          );
-        },
-      );
-      return $int.sum(_pipe$1);
-    }
-  })();
+  let _block;
+  if (value instanceof BinaryValue) {
+    let bytes$1 = value.bytes;
+    _block = $bit_array.byte_size(bytes$1);
+  } else if (value instanceof LookupTableDescriptorValue) {
+    let bytes$1 = value.bytes;
+    _block = $bit_array.byte_size(bytes$1);
+  } else if (value instanceof EncapsulatedPixelDataValue) {
+    let items = value.items;
+    _block = $list.length(items) * 8 + $list.fold(
+      items,
+      0,
+      (total, item) => { return total + $bit_array.byte_size(item); },
+    );
+  } else {
+    let items = value.items;
+    let _pipe = items;
+    let _pipe$1 = $list.map(
+      _pipe,
+      (item) => {
+        let _pipe$1 = item;
+        return $dict.fold(
+          _pipe$1,
+          0,
+          (total, _, value) => { return total + total_byte_size(value); },
+        );
+      },
+    );
+    _block = $int.sum(_pipe$1);
+  }
+  let data_size = _block;
   let fixed_size = 32;
   return data_size + fixed_size;
 }
@@ -729,585 +729,550 @@ export function to_string(value, tag, output_width) {
   let vr_is_string = $value_representation.is_string(
     value_representation(value),
   );
-  let _pipe = (() => {
-    if (value instanceof BinaryValue && (vr_is_string)) {
-      let vr = value.vr;
-      let bytes$1 = value.bytes;
-      let utf8 = (() => {
-        let $ = $bit_array.to_string(bytes$1);
-        if ($.isOk()) {
-          let utf8 = $[0];
-          return new Ok(utf8);
-        } else {
-          let _pipe = $bit_array_utils.reverse_index(
-            bytes$1,
-            (b) => { return $int.bitwise_and(b, 0b1100_0000) !== 0b1000_0000; },
-          );
-          let _pipe$1 = $result.then$(
-            _pipe,
-            (_capture) => { return $bit_array.slice(bytes$1, 0, _capture); },
-          );
-          return $result.then$(_pipe$1, $bit_array.to_string);
-        }
-      })();
-      if (utf8.isOk()) {
-        let value$1 = utf8[0];
-        let formatted_value = (() => {
-          if (vr instanceof $value_representation.AgeString) {
-            let _pipe = value$1;
-            let _pipe$1 = $bit_array.from_string(_pipe);
-            let _pipe$2 = $age_string.from_bytes(_pipe$1);
-            let _pipe$3 = $result.map(_pipe$2, $age_string.to_string);
-            return $result.lazy_unwrap(
-              _pipe$3,
-              () => { return $string.inspect(value$1); },
-            );
-          } else if (vr instanceof $value_representation.ApplicationEntity) {
-            let _pipe = value$1;
-            let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
-            return $string.inspect(_pipe$1);
-          } else if (vr instanceof $value_representation.Date) {
-            let _pipe = value$1;
-            let _pipe$1 = $bit_array.from_string(_pipe);
-            let _pipe$2 = $date.from_bytes(_pipe$1);
-            let _pipe$3 = $result.map(_pipe$2, $date.to_iso8601);
-            return $result.lazy_unwrap(
-              _pipe$3,
-              () => { return $string.inspect(value$1); },
-            );
-          } else if (vr instanceof $value_representation.DateTime) {
-            let _pipe = value$1;
-            let _pipe$1 = $bit_array.from_string(_pipe);
-            let _pipe$2 = $date_time.from_bytes(_pipe$1);
-            let _pipe$3 = $result.map(_pipe$2, $date_time.to_iso8601);
-            return $result.lazy_unwrap(
-              _pipe$3,
-              () => { return $string.inspect(value$1); },
-            );
-          } else if (vr instanceof $value_representation.Time) {
-            let _pipe = value$1;
-            let _pipe$1 = $bit_array.from_string(_pipe);
-            let _pipe$2 = $time.from_bytes(_pipe$1);
-            let _pipe$3 = $result.map(_pipe$2, $time.to_iso8601);
-            return $result.lazy_unwrap(
-              _pipe$3,
-              () => { return $string.inspect(value$1); },
-            );
-          } else if (vr instanceof $value_representation.CodeString) {
-            let _pipe = value$1;
-            let _pipe$1 = $string.split(_pipe, "\\");
-            let _pipe$2 = $list.map(
-              _pipe$1,
-              (s) => {
-                let _pipe$2 = (() => {
-                  if (vr instanceof $value_representation.UniqueIdentifier) {
-                    return $utils.trim_ascii_end(s, 0x0);
-                  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-                    return $utils.trim_ascii_end(s, 0x20);
-                  } else {
-                    return $utils.trim_ascii(s, 0x20);
-                  }
-                })();
-                return $string.inspect(_pipe$2);
-              },
-            );
-            return $string.join(_pipe$2, ", ");
-          } else if (vr instanceof $value_representation.DecimalString) {
-            let _pipe = value$1;
-            let _pipe$1 = $string.split(_pipe, "\\");
-            let _pipe$2 = $list.map(
-              _pipe$1,
-              (s) => {
-                let _pipe$2 = (() => {
-                  if (vr instanceof $value_representation.UniqueIdentifier) {
-                    return $utils.trim_ascii_end(s, 0x0);
-                  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-                    return $utils.trim_ascii_end(s, 0x20);
-                  } else {
-                    return $utils.trim_ascii(s, 0x20);
-                  }
-                })();
-                return $string.inspect(_pipe$2);
-              },
-            );
-            return $string.join(_pipe$2, ", ");
-          } else if (vr instanceof $value_representation.UniqueIdentifier) {
-            let _pipe = value$1;
-            let _pipe$1 = $string.split(_pipe, "\\");
-            let _pipe$2 = $list.map(
-              _pipe$1,
-              (s) => {
-                let _pipe$2 = (() => {
-                  if (vr instanceof $value_representation.UniqueIdentifier) {
-                    return $utils.trim_ascii_end(s, 0x0);
-                  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-                    return $utils.trim_ascii_end(s, 0x20);
-                  } else {
-                    return $utils.trim_ascii(s, 0x20);
-                  }
-                })();
-                return $string.inspect(_pipe$2);
-              },
-            );
-            return $string.join(_pipe$2, ", ");
-          } else if (vr instanceof $value_representation.IntegerString) {
-            let _pipe = value$1;
-            let _pipe$1 = $string.split(_pipe, "\\");
-            let _pipe$2 = $list.map(
-              _pipe$1,
-              (s) => {
-                let _pipe$2 = (() => {
-                  if (vr instanceof $value_representation.UniqueIdentifier) {
-                    return $utils.trim_ascii_end(s, 0x0);
-                  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-                    return $utils.trim_ascii_end(s, 0x20);
-                  } else {
-                    return $utils.trim_ascii(s, 0x20);
-                  }
-                })();
-                return $string.inspect(_pipe$2);
-              },
-            );
-            return $string.join(_pipe$2, ", ");
-          } else if (vr instanceof $value_representation.LongString) {
-            let _pipe = value$1;
-            let _pipe$1 = $string.split(_pipe, "\\");
-            let _pipe$2 = $list.map(
-              _pipe$1,
-              (s) => {
-                let _pipe$2 = (() => {
-                  if (vr instanceof $value_representation.UniqueIdentifier) {
-                    return $utils.trim_ascii_end(s, 0x0);
-                  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-                    return $utils.trim_ascii_end(s, 0x20);
-                  } else {
-                    return $utils.trim_ascii(s, 0x20);
-                  }
-                })();
-                return $string.inspect(_pipe$2);
-              },
-            );
-            return $string.join(_pipe$2, ", ");
-          } else if (vr instanceof $value_representation.ShortString) {
-            let _pipe = value$1;
-            let _pipe$1 = $string.split(_pipe, "\\");
-            let _pipe$2 = $list.map(
-              _pipe$1,
-              (s) => {
-                let _pipe$2 = (() => {
-                  if (vr instanceof $value_representation.UniqueIdentifier) {
-                    return $utils.trim_ascii_end(s, 0x0);
-                  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-                    return $utils.trim_ascii_end(s, 0x20);
-                  } else {
-                    return $utils.trim_ascii(s, 0x20);
-                  }
-                })();
-                return $string.inspect(_pipe$2);
-              },
-            );
-            return $string.join(_pipe$2, ", ");
-          } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-            let _pipe = value$1;
-            let _pipe$1 = $string.split(_pipe, "\\");
-            let _pipe$2 = $list.map(
-              _pipe$1,
-              (s) => {
-                let _pipe$2 = (() => {
-                  if (vr instanceof $value_representation.UniqueIdentifier) {
-                    return $utils.trim_ascii_end(s, 0x0);
-                  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-                    return $utils.trim_ascii_end(s, 0x20);
-                  } else {
-                    return $utils.trim_ascii(s, 0x20);
-                  }
-                })();
-                return $string.inspect(_pipe$2);
-              },
-            );
-            return $string.join(_pipe$2, ", ");
-          } else {
-            let _pipe = value$1;
-            let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
-            return $string.inspect(_pipe$1);
-          }
-        })();
-        let suffix = (() => {
-          if (vr instanceof $value_representation.UniqueIdentifier) {
-            let $ = $dictionary.uid_name($utils.trim_ascii_end(value$1, 0x0));
-            if ($.isOk()) {
-              let uid_name = $[0];
-              return new Some((" (" + uid_name) + ")");
-            } else {
-              return new None();
-            }
-          } else if (vr instanceof $value_representation.CodeString) {
-            let $ = $code_strings.describe($string.trim(value$1), tag);
-            if ($.isOk()) {
-              let description = $[0];
-              return new Some((" (" + description) + ")");
-            } else {
-              return new None();
-            }
-          } else {
-            return new None();
-          }
-        })();
-        return new Ok([formatted_value, suffix]);
-      } else {
-        return new Ok(["!! Invalid UTF-8 data", new None()]);
-      }
-    } else if (value instanceof LookupTableDescriptorValue) {
-      let vr = value.vr;
-      let bytes$1 = value.bytes;
-      if (vr instanceof $value_representation.AttributeTag) {
-        let $ = $attribute_tag.from_bytes(bytes$1);
-        if ($.isOk()) {
-          let tags = $[0];
-          let s = (() => {
-            let _pipe = tags;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $data_element_tag.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.FloatingPointDouble) {
-        let $ = get_floats(value);
-        if ($.isOk()) {
-          let floats = $[0];
-          let s = (() => {
-            let _pipe = floats;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.FloatingPointSingle) {
-        let $ = get_floats(value);
-        if ($.isOk()) {
-          let floats = $[0];
-          let s = (() => {
-            let _pipe = floats;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.OtherByteString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherDoubleString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherFloatString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherLongString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherVeryLongString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherWordString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.Unknown) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.SignedLong) {
-        let $ = get_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.SignedShort) {
-        let $ = get_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.UnsignedLong) {
-        let $ = get_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.UnsignedShort) {
-        let $ = get_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.SignedVeryLong) {
-        let $ = get_big_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.UnsignedVeryLong) {
-        let $ = get_big_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else {
-        return new Error(undefined);
-      }
-    } else if (value instanceof BinaryValue) {
-      let vr = value.vr;
-      let bytes$1 = value.bytes;
-      if (vr instanceof $value_representation.AttributeTag) {
-        let $ = $attribute_tag.from_bytes(bytes$1);
-        if ($.isOk()) {
-          let tags = $[0];
-          let s = (() => {
-            let _pipe = tags;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $data_element_tag.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.FloatingPointDouble) {
-        let $ = get_floats(value);
-        if ($.isOk()) {
-          let floats = $[0];
-          let s = (() => {
-            let _pipe = floats;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.FloatingPointSingle) {
-        let $ = get_floats(value);
-        if ($.isOk()) {
-          let floats = $[0];
-          let s = (() => {
-            let _pipe = floats;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.OtherByteString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherDoubleString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherFloatString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherLongString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherVeryLongString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.OtherWordString) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.Unknown) {
-        return new Ok(
-          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-        );
-      } else if (vr instanceof $value_representation.SignedLong) {
-        let $ = get_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.SignedShort) {
-        let $ = get_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.UnsignedLong) {
-        let $ = get_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.UnsignedShort) {
-        let $ = get_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.SignedVeryLong) {
-        let $ = get_big_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else if (vr instanceof $value_representation.UnsignedVeryLong) {
-        let $ = get_big_ints(value);
-        if ($.isOk()) {
-          let ints = $[0];
-          let s = (() => {
-            let _pipe = ints;
-            let _pipe$1 = $list.take(_pipe, output_list_max_size);
-            let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
-            return $string.join(_pipe$2, ", ");
-          })();
-          return new Ok([s, new None()]);
-        } else {
-          return new Error(undefined);
-        }
-      } else {
-        return new Error(undefined);
-      }
-    } else if (value instanceof EncapsulatedPixelDataValue) {
-      let items = value.items;
-      let total_bytes = (() => {
-        let _pipe = items;
-        let _pipe$1 = $list.map(_pipe, $bit_array.byte_size);
-        return $list.fold(_pipe$1, 0, $int.add);
-      })();
-      let size = $list.length(items);
-      let s = (("Items: " + $int.to_string(size)) + ", bytes: ") + $int.to_string(
-        total_bytes,
-      );
-      return new Ok([s, new None()]);
+  let _block;
+  if (value instanceof BinaryValue && (vr_is_string)) {
+    let vr = value.vr;
+    let bytes$1 = value.bytes;
+    let _block$1;
+    let $ = $bit_array.to_string(bytes$1);
+    if ($.isOk()) {
+      let utf8 = $[0];
+      _block$1 = new Ok(utf8);
     } else {
-      let items = value.items;
-      let s = "Items: " + (() => {
-        let _pipe = items;
-        let _pipe$1 = $list.length(_pipe);
-        return $int.to_string(_pipe$1);
-      })();
-      return new Ok([s, new None()]);
+      let _pipe = $bit_array_utils.reverse_index(
+        bytes$1,
+        (b) => { return $int.bitwise_and(b, 0b1100_0000) !== 0b1000_0000; },
+      );
+      let _pipe$1 = $result.then$(
+        _pipe,
+        (_capture) => { return $bit_array.slice(bytes$1, 0, _capture); },
+      );
+      _block$1 = $result.then$(_pipe$1, $bit_array.to_string);
     }
-  })();
+    let utf8 = _block$1;
+    if (utf8.isOk()) {
+      let value$1 = utf8[0];
+      let _block$2;
+      if (vr instanceof $value_representation.AgeString) {
+        let _pipe = value$1;
+        let _pipe$1 = $bit_array.from_string(_pipe);
+        let _pipe$2 = $age_string.from_bytes(_pipe$1);
+        let _pipe$3 = $result.map(_pipe$2, $age_string.to_string);
+        _block$2 = $result.lazy_unwrap(
+          _pipe$3,
+          () => { return $string.inspect(value$1); },
+        );
+      } else if (vr instanceof $value_representation.ApplicationEntity) {
+        let _pipe = value$1;
+        let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
+        _block$2 = $string.inspect(_pipe$1);
+      } else if (vr instanceof $value_representation.Date) {
+        let _pipe = value$1;
+        let _pipe$1 = $bit_array.from_string(_pipe);
+        let _pipe$2 = $date.from_bytes(_pipe$1);
+        let _pipe$3 = $result.map(_pipe$2, $date.to_iso8601);
+        _block$2 = $result.lazy_unwrap(
+          _pipe$3,
+          () => { return $string.inspect(value$1); },
+        );
+      } else if (vr instanceof $value_representation.DateTime) {
+        let _pipe = value$1;
+        let _pipe$1 = $bit_array.from_string(_pipe);
+        let _pipe$2 = $date_time.from_bytes(_pipe$1);
+        let _pipe$3 = $result.map(_pipe$2, $date_time.to_iso8601);
+        _block$2 = $result.lazy_unwrap(
+          _pipe$3,
+          () => { return $string.inspect(value$1); },
+        );
+      } else if (vr instanceof $value_representation.Time) {
+        let _pipe = value$1;
+        let _pipe$1 = $bit_array.from_string(_pipe);
+        let _pipe$2 = $time.from_bytes(_pipe$1);
+        let _pipe$3 = $result.map(_pipe$2, $time.to_iso8601);
+        _block$2 = $result.lazy_unwrap(
+          _pipe$3,
+          () => { return $string.inspect(value$1); },
+        );
+      } else if (vr instanceof $value_representation.CodeString) {
+        let _pipe = value$1;
+        let _pipe$1 = $string.split(_pipe, "\\");
+        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
+            if (vr instanceof $value_representation.UniqueIdentifier) {
+              _block$3 = $utils.trim_ascii_end(s, 0x0);
+            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+              _block$3 = $utils.trim_ascii_end(s, 0x20);
+            } else {
+              _block$3 = $utils.trim_ascii(s, 0x20);
+            }
+            let _pipe$2 = _block$3;
+            return $string.inspect(_pipe$2); });
+        _block$2 = $string.join(_pipe$2, ", ");
+      } else if (vr instanceof $value_representation.DecimalString) {
+        let _pipe = value$1;
+        let _pipe$1 = $string.split(_pipe, "\\");
+        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
+            if (vr instanceof $value_representation.UniqueIdentifier) {
+              _block$3 = $utils.trim_ascii_end(s, 0x0);
+            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+              _block$3 = $utils.trim_ascii_end(s, 0x20);
+            } else {
+              _block$3 = $utils.trim_ascii(s, 0x20);
+            }
+            let _pipe$2 = _block$3;
+            return $string.inspect(_pipe$2); });
+        _block$2 = $string.join(_pipe$2, ", ");
+      } else if (vr instanceof $value_representation.UniqueIdentifier) {
+        let _pipe = value$1;
+        let _pipe$1 = $string.split(_pipe, "\\");
+        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
+            if (vr instanceof $value_representation.UniqueIdentifier) {
+              _block$3 = $utils.trim_ascii_end(s, 0x0);
+            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+              _block$3 = $utils.trim_ascii_end(s, 0x20);
+            } else {
+              _block$3 = $utils.trim_ascii(s, 0x20);
+            }
+            let _pipe$2 = _block$3;
+            return $string.inspect(_pipe$2); });
+        _block$2 = $string.join(_pipe$2, ", ");
+      } else if (vr instanceof $value_representation.IntegerString) {
+        let _pipe = value$1;
+        let _pipe$1 = $string.split(_pipe, "\\");
+        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
+            if (vr instanceof $value_representation.UniqueIdentifier) {
+              _block$3 = $utils.trim_ascii_end(s, 0x0);
+            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+              _block$3 = $utils.trim_ascii_end(s, 0x20);
+            } else {
+              _block$3 = $utils.trim_ascii(s, 0x20);
+            }
+            let _pipe$2 = _block$3;
+            return $string.inspect(_pipe$2); });
+        _block$2 = $string.join(_pipe$2, ", ");
+      } else if (vr instanceof $value_representation.LongString) {
+        let _pipe = value$1;
+        let _pipe$1 = $string.split(_pipe, "\\");
+        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
+            if (vr instanceof $value_representation.UniqueIdentifier) {
+              _block$3 = $utils.trim_ascii_end(s, 0x0);
+            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+              _block$3 = $utils.trim_ascii_end(s, 0x20);
+            } else {
+              _block$3 = $utils.trim_ascii(s, 0x20);
+            }
+            let _pipe$2 = _block$3;
+            return $string.inspect(_pipe$2); });
+        _block$2 = $string.join(_pipe$2, ", ");
+      } else if (vr instanceof $value_representation.ShortString) {
+        let _pipe = value$1;
+        let _pipe$1 = $string.split(_pipe, "\\");
+        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
+            if (vr instanceof $value_representation.UniqueIdentifier) {
+              _block$3 = $utils.trim_ascii_end(s, 0x0);
+            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+              _block$3 = $utils.trim_ascii_end(s, 0x20);
+            } else {
+              _block$3 = $utils.trim_ascii(s, 0x20);
+            }
+            let _pipe$2 = _block$3;
+            return $string.inspect(_pipe$2); });
+        _block$2 = $string.join(_pipe$2, ", ");
+      } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+        let _pipe = value$1;
+        let _pipe$1 = $string.split(_pipe, "\\");
+        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
+            if (vr instanceof $value_representation.UniqueIdentifier) {
+              _block$3 = $utils.trim_ascii_end(s, 0x0);
+            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+              _block$3 = $utils.trim_ascii_end(s, 0x20);
+            } else {
+              _block$3 = $utils.trim_ascii(s, 0x20);
+            }
+            let _pipe$2 = _block$3;
+            return $string.inspect(_pipe$2); });
+        _block$2 = $string.join(_pipe$2, ", ");
+      } else {
+        let _pipe = value$1;
+        let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
+        _block$2 = $string.inspect(_pipe$1);
+      }
+      let formatted_value = _block$2;
+      let _block$3;
+      if (vr instanceof $value_representation.UniqueIdentifier) {
+        let $1 = $dictionary.uid_name($utils.trim_ascii_end(value$1, 0x0));
+        if ($1.isOk()) {
+          let uid_name = $1[0];
+          _block$3 = new Some((" (" + uid_name) + ")");
+        } else {
+          _block$3 = new None();
+        }
+      } else if (vr instanceof $value_representation.CodeString) {
+        let $1 = $code_strings.describe($string.trim(value$1), tag);
+        if ($1.isOk()) {
+          let description = $1[0];
+          _block$3 = new Some((" (" + description) + ")");
+        } else {
+          _block$3 = new None();
+        }
+      } else {
+        _block$3 = new None();
+      }
+      let suffix = _block$3;
+      _block = new Ok([formatted_value, suffix]);
+    } else {
+      _block = new Ok(["!! Invalid UTF-8 data", new None()]);
+    }
+  } else if (value instanceof LookupTableDescriptorValue) {
+    let vr = value.vr;
+    let bytes$1 = value.bytes;
+    if (vr instanceof $value_representation.AttributeTag) {
+      let $ = $attribute_tag.from_bytes(bytes$1);
+      if ($.isOk()) {
+        let tags = $[0];
+        let _block$1;
+        let _pipe = tags;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $data_element_tag.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.FloatingPointDouble) {
+      let $ = get_floats(value);
+      if ($.isOk()) {
+        let floats = $[0];
+        let _block$1;
+        let _pipe = floats;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.FloatingPointSingle) {
+      let $ = get_floats(value);
+      if ($.isOk()) {
+        let floats = $[0];
+        let _block$1;
+        let _pipe = floats;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.OtherByteString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherDoubleString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherFloatString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherLongString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherVeryLongString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherWordString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.Unknown) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.SignedLong) {
+      let $ = get_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.SignedShort) {
+      let $ = get_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.UnsignedLong) {
+      let $ = get_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.UnsignedShort) {
+      let $ = get_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.SignedVeryLong) {
+      let $ = get_big_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.UnsignedVeryLong) {
+      let $ = get_big_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else {
+      _block = new Error(undefined);
+    }
+  } else if (value instanceof BinaryValue) {
+    let vr = value.vr;
+    let bytes$1 = value.bytes;
+    if (vr instanceof $value_representation.AttributeTag) {
+      let $ = $attribute_tag.from_bytes(bytes$1);
+      if ($.isOk()) {
+        let tags = $[0];
+        let _block$1;
+        let _pipe = tags;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $data_element_tag.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.FloatingPointDouble) {
+      let $ = get_floats(value);
+      if ($.isOk()) {
+        let floats = $[0];
+        let _block$1;
+        let _pipe = floats;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.FloatingPointSingle) {
+      let $ = get_floats(value);
+      if ($.isOk()) {
+        let floats = $[0];
+        let _block$1;
+        let _pipe = floats;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.OtherByteString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherDoubleString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherFloatString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherLongString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherVeryLongString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.OtherWordString) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.Unknown) {
+      _block = new Ok(
+        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+      );
+    } else if (vr instanceof $value_representation.SignedLong) {
+      let $ = get_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.SignedShort) {
+      let $ = get_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.UnsignedLong) {
+      let $ = get_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.UnsignedShort) {
+      let $ = get_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.SignedVeryLong) {
+      let $ = get_big_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else if (vr instanceof $value_representation.UnsignedVeryLong) {
+      let $ = get_big_ints(value);
+      if ($.isOk()) {
+        let ints = $[0];
+        let _block$1;
+        let _pipe = ints;
+        let _pipe$1 = $list.take(_pipe, output_list_max_size);
+        let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
+        _block$1 = $string.join(_pipe$2, ", ");
+        let s = _block$1;
+        _block = new Ok([s, new None()]);
+      } else {
+        _block = new Error(undefined);
+      }
+    } else {
+      _block = new Error(undefined);
+    }
+  } else if (value instanceof EncapsulatedPixelDataValue) {
+    let items = value.items;
+    let _block$1;
+    let _pipe = items;
+    let _pipe$1 = $list.map(_pipe, $bit_array.byte_size);
+    _block$1 = $list.fold(_pipe$1, 0, $int.add);
+    let total_bytes = _block$1;
+    let size = $list.length(items);
+    let s = (("Items: " + $int.to_string(size)) + ", bytes: ") + $int.to_string(
+      total_bytes,
+    );
+    _block = new Ok([s, new None()]);
+  } else {
+    let items = value.items;
+    let s = "Items: " + (() => {
+      let _pipe = items;
+      let _pipe$1 = $list.length(_pipe);
+      return $int.to_string(_pipe$1);
+    })();
+    _block = new Ok([s, new None()]);
+  }
+  let _pipe = _block;
   let _pipe$1 = $result.map(
     _pipe,
     (res) => {
       let s = res[0];
       let suffix = res[1];
-      let suffix$1 = (() => {
-        let _pipe$1 = suffix;
-        return $option.unwrap(_pipe$1, "");
-      })();
+      let _block$1;
+      let _pipe$1 = suffix;
+      _block$1 = $option.unwrap(_pipe$1, "");
+      let suffix$1 = _block$1;
       let output_width$1 = $int.max(
         output_width - $utils.string_fast_length(suffix$1),
         10,
@@ -1412,11 +1377,11 @@ export function get_person_name(value) {
 }
 
 export function validate_length(value) {
-  let value_length = (() => {
-    let _pipe = bytes(value);
-    let _pipe$1 = $result.unwrap(_pipe, toBitArray([]));
-    return $bit_array.byte_size(_pipe$1);
-  })();
+  let _block;
+  let _pipe = bytes(value);
+  let _pipe$1 = $result.unwrap(_pipe, toBitArray([]));
+  _block = $bit_array.byte_size(_pipe$1);
+  let value_length = _block;
   if (value instanceof LookupTableDescriptorValue) {
     let vr = value.vr;
     if (value_length === 6) {
@@ -1435,10 +1400,10 @@ export function validate_length(value) {
     let $ = $value_representation.length_requirements(vr);
     let bytes_max = $.bytes_max;
     let bytes_multiple_of = $.bytes_multiple_of;
-    let bytes_multiple_of$1 = (() => {
-      let _pipe = bytes_multiple_of;
-      return $option.unwrap(_pipe, 2);
-    })();
+    let _block$1;
+    let _pipe$2 = bytes_multiple_of;
+    _block$1 = $option.unwrap(_pipe$2, 2);
+    let bytes_multiple_of$1 = _block$1;
     let $1 = value_length > bytes_max;
     if ($1) {
       return new Error(
@@ -1465,9 +1430,9 @@ export function validate_length(value) {
   } else if (value instanceof EncapsulatedPixelDataValue) {
     let vr = value.vr;
     let items = value.items;
-    let _pipe = items;
-    let _pipe$1 = $list.try_each(
-      _pipe,
+    let _pipe$2 = items;
+    let _pipe$3 = $list.try_each(
+      _pipe$2,
       (item) => {
         let item_length = $bit_array.byte_size(item);
         let $ = item_length > 0xFFFFFFFE;
@@ -1495,64 +1460,64 @@ export function validate_length(value) {
         }
       },
     );
-    return $result.replace(_pipe$1, value);
+    return $result.replace(_pipe$3, value);
   } else {
     return new Ok(value);
   }
 }
 
 export function new_binary(vr, bytes) {
-  let vr_validation = (() => {
-    if (vr instanceof $value_representation.Sequence) {
-      return new Error(
-        $data_error.new_value_invalid(
-          ("Value representation '" + $value_representation.to_string(vr)) + "' is not valid for binary data",
-        ),
-      );
-    } else {
-      return new Ok(new BinaryValue(vr, bytes));
-    }
-  })();
+  let _block;
+  if (vr instanceof $value_representation.Sequence) {
+    _block = new Error(
+      $data_error.new_value_invalid(
+        ("Value representation '" + $value_representation.to_string(vr)) + "' is not valid for binary data",
+      ),
+    );
+  } else {
+    _block = new Ok(new BinaryValue(vr, bytes));
+  }
+  let vr_validation = _block;
   return $result.try$(
     vr_validation,
     (_) => {
-      let string_validation = (() => {
-        let $ = $value_representation.is_encoded_string(vr);
-        if ($) {
-          let $1 = $bit_array.is_utf8(bytes);
-          if ($1) {
-            return new Ok(undefined);
+      let _block$1;
+      let $ = $value_representation.is_encoded_string(vr);
+      if ($) {
+        let $1 = $bit_array.is_utf8(bytes);
+        if ($1) {
+          _block$1 = new Ok(undefined);
+        } else {
+          _block$1 = new Error(
+            $data_error.new_value_invalid(
+              ("Bytes for '" + $value_representation.to_string(vr)) + "' are not valid UTF-8",
+            ),
+          );
+        }
+      } else {
+        let $1 = $value_representation.is_string(vr);
+        if ($1) {
+          let $2 = validate_default_charset_bytes(bytes);
+          if ($2.isOk() && !$2[0]) {
+            _block$1 = new Ok(undefined);
           } else {
-            return new Error(
+            let invalid_byte = $2[0];
+            let _block$2;
+            let _pipe = invalid_byte;
+            let _pipe$1 = $int.to_base16(_pipe);
+            _block$2 = $utils.pad_start(_pipe$1, 2, "0");
+            let invalid_byte$1 = _block$2;
+            _block$1 = new Error(
               $data_error.new_value_invalid(
-                ("Bytes for '" + $value_representation.to_string(vr)) + "' are not valid UTF-8",
+                (("Bytes for '" + $value_representation.to_string(vr)) + "' has disallowed byte: 0x") + invalid_byte$1,
               ),
             );
           }
         } else {
-          let $1 = $value_representation.is_string(vr);
-          if ($1) {
-            let $2 = validate_default_charset_bytes(bytes);
-            if ($2.isOk() && !$2[0]) {
-              return new Ok(undefined);
-            } else {
-              let invalid_byte = $2[0];
-              let invalid_byte$1 = (() => {
-                let _pipe = invalid_byte;
-                let _pipe$1 = $int.to_base16(_pipe);
-                return $utils.pad_start(_pipe$1, 2, "0");
-              })();
-              return new Error(
-                $data_error.new_value_invalid(
-                  (("Bytes for '" + $value_representation.to_string(vr)) + "' has disallowed byte: 0x") + invalid_byte$1,
-                ),
-              );
-            }
-          } else {
-            return new Ok(undefined);
-          }
+          _block$1 = new Ok(undefined);
         }
-      })();
+      }
+      let string_validation = _block$1;
       return $result.try$(
         string_validation,
         (_) => {
@@ -1565,19 +1530,19 @@ export function new_binary(vr, bytes) {
 }
 
 export function new_lookup_table_descriptor(vr, bytes) {
-  let vr_validation = (() => {
-    if (vr instanceof $value_representation.SignedShort) {
-      return new Ok(undefined);
-    } else if (vr instanceof $value_representation.UnsignedShort) {
-      return new Ok(undefined);
-    } else {
-      return new Error(
-        $data_error.new_value_invalid(
-          ("Value representation '" + $value_representation.to_string(vr)) + "' is not valid for lookup table descriptor data",
-        ),
-      );
-    }
-  })();
+  let _block;
+  if (vr instanceof $value_representation.SignedShort) {
+    _block = new Ok(undefined);
+  } else if (vr instanceof $value_representation.UnsignedShort) {
+    _block = new Ok(undefined);
+  } else {
+    _block = new Error(
+      $data_error.new_value_invalid(
+        ("Value representation '" + $value_representation.to_string(vr)) + "' is not valid for lookup table descriptor data",
+      ),
+    );
+  }
+  let vr_validation = _block;
   return $result.try$(
     vr_validation,
     (_) => {
@@ -1588,19 +1553,19 @@ export function new_lookup_table_descriptor(vr, bytes) {
 }
 
 export function new_encapsulated_pixel_data(vr, items) {
-  let vr_validation = (() => {
-    if (vr instanceof $value_representation.OtherByteString) {
-      return new Ok(undefined);
-    } else if (vr instanceof $value_representation.OtherWordString) {
-      return new Ok(undefined);
-    } else {
-      return new Error(
-        $data_error.new_value_invalid(
-          ("Value representation '" + $value_representation.to_string(vr)) + "' is not valid for encapsulated pixel data",
-        ),
-      );
-    }
-  })();
+  let _block;
+  if (vr instanceof $value_representation.OtherByteString) {
+    _block = new Ok(undefined);
+  } else if (vr instanceof $value_representation.OtherWordString) {
+    _block = new Ok(undefined);
+  } else {
+    _block = new Error(
+      $data_error.new_value_invalid(
+        ("Value representation '" + $value_representation.to_string(vr)) + "' is not valid for encapsulated pixel data",
+      ),
+    );
+  }
+  let vr_validation = _block;
   return $result.try$(
     vr_validation,
     (_) => {

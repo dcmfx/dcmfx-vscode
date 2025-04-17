@@ -98,6 +98,12 @@ export const hevc_h265_main_profile: TransferSyntax$;
 
 export const hevc_h265_main_10_profile: TransferSyntax$;
 
+export const jpeg_xl_lossless: TransferSyntax$;
+
+export const jpeg_xl_jpeg_recompression: TransferSyntax$;
+
+export const jpeg_xl: TransferSyntax$;
+
 export const high_throughput_jpeg_2k_lossless_only: TransferSyntax$;
 
 export const high_throughput_jpeg_2k_with_rpcl_options_lossless_only: TransferSyntax$;
@@ -115,6 +121,8 @@ export const smpte_st_2110_20_uncompressed_progressive_active_video: TransferSyn
 export const smpte_st_2110_20_uncompressed_interlaced_active_video: TransferSyntax$;
 
 export const smpte_st_2110_30_pcm_audio: TransferSyntax$;
+
+export const deflated_image_frame_compression: TransferSyntax$;
 
 export function from_uid(uid: string): _.Result<TransferSyntax$, undefined>;
 

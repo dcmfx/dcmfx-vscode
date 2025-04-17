@@ -39,15 +39,15 @@ export function append(first, second) {
 }
 
 export function base64_decode(encoded) {
-  let padded = (() => {
-    let $ = remainderInt(byte_size(from_string(encoded)), 4);
-    if ($ === 0) {
-      return encoded;
-    } else {
-      let n = $;
-      return $string.append(encoded, $string.repeat("=", 4 - n));
-    }
-  })();
+  let _block;
+  let $ = remainderInt(byte_size(from_string(encoded)), 4);
+  if ($ === 0) {
+    _block = encoded;
+  } else {
+    let n = $;
+    _block = $string.append(encoded, $string.repeat("=", 4 - n));
+  }
+  let padded = _block;
   return decode64(padded);
 }
 

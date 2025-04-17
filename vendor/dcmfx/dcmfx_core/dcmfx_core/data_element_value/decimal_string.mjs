@@ -10,29 +10,29 @@ import * as $utils from "../../dcmfx_core/internal/utils.mjs";
 import { float_to_shortest_string } from "./decimal_string_ffi.mjs";
 
 export function from_bytes(bytes) {
-  let decimal_string = (() => {
-    let _pipe = bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    return $result.replace_error(
-      _pipe$1,
-      $data_error.new_value_invalid("DecimalString is invalid UTF-8"),
-    );
-  })();
+  let _block;
+  let _pipe = bytes;
+  let _pipe$1 = $bit_array.to_string(_pipe);
+  _block = $result.replace_error(
+    _pipe$1,
+    $data_error.new_value_invalid("DecimalString is invalid UTF-8"),
+  );
+  let decimal_string = _block;
   return $result.try$(
     decimal_string,
     (decimal_string) => {
       let decimal_string$1 = $utils.trim_ascii(decimal_string, 0x0);
-      let _pipe = decimal_string$1;
-      let _pipe$1 = $string.split(_pipe, "\\");
-      let _pipe$2 = $list.map(_pipe$1, $string.trim);
-      let _pipe$3 = $list.filter(
-        _pipe$2,
+      let _pipe$2 = decimal_string$1;
+      let _pipe$3 = $string.split(_pipe$2, "\\");
+      let _pipe$4 = $list.map(_pipe$3, $string.trim);
+      let _pipe$5 = $list.filter(
+        _pipe$4,
         (s) => { return !$string.is_empty(s); },
       );
-      let _pipe$4 = $list.map(_pipe$3, $utils.smart_parse_float);
-      let _pipe$5 = $result.all(_pipe$4);
+      let _pipe$6 = $list.map(_pipe$5, $utils.smart_parse_float);
+      let _pipe$7 = $result.all(_pipe$6);
       return $result.map_error(
-        _pipe$5,
+        _pipe$7,
         (_) => {
           return $data_error.new_value_invalid(
             ("DecimalString is invalid: '" + decimal_string$1) + "'",

@@ -110,107 +110,127 @@ export function name(error) {
   }
 }
 
+export function details(error) {
+  if (error instanceof TransferSyntaxNotSupported) {
+    return "";
+  } else if (error instanceof SpecificCharacterSetInvalid) {
+    let details$1 = error.details;
+    return details$1;
+  } else if (error instanceof DataRequired) {
+    return "";
+  } else if (error instanceof DataEndedUnexpectedly) {
+    return "";
+  } else if (error instanceof DataInvalid) {
+    let details$1 = error.details;
+    return details$1;
+  } else if (error instanceof MaximumExceeded) {
+    let details$1 = error.details;
+    return details$1;
+  } else if (error instanceof TokenStreamInvalid) {
+    let details$1 = error.details;
+    return details$1;
+  } else if (error instanceof WriteAfterCompletion) {
+    return "";
+  } else if (error instanceof FileStreamError) {
+    return "";
+  } else {
+    let details$1 = error.details;
+    return details$1;
+  }
+}
+
 export function to_lines(error, task_description) {
   let lines = toList(["", "DICOM P10 error " + task_description]);
   let lines$1 = listPrepend("  Error: " + name(error), lines);
-  let lines$2 = (() => {
-    if (error instanceof DataRequired) {
-      let when = error.when;
-      return listPrepend("  When: " + when, lines$1);
-    } else if (error instanceof DataEndedUnexpectedly) {
-      let when = error.when;
-      return listPrepend("  When: " + when, lines$1);
-    } else if (error instanceof DataInvalid) {
-      let when = error.when;
-      return listPrepend("  When: " + when, lines$1);
-    } else if (error instanceof TokenStreamInvalid) {
-      let when = error.when;
-      return listPrepend("  When: " + when, lines$1);
-    } else if (error instanceof FileStreamError) {
-      let when = error.when;
-      return listPrepend("  When: " + when, lines$1);
-    } else {
-      return lines$1;
-    }
-  })();
-  let lines$3 = (() => {
-    if (error instanceof TransferSyntaxNotSupported) {
-      let uid = error.transfer_syntax_uid;
-      return listPrepend("  Transfer syntax UID: " + uid, lines$2);
-    } else if (error instanceof SpecificCharacterSetInvalid) {
-      let charset = error.specific_character_set;
-      let details = error.details;
-      return $list.flatten(
-        toList([
-          (() => {
-            if (details === "") {
-              return toList([]);
-            } else {
-              return toList(["  Details: " + details]);
-            }
-          })(),
-          toList(["  Specific character set: " + charset]),
-          lines$2,
-        ]),
-      );
-    } else if (error instanceof TokenStreamInvalid) {
-      let details = error.details;
-      let token = error.token;
-      return listPrepend(
-        "  Token: " + $p10_token.to_string(token),
-        listPrepend("  Details: " + details, lines$2),
-      );
-    } else if (error instanceof FileStreamError) {
-      let error$1 = error.error;
-      return listPrepend("  Details: " + $string.inspect(error$1), lines$2);
-    } else if (error instanceof DataInvalid) {
-      let details = error.details;
-      return listPrepend("  Details: " + details, lines$2);
-    } else if (error instanceof MaximumExceeded) {
-      let details = error.details;
-      return listPrepend("  Details: " + details, lines$2);
-    } else if (error instanceof OtherError) {
-      let details = error.details;
-      return listPrepend("  Details: " + details, lines$2);
-    } else {
-      return lines$2;
-    }
-  })();
-  let lines$4 = (() => {
-    if (error instanceof DataEndedUnexpectedly) {
-      let path = error.path;
-      let offset = error.offset;
-      return listPrepend(
-        "  Offset: 0x" + $int.to_base16(offset),
-        listPrepend(
-          "  Path: " + $data_set_path.to_detailed_string(path),
-          lines$3,
-        ),
-      );
-    } else if (error instanceof DataInvalid) {
-      let path = error.path;
-      let offset = error.offset;
-      return listPrepend(
-        "  Offset: 0x" + $int.to_base16(offset),
-        listPrepend(
-          "  Path: " + $data_set_path.to_detailed_string(path),
-          lines$3,
-        ),
-      );
-    } else if (error instanceof MaximumExceeded) {
-      let path = error.path;
-      let offset = error.offset;
-      return listPrepend(
-        "  Offset: 0x" + $int.to_base16(offset),
-        listPrepend(
-          "  Path: " + $data_set_path.to_detailed_string(path),
-          lines$3,
-        ),
-      );
-    } else {
-      return lines$3;
-    }
-  })();
+  let _block;
+  if (error instanceof DataRequired) {
+    let when = error.when;
+    _block = listPrepend("  When: " + when, lines$1);
+  } else if (error instanceof DataEndedUnexpectedly) {
+    let when = error.when;
+    _block = listPrepend("  When: " + when, lines$1);
+  } else if (error instanceof DataInvalid) {
+    let when = error.when;
+    _block = listPrepend("  When: " + when, lines$1);
+  } else if (error instanceof TokenStreamInvalid) {
+    let when = error.when;
+    _block = listPrepend("  When: " + when, lines$1);
+  } else if (error instanceof FileStreamError) {
+    let when = error.when;
+    _block = listPrepend("  When: " + when, lines$1);
+  } else {
+    _block = lines$1;
+  }
+  let lines$2 = _block;
+  let _block$1;
+  if (error instanceof TransferSyntaxNotSupported) {
+    let uid = error.transfer_syntax_uid;
+    _block$1 = listPrepend("  Transfer syntax UID: " + uid, lines$2);
+  } else if (error instanceof SpecificCharacterSetInvalid) {
+    let charset = error.specific_character_set;
+    let details$1 = error.details;
+    _block$1 = $list.flatten(
+      toList([
+        (() => {
+          if (details$1 === "") {
+            return toList([]);
+          } else {
+            return toList(["  Details: " + details$1]);
+          }
+        })(),
+        toList(["  Specific character set: " + charset]),
+        lines$2,
+      ]),
+    );
+  } else if (error instanceof TokenStreamInvalid) {
+    let details$1 = error.details;
+    let token = error.token;
+    _block$1 = listPrepend(
+      "  Token: " + $p10_token.to_string(token),
+      listPrepend("  Details: " + details$1, lines$2),
+    );
+  } else if (error instanceof FileStreamError) {
+    let error$1 = error.error;
+    _block$1 = listPrepend("  Details: " + $string.inspect(error$1), lines$2);
+  } else if (error instanceof DataInvalid) {
+    let details$1 = error.details;
+    _block$1 = listPrepend("  Details: " + details$1, lines$2);
+  } else if (error instanceof MaximumExceeded) {
+    let details$1 = error.details;
+    _block$1 = listPrepend("  Details: " + details$1, lines$2);
+  } else if (error instanceof OtherError) {
+    let details$1 = error.details;
+    _block$1 = listPrepend("  Details: " + details$1, lines$2);
+  } else {
+    _block$1 = lines$2;
+  }
+  let lines$3 = _block$1;
+  let _block$2;
+  if (error instanceof DataEndedUnexpectedly) {
+    let path = error.path;
+    let offset = error.offset;
+    _block$2 = listPrepend(
+      "  Offset: 0x" + $int.to_base16(offset),
+      listPrepend("  Path: " + $data_set_path.to_detailed_string(path), lines$3),
+    );
+  } else if (error instanceof DataInvalid) {
+    let path = error.path;
+    let offset = error.offset;
+    _block$2 = listPrepend(
+      "  Offset: 0x" + $int.to_base16(offset),
+      listPrepend("  Path: " + $data_set_path.to_detailed_string(path), lines$3),
+    );
+  } else if (error instanceof MaximumExceeded) {
+    let path = error.path;
+    let offset = error.offset;
+    _block$2 = listPrepend(
+      "  Offset: 0x" + $int.to_base16(offset),
+      listPrepend("  Path: " + $data_set_path.to_detailed_string(path), lines$3),
+    );
+  } else {
+    _block$2 = lines$3;
+  }
+  let lines$4 = _block$2;
   let _pipe = lines$4;
   return $list.reverse(_pipe);
 }

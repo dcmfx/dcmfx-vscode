@@ -11,13 +11,13 @@ import * as $data_set_builder from "../../dcmfx_p10/data_set_builder.mjs";
 import * as $p10_error from "../../dcmfx_p10/p10_error.mjs";
 import * as $p10_token from "../../dcmfx_p10/p10_token.mjs";
 import * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filter_transform.mjs";
-import { Ok, CustomType as $CustomType, makeError, isEqual } from "../../gleam.mjs";
+import { Ok, Error, CustomType as $CustomType, makeError, isEqual } from "../../gleam.mjs";
 
 class P10CustomTypeTransform extends $CustomType {
-  constructor(filter, last_tag, target_from_data_set, target) {
+  constructor(filter, highest_tag, target_from_data_set, target) {
     super();
     this.filter = filter;
-    this.last_tag = last_tag;
+    this.highest_tag = highest_tag;
     this.target_from_data_set = target_from_data_set;
     this.target = target;
   }
@@ -39,16 +39,16 @@ export class DataError extends $CustomType {
 
 export function new$(tags, target_from_data_set) {
   let filter = $p10_filter_transform.new$(
-    (tag, _, _1) => { return $list.contains(tags, tag); },
+    (tag, _, _1, _2) => { return $list.contains(tags, tag); },
   );
-  let last_tag = (() => {
-    let _pipe = tags;
-    let _pipe$1 = $list.max(_pipe, $data_element_tag.compare);
-    return $result.unwrap(_pipe$1, $data_element_tag.zero);
-  })();
+  let _block;
+  let _pipe = tags;
+  let _pipe$1 = $list.max(_pipe, $data_element_tag.compare);
+  _block = $result.unwrap(_pipe$1, $data_element_tag.zero);
+  let highest_tag = _block;
   return new P10CustomTypeTransform(
     new Some([filter, $data_set_builder.new$()]),
-    last_tag,
+    highest_tag,
     target_from_data_set,
     new None(),
   );
@@ -63,23 +63,26 @@ export function add_token(transform, token) {
     return $result.try$(
       (() => {
         let $1 = $p10_filter_transform.add_token(filter, token);
-        if ($1[0]) {
-          let filter$1 = $1[1];
-          let builder$1 = (() => {
-            let _pipe = builder;
-            let _pipe$1 = $data_set_builder.add_token(_pipe, token);
-            return $result.map_error(
-              _pipe$1,
-              (var0) => { return new P10Error(var0); },
-            );
-          })();
+        if ($1.isOk() && $1[0][0]) {
+          let filter$1 = $1[0][1];
+          let _block;
+          let _pipe = builder;
+          let _pipe$1 = $data_set_builder.add_token(_pipe, token);
+          _block = $result.map_error(
+            _pipe$1,
+            (var0) => { return new P10Error(var0); },
+          );
+          let builder$1 = _block;
           return $result.map(
             builder$1,
             (builder) => { return [filter$1, builder]; },
           );
-        } else {
-          let filter$1 = $1[1];
+        } else if ($1.isOk() && !$1[0][0]) {
+          let filter$1 = $1[0][1];
           return new Ok([filter$1, builder]);
+        } else {
+          let e = $1[0];
+          return new Error(new P10Error(e));
         }
       })(),
       (_use0) => {
@@ -89,22 +92,22 @@ export function add_token(transform, token) {
           if (token instanceof $p10_token.DataElementHeader) {
             let tag = token.tag;
             return isEqual(
-              $data_element_tag.compare(tag, transform.last_tag),
+              $data_element_tag.compare(tag, transform.highest_tag),
               new $order.Gt()
             );
           } else if (token instanceof $p10_token.SequenceStart) {
             let tag = token.tag;
             return isEqual(
-              $data_element_tag.compare(tag, transform.last_tag),
+              $data_element_tag.compare(tag, transform.highest_tag),
               new $order.Gt()
             );
           } else if (token instanceof $p10_token.DataElementValueBytes &&
           token.bytes_remaining === 0) {
             let tag = token.tag;
-            return isEqual(tag, transform.last_tag);
+            return isEqual(tag, transform.highest_tag);
           } else if (token instanceof $p10_token.SequenceDelimiter) {
             let tag = token.tag;
-            return isEqual(tag, transform.last_tag);
+            return isEqual(tag, transform.highest_tag);
           } else if (token instanceof $p10_token.End) {
             return true;
           } else {
@@ -112,54 +115,49 @@ export function add_token(transform, token) {
           }
         })();
         if (is_complete) {
-          let $1 = (() => {
-            let _pipe = builder$1;
-            let _pipe$1 = $data_set_builder.force_end(_pipe);
-            return $data_set_builder.final_data_set(_pipe$1);
-          })();
+          let _block;
+          let _pipe = builder$1;
+          let _pipe$1 = $data_set_builder.force_end(_pipe);
+          _block = $data_set_builder.final_data_set(_pipe$1);
+          let $1 = _block;
           if (!$1.isOk()) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/transforms/p10_custom_type_transform",
-              115,
+              119,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: $1 }
             )
           }
           let data_set = $1[0];
-          let target = (() => {
-            let _pipe = transform.target_from_data_set(data_set);
-            return $result.map_error(
-              _pipe,
-              (var0) => { return new DataError(var0); },
-            );
-          })();
-          return $result.try$(
-            target,
-            (target) => {
-              let _pipe = (() => {
-                let _record = transform;
-                return new P10CustomTypeTransform(
-                  new None(),
-                  _record.last_tag,
-                  _record.target_from_data_set,
-                  new Some(target),
-                );
-              })();
-              return new Ok(_pipe);
-            },
+          let _block$1;
+          let _pipe$2 = transform.target_from_data_set(data_set);
+          _block$1 = $result.map_error(
+            _pipe$2,
+            (var0) => { return new DataError(var0); },
           );
+          let target = _block$1;
+          return $result.try$(target, (target) => { let _block$2;
+              let _record = transform;
+              _block$2 = new P10CustomTypeTransform(
+                new None(),
+                _record.highest_tag,
+                _record.target_from_data_set,
+                new Some(target),
+              );
+              let _pipe$3 = _block$2;
+              return new Ok(_pipe$3); });
         } else {
-          let _pipe = (() => {
-            let _record = transform;
-            return new P10CustomTypeTransform(
-              new Some([filter$1, builder$1]),
-              _record.last_tag,
-              _record.target_from_data_set,
-              _record.target,
-            );
-          })();
+          let _block;
+          let _record = transform;
+          _block = new P10CustomTypeTransform(
+            new Some([filter$1, builder$1]),
+            _record.highest_tag,
+            _record.target_from_data_set,
+            _record.target,
+          );
+          let _pipe = _block;
           return new Ok(_pipe);
         }
       },

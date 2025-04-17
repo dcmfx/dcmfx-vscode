@@ -6,4 +6,4 @@ export function println(string: string): undefined;
 
 export function println_error(string: string): undefined;
 
-export function debug<EFX>(term: EFX): EFX;
+export function debug<EFR>(term: EFR): EFR;

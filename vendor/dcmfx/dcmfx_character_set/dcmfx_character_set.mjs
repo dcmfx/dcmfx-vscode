@@ -35,70 +35,70 @@ class SpecificCharacterSet extends $CustomType {
 }
 
 export function from_string(specific_character_set) {
-  let charsets = (() => {
-    let _pipe = specific_character_set;
-    let _pipe$1 = $string.split(_pipe, "\\");
-    let _pipe$2 = $list.map(_pipe$1, $string.trim);
-    return $list.map(_pipe$2, $string.uppercase);
-  })();
-  let charsets$1 = (() => {
-    if (charsets.hasLength(1) && charsets.head === "") {
-      return toList(["ISO_IR 6"]);
-    } else if (charsets.atLeastLength(2) && charsets.head === "") {
-      let c = charsets.tail.head;
-      let rest = charsets.tail.tail;
-      return listPrepend("ISO 2022 IR 6", listPrepend(c, rest));
-    } else {
-      return charsets;
-    }
-  })();
-  let charsets$2 = (() => {
-    let _pipe = charsets$1;
-    let _pipe$1 = $list.map(_pipe, $character_set.from_string);
-    return $result.all(_pipe$1);
-  })();
+  let _block;
+  let _pipe = specific_character_set;
+  let _pipe$1 = $string.split(_pipe, "\\");
+  let _pipe$2 = $list.map(_pipe$1, $string.trim);
+  _block = $list.map(_pipe$2, $string.uppercase);
+  let charsets = _block;
+  let _block$1;
+  if (charsets.hasLength(1) && charsets.head === "") {
+    _block$1 = toList(["ISO_IR 6"]);
+  } else if (charsets.atLeastLength(2) && charsets.head === "") {
+    let c = charsets.tail.head;
+    let rest = charsets.tail.tail;
+    _block$1 = listPrepend("ISO 2022 IR 6", listPrepend(c, rest));
+  } else {
+    _block$1 = charsets;
+  }
+  let charsets$1 = _block$1;
+  let _block$2;
+  let _pipe$3 = charsets$1;
+  let _pipe$4 = $list.map(_pipe$3, $character_set.from_string);
+  _block$2 = $result.all(_pipe$4);
+  let charsets$2 = _block$2;
   return $result.try$(
     charsets$2,
     (charsets) => {
-      let charsets$1 = (() => {
-        if (charsets.hasLength(1)) {
-          return new Ok(charsets);
+      let _block$3;
+      if (charsets.hasLength(1)) {
+        _block$3 = new Ok(charsets);
+      } else {
+        let _block$4;
+        let _pipe$5 = charsets;
+        _block$4 = $list.find(
+          _pipe$5,
+          (charset) => {
+            if (charset instanceof SingleByteWithoutExtensions) {
+              return true;
+            } else if (charset instanceof MultiByteWithoutExtensions) {
+              return true;
+            } else {
+              return false;
+            }
+          },
+        );
+        let has_non_iso_2022_charset = _block$4;
+        if (has_non_iso_2022_charset.isOk()) {
+          _block$3 = new Error(
+            "SpecificCharacterSet has multiple non-ISO 2022 values",
+          );
         } else {
-          let has_non_iso_2022_charset = (() => {
-            let _pipe = charsets;
-            return $list.find(
-              _pipe,
-              (charset) => {
-                if (charset instanceof SingleByteWithoutExtensions) {
-                  return true;
-                } else if (charset instanceof MultiByteWithoutExtensions) {
-                  return true;
-                } else {
-                  return false;
-                }
-              },
-            );
-          })();
-          if (has_non_iso_2022_charset.isOk()) {
-            return new Error(
-              "SpecificCharacterSet has multiple non-ISO 2022 values",
-            );
+          let _block$5;
+          let $ = $list.contains(charsets, $character_set.iso_2022_ir_6);
+          if ($) {
+            _block$5 = charsets;
           } else {
-            let _pipe = (() => {
-              let $ = $list.contains(charsets, $character_set.iso_2022_ir_6);
-              if ($) {
-                return charsets;
-              } else {
-                return $list.append(
-                  charsets,
-                  toList([$character_set.iso_2022_ir_6]),
-                );
-              }
-            })();
-            return new Ok(_pipe);
+            _block$5 = $list.append(
+              charsets,
+              toList([$character_set.iso_2022_ir_6]),
+            );
           }
+          let _pipe$6 = _block$5;
+          _block$3 = new Ok(_pipe$6);
         }
-      })();
+      }
+      let charsets$1 = _block$3;
       return $result.try$(
         charsets$1,
         (charsets) => { return new Ok(new SpecificCharacterSet(charsets)); },
@@ -226,20 +226,20 @@ function decode_iso_2022_bytes(
       loop$active_code_elements = active_code_elements$1;
       loop$acc = acc;
     } else {
-      let decoder = (() => {
-        if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0) &&
-        active_code_elements[1] instanceof Some &&
-        (bytes.byteAt(0) >= 0x80)) {
-          let byte = bytes.byteAt(0);
-          let g1 = active_code_elements[1][0];
-          return g1.decoder;
-        } else if (active_code_elements[0] instanceof Some) {
-          let g0 = active_code_elements[0][0];
-          return g0.decoder;
-        } else {
-          return $iso_ir_6.decode_next_codepoint;
-        }
-      })();
+      let _block;
+      if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0) &&
+      active_code_elements[1] instanceof Some &&
+      (bytes.byteAt(0) >= 0x80)) {
+        let byte = bytes.byteAt(0);
+        let g1 = active_code_elements[1][0];
+        _block = g1.decoder;
+      } else if (active_code_elements[0] instanceof Some) {
+        let g0 = active_code_elements[0][0];
+        _block = g0.decoder;
+      } else {
+        _block = $iso_ir_6.decode_next_codepoint;
+      }
+      let decoder = _block;
       let $ = decoder(bytes);
       if (!$.isOk()) {
         throw makeError(
@@ -253,28 +253,28 @@ function decode_iso_2022_bytes(
       }
       let codepoint = $[0][0];
       let bytes$1 = $[0][1];
-      let active_code_elements$1 = (() => {
-        let $1 = $string.utf_codepoint_to_int(codepoint);
-        if ($1 === 0x9) {
-          return default_code_elements(specific_character_set);
-        } else if ($1 === 0xA) {
-          return default_code_elements(specific_character_set);
-        } else if ($1 === 0xC) {
-          return default_code_elements(specific_character_set);
-        } else if ($1 === 0xD) {
-          return default_code_elements(specific_character_set);
-        } else if ($1 === 0x5C && string_type instanceof $string_type.MultiValue) {
-          return default_code_elements(specific_character_set);
-        } else if ($1 === 0x5C && string_type instanceof $string_type.PersonName) {
-          return default_code_elements(specific_character_set);
-        } else if ($1 === 0x3D && string_type instanceof $string_type.PersonName) {
-          return default_code_elements(specific_character_set);
-        } else if ($1 === 0x5E && string_type instanceof $string_type.PersonName) {
-          return default_code_elements(specific_character_set);
-        } else {
-          return active_code_elements;
-        }
-      })();
+      let _block$1;
+      let $1 = $string.utf_codepoint_to_int(codepoint);
+      if ($1 === 0x9) {
+        _block$1 = default_code_elements(specific_character_set);
+      } else if ($1 === 0xA) {
+        _block$1 = default_code_elements(specific_character_set);
+      } else if ($1 === 0xC) {
+        _block$1 = default_code_elements(specific_character_set);
+      } else if ($1 === 0xD) {
+        _block$1 = default_code_elements(specific_character_set);
+      } else if ($1 === 0x5C && string_type instanceof $string_type.MultiValue) {
+        _block$1 = default_code_elements(specific_character_set);
+      } else if ($1 === 0x5C && string_type instanceof $string_type.PersonName) {
+        _block$1 = default_code_elements(specific_character_set);
+      } else if ($1 === 0x3D && string_type instanceof $string_type.PersonName) {
+        _block$1 = default_code_elements(specific_character_set);
+      } else if ($1 === 0x5E && string_type instanceof $string_type.PersonName) {
+        _block$1 = default_code_elements(specific_character_set);
+      } else {
+        _block$1 = active_code_elements;
+      }
+      let active_code_elements$1 = _block$1;
       loop$specific_character_set = specific_character_set;
       loop$bytes = bytes$1;
       loop$string_type = string_type;
@@ -285,39 +285,38 @@ function decode_iso_2022_bytes(
 }
 
 export function decode_bytes(specific_character_set, bytes, string_type) {
-  let _pipe = (() => {
-    if (specific_character_set instanceof SpecificCharacterSet &&
-    specific_character_set.charsets.hasLength(1) &&
-    specific_character_set.charsets.head instanceof SingleByteWithoutExtensions) {
-      let term = specific_character_set.charsets.head.defined_term;
-      let decoder = specific_character_set.charsets.head.decoder;
-      let decoder$1 = (() => {
-        if (term === "ISO_IR 13" &&
-        string_type instanceof $string_type.MultiValue) {
-          return $jis_x_0201.decode_next_codepoint_allowing_backslash;
-        } else if (term === "ISO_IR 13" &&
-        string_type instanceof $string_type.PersonName) {
-          return $jis_x_0201.decode_next_codepoint_allowing_backslash;
-        } else {
-          return decoder;
-        }
-      })();
-      return $character_set.decode_bytes(bytes, decoder$1, toList([]));
-    } else if (specific_character_set instanceof SpecificCharacterSet &&
-    specific_character_set.charsets.hasLength(1) &&
-    specific_character_set.charsets.head instanceof MultiByteWithoutExtensions) {
-      let decoder = specific_character_set.charsets.head.decoder;
-      return $character_set.decode_bytes(bytes, decoder, toList([]));
+  let _block;
+  if (specific_character_set instanceof SpecificCharacterSet &&
+  specific_character_set.charsets.hasLength(1) &&
+  specific_character_set.charsets.head instanceof SingleByteWithoutExtensions) {
+    let term = specific_character_set.charsets.head.defined_term;
+    let decoder = specific_character_set.charsets.head.decoder;
+    let _block$1;
+    if (term === "ISO_IR 13" && string_type instanceof $string_type.MultiValue) {
+      _block$1 = $jis_x_0201.decode_next_codepoint_allowing_backslash;
+    } else if (term === "ISO_IR 13" &&
+    string_type instanceof $string_type.PersonName) {
+      _block$1 = $jis_x_0201.decode_next_codepoint_allowing_backslash;
     } else {
-      return decode_iso_2022_bytes(
-        specific_character_set,
-        bytes,
-        string_type,
-        default_code_elements(specific_character_set),
-        toList([]),
-      );
+      _block$1 = decoder;
     }
-  })();
+    let decoder$1 = _block$1;
+    _block = $character_set.decode_bytes(bytes, decoder$1, toList([]));
+  } else if (specific_character_set instanceof SpecificCharacterSet &&
+  specific_character_set.charsets.hasLength(1) &&
+  specific_character_set.charsets.head instanceof MultiByteWithoutExtensions) {
+    let decoder = specific_character_set.charsets.head.decoder;
+    _block = $character_set.decode_bytes(bytes, decoder, toList([]));
+  } else {
+    _block = decode_iso_2022_bytes(
+      specific_character_set,
+      bytes,
+      string_type,
+      default_code_elements(specific_character_set),
+      toList([]),
+    );
+  }
+  let _pipe = _block;
   let _pipe$1 = $list.reverse(_pipe);
   return $string.from_utf_codepoints(_pipe$1);
 }

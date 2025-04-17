@@ -9,7 +9,7 @@ import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filter_transform.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
-declare class P10CustomTypeTransform<CCAG> extends _.CustomType {
+declare class P10CustomTypeTransform<CCCI> extends _.CustomType {
   constructor(
     filter: $option.Option$<
       [
@@ -17,7 +17,7 @@ declare class P10CustomTypeTransform<CCAG> extends _.CustomType {
         $data_set_builder.DataSetBuilder$
       ]
     >,
-    last_tag: $data_element_tag.DataElementTag$,
+    highest_tag: $data_element_tag.DataElementTag$,
     target_from_data_set: (
       x0: $dict.Dict$<
         $data_element_tag.DataElementTag$,
@@ -33,7 +33,7 @@ declare class P10CustomTypeTransform<CCAG> extends _.CustomType {
       $data_set_builder.DataSetBuilder$
     ]
   >;
-  last_tag: $data_element_tag.DataElementTag$;
+  highest_tag: $data_element_tag.DataElementTag$;
   target_from_data_set: (
     x0: $dict.Dict$<
       $data_element_tag.DataElementTag$,
@@ -43,7 +43,7 @@ declare class P10CustomTypeTransform<CCAG> extends _.CustomType {
   target: $option.Option$<any>;
 }
 
-export type P10CustomTypeTransform$<CCAG> = P10CustomTypeTransform<CCAG>;
+export type P10CustomTypeTransform$<CCCI> = P10CustomTypeTransform<CCCI>;
 
 export class P10Error extends _.CustomType {
   constructor(argument$0: $p10_error.P10Error$);
@@ -59,21 +59,21 @@ export class DataError extends _.CustomType {
 
 export type P10CustomTypeTransformError$ = P10Error | DataError;
 
-export function new$<CCAI>(
+export function new$<CCCK>(
   tags: _.List<$data_element_tag.DataElementTag$>,
   target_from_data_set: (
     x0: $dict.Dict$<
       $data_element_tag.DataElementTag$,
       $data_element_value.DataElementValue$
     >
-  ) => _.Result<CCAI, $data_error.DataError$>
-): P10CustomTypeTransform$<CCAI>;
+  ) => _.Result<CCCK, $data_error.DataError$>
+): P10CustomTypeTransform$<CCCK>;
 
-export function add_token<CCAM>(
-  transform: P10CustomTypeTransform$<CCAM>,
+export function add_token<CCCO>(
+  transform: P10CustomTypeTransform$<CCCO>,
   token: $p10_token.P10Token$
-): _.Result<P10CustomTypeTransform$<CCAM>, P10CustomTypeTransformError$>;
+): _.Result<P10CustomTypeTransform$<CCCO>, P10CustomTypeTransformError$>;
 
-export function get_output<CCAR>(transform: P10CustomTypeTransform$<CCAR>): $option.Option$<
-  CCAR
+export function get_output<CCCT>(transform: P10CustomTypeTransform$<CCCT>): $option.Option$<
+  CCCT
 >;

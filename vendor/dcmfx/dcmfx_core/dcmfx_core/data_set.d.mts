@@ -153,7 +153,7 @@ export function to_list(
   [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
 >;
 
-export function map<BXQI>(
+export function map<BXOE>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -161,8 +161,8 @@ export function map<BXQI>(
   callback: (
     x0: $data_element_tag.DataElementTag$,
     x1: $data_element_value.DataElementValue$
-  ) => BXQI
-): _.List<BXQI>;
+  ) => BXOE
+): _.List<BXOE>;
 
 export function map_values(
   data_set: $dict.Dict$<
@@ -192,44 +192,44 @@ export function filter(
   $data_element_value.DataElementValue$
 >;
 
-export function fold<BXQK>(
+export function fold<BXOG>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BXQK,
+  initial: BXOG,
   callback: (
-    x0: BXQK,
+    x0: BXOG,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => BXQK
-): BXQK;
+  ) => BXOG
+): BXOG;
 
-export function try_fold<BXQL, BXQM>(
+export function try_fold<BXOH, BXOI>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BXQL,
+  initial: BXOH,
   callback: (
-    x0: BXQL,
+    x0: BXOH,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => _.Result<BXQL, BXQM>
-): _.Result<BXQL, BXQM>;
+  ) => _.Result<BXOH, BXOI>
+): _.Result<BXOH, BXOI>;
 
-export function fold_until<BXQR>(
+export function fold_until<BXON>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BXQR,
+  initial: BXON,
   callback: (
-    x0: BXQR,
+    x0: BXON,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => $list.ContinueOrStop$<BXQR>
-): BXQR;
+  ) => $list.ContinueOrStop$<BXON>
+): BXON;
 
 export function partition(
   data_set: $dict.Dict$<
@@ -329,6 +329,15 @@ export function get_int(
   tag: $data_element_tag.DataElementTag$
 ): _.Result<number, $data_error.DataError$>;
 
+export function get_int_with_default(
+  data_set: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+  tag: $data_element_tag.DataElementTag$,
+  default$: number
+): _.Result<number, $data_error.DataError$>;
+
 export function get_ints(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
@@ -369,6 +378,15 @@ export function get_float(
   tag: $data_element_tag.DataElementTag$
 ): _.Result<$ieee_float.IEEEFloat$, $data_error.DataError$>;
 
+export function get_float_with_default(
+  data_set: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+  tag: $data_element_tag.DataElementTag$,
+  default$: number
+): _.Result<$ieee_float.IEEEFloat$, $data_error.DataError$>;
+
 export function get_floats(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
@@ -384,6 +402,14 @@ export function get_age(
   >,
   tag: $data_element_tag.DataElementTag$
 ): _.Result<$age_string.StructuredAge$, $data_error.DataError$>;
+
+export function get_attribute_tags(
+  data_set: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+  tag: $data_element_tag.DataElementTag$
+): _.Result<_.List<$data_element_tag.DataElementTag$>, $data_error.DataError$>;
 
 export function get_date(
   data_set: $dict.Dict$<
@@ -471,15 +497,15 @@ export function tag_name(
   tag: $data_element_tag.DataElementTag$
 ): string;
 
-export function to_lines<BXQT>(
+export function to_lines<BXOP>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   print_options: $data_set_print.DataSetPrintOptions$,
-  context: BXQT,
-  callback: (x0: BXQT, x1: string) => BXQT
-): BXQT;
+  context: BXOP,
+  callback: (x0: BXOP, x1: string) => BXOP
+): BXOP;
 
 export function print_with_options(
   data_set: $dict.Dict$<

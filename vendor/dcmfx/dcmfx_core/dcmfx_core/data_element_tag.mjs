@@ -23,6 +23,14 @@ export function is_private_creator(tag) {
   return ($int.is_odd(tag.group) && (tag.element >= 0x10)) && (tag.element <= 0xFF);
 }
 
+export function with_group(tag, group) {
+  return new DataElementTag(group, tag.element);
+}
+
+export function with_element(tag, element) {
+  return new DataElementTag(tag.group, element);
+}
+
 export function to_int(tag) {
   return tag.group * 65_536 + tag.element;
 }

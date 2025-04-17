@@ -7,8 +7,8 @@ import {
   writeDataToReadContext,
 } from "./utils.mjs";
 import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
+import * as p10_pixel_data_frame_filter from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/p10_pixel_data_frame_filter.mjs";
 import * as dcmfx_pixel_data from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data.mjs";
-import * as pixel_data_filter from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/pixel_data_filter.mjs";
 import * as pixel_data_frame from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/pixel_data_frame.mjs";
 import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
 import * as p10_token from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_token.mjs";
@@ -77,7 +77,7 @@ function* doExtractDicomPixelData(
     new p10_read.P10ReadConfig(maxTokenSize, 0xfffffffe, 10_000, false),
   );
 
-  let pixelDataFilter = pixel_data_filter.new$();
+  let pixelDataFilter = p10_pixel_data_frame_filter.new$();
 
   let fileExtension = ".bin";
   let frameIndex = 0;
@@ -108,10 +108,10 @@ function* doExtractDicomPixelData(
             // that are now complete and can be written out to a file
             const [frames, newPixelDataFilter] = yield* pipe(
               gleamResultToEffect(
-                pixel_data_filter.add_token(pixelDataFilter, token),
+                p10_pixel_data_frame_filter.add_token(pixelDataFilter, token),
               ),
               Effect.mapError((e) => {
-                if (e instanceof pixel_data_filter.P10Error) {
+                if (e instanceof p10_pixel_data_frame_filter.P10Error) {
                   return p10_error.to_lines(e[0], "").toArray();
                 } else {
                   return data_error.to_lines(e[0], "").toArray();
@@ -164,7 +164,7 @@ function* doExtractDicomJsonPixelData(
   const frames = yield* pipe(
     gleamResultToEffect(dcmfx_pixel_data.get_pixel_data_frames(dataSet)),
     Effect.mapError((e) => {
-      if (e instanceof pixel_data_filter.P10Error) {
+      if (e instanceof p10_pixel_data_frame_filter.P10Error) {
         return p10_error.to_lines(e[0], "").toArray();
       } else {
         return data_error.to_lines(e[0], "").toArray();

@@ -24110,595 +24110,595 @@ export function decode_next_codepoint(bytes) {
     let byte_2$1 = byte_2 - 0x81;
     let byte_3$1 = byte_3 - 0x30;
     let index = ((byte_0$1 * 10 + byte_1$1) * 126 + byte_2$1) * 10 + byte_3$1;
-    let codepoint_value = (() => {
-      if (index <= 0x23) {
-        let index$1 = index;
-        return (0x80 + index$1) - 0x0;
-      } else if ((index >= 0x24) && (index <= 0x25)) {
-        let index$1 = index;
-        return (0xA5 + index$1) - 0x24;
-      } else if ((index >= 0x26) && (index <= 0x2C)) {
-        let index$1 = index;
-        return (0xA9 + index$1) - 0x26;
-      } else if ((index >= 0x2D) && (index <= 0x31)) {
-        let index$1 = index;
-        return (0xB2 + index$1) - 0x2D;
-      } else if ((index >= 0x32) && (index <= 0x50)) {
-        let index$1 = index;
-        return (0xB8 + index$1) - 0x32;
-      } else if ((index >= 0x51) && (index <= 0x58)) {
-        let index$1 = index;
-        return (0xD8 + index$1) - 0x51;
-      } else if ((index >= 0x59) && (index <= 0x5E)) {
-        let index$1 = index;
-        return (0xE2 + index$1) - 0x59;
-      } else if (index === 0x5F) {
-        return 0xEB;
-      } else if ((index >= 0x60) && (index <= 0x63)) {
-        let index$1 = index;
-        return (0xEE + index$1) - 0x60;
-      } else if ((index >= 0x64) && (index <= 0x66)) {
-        let index$1 = index;
-        return (0xF4 + index$1) - 0x64;
-      } else if (index === 0x67) {
-        return 0xF8;
-      } else if (index === 0x68) {
-        return 0xFB;
-      } else if ((index >= 0x69) && (index <= 0x6C)) {
-        let index$1 = index;
-        return (0xFD + index$1) - 0x69;
-      } else if ((index >= 0x6D) && (index <= 0x7D)) {
-        let index$1 = index;
-        return (0x102 + index$1) - 0x6D;
-      } else if ((index >= 0x7E) && (index <= 0x84)) {
-        let index$1 = index;
-        return (0x114 + index$1) - 0x7E;
-      } else if ((index >= 0x85) && (index <= 0x93)) {
-        let index$1 = index;
-        return (0x11C + index$1) - 0x85;
-      } else if ((index >= 0x94) && (index <= 0xAB)) {
-        let index$1 = index;
-        return (0x12C + index$1) - 0x94;
-      } else if ((index >= 0xAC) && (index <= 0xAE)) {
-        let index$1 = index;
-        return (0x145 + index$1) - 0xAC;
-      } else if ((index >= 0xAF) && (index <= 0xB2)) {
-        let index$1 = index;
-        return (0x149 + index$1) - 0xAF;
-      } else if ((index >= 0xB3) && (index <= 0xCF)) {
-        let index$1 = index;
-        return (0x14E + index$1) - 0xB3;
-      } else if ((index >= 0xD0) && (index <= 0x131)) {
-        let index$1 = index;
-        return (0x16C + index$1) - 0xD0;
-      } else if (index === 0x132) {
-        return 0x1CF;
-      } else if (index === 0x133) {
-        return 0x1D1;
-      } else if (index === 0x134) {
-        return 0x1D3;
-      } else if (index === 0x135) {
-        return 0x1D5;
-      } else if (index === 0x136) {
-        return 0x1D7;
-      } else if (index === 0x137) {
-        return 0x1D9;
-      } else if (index === 0x138) {
-        return 0x1DB;
-      } else if ((index >= 0x139) && (index <= 0x154)) {
-        let index$1 = index;
-        return (0x1DD + index$1) - 0x139;
-      } else if ((index >= 0x155) && (index <= 0x1AB)) {
-        let index$1 = index;
-        return (0x1FA + index$1) - 0x155;
-      } else if ((index >= 0x1AC) && (index <= 0x1BA)) {
-        let index$1 = index;
-        return (0x252 + index$1) - 0x1AC;
-      } else if ((index >= 0x1BB) && (index <= 0x21F)) {
-        let index$1 = index;
-        return (0x262 + index$1) - 0x1BB;
-      } else if (index === 0x220) {
-        return 0x2C8;
-      } else if ((index >= 0x221) && (index <= 0x22D)) {
-        let index$1 = index;
-        return (0x2CC + index$1) - 0x221;
-      } else if ((index >= 0x22E) && (index <= 0x2E4)) {
-        let index$1 = index;
-        return (0x2DA + index$1) - 0x22E;
-      } else if (index === 0x2E5) {
-        return 0x3A2;
-      } else if ((index >= 0x2E6) && (index <= 0x2EC)) {
-        let index$1 = index;
-        return (0x3AA + index$1) - 0x2E6;
-      } else if (index === 0x2ED) {
-        return 0x3C2;
-      } else if ((index >= 0x2EE) && (index <= 0x324)) {
-        let index$1 = index;
-        return (0x3CA + index$1) - 0x2EE;
-      } else if ((index >= 0x325) && (index <= 0x332)) {
-        let index$1 = index;
-        return (0x402 + index$1) - 0x325;
-      } else if (index === 0x333) {
-        return 0x450;
-      } else if ((index >= 0x334) && (index <= 0x1EF1)) {
-        let index$1 = index;
-        return (0x452 + index$1) - 0x334;
-      } else if ((index >= 0x1EF2) && (index <= 0x1EF3)) {
-        let index$1 = index;
-        return (0x2011 + index$1) - 0x1EF2;
-      } else if (index === 0x1EF4) {
-        return 0x2017;
-      } else if ((index >= 0x1EF5) && (index <= 0x1EF6)) {
-        let index$1 = index;
-        return (0x201A + index$1) - 0x1EF5;
-      } else if ((index >= 0x1EF7) && (index <= 0x1EFD)) {
-        let index$1 = index;
-        return (0x201E + index$1) - 0x1EF7;
-      } else if ((index >= 0x1EFE) && (index <= 0x1F06)) {
-        let index$1 = index;
-        return (0x2027 + index$1) - 0x1EFE;
-      } else if (index === 0x1F07) {
-        return 0x2031;
-      } else if (index === 0x1F08) {
-        return 0x2034;
-      } else if ((index >= 0x1F09) && (index <= 0x1F0D)) {
-        let index$1 = index;
-        return (0x2036 + index$1) - 0x1F09;
-      } else if ((index >= 0x1F0E) && (index <= 0x1F7D)) {
-        let index$1 = index;
-        return (0x203C + index$1) - 0x1F0E;
-      } else if ((index >= 0x1F7E) && (index <= 0x1FD3)) {
-        let index$1 = index;
-        return (0x20AD + index$1) - 0x1F7E;
-      } else if (index === 0x1FD4) {
-        return 0x2104;
-      } else if ((index >= 0x1FD5) && (index <= 0x1FD7)) {
-        let index$1 = index;
-        return (0x2106 + index$1) - 0x1FD5;
-      } else if ((index >= 0x1FD8) && (index <= 0x1FE3)) {
-        let index$1 = index;
-        return (0x210A + index$1) - 0x1FD8;
-      } else if ((index >= 0x1FE4) && (index <= 0x1FED)) {
-        let index$1 = index;
-        return (0x2117 + index$1) - 0x1FE4;
-      } else if ((index >= 0x1FEE) && (index <= 0x202B)) {
-        let index$1 = index;
-        return (0x2122 + index$1) - 0x1FEE;
-      } else if ((index >= 0x202C) && (index <= 0x202F)) {
-        let index$1 = index;
-        return (0x216C + index$1) - 0x202C;
-      } else if ((index >= 0x2030) && (index <= 0x2045)) {
-        let index$1 = index;
-        return (0x217A + index$1) - 0x2030;
-      } else if ((index >= 0x2046) && (index <= 0x2047)) {
-        let index$1 = index;
-        return (0x2194 + index$1) - 0x2046;
-      } else if ((index >= 0x2048) && (index <= 0x20B5)) {
-        let index$1 = index;
-        return (0x219A + index$1) - 0x2048;
-      } else if ((index >= 0x20B6) && (index <= 0x20BB)) {
-        let index$1 = index;
-        return (0x2209 + index$1) - 0x20B6;
-      } else if (index === 0x20BC) {
-        return 0x2210;
-      } else if ((index >= 0x20BD) && (index <= 0x20BF)) {
-        let index$1 = index;
-        return (0x2212 + index$1) - 0x20BD;
-      } else if ((index >= 0x20C0) && (index <= 0x20C3)) {
-        let index$1 = index;
-        return (0x2216 + index$1) - 0x20C0;
-      } else if ((index >= 0x20C4) && (index <= 0x20C5)) {
-        let index$1 = index;
-        return (0x221B + index$1) - 0x20C4;
-      } else if ((index >= 0x20C6) && (index <= 0x20C7)) {
-        let index$1 = index;
-        return (0x2221 + index$1) - 0x20C6;
-      } else if (index === 0x20C8) {
-        return 0x2224;
-      } else if (index === 0x20C9) {
-        return 0x2226;
-      } else if ((index >= 0x20CA) && (index <= 0x20CB)) {
-        let index$1 = index;
-        return (0x222C + index$1) - 0x20CA;
-      } else if ((index >= 0x20CC) && (index <= 0x20D0)) {
-        let index$1 = index;
-        return (0x222F + index$1) - 0x20CC;
-      } else if ((index >= 0x20D1) && (index <= 0x20D5)) {
-        let index$1 = index;
-        return (0x2238 + index$1) - 0x20D1;
-      } else if ((index >= 0x20D6) && (index <= 0x20DF)) {
-        let index$1 = index;
-        return (0x223E + index$1) - 0x20D6;
-      } else if ((index >= 0x20E0) && (index <= 0x20E2)) {
-        let index$1 = index;
-        return (0x2249 + index$1) - 0x20E0;
-      } else if ((index >= 0x20E3) && (index <= 0x20E7)) {
-        let index$1 = index;
-        return (0x224D + index$1) - 0x20E3;
-      } else if ((index >= 0x20E8) && (index <= 0x20F4)) {
-        let index$1 = index;
-        return (0x2253 + index$1) - 0x20E8;
-      } else if ((index >= 0x20F5) && (index <= 0x20F6)) {
-        let index$1 = index;
-        return (0x2262 + index$1) - 0x20F5;
-      } else if ((index >= 0x20F7) && (index <= 0x20FC)) {
-        let index$1 = index;
-        return (0x2268 + index$1) - 0x20F7;
-      } else if ((index >= 0x20FD) && (index <= 0x2121)) {
-        let index$1 = index;
-        return (0x2270 + index$1) - 0x20FD;
-      } else if ((index >= 0x2122) && (index <= 0x2124)) {
-        let index$1 = index;
-        return (0x2296 + index$1) - 0x2122;
-      } else if ((index >= 0x2125) && (index <= 0x212F)) {
-        let index$1 = index;
-        return (0x229A + index$1) - 0x2125;
-      } else if ((index >= 0x2130) && (index <= 0x2148)) {
-        let index$1 = index;
-        return (0x22A6 + index$1) - 0x2130;
-      } else if ((index >= 0x2149) && (index <= 0x219A)) {
-        let index$1 = index;
-        return (0x22C0 + index$1) - 0x2149;
-      } else if ((index >= 0x219B) && (index <= 0x22E7)) {
-        let index$1 = index;
-        return (0x2313 + index$1) - 0x219B;
-      } else if ((index >= 0x22E8) && (index <= 0x22F1)) {
-        let index$1 = index;
-        return (0x246A + index$1) - 0x22E8;
-      } else if ((index >= 0x22F2) && (index <= 0x2355)) {
-        let index$1 = index;
-        return (0x249C + index$1) - 0x22F2;
-      } else if ((index >= 0x2356) && (index <= 0x2359)) {
-        let index$1 = index;
-        return (0x254C + index$1) - 0x2356;
-      } else if ((index >= 0x235A) && (index <= 0x2366)) {
-        let index$1 = index;
-        return (0x2574 + index$1) - 0x235A;
-      } else if ((index >= 0x2367) && (index <= 0x2369)) {
-        let index$1 = index;
-        return (0x2590 + index$1) - 0x2367;
-      } else if ((index >= 0x236A) && (index <= 0x2373)) {
-        let index$1 = index;
-        return (0x2596 + index$1) - 0x236A;
-      } else if ((index >= 0x2374) && (index <= 0x2383)) {
-        let index$1 = index;
-        return (0x25A2 + index$1) - 0x2374;
-      } else if ((index >= 0x2384) && (index <= 0x238B)) {
-        let index$1 = index;
-        return (0x25B4 + index$1) - 0x2384;
-      } else if ((index >= 0x238C) && (index <= 0x2393)) {
-        let index$1 = index;
-        return (0x25BE + index$1) - 0x238C;
-      } else if ((index >= 0x2394) && (index <= 0x2396)) {
-        let index$1 = index;
-        return (0x25C8 + index$1) - 0x2394;
-      } else if ((index >= 0x2397) && (index <= 0x2398)) {
-        let index$1 = index;
-        return (0x25CC + index$1) - 0x2397;
-      } else if ((index >= 0x2399) && (index <= 0x23AA)) {
-        let index$1 = index;
-        return (0x25D0 + index$1) - 0x2399;
-      } else if ((index >= 0x23AB) && (index <= 0x23C9)) {
-        let index$1 = index;
-        return (0x25E6 + index$1) - 0x23AB;
-      } else if ((index >= 0x23CA) && (index <= 0x23CB)) {
-        let index$1 = index;
-        return (0x2607 + index$1) - 0x23CA;
-      } else if ((index >= 0x23CC) && (index <= 0x2401)) {
-        let index$1 = index;
-        return (0x260A + index$1) - 0x23CC;
-      } else if (index === 0x2402) {
-        return 0x2641;
-      } else if ((index >= 0x2403) && (index <= 0x2C40)) {
-        let index$1 = index;
-        return (0x2643 + index$1) - 0x2403;
-      } else if ((index >= 0x2C41) && (index <= 0x2C42)) {
-        let index$1 = index;
-        return (0x2E82 + index$1) - 0x2C41;
-      } else if ((index >= 0x2C43) && (index <= 0x2C45)) {
-        let index$1 = index;
-        return (0x2E85 + index$1) - 0x2C43;
-      } else if ((index >= 0x2C46) && (index <= 0x2C47)) {
-        let index$1 = index;
-        return (0x2E89 + index$1) - 0x2C46;
-      } else if ((index >= 0x2C48) && (index <= 0x2C51)) {
-        let index$1 = index;
-        return (0x2E8D + index$1) - 0x2C48;
-      } else if ((index >= 0x2C52) && (index <= 0x2C60)) {
-        let index$1 = index;
-        return (0x2E98 + index$1) - 0x2C52;
-      } else if ((index >= 0x2C61) && (index <= 0x2C62)) {
-        let index$1 = index;
-        return (0x2EA8 + index$1) - 0x2C61;
-      } else if ((index >= 0x2C63) && (index <= 0x2C65)) {
-        let index$1 = index;
-        return (0x2EAB + index$1) - 0x2C63;
-      } else if ((index >= 0x2C66) && (index <= 0x2C69)) {
-        let index$1 = index;
-        return (0x2EAF + index$1) - 0x2C66;
-      } else if ((index >= 0x2C6A) && (index <= 0x2C6B)) {
-        let index$1 = index;
-        return (0x2EB4 + index$1) - 0x2C6A;
-      } else if ((index >= 0x2C6C) && (index <= 0x2C6E)) {
-        let index$1 = index;
-        return (0x2EB8 + index$1) - 0x2C6C;
-      } else if ((index >= 0x2C6F) && (index <= 0x2C7C)) {
-        let index$1 = index;
-        return (0x2EBC + index$1) - 0x2C6F;
-      } else if ((index >= 0x2C7D) && (index <= 0x2DA1)) {
-        let index$1 = index;
-        return (0x2ECB + index$1) - 0x2C7D;
-      } else if ((index >= 0x2DA2) && (index <= 0x2DA5)) {
-        let index$1 = index;
-        return (0x2FFC + index$1) - 0x2DA2;
-      } else if (index === 0x2DA6) {
-        return 0x3004;
-      } else if ((index >= 0x2DA7) && (index <= 0x2DAB)) {
-        let index$1 = index;
-        return (0x3018 + index$1) - 0x2DA7;
-      } else if ((index >= 0x2DAC) && (index <= 0x2DAD)) {
-        let index$1 = index;
-        return (0x301F + index$1) - 0x2DAC;
-      } else if ((index >= 0x2DAE) && (index <= 0x2DC1)) {
-        let index$1 = index;
-        return (0x302A + index$1) - 0x2DAE;
-      } else if ((index >= 0x2DC2) && (index <= 0x2DC3)) {
-        let index$1 = index;
-        return (0x303F + index$1) - 0x2DC2;
-      } else if ((index >= 0x2DC4) && (index <= 0x2DCA)) {
-        let index$1 = index;
-        return (0x3094 + index$1) - 0x2DC4;
-      } else if ((index >= 0x2DCB) && (index <= 0x2DCC)) {
-        let index$1 = index;
-        return (0x309F + index$1) - 0x2DCB;
-      } else if ((index >= 0x2DCD) && (index <= 0x2DD1)) {
-        let index$1 = index;
-        return (0x30F7 + index$1) - 0x2DCD;
-      } else if ((index >= 0x2DD2) && (index <= 0x2DD7)) {
-        let index$1 = index;
-        return (0x30FF + index$1) - 0x2DD2;
-      } else if ((index >= 0x2DD8) && (index <= 0x2ECD)) {
-        let index$1 = index;
-        return (0x312A + index$1) - 0x2DD8;
-      } else if ((index >= 0x2ECE) && (index <= 0x2ED4)) {
-        let index$1 = index;
-        return (0x322A + index$1) - 0x2ECE;
-      } else if ((index >= 0x2ED5) && (index <= 0x2F45)) {
-        let index$1 = index;
-        return (0x3232 + index$1) - 0x2ED5;
-      } else if ((index >= 0x2F46) && (index <= 0x302F)) {
-        let index$1 = index;
-        return (0x32A4 + index$1) - 0x2F46;
-      } else if ((index >= 0x3030) && (index <= 0x303B)) {
-        let index$1 = index;
-        return (0x3390 + index$1) - 0x3030;
-      } else if ((index >= 0x303C) && (index <= 0x303D)) {
-        let index$1 = index;
-        return (0x339F + index$1) - 0x303C;
-      } else if ((index >= 0x303E) && (index <= 0x305F)) {
-        let index$1 = index;
-        return (0x33A2 + index$1) - 0x303E;
-      } else if ((index >= 0x3060) && (index <= 0x3068)) {
-        let index$1 = index;
-        return (0x33C5 + index$1) - 0x3060;
-      } else if ((index >= 0x3069) && (index <= 0x306A)) {
-        let index$1 = index;
-        return (0x33CF + index$1) - 0x3069;
-      } else if ((index >= 0x306B) && (index <= 0x306C)) {
-        let index$1 = index;
-        return (0x33D3 + index$1) - 0x306B;
-      } else if ((index >= 0x306D) && (index <= 0x30DD)) {
-        let index$1 = index;
-        return (0x33D6 + index$1) - 0x306D;
-      } else if ((index >= 0x30DE) && (index <= 0x3108)) {
-        let index$1 = index;
-        return (0x3448 + index$1) - 0x30DE;
-      } else if ((index >= 0x3109) && (index <= 0x3232)) {
-        let index$1 = index;
-        return (0x3474 + index$1) - 0x3109;
-      } else if ((index >= 0x3233) && (index <= 0x32A1)) {
-        let index$1 = index;
-        return (0x359F + index$1) - 0x3233;
-      } else if ((index >= 0x32A2) && (index <= 0x32AC)) {
-        let index$1 = index;
-        return (0x360F + index$1) - 0x32A2;
-      } else if ((index >= 0x32AD) && (index <= 0x35A9)) {
-        let index$1 = index;
-        return (0x361B + index$1) - 0x32AD;
-      } else if ((index >= 0x35AA) && (index <= 0x35FE)) {
-        let index$1 = index;
-        return (0x3919 + index$1) - 0x35AA;
-      } else if ((index >= 0x35FF) && (index <= 0x365E)) {
-        let index$1 = index;
-        return (0x396F + index$1) - 0x35FF;
-      } else if ((index >= 0x365F) && (index <= 0x366C)) {
-        let index$1 = index;
-        return (0x39D1 + index$1) - 0x365F;
-      } else if ((index >= 0x366D) && (index <= 0x36FF)) {
-        let index$1 = index;
-        return (0x39E0 + index$1) - 0x366D;
-      } else if ((index >= 0x3700) && (index <= 0x37D9)) {
-        let index$1 = index;
-        return (0x3A74 + index$1) - 0x3700;
-      } else if ((index >= 0x37DA) && (index <= 0x38F8)) {
-        let index$1 = index;
-        return (0x3B4F + index$1) - 0x37DA;
-      } else if ((index >= 0x38F9) && (index <= 0x3969)) {
-        let index$1 = index;
-        return (0x3C6F + index$1) - 0x38F9;
-      } else if ((index >= 0x396A) && (index <= 0x3CDE)) {
-        let index$1 = index;
-        return (0x3CE1 + index$1) - 0x396A;
-      } else if ((index >= 0x3CDF) && (index <= 0x3DE6)) {
-        let index$1 = index;
-        return (0x4057 + index$1) - 0x3CDF;
-      } else if ((index >= 0x3DE7) && (index <= 0x3FBD)) {
-        let index$1 = index;
-        return (0x4160 + index$1) - 0x3DE7;
-      } else if ((index >= 0x3FBE) && (index <= 0x4031)) {
-        let index$1 = index;
-        return (0x4338 + index$1) - 0x3FBE;
-      } else if ((index >= 0x4032) && (index <= 0x4035)) {
-        let index$1 = index;
-        return (0x43AD + index$1) - 0x4032;
-      } else if ((index >= 0x4036) && (index <= 0x4060)) {
-        let index$1 = index;
-        return (0x43B2 + index$1) - 0x4036;
-      } else if ((index >= 0x4061) && (index <= 0x4158)) {
-        let index$1 = index;
-        return (0x43DE + index$1) - 0x4061;
-      } else if ((index >= 0x4159) && (index <= 0x42CD)) {
-        let index$1 = index;
-        return (0x44D7 + index$1) - 0x4159;
-      } else if ((index >= 0x42CE) && (index <= 0x42E1)) {
-        let index$1 = index;
-        return (0x464D + index$1) - 0x42CE;
-      } else if ((index >= 0x42E2) && (index <= 0x43A2)) {
-        let index$1 = index;
-        return (0x4662 + index$1) - 0x42E2;
-      } else if ((index >= 0x43A3) && (index <= 0x43A7)) {
-        let index$1 = index;
-        return (0x4724 + index$1) - 0x43A3;
-      } else if ((index >= 0x43A8) && (index <= 0x43F9)) {
-        let index$1 = index;
-        return (0x472A + index$1) - 0x43A8;
-      } else if ((index >= 0x43FA) && (index <= 0x4409)) {
-        let index$1 = index;
-        return (0x477D + index$1) - 0x43FA;
-      } else if ((index >= 0x440A) && (index <= 0x45C2)) {
-        let index$1 = index;
-        return (0x478E + index$1) - 0x440A;
-      } else if ((index >= 0x45C3) && (index <= 0x45F4)) {
-        let index$1 = index;
-        return (0x4948 + index$1) - 0x45C3;
-      } else if ((index >= 0x45F5) && (index <= 0x45F6)) {
-        let index$1 = index;
-        return (0x497B + index$1) - 0x45F5;
-      } else if ((index >= 0x45F7) && (index <= 0x45FA)) {
-        let index$1 = index;
-        return (0x497E + index$1) - 0x45F7;
-      } else if (index === 0x45FB) {
-        return 0x4984;
-      } else if ((index >= 0x45FC) && (index <= 0x460F)) {
-        let index$1 = index;
-        return (0x4987 + index$1) - 0x45FC;
-      } else if ((index >= 0x4610) && (index <= 0x4612)) {
-        let index$1 = index;
-        return (0x499C + index$1) - 0x4610;
-      } else if ((index >= 0x4613) && (index <= 0x4628)) {
-        let index$1 = index;
-        return (0x49A0 + index$1) - 0x4613;
-      } else if ((index >= 0x4629) && (index <= 0x48E7)) {
-        let index$1 = index;
-        return (0x49B8 + index$1) - 0x4629;
-      } else if ((index >= 0x48E8) && (index <= 0x490E)) {
-        let index$1 = index;
-        return (0x4C78 + index$1) - 0x48E8;
-      } else if ((index >= 0x490F) && (index <= 0x497D)) {
-        let index$1 = index;
-        return (0x4CA4 + index$1) - 0x490F;
-      } else if ((index >= 0x497E) && (index <= 0x4A11)) {
-        let index$1 = index;
-        return (0x4D1A + index$1) - 0x497E;
-      } else if ((index >= 0x4A12) && (index <= 0x4A62)) {
-        let index$1 = index;
-        return (0x4DAF + index$1) - 0x4A12;
-      } else if ((index >= 0x4A63) && (index <= 0x82BC)) {
-        let index$1 = index;
-        return (0x9FA6 + index$1) - 0x4A63;
-      } else if (index === 0x82BD) {
-        return 0xE76C;
-      } else if (index === 0x82BE) {
-        return 0xE7C8;
-      } else if ((index >= 0x82BF) && (index <= 0x82CB)) {
-        let index$1 = index;
-        return (0xE7E7 + index$1) - 0x82BF;
-      } else if (index === 0x82CC) {
-        return 0xE815;
-      } else if ((index >= 0x82CD) && (index <= 0x82D1)) {
-        let index$1 = index;
-        return (0xE819 + index$1) - 0x82CD;
-      } else if ((index >= 0x82D2) && (index <= 0x82D8)) {
-        let index$1 = index;
-        return (0xE81F + index$1) - 0x82D2;
-      } else if ((index >= 0x82D9) && (index <= 0x82DC)) {
-        let index$1 = index;
-        return (0xE827 + index$1) - 0x82D9;
-      } else if ((index >= 0x82DD) && (index <= 0x82E0)) {
-        let index$1 = index;
-        return (0xE82D + index$1) - 0x82DD;
-      } else if ((index >= 0x82E1) && (index <= 0x82E8)) {
-        let index$1 = index;
-        return (0xE833 + index$1) - 0x82E1;
-      } else if ((index >= 0x82E9) && (index <= 0x82EF)) {
-        let index$1 = index;
-        return (0xE83C + index$1) - 0x82E9;
-      } else if ((index >= 0x82F0) && (index <= 0x82FF)) {
-        let index$1 = index;
-        return (0xE844 + index$1) - 0x82F0;
-      } else if ((index >= 0x8300) && (index <= 0x830D)) {
-        let index$1 = index;
-        return (0xE856 + index$1) - 0x8300;
-      } else if ((index >= 0x830E) && (index <= 0x93D4)) {
-        let index$1 = index;
-        return (0xE865 + index$1) - 0x830E;
-      } else if ((index >= 0x93D5) && (index <= 0x9420)) {
-        let index$1 = index;
-        return (0xF92D + index$1) - 0x93D5;
-      } else if ((index >= 0x9421) && (index <= 0x943B)) {
-        let index$1 = index;
-        return (0xF97A + index$1) - 0x9421;
-      } else if ((index >= 0x943C) && (index <= 0x948C)) {
-        let index$1 = index;
-        return (0xF996 + index$1) - 0x943C;
-      } else if ((index >= 0x948D) && (index <= 0x9495)) {
-        let index$1 = index;
-        return (0xF9E8 + index$1) - 0x948D;
-      } else if ((index >= 0x9496) && (index <= 0x94AF)) {
-        let index$1 = index;
-        return (0xF9F2 + index$1) - 0x9496;
-      } else if (index === 0x94B0) {
-        return 0xFA10;
-      } else if (index === 0x94B1) {
-        return 0xFA12;
-      } else if ((index >= 0x94B2) && (index <= 0x94B4)) {
-        let index$1 = index;
-        return (0xFA15 + index$1) - 0x94B2;
-      } else if ((index >= 0x94B5) && (index <= 0x94BA)) {
-        let index$1 = index;
-        return (0xFA19 + index$1) - 0x94B5;
-      } else if (index === 0x94BB) {
-        return 0xFA22;
-      } else if ((index >= 0x94BC) && (index <= 0x94BD)) {
-        let index$1 = index;
-        return (0xFA25 + index$1) - 0x94BC;
-      } else if ((index >= 0x94BE) && (index <= 0x98C3)) {
-        let index$1 = index;
-        return (0xFA2A + index$1) - 0x94BE;
-      } else if (index === 0x98C4) {
-        return 0xFE32;
-      } else if ((index >= 0x98C5) && (index <= 0x98C8)) {
-        let index$1 = index;
-        return (0xFE45 + index$1) - 0x98C5;
-      } else if (index === 0x98C9) {
-        return 0xFE53;
-      } else if (index === 0x98CA) {
-        return 0xFE58;
-      } else if (index === 0x98CB) {
-        return 0xFE67;
-      } else if ((index >= 0x98CC) && (index <= 0x9960)) {
-        let index$1 = index;
-        return (0xFE6C + index$1) - 0x98CC;
-      } else if ((index >= 0x9961) && (index <= 0x99E1)) {
-        let index$1 = index;
-        return (0xFF5F + index$1) - 0x9961;
-      } else if ((index >= 0x99E2) && (index <= 0x99F9)) {
-        let index$1 = index;
-        return (0xFFE6 + index$1) - 0x99E2;
-      } else {
-        return 0xFFFD;
-      }
-    })();
+    let _block;
+    if (index <= 0x23) {
+      let index$1 = index;
+      _block = (0x80 + index$1) - 0x0;
+    } else if ((index >= 0x24) && (index <= 0x25)) {
+      let index$1 = index;
+      _block = (0xA5 + index$1) - 0x24;
+    } else if ((index >= 0x26) && (index <= 0x2C)) {
+      let index$1 = index;
+      _block = (0xA9 + index$1) - 0x26;
+    } else if ((index >= 0x2D) && (index <= 0x31)) {
+      let index$1 = index;
+      _block = (0xB2 + index$1) - 0x2D;
+    } else if ((index >= 0x32) && (index <= 0x50)) {
+      let index$1 = index;
+      _block = (0xB8 + index$1) - 0x32;
+    } else if ((index >= 0x51) && (index <= 0x58)) {
+      let index$1 = index;
+      _block = (0xD8 + index$1) - 0x51;
+    } else if ((index >= 0x59) && (index <= 0x5E)) {
+      let index$1 = index;
+      _block = (0xE2 + index$1) - 0x59;
+    } else if (index === 0x5F) {
+      _block = 0xEB;
+    } else if ((index >= 0x60) && (index <= 0x63)) {
+      let index$1 = index;
+      _block = (0xEE + index$1) - 0x60;
+    } else if ((index >= 0x64) && (index <= 0x66)) {
+      let index$1 = index;
+      _block = (0xF4 + index$1) - 0x64;
+    } else if (index === 0x67) {
+      _block = 0xF8;
+    } else if (index === 0x68) {
+      _block = 0xFB;
+    } else if ((index >= 0x69) && (index <= 0x6C)) {
+      let index$1 = index;
+      _block = (0xFD + index$1) - 0x69;
+    } else if ((index >= 0x6D) && (index <= 0x7D)) {
+      let index$1 = index;
+      _block = (0x102 + index$1) - 0x6D;
+    } else if ((index >= 0x7E) && (index <= 0x84)) {
+      let index$1 = index;
+      _block = (0x114 + index$1) - 0x7E;
+    } else if ((index >= 0x85) && (index <= 0x93)) {
+      let index$1 = index;
+      _block = (0x11C + index$1) - 0x85;
+    } else if ((index >= 0x94) && (index <= 0xAB)) {
+      let index$1 = index;
+      _block = (0x12C + index$1) - 0x94;
+    } else if ((index >= 0xAC) && (index <= 0xAE)) {
+      let index$1 = index;
+      _block = (0x145 + index$1) - 0xAC;
+    } else if ((index >= 0xAF) && (index <= 0xB2)) {
+      let index$1 = index;
+      _block = (0x149 + index$1) - 0xAF;
+    } else if ((index >= 0xB3) && (index <= 0xCF)) {
+      let index$1 = index;
+      _block = (0x14E + index$1) - 0xB3;
+    } else if ((index >= 0xD0) && (index <= 0x131)) {
+      let index$1 = index;
+      _block = (0x16C + index$1) - 0xD0;
+    } else if (index === 0x132) {
+      _block = 0x1CF;
+    } else if (index === 0x133) {
+      _block = 0x1D1;
+    } else if (index === 0x134) {
+      _block = 0x1D3;
+    } else if (index === 0x135) {
+      _block = 0x1D5;
+    } else if (index === 0x136) {
+      _block = 0x1D7;
+    } else if (index === 0x137) {
+      _block = 0x1D9;
+    } else if (index === 0x138) {
+      _block = 0x1DB;
+    } else if ((index >= 0x139) && (index <= 0x154)) {
+      let index$1 = index;
+      _block = (0x1DD + index$1) - 0x139;
+    } else if ((index >= 0x155) && (index <= 0x1AB)) {
+      let index$1 = index;
+      _block = (0x1FA + index$1) - 0x155;
+    } else if ((index >= 0x1AC) && (index <= 0x1BA)) {
+      let index$1 = index;
+      _block = (0x252 + index$1) - 0x1AC;
+    } else if ((index >= 0x1BB) && (index <= 0x21F)) {
+      let index$1 = index;
+      _block = (0x262 + index$1) - 0x1BB;
+    } else if (index === 0x220) {
+      _block = 0x2C8;
+    } else if ((index >= 0x221) && (index <= 0x22D)) {
+      let index$1 = index;
+      _block = (0x2CC + index$1) - 0x221;
+    } else if ((index >= 0x22E) && (index <= 0x2E4)) {
+      let index$1 = index;
+      _block = (0x2DA + index$1) - 0x22E;
+    } else if (index === 0x2E5) {
+      _block = 0x3A2;
+    } else if ((index >= 0x2E6) && (index <= 0x2EC)) {
+      let index$1 = index;
+      _block = (0x3AA + index$1) - 0x2E6;
+    } else if (index === 0x2ED) {
+      _block = 0x3C2;
+    } else if ((index >= 0x2EE) && (index <= 0x324)) {
+      let index$1 = index;
+      _block = (0x3CA + index$1) - 0x2EE;
+    } else if ((index >= 0x325) && (index <= 0x332)) {
+      let index$1 = index;
+      _block = (0x402 + index$1) - 0x325;
+    } else if (index === 0x333) {
+      _block = 0x450;
+    } else if ((index >= 0x334) && (index <= 0x1EF1)) {
+      let index$1 = index;
+      _block = (0x452 + index$1) - 0x334;
+    } else if ((index >= 0x1EF2) && (index <= 0x1EF3)) {
+      let index$1 = index;
+      _block = (0x2011 + index$1) - 0x1EF2;
+    } else if (index === 0x1EF4) {
+      _block = 0x2017;
+    } else if ((index >= 0x1EF5) && (index <= 0x1EF6)) {
+      let index$1 = index;
+      _block = (0x201A + index$1) - 0x1EF5;
+    } else if ((index >= 0x1EF7) && (index <= 0x1EFD)) {
+      let index$1 = index;
+      _block = (0x201E + index$1) - 0x1EF7;
+    } else if ((index >= 0x1EFE) && (index <= 0x1F06)) {
+      let index$1 = index;
+      _block = (0x2027 + index$1) - 0x1EFE;
+    } else if (index === 0x1F07) {
+      _block = 0x2031;
+    } else if (index === 0x1F08) {
+      _block = 0x2034;
+    } else if ((index >= 0x1F09) && (index <= 0x1F0D)) {
+      let index$1 = index;
+      _block = (0x2036 + index$1) - 0x1F09;
+    } else if ((index >= 0x1F0E) && (index <= 0x1F7D)) {
+      let index$1 = index;
+      _block = (0x203C + index$1) - 0x1F0E;
+    } else if ((index >= 0x1F7E) && (index <= 0x1FD3)) {
+      let index$1 = index;
+      _block = (0x20AD + index$1) - 0x1F7E;
+    } else if (index === 0x1FD4) {
+      _block = 0x2104;
+    } else if ((index >= 0x1FD5) && (index <= 0x1FD7)) {
+      let index$1 = index;
+      _block = (0x2106 + index$1) - 0x1FD5;
+    } else if ((index >= 0x1FD8) && (index <= 0x1FE3)) {
+      let index$1 = index;
+      _block = (0x210A + index$1) - 0x1FD8;
+    } else if ((index >= 0x1FE4) && (index <= 0x1FED)) {
+      let index$1 = index;
+      _block = (0x2117 + index$1) - 0x1FE4;
+    } else if ((index >= 0x1FEE) && (index <= 0x202B)) {
+      let index$1 = index;
+      _block = (0x2122 + index$1) - 0x1FEE;
+    } else if ((index >= 0x202C) && (index <= 0x202F)) {
+      let index$1 = index;
+      _block = (0x216C + index$1) - 0x202C;
+    } else if ((index >= 0x2030) && (index <= 0x2045)) {
+      let index$1 = index;
+      _block = (0x217A + index$1) - 0x2030;
+    } else if ((index >= 0x2046) && (index <= 0x2047)) {
+      let index$1 = index;
+      _block = (0x2194 + index$1) - 0x2046;
+    } else if ((index >= 0x2048) && (index <= 0x20B5)) {
+      let index$1 = index;
+      _block = (0x219A + index$1) - 0x2048;
+    } else if ((index >= 0x20B6) && (index <= 0x20BB)) {
+      let index$1 = index;
+      _block = (0x2209 + index$1) - 0x20B6;
+    } else if (index === 0x20BC) {
+      _block = 0x2210;
+    } else if ((index >= 0x20BD) && (index <= 0x20BF)) {
+      let index$1 = index;
+      _block = (0x2212 + index$1) - 0x20BD;
+    } else if ((index >= 0x20C0) && (index <= 0x20C3)) {
+      let index$1 = index;
+      _block = (0x2216 + index$1) - 0x20C0;
+    } else if ((index >= 0x20C4) && (index <= 0x20C5)) {
+      let index$1 = index;
+      _block = (0x221B + index$1) - 0x20C4;
+    } else if ((index >= 0x20C6) && (index <= 0x20C7)) {
+      let index$1 = index;
+      _block = (0x2221 + index$1) - 0x20C6;
+    } else if (index === 0x20C8) {
+      _block = 0x2224;
+    } else if (index === 0x20C9) {
+      _block = 0x2226;
+    } else if ((index >= 0x20CA) && (index <= 0x20CB)) {
+      let index$1 = index;
+      _block = (0x222C + index$1) - 0x20CA;
+    } else if ((index >= 0x20CC) && (index <= 0x20D0)) {
+      let index$1 = index;
+      _block = (0x222F + index$1) - 0x20CC;
+    } else if ((index >= 0x20D1) && (index <= 0x20D5)) {
+      let index$1 = index;
+      _block = (0x2238 + index$1) - 0x20D1;
+    } else if ((index >= 0x20D6) && (index <= 0x20DF)) {
+      let index$1 = index;
+      _block = (0x223E + index$1) - 0x20D6;
+    } else if ((index >= 0x20E0) && (index <= 0x20E2)) {
+      let index$1 = index;
+      _block = (0x2249 + index$1) - 0x20E0;
+    } else if ((index >= 0x20E3) && (index <= 0x20E7)) {
+      let index$1 = index;
+      _block = (0x224D + index$1) - 0x20E3;
+    } else if ((index >= 0x20E8) && (index <= 0x20F4)) {
+      let index$1 = index;
+      _block = (0x2253 + index$1) - 0x20E8;
+    } else if ((index >= 0x20F5) && (index <= 0x20F6)) {
+      let index$1 = index;
+      _block = (0x2262 + index$1) - 0x20F5;
+    } else if ((index >= 0x20F7) && (index <= 0x20FC)) {
+      let index$1 = index;
+      _block = (0x2268 + index$1) - 0x20F7;
+    } else if ((index >= 0x20FD) && (index <= 0x2121)) {
+      let index$1 = index;
+      _block = (0x2270 + index$1) - 0x20FD;
+    } else if ((index >= 0x2122) && (index <= 0x2124)) {
+      let index$1 = index;
+      _block = (0x2296 + index$1) - 0x2122;
+    } else if ((index >= 0x2125) && (index <= 0x212F)) {
+      let index$1 = index;
+      _block = (0x229A + index$1) - 0x2125;
+    } else if ((index >= 0x2130) && (index <= 0x2148)) {
+      let index$1 = index;
+      _block = (0x22A6 + index$1) - 0x2130;
+    } else if ((index >= 0x2149) && (index <= 0x219A)) {
+      let index$1 = index;
+      _block = (0x22C0 + index$1) - 0x2149;
+    } else if ((index >= 0x219B) && (index <= 0x22E7)) {
+      let index$1 = index;
+      _block = (0x2313 + index$1) - 0x219B;
+    } else if ((index >= 0x22E8) && (index <= 0x22F1)) {
+      let index$1 = index;
+      _block = (0x246A + index$1) - 0x22E8;
+    } else if ((index >= 0x22F2) && (index <= 0x2355)) {
+      let index$1 = index;
+      _block = (0x249C + index$1) - 0x22F2;
+    } else if ((index >= 0x2356) && (index <= 0x2359)) {
+      let index$1 = index;
+      _block = (0x254C + index$1) - 0x2356;
+    } else if ((index >= 0x235A) && (index <= 0x2366)) {
+      let index$1 = index;
+      _block = (0x2574 + index$1) - 0x235A;
+    } else if ((index >= 0x2367) && (index <= 0x2369)) {
+      let index$1 = index;
+      _block = (0x2590 + index$1) - 0x2367;
+    } else if ((index >= 0x236A) && (index <= 0x2373)) {
+      let index$1 = index;
+      _block = (0x2596 + index$1) - 0x236A;
+    } else if ((index >= 0x2374) && (index <= 0x2383)) {
+      let index$1 = index;
+      _block = (0x25A2 + index$1) - 0x2374;
+    } else if ((index >= 0x2384) && (index <= 0x238B)) {
+      let index$1 = index;
+      _block = (0x25B4 + index$1) - 0x2384;
+    } else if ((index >= 0x238C) && (index <= 0x2393)) {
+      let index$1 = index;
+      _block = (0x25BE + index$1) - 0x238C;
+    } else if ((index >= 0x2394) && (index <= 0x2396)) {
+      let index$1 = index;
+      _block = (0x25C8 + index$1) - 0x2394;
+    } else if ((index >= 0x2397) && (index <= 0x2398)) {
+      let index$1 = index;
+      _block = (0x25CC + index$1) - 0x2397;
+    } else if ((index >= 0x2399) && (index <= 0x23AA)) {
+      let index$1 = index;
+      _block = (0x25D0 + index$1) - 0x2399;
+    } else if ((index >= 0x23AB) && (index <= 0x23C9)) {
+      let index$1 = index;
+      _block = (0x25E6 + index$1) - 0x23AB;
+    } else if ((index >= 0x23CA) && (index <= 0x23CB)) {
+      let index$1 = index;
+      _block = (0x2607 + index$1) - 0x23CA;
+    } else if ((index >= 0x23CC) && (index <= 0x2401)) {
+      let index$1 = index;
+      _block = (0x260A + index$1) - 0x23CC;
+    } else if (index === 0x2402) {
+      _block = 0x2641;
+    } else if ((index >= 0x2403) && (index <= 0x2C40)) {
+      let index$1 = index;
+      _block = (0x2643 + index$1) - 0x2403;
+    } else if ((index >= 0x2C41) && (index <= 0x2C42)) {
+      let index$1 = index;
+      _block = (0x2E82 + index$1) - 0x2C41;
+    } else if ((index >= 0x2C43) && (index <= 0x2C45)) {
+      let index$1 = index;
+      _block = (0x2E85 + index$1) - 0x2C43;
+    } else if ((index >= 0x2C46) && (index <= 0x2C47)) {
+      let index$1 = index;
+      _block = (0x2E89 + index$1) - 0x2C46;
+    } else if ((index >= 0x2C48) && (index <= 0x2C51)) {
+      let index$1 = index;
+      _block = (0x2E8D + index$1) - 0x2C48;
+    } else if ((index >= 0x2C52) && (index <= 0x2C60)) {
+      let index$1 = index;
+      _block = (0x2E98 + index$1) - 0x2C52;
+    } else if ((index >= 0x2C61) && (index <= 0x2C62)) {
+      let index$1 = index;
+      _block = (0x2EA8 + index$1) - 0x2C61;
+    } else if ((index >= 0x2C63) && (index <= 0x2C65)) {
+      let index$1 = index;
+      _block = (0x2EAB + index$1) - 0x2C63;
+    } else if ((index >= 0x2C66) && (index <= 0x2C69)) {
+      let index$1 = index;
+      _block = (0x2EAF + index$1) - 0x2C66;
+    } else if ((index >= 0x2C6A) && (index <= 0x2C6B)) {
+      let index$1 = index;
+      _block = (0x2EB4 + index$1) - 0x2C6A;
+    } else if ((index >= 0x2C6C) && (index <= 0x2C6E)) {
+      let index$1 = index;
+      _block = (0x2EB8 + index$1) - 0x2C6C;
+    } else if ((index >= 0x2C6F) && (index <= 0x2C7C)) {
+      let index$1 = index;
+      _block = (0x2EBC + index$1) - 0x2C6F;
+    } else if ((index >= 0x2C7D) && (index <= 0x2DA1)) {
+      let index$1 = index;
+      _block = (0x2ECB + index$1) - 0x2C7D;
+    } else if ((index >= 0x2DA2) && (index <= 0x2DA5)) {
+      let index$1 = index;
+      _block = (0x2FFC + index$1) - 0x2DA2;
+    } else if (index === 0x2DA6) {
+      _block = 0x3004;
+    } else if ((index >= 0x2DA7) && (index <= 0x2DAB)) {
+      let index$1 = index;
+      _block = (0x3018 + index$1) - 0x2DA7;
+    } else if ((index >= 0x2DAC) && (index <= 0x2DAD)) {
+      let index$1 = index;
+      _block = (0x301F + index$1) - 0x2DAC;
+    } else if ((index >= 0x2DAE) && (index <= 0x2DC1)) {
+      let index$1 = index;
+      _block = (0x302A + index$1) - 0x2DAE;
+    } else if ((index >= 0x2DC2) && (index <= 0x2DC3)) {
+      let index$1 = index;
+      _block = (0x303F + index$1) - 0x2DC2;
+    } else if ((index >= 0x2DC4) && (index <= 0x2DCA)) {
+      let index$1 = index;
+      _block = (0x3094 + index$1) - 0x2DC4;
+    } else if ((index >= 0x2DCB) && (index <= 0x2DCC)) {
+      let index$1 = index;
+      _block = (0x309F + index$1) - 0x2DCB;
+    } else if ((index >= 0x2DCD) && (index <= 0x2DD1)) {
+      let index$1 = index;
+      _block = (0x30F7 + index$1) - 0x2DCD;
+    } else if ((index >= 0x2DD2) && (index <= 0x2DD7)) {
+      let index$1 = index;
+      _block = (0x30FF + index$1) - 0x2DD2;
+    } else if ((index >= 0x2DD8) && (index <= 0x2ECD)) {
+      let index$1 = index;
+      _block = (0x312A + index$1) - 0x2DD8;
+    } else if ((index >= 0x2ECE) && (index <= 0x2ED4)) {
+      let index$1 = index;
+      _block = (0x322A + index$1) - 0x2ECE;
+    } else if ((index >= 0x2ED5) && (index <= 0x2F45)) {
+      let index$1 = index;
+      _block = (0x3232 + index$1) - 0x2ED5;
+    } else if ((index >= 0x2F46) && (index <= 0x302F)) {
+      let index$1 = index;
+      _block = (0x32A4 + index$1) - 0x2F46;
+    } else if ((index >= 0x3030) && (index <= 0x303B)) {
+      let index$1 = index;
+      _block = (0x3390 + index$1) - 0x3030;
+    } else if ((index >= 0x303C) && (index <= 0x303D)) {
+      let index$1 = index;
+      _block = (0x339F + index$1) - 0x303C;
+    } else if ((index >= 0x303E) && (index <= 0x305F)) {
+      let index$1 = index;
+      _block = (0x33A2 + index$1) - 0x303E;
+    } else if ((index >= 0x3060) && (index <= 0x3068)) {
+      let index$1 = index;
+      _block = (0x33C5 + index$1) - 0x3060;
+    } else if ((index >= 0x3069) && (index <= 0x306A)) {
+      let index$1 = index;
+      _block = (0x33CF + index$1) - 0x3069;
+    } else if ((index >= 0x306B) && (index <= 0x306C)) {
+      let index$1 = index;
+      _block = (0x33D3 + index$1) - 0x306B;
+    } else if ((index >= 0x306D) && (index <= 0x30DD)) {
+      let index$1 = index;
+      _block = (0x33D6 + index$1) - 0x306D;
+    } else if ((index >= 0x30DE) && (index <= 0x3108)) {
+      let index$1 = index;
+      _block = (0x3448 + index$1) - 0x30DE;
+    } else if ((index >= 0x3109) && (index <= 0x3232)) {
+      let index$1 = index;
+      _block = (0x3474 + index$1) - 0x3109;
+    } else if ((index >= 0x3233) && (index <= 0x32A1)) {
+      let index$1 = index;
+      _block = (0x359F + index$1) - 0x3233;
+    } else if ((index >= 0x32A2) && (index <= 0x32AC)) {
+      let index$1 = index;
+      _block = (0x360F + index$1) - 0x32A2;
+    } else if ((index >= 0x32AD) && (index <= 0x35A9)) {
+      let index$1 = index;
+      _block = (0x361B + index$1) - 0x32AD;
+    } else if ((index >= 0x35AA) && (index <= 0x35FE)) {
+      let index$1 = index;
+      _block = (0x3919 + index$1) - 0x35AA;
+    } else if ((index >= 0x35FF) && (index <= 0x365E)) {
+      let index$1 = index;
+      _block = (0x396F + index$1) - 0x35FF;
+    } else if ((index >= 0x365F) && (index <= 0x366C)) {
+      let index$1 = index;
+      _block = (0x39D1 + index$1) - 0x365F;
+    } else if ((index >= 0x366D) && (index <= 0x36FF)) {
+      let index$1 = index;
+      _block = (0x39E0 + index$1) - 0x366D;
+    } else if ((index >= 0x3700) && (index <= 0x37D9)) {
+      let index$1 = index;
+      _block = (0x3A74 + index$1) - 0x3700;
+    } else if ((index >= 0x37DA) && (index <= 0x38F8)) {
+      let index$1 = index;
+      _block = (0x3B4F + index$1) - 0x37DA;
+    } else if ((index >= 0x38F9) && (index <= 0x3969)) {
+      let index$1 = index;
+      _block = (0x3C6F + index$1) - 0x38F9;
+    } else if ((index >= 0x396A) && (index <= 0x3CDE)) {
+      let index$1 = index;
+      _block = (0x3CE1 + index$1) - 0x396A;
+    } else if ((index >= 0x3CDF) && (index <= 0x3DE6)) {
+      let index$1 = index;
+      _block = (0x4057 + index$1) - 0x3CDF;
+    } else if ((index >= 0x3DE7) && (index <= 0x3FBD)) {
+      let index$1 = index;
+      _block = (0x4160 + index$1) - 0x3DE7;
+    } else if ((index >= 0x3FBE) && (index <= 0x4031)) {
+      let index$1 = index;
+      _block = (0x4338 + index$1) - 0x3FBE;
+    } else if ((index >= 0x4032) && (index <= 0x4035)) {
+      let index$1 = index;
+      _block = (0x43AD + index$1) - 0x4032;
+    } else if ((index >= 0x4036) && (index <= 0x4060)) {
+      let index$1 = index;
+      _block = (0x43B2 + index$1) - 0x4036;
+    } else if ((index >= 0x4061) && (index <= 0x4158)) {
+      let index$1 = index;
+      _block = (0x43DE + index$1) - 0x4061;
+    } else if ((index >= 0x4159) && (index <= 0x42CD)) {
+      let index$1 = index;
+      _block = (0x44D7 + index$1) - 0x4159;
+    } else if ((index >= 0x42CE) && (index <= 0x42E1)) {
+      let index$1 = index;
+      _block = (0x464D + index$1) - 0x42CE;
+    } else if ((index >= 0x42E2) && (index <= 0x43A2)) {
+      let index$1 = index;
+      _block = (0x4662 + index$1) - 0x42E2;
+    } else if ((index >= 0x43A3) && (index <= 0x43A7)) {
+      let index$1 = index;
+      _block = (0x4724 + index$1) - 0x43A3;
+    } else if ((index >= 0x43A8) && (index <= 0x43F9)) {
+      let index$1 = index;
+      _block = (0x472A + index$1) - 0x43A8;
+    } else if ((index >= 0x43FA) && (index <= 0x4409)) {
+      let index$1 = index;
+      _block = (0x477D + index$1) - 0x43FA;
+    } else if ((index >= 0x440A) && (index <= 0x45C2)) {
+      let index$1 = index;
+      _block = (0x478E + index$1) - 0x440A;
+    } else if ((index >= 0x45C3) && (index <= 0x45F4)) {
+      let index$1 = index;
+      _block = (0x4948 + index$1) - 0x45C3;
+    } else if ((index >= 0x45F5) && (index <= 0x45F6)) {
+      let index$1 = index;
+      _block = (0x497B + index$1) - 0x45F5;
+    } else if ((index >= 0x45F7) && (index <= 0x45FA)) {
+      let index$1 = index;
+      _block = (0x497E + index$1) - 0x45F7;
+    } else if (index === 0x45FB) {
+      _block = 0x4984;
+    } else if ((index >= 0x45FC) && (index <= 0x460F)) {
+      let index$1 = index;
+      _block = (0x4987 + index$1) - 0x45FC;
+    } else if ((index >= 0x4610) && (index <= 0x4612)) {
+      let index$1 = index;
+      _block = (0x499C + index$1) - 0x4610;
+    } else if ((index >= 0x4613) && (index <= 0x4628)) {
+      let index$1 = index;
+      _block = (0x49A0 + index$1) - 0x4613;
+    } else if ((index >= 0x4629) && (index <= 0x48E7)) {
+      let index$1 = index;
+      _block = (0x49B8 + index$1) - 0x4629;
+    } else if ((index >= 0x48E8) && (index <= 0x490E)) {
+      let index$1 = index;
+      _block = (0x4C78 + index$1) - 0x48E8;
+    } else if ((index >= 0x490F) && (index <= 0x497D)) {
+      let index$1 = index;
+      _block = (0x4CA4 + index$1) - 0x490F;
+    } else if ((index >= 0x497E) && (index <= 0x4A11)) {
+      let index$1 = index;
+      _block = (0x4D1A + index$1) - 0x497E;
+    } else if ((index >= 0x4A12) && (index <= 0x4A62)) {
+      let index$1 = index;
+      _block = (0x4DAF + index$1) - 0x4A12;
+    } else if ((index >= 0x4A63) && (index <= 0x82BC)) {
+      let index$1 = index;
+      _block = (0x9FA6 + index$1) - 0x4A63;
+    } else if (index === 0x82BD) {
+      _block = 0xE76C;
+    } else if (index === 0x82BE) {
+      _block = 0xE7C8;
+    } else if ((index >= 0x82BF) && (index <= 0x82CB)) {
+      let index$1 = index;
+      _block = (0xE7E7 + index$1) - 0x82BF;
+    } else if (index === 0x82CC) {
+      _block = 0xE815;
+    } else if ((index >= 0x82CD) && (index <= 0x82D1)) {
+      let index$1 = index;
+      _block = (0xE819 + index$1) - 0x82CD;
+    } else if ((index >= 0x82D2) && (index <= 0x82D8)) {
+      let index$1 = index;
+      _block = (0xE81F + index$1) - 0x82D2;
+    } else if ((index >= 0x82D9) && (index <= 0x82DC)) {
+      let index$1 = index;
+      _block = (0xE827 + index$1) - 0x82D9;
+    } else if ((index >= 0x82DD) && (index <= 0x82E0)) {
+      let index$1 = index;
+      _block = (0xE82D + index$1) - 0x82DD;
+    } else if ((index >= 0x82E1) && (index <= 0x82E8)) {
+      let index$1 = index;
+      _block = (0xE833 + index$1) - 0x82E1;
+    } else if ((index >= 0x82E9) && (index <= 0x82EF)) {
+      let index$1 = index;
+      _block = (0xE83C + index$1) - 0x82E9;
+    } else if ((index >= 0x82F0) && (index <= 0x82FF)) {
+      let index$1 = index;
+      _block = (0xE844 + index$1) - 0x82F0;
+    } else if ((index >= 0x8300) && (index <= 0x830D)) {
+      let index$1 = index;
+      _block = (0xE856 + index$1) - 0x8300;
+    } else if ((index >= 0x830E) && (index <= 0x93D4)) {
+      let index$1 = index;
+      _block = (0xE865 + index$1) - 0x830E;
+    } else if ((index >= 0x93D5) && (index <= 0x9420)) {
+      let index$1 = index;
+      _block = (0xF92D + index$1) - 0x93D5;
+    } else if ((index >= 0x9421) && (index <= 0x943B)) {
+      let index$1 = index;
+      _block = (0xF97A + index$1) - 0x9421;
+    } else if ((index >= 0x943C) && (index <= 0x948C)) {
+      let index$1 = index;
+      _block = (0xF996 + index$1) - 0x943C;
+    } else if ((index >= 0x948D) && (index <= 0x9495)) {
+      let index$1 = index;
+      _block = (0xF9E8 + index$1) - 0x948D;
+    } else if ((index >= 0x9496) && (index <= 0x94AF)) {
+      let index$1 = index;
+      _block = (0xF9F2 + index$1) - 0x9496;
+    } else if (index === 0x94B0) {
+      _block = 0xFA10;
+    } else if (index === 0x94B1) {
+      _block = 0xFA12;
+    } else if ((index >= 0x94B2) && (index <= 0x94B4)) {
+      let index$1 = index;
+      _block = (0xFA15 + index$1) - 0x94B2;
+    } else if ((index >= 0x94B5) && (index <= 0x94BA)) {
+      let index$1 = index;
+      _block = (0xFA19 + index$1) - 0x94B5;
+    } else if (index === 0x94BB) {
+      _block = 0xFA22;
+    } else if ((index >= 0x94BC) && (index <= 0x94BD)) {
+      let index$1 = index;
+      _block = (0xFA25 + index$1) - 0x94BC;
+    } else if ((index >= 0x94BE) && (index <= 0x98C3)) {
+      let index$1 = index;
+      _block = (0xFA2A + index$1) - 0x94BE;
+    } else if (index === 0x98C4) {
+      _block = 0xFE32;
+    } else if ((index >= 0x98C5) && (index <= 0x98C8)) {
+      let index$1 = index;
+      _block = (0xFE45 + index$1) - 0x98C5;
+    } else if (index === 0x98C9) {
+      _block = 0xFE53;
+    } else if (index === 0x98CA) {
+      _block = 0xFE58;
+    } else if (index === 0x98CB) {
+      _block = 0xFE67;
+    } else if ((index >= 0x98CC) && (index <= 0x9960)) {
+      let index$1 = index;
+      _block = (0xFE6C + index$1) - 0x98CC;
+    } else if ((index >= 0x9961) && (index <= 0x99E1)) {
+      let index$1 = index;
+      _block = (0xFF5F + index$1) - 0x9961;
+    } else if ((index >= 0x99E2) && (index <= 0x99F9)) {
+      let index$1 = index;
+      _block = (0xFFE6 + index$1) - 0x99E2;
+    } else {
+      _block = 0xFFFD;
+    }
+    let codepoint_value = _block;
     return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
   } else if ((bytes.bitSize >= 32 && (bytes.bitSize - 32) % 8 === 0) &&
   ((((((((bytes.byteAt(0) >= 0x90) && (bytes.byteAt(0) <= 0xE3)) && (bytes.byteAt(1) >= 0x30)) && (bytes.byteAt(1) <= 0x39)) && (bytes.byteAt(2) >= 0x81)) && (bytes.byteAt(2) <= 0xFE)) && (bytes.byteAt(3) >= 0x30)) && (bytes.byteAt(3) <= 0x39))) {
@@ -24712,14 +24712,14 @@ export function decode_next_codepoint(bytes) {
     let byte_2$1 = byte_2 - 0x81;
     let byte_3$1 = byte_3 - 0x30;
     let codepoint_value = (((byte_0$1 * 10 + byte_1$1) * 126 + byte_2$1) * 10 + byte_3$1) + 0x10000;
-    let codepoint = (() => {
-      let $ = codepoint_value > 0x10FFFF;
-      if ($) {
-        return $utils.replacement_character();
-      } else {
-        return $utils.int_to_codepoint(codepoint_value);
-      }
-    })();
+    let _block;
+    let $ = codepoint_value > 0x10FFFF;
+    if ($) {
+      _block = $utils.replacement_character();
+    } else {
+      _block = $utils.int_to_codepoint(codepoint_value);
+    }
+    let codepoint = _block;
     return new Ok([codepoint, rest]);
   } else if ((bytes.bitSize >= 32 && (bytes.bitSize - 32) % 8 === 0) &&
   (((((((((bytes.byteAt(0) >= 0x85) && (bytes.byteAt(0) <= 0x8F)) || ((bytes.byteAt(0) >= 0xE4) && (bytes.byteAt(0) <= 0xFE))) && (bytes.byteAt(1) >= 0x30)) && (bytes.byteAt(1) <= 0x39)) && (bytes.byteAt(2) >= 0x81)) && (bytes.byteAt(2) <= 0xFE)) && (bytes.byteAt(3) >= 0x30)) && (bytes.byteAt(3) <= 0x39))) {

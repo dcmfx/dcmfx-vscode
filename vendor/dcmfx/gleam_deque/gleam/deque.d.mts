@@ -1,44 +1,44 @@
 import type * as _ from "../gleam.d.mts";
 
-declare class Deque<BZDF> extends _.CustomType {
+declare class Deque<BZCR> extends _.CustomType {
   constructor(in$: _.List<any>, out: _.List<any>);
   
   in$: _.List<any>;
   out: _.List<any>;
 }
 
-export type Deque$<BZDF> = Deque<BZDF>;
+export type Deque$<BZCR> = Deque<BZCR>;
 
 export function new$(): Deque$<any>;
 
-export function from_list<BZDI>(list: _.List<BZDI>): Deque$<BZDI>;
+export function from_list<BZCU>(list: _.List<BZCU>): Deque$<BZCU>;
 
-export function to_list<BZDL>(deque: Deque$<BZDL>): _.List<BZDL>;
+export function to_list<BZCX>(deque: Deque$<BZCX>): _.List<BZCX>;
 
 export function is_empty(deque: Deque$<any>): boolean;
 
 export function length(deque: Deque$<any>): number;
 
-export function push_back<BZDS>(deque: Deque$<BZDS>, item: BZDS): Deque$<BZDS>;
+export function push_back<BZDE>(deque: Deque$<BZDE>, item: BZDE): Deque$<BZDE>;
 
-export function push_front<BZDV>(deque: Deque$<BZDV>, item: BZDV): Deque$<BZDV>;
+export function push_front<BZDH>(deque: Deque$<BZDH>, item: BZDH): Deque$<BZDH>;
 
-export function pop_back<BZDY>(deque: Deque$<BZDY>): _.Result<
-  [BZDY, Deque$<BZDY>],
+export function pop_back<BZDK>(deque: Deque$<BZDK>): _.Result<
+  [BZDK, Deque$<BZDK>],
   undefined
 >;
 
-export function pop_front<BZED>(deque: Deque$<BZED>): _.Result<
-  [BZED, Deque$<BZED>],
+export function pop_front<BZDP>(deque: Deque$<BZDP>): _.Result<
+  [BZDP, Deque$<BZDP>],
   undefined
 >;
 
-export function reverse<BZEI>(deque: Deque$<BZEI>): Deque$<BZEI>;
+export function reverse<BZDU>(deque: Deque$<BZDU>): Deque$<BZDU>;
 
-export function is_logically_equal<BZEL>(
-  a: Deque$<BZEL>,
-  b: Deque$<BZEL>,
-  element_is_equal: (x0: BZEL, x1: BZEL) => boolean
+export function is_logically_equal<BZDX>(
+  a: Deque$<BZDX>,
+  b: Deque$<BZDX>,
+  element_is_equal: (x0: BZDX, x1: BZDX) => boolean
 ): boolean;
 
-export function is_equal<BZET>(a: Deque$<BZET>, b: Deque$<BZET>): boolean;
+export function is_equal<BZEF>(a: Deque$<BZEF>, b: Deque$<BZEF>): boolean;

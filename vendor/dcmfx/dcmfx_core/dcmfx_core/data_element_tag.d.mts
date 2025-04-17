@@ -14,6 +14,10 @@ export function is_private(tag: DataElementTag$): boolean;
 
 export function is_private_creator(tag: DataElementTag$): boolean;
 
+export function with_group(tag: DataElementTag$, group: number): DataElementTag$;
+
+export function with_element(tag: DataElementTag$, element: number): DataElementTag$;
+
 export function to_int(tag: DataElementTag$): number;
 
 export function compare(lhs: DataElementTag$, rhs: DataElementTag$): $order.Order$;

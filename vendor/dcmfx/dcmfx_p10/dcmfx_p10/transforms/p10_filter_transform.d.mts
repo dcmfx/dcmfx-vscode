@@ -1,5 +1,8 @@
 import type * as $data_element_tag from "../../../dcmfx_core/dcmfx_core/data_element_tag.d.mts";
+import type * as $data_set_path from "../../../dcmfx_core/dcmfx_core/data_set_path.d.mts";
 import type * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.d.mts";
+import type * as $option from "../../../gleam_stdlib/gleam/option.d.mts";
+import type * as $p10_error from "../../dcmfx_p10/p10_error.d.mts";
 import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
@@ -8,35 +11,38 @@ declare class P10FilterTransform extends _.CustomType {
     predicate: (
       x0: $data_element_tag.DataElementTag$,
       x1: $value_representation.ValueRepresentation$,
-      x2: _.List<LocationEntry$>
+      x2: $option.Option$<number>,
+      x3: $data_set_path.DataSetPath$
     ) => boolean,
-    location: _.List<LocationEntry$>
+    path: $data_set_path.DataSetPath$,
+    path_filter_results: _.List<boolean>
   );
   
   predicate: (
     x0: $data_element_tag.DataElementTag$,
     x1: $value_representation.ValueRepresentation$,
-    x2: _.List<LocationEntry$>
+    x2: $option.Option$<number>,
+    x3: $data_set_path.DataSetPath$
   ) => boolean;
-  location: _.List<LocationEntry$>;
+  path: $data_set_path.DataSetPath$;
+  path_filter_results: _.List<boolean>;
 }
 
 export type P10FilterTransform$ = P10FilterTransform;
 
-export class LocationEntry extends _.CustomType {
-  constructor(tag: $data_element_tag.DataElementTag$, filter_result: boolean);
-  
-  tag: $data_element_tag.DataElementTag$;
-  filter_result: boolean;
-}
-
-export type LocationEntry$ = LocationEntry;
+export type PredicateFunction = (
+  x0: $data_element_tag.DataElementTag$,
+  x1: $value_representation.ValueRepresentation$,
+  x2: $option.Option$<number>,
+  x3: $data_set_path.DataSetPath$
+) => boolean;
 
 export function new$(
   predicate: (
     x0: $data_element_tag.DataElementTag$,
     x1: $value_representation.ValueRepresentation$,
-    x2: _.List<LocationEntry$>
+    x2: $option.Option$<number>,
+    x3: $data_set_path.DataSetPath$
   ) => boolean
 ): P10FilterTransform$;
 
@@ -45,4 +51,4 @@ export function is_at_root(context: P10FilterTransform$): boolean;
 export function add_token(
   context: P10FilterTransform$,
   token: $p10_token.P10Token$
-): [boolean, P10FilterTransform$];
+): _.Result<[boolean, P10FilterTransform$], $p10_error.P10Error$>;

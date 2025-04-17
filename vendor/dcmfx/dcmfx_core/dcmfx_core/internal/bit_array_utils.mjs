@@ -99,11 +99,11 @@ function do_to_list(
     if (i === -1) {
       return new Ok(acc);
     } else {
-      let item = (() => {
-        let _pipe = bytes;
-        let _pipe$1 = $bit_array.slice(_pipe, i * item_size, item_size);
-        return $result.then$(_pipe$1, read_item);
-      })();
+      let _block;
+      let _pipe = bytes;
+      let _pipe$1 = $bit_array.slice(_pipe, i * item_size, item_size);
+      _block = $result.then$(_pipe$1, read_item);
+      let item = _block;
       if (item.isOk()) {
         let item$1 = item[0];
         loop$bytes = bytes;

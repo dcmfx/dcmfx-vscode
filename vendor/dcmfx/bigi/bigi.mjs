@@ -180,10 +180,10 @@ function get_digit(loop$bigint, loop$digits, loop$divisor) {
       let digit = $1[0];
       return listPrepend(digit, digits);
     } else {
-      let $1 = (() => {
-        let _pipe = remainder(bigint, divisor);
-        return to_int(_pipe);
-      })();
+      let _block;
+      let _pipe = remainder(bigint, divisor);
+      _block = to_int(_pipe);
+      let $1 = _block;
       if (!$1.isOk()) {
         throw makeError(
           "let_assert",

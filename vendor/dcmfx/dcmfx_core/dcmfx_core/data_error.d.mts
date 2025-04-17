@@ -3,25 +3,25 @@ import type * as $data_set_path from "../dcmfx_core/data_set_path.d.mts";
 import type * as $value_representation from "../dcmfx_core/value_representation.d.mts";
 import type * as _ from "../gleam.d.mts";
 
-declare class TagNotPresent extends _.CustomType {
+export class TagNotPresent extends _.CustomType {
   constructor(path: $data_set_path.DataSetPath$);
   
   path: $data_set_path.DataSetPath$;
 }
 
-declare class ValueNotPresent extends _.CustomType {
+export class ValueNotPresent extends _.CustomType {
   constructor(path: $option.Option$<$data_set_path.DataSetPath$>);
   
   path: $option.Option$<$data_set_path.DataSetPath$>;
 }
 
-declare class MultiplicityMismatch extends _.CustomType {
+export class MultiplicityMismatch extends _.CustomType {
   constructor(path: $option.Option$<$data_set_path.DataSetPath$>);
   
   path: $option.Option$<$data_set_path.DataSetPath$>;
 }
 
-declare class ValueInvalid extends _.CustomType {
+export class ValueInvalid extends _.CustomType {
   constructor(
     details: string,
     path: $option.Option$<$data_set_path.DataSetPath$>
@@ -31,7 +31,7 @@ declare class ValueInvalid extends _.CustomType {
   path: $option.Option$<$data_set_path.DataSetPath$>;
 }
 
-declare class ValueLengthInvalid extends _.CustomType {
+export class ValueLengthInvalid extends _.CustomType {
   constructor(
     vr: $value_representation.ValueRepresentation$,
     length: number,
@@ -45,7 +45,7 @@ declare class ValueLengthInvalid extends _.CustomType {
   path: $option.Option$<$data_set_path.DataSetPath$>;
 }
 
-declare class ValueUnsupported extends _.CustomType {
+export class ValueUnsupported extends _.CustomType {
   constructor(
     details: string,
     path: $option.Option$<$data_set_path.DataSetPath$>
@@ -79,11 +79,11 @@ export function path(error: DataError$): $option.Option$<
   $data_set_path.DataSetPath$
 >;
 
-export function is_tag_not_present(error: DataError$): boolean;
-
 export function with_path(error: DataError$, path: $data_set_path.DataSetPath$): DataError$;
 
 export function name(error: DataError$): string;
+
+export function details(error: DataError$): string;
 
 export function to_lines(error: DataError$, task_description: string): _.List<
   string

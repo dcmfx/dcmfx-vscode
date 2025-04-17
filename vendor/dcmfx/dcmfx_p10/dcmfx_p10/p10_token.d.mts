@@ -66,13 +66,18 @@ export class SequenceDelimiter extends _.CustomType {
   tag: $data_element_tag.DataElementTag$;
 }
 
-export class SequenceItemStart extends _.CustomType {}
+export class SequenceItemStart extends _.CustomType {
+  constructor(index: number);
+  
+  index: number;
+}
 
 export class SequenceItemDelimiter extends _.CustomType {}
 
 export class PixelDataItem extends _.CustomType {
-  constructor(length: number);
+  constructor(index: number, length: number);
   
+  index: number;
   length: number;
 }
 
@@ -84,18 +89,18 @@ export function to_string(token: P10Token$): string;
 
 export function is_header_token(token: P10Token$): boolean;
 
-export function data_element_to_tokens<BZIV, BZIW>(
+export function data_element_to_tokens<BZIB, BZIC>(
   tag: $data_element_tag.DataElementTag$,
   value: $data_element_value.DataElementValue$,
-  context: BZIV,
-  token_callback: (x0: BZIV, x1: P10Token$) => _.Result<BZIV, BZIW>
-): _.Result<BZIV, BZIW>;
+  context: BZIB,
+  token_callback: (x0: BZIB, x1: P10Token$) => _.Result<BZIB, BZIC>
+): _.Result<BZIB, BZIC>;
 
-export function data_elements_to_tokens<BZIP, BZIQ>(
+export function data_elements_to_tokens<BZHV, BZHW>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: BZIP,
-  token_callback: (x0: BZIP, x1: P10Token$) => _.Result<BZIP, BZIQ>
-): _.Result<BZIP, BZIQ>;
+  context: BZHV,
+  token_callback: (x0: BZHV, x1: P10Token$) => _.Result<BZHV, BZHW>
+): _.Result<BZHV, BZHW>;

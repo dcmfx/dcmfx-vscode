@@ -68,53 +68,53 @@ export class EndOfFile extends $CustomType {
 }
 
 export function open(filename, modes) {
-  let is_raw = (() => {
-    let _pipe = modes;
-    return $list.contains(_pipe, new $file_open_mode.Raw());
-  })();
-  let encoding = (() => {
-    let _pipe = modes;
-    let _pipe$1 = $list.find_map(
-      _pipe,
-      (m) => {
-        if (m instanceof $file_open_mode.Encoding) {
-          let e = m.encoding;
-          return new Ok(e);
-        } else {
-          return new Error(undefined);
-        }
-      },
+  let _block;
+  let _pipe = modes;
+  _block = $list.contains(_pipe, new $file_open_mode.Raw());
+  let is_raw = _block;
+  let _block$1;
+  let _pipe$1 = modes;
+  let _pipe$2 = $list.find_map(
+    _pipe$1,
+    (m) => {
+      if (m instanceof $file_open_mode.Encoding) {
+        let e = m.encoding;
+        return new Ok(e);
+      } else {
+        return new Error(undefined);
+      }
+    },
+  );
+  _block$1 = $option.from_result(_pipe$2);
+  let encoding = _block$1;
+  let _block$2;
+  if (is_raw && encoding instanceof Some) {
+    _block$2 = new Error(new $file_stream_error.Enotsup());
+  } else if (is_raw && encoding instanceof None) {
+    _block$2 = new Ok(new None());
+  } else {
+    _block$2 = new Ok(
+      (() => {
+        let _pipe$3 = encoding;
+        return $option.or(_pipe$3, new Some(new $text_encoding.Latin1()));
+      })(),
     );
-    return $option.from_result(_pipe$1);
-  })();
-  let encoding$1 = (() => {
-    if (is_raw && encoding instanceof Some) {
-      return new Error(new $file_stream_error.Enotsup());
-    } else if (is_raw && encoding instanceof None) {
-      return new Ok(new None());
-    } else {
-      return new Ok(
-        (() => {
-          let _pipe = encoding;
-          return $option.or(_pipe, new Some(new $text_encoding.Latin1()));
-        })(),
-      );
-    }
-  })();
+  }
+  let encoding$1 = _block$2;
   return $result.try$(
     encoding$1,
     (encoding) => {
-      let mode = (() => {
-        let $ = (() => {
-          let _pipe = modes;
-          return $list.contains(_pipe, new $file_open_mode.Binary());
-        })();
-        if ($) {
-          return modes;
-        } else {
-          return listPrepend(new $file_open_mode.Binary(), modes);
-        }
+      let _block$3;
+      let $ = (() => {
+        let _pipe$3 = modes;
+        return $list.contains(_pipe$3, new $file_open_mode.Binary());
       })();
+      if ($) {
+        _block$3 = modes;
+      } else {
+        _block$3 = listPrepend(new $file_open_mode.Binary(), modes);
+      }
+      let mode = _block$3;
       return $result.try$(
         do_open(filename, mode),
         (io_device) => { return new Ok(new FileStream(io_device, encoding)); },
@@ -195,18 +195,18 @@ export function set_encoding(stream, encoding) {
 }
 
 export function position(stream, location) {
-  let location$1 = (() => {
-    if (location instanceof BeginningOfFile) {
-      let offset = location.offset;
-      return new $raw_location.Bof(offset);
-    } else if (location instanceof CurrentLocation) {
-      let offset = location.offset;
-      return new $raw_location.Cur(offset);
-    } else {
-      let offset = location.offset;
-      return new $raw_location.Eof(offset);
-    }
-  })();
+  let _block;
+  if (location instanceof BeginningOfFile) {
+    let offset = location.offset;
+    _block = new $raw_location.Bof(offset);
+  } else if (location instanceof CurrentLocation) {
+    let offset = location.offset;
+    _block = new $raw_location.Cur(offset);
+  } else {
+    let offset = location.offset;
+    _block = new $raw_location.Eof(offset);
+  }
+  let location$1 = _block;
   return file_position(stream.io_device, location$1);
 }
 

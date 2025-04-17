@@ -1,6 +1,7 @@
 import type * as $data_element_tag from "../../../dcmfx_core/dcmfx_core/data_element_tag.d.mts";
 import type * as $data_element_value from "../../../dcmfx_core/dcmfx_core/data_element_value.d.mts";
 import type * as $dict from "../../../gleam_stdlib/gleam/dict.d.mts";
+import type * as $p10_error from "../../dcmfx_p10/p10_error.d.mts";
 import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filter_transform.d.mts";
 import type * as _ from "../../gleam.d.mts";
@@ -31,4 +32,7 @@ export function new$(
 export function add_token(
   context: P10InsertTransform$,
   token: $p10_token.P10Token$
-): [_.List<$p10_token.P10Token$>, P10InsertTransform$];
+): _.Result<
+  [_.List<$p10_token.P10Token$>, P10InsertTransform$],
+  $p10_error.P10Error$
+>;

@@ -461,27 +461,27 @@ export function field(field_name, field_decoder, next) {
 export function optional_field(key, default$, field_decoder, next) {
   return new Decoder(
     (data) => {
-      let $ = (() => {
-        let $1 = bare_index(data, key);
-        if ($1.isOk() && $1[0] instanceof Some) {
-          let data$1 = $1[0][0];
-          return field_decoder.function(data$1);
-        } else if ($1.isOk() && $1[0] instanceof None) {
-          return [default$, toList([])];
-        } else {
-          let kind = $1[0];
-          let _pipe = [
-            default$,
-            toList([new DecodeError(kind, $dynamic.classify(data), toList([]))]),
-          ];
-          return push_path(_pipe, toList([key]));
-        }
-      })();
+      let _block;
+      let $1 = bare_index(data, key);
+      if ($1.isOk() && $1[0] instanceof Some) {
+        let data$1 = $1[0][0];
+        _block = field_decoder.function(data$1);
+      } else if ($1.isOk() && $1[0] instanceof None) {
+        _block = [default$, toList([])];
+      } else {
+        let kind = $1[0];
+        let _pipe = [
+          default$,
+          toList([new DecodeError(kind, $dynamic.classify(data), toList([]))]),
+        ];
+        _block = push_path(_pipe, toList([key]));
+      }
+      let $ = _block;
       let out = $[0];
       let errors1 = $[1];
-      let $1 = next(out).function(data);
-      let out$1 = $1[0];
-      let errors2 = $1[1];
+      let $2 = next(out).function(data);
+      let out$1 = $2[0];
+      let errors2 = $2[1];
       return [out$1, $list.append(errors1, errors2)];
     },
   );

@@ -30,22 +30,22 @@ export class StructuredDateTime extends $CustomType {
 }
 
 export function from_bytes(bytes) {
-  let date_time_string = (() => {
-    let _pipe = bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    return $result.replace_error(
-      _pipe$1,
-      $data_error.new_value_invalid("DateTime is invalid UTF-8"),
-    );
-  })();
+  let _block;
+  let _pipe = bytes;
+  let _pipe$1 = $bit_array.to_string(_pipe);
+  _block = $result.replace_error(
+    _pipe$1,
+    $data_error.new_value_invalid("DateTime is invalid UTF-8"),
+  );
+  let date_time_string = _block;
   return $result.try$(
     date_time_string,
     (date_time_string) => {
-      let date_time_string$1 = (() => {
-        let _pipe = date_time_string;
-        let _pipe$1 = $utils.trim_ascii(_pipe, 0x0);
-        return $string.trim(_pipe$1);
-      })();
+      let _block$1;
+      let _pipe$2 = date_time_string;
+      let _pipe$3 = $utils.trim_ascii(_pipe$2, 0x0);
+      _block$1 = $string.trim(_pipe$3);
+      let date_time_string$1 = _block$1;
       let $ = $regexp.from_string(
         "^(\\d{4})((\\d{2})((\\d{2})((\\d{2})((\\d{2})((\\d{2})(\\.\\d{1,6})?)?)?)?)?)?([\\+\\-]\\d{4})?$",
       );
@@ -67,28 +67,28 @@ export function from_bytes(bytes) {
           match.submatches,
           $list.repeat(new None(), 13 - $list.length(match.submatches)),
         );
-        let $2 = (() => {
-          if (submatches.hasLength(13) && submatches.head instanceof Some) {
-            let year = submatches.head[0];
-            let month = submatches.tail.tail.head;
-            let day = submatches.tail.tail.tail.tail.head;
-            let hour = submatches.tail.tail.tail.tail.tail.tail.head;
-            let minute = submatches.tail.tail.tail.tail.tail.tail.tail.tail.head;
-            let second = submatches.tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
-            let offset = submatches.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
-            return [year, month, day, hour, minute, second, offset];
-          } else {
-            return [
-              "0",
-              new None(),
-              new None(),
-              new None(),
-              new None(),
-              new None(),
-              new None(),
-            ];
-          }
-        })();
+        let _block$2;
+        if (submatches.hasLength(13) && submatches.head instanceof Some) {
+          let year = submatches.head[0];
+          let month = submatches.tail.tail.head;
+          let day = submatches.tail.tail.tail.tail.head;
+          let hour = submatches.tail.tail.tail.tail.tail.tail.head;
+          let minute = submatches.tail.tail.tail.tail.tail.tail.tail.tail.head;
+          let second = submatches.tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
+          let offset = submatches.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
+          _block$2 = [year, month, day, hour, minute, second, offset];
+        } else {
+          _block$2 = [
+            "0",
+            new None(),
+            new None(),
+            new None(),
+            new None(),
+            new None(),
+            new None(),
+          ];
+        }
+        let $2 = _block$2;
         let year = $2[0];
         let month = $2[1];
         let day = $2[2];
@@ -121,14 +121,14 @@ export function from_bytes(bytes) {
         let hour$1 = parse_int(hour);
         let minute$1 = parse_int(minute);
         let offset$1 = parse_int(offset);
-        let second$1 = (() => {
-          if (second instanceof Some) {
-            let second$1 = second[0];
-            return $option.from_result($utils.smart_parse_float(second$1));
-          } else {
-            return new None();
-          }
-        })();
+        let _block$3;
+        if (second instanceof Some) {
+          let second$1 = second[0];
+          _block$3 = $option.from_result($utils.smart_parse_float(second$1));
+        } else {
+          _block$3 = new None();
+        }
+        let second$1 = _block$3;
         return new Ok(
           new StructuredDateTime(
             year$1,
@@ -167,58 +167,58 @@ export function to_bytes(value) {
       return $result.try$(
         date,
         (date) => {
-          let time = (() => {
-            let $ = value.hour;
-            if ($ instanceof Some) {
-              let hour = $[0];
-              return $time.to_string(
-                new StructuredTime(hour, value.minute, value.second),
-              );
-            } else {
-              return new Ok("");
-            }
-          })();
+          let _block;
+          let $ = value.hour;
+          if ($ instanceof Some) {
+            let hour = $[0];
+            _block = $time.to_string(
+              new StructuredTime(hour, value.minute, value.second),
+            );
+          } else {
+            _block = new Ok("");
+          }
+          let time = _block;
           return $result.try$(
             time,
             (time) => {
-              let time_zone_offset = (() => {
-                let $ = value.time_zone_offset;
-                if ($ instanceof Some) {
-                  let offset = $[0];
-                  let is_offset_valid = ((offset >= -1200) && (offset <= 1400)) && ((remainderInt(
-                    offset,
-                    100
-                  )) < 60);
-                  if (is_offset_valid) {
-                    let sign = (() => {
-                      let $1 = offset < 0;
-                      if ($1) {
-                        return "-";
-                      } else {
-                        return "+";
-                      }
-                    })();
-                    let _pipe = offset;
-                    let _pipe$1 = $int.absolute_value(_pipe);
-                    let _pipe$2 = $int.to_string(_pipe$1);
-                    let _pipe$3 = $utils.pad_start(_pipe$2, 4, "0");
-                    let _pipe$4 = ((_capture) => {
-                      return $string.append(sign, _capture);
-                    })(_pipe$3);
-                    return new Ok(_pipe$4);
+              let _block$1;
+              let $1 = value.time_zone_offset;
+              if ($1 instanceof Some) {
+                let offset = $1[0];
+                let is_offset_valid = ((offset >= -1200) && (offset <= 1400)) && ((remainderInt(
+                  offset,
+                  100
+                )) < 60);
+                if (is_offset_valid) {
+                  let _block$2;
+                  let $2 = offset < 0;
+                  if ($2) {
+                    _block$2 = "-";
                   } else {
-                    return new Error(
-                      $data_error.new_value_invalid(
-                        "DateTime time zone offset is invalid: " + $int.to_string(
-                          offset,
-                        ),
-                      ),
-                    );
+                    _block$2 = "+";
                   }
+                  let sign = _block$2;
+                  let _pipe = offset;
+                  let _pipe$1 = $int.absolute_value(_pipe);
+                  let _pipe$2 = $int.to_string(_pipe$1);
+                  let _pipe$3 = $utils.pad_start(_pipe$2, 4, "0");
+                  let _pipe$4 = ((_capture) => {
+                    return $string.append(sign, _capture);
+                  })(_pipe$3);
+                  _block$1 = new Ok(_pipe$4);
                 } else {
-                  return new Ok("");
+                  _block$1 = new Error(
+                    $data_error.new_value_invalid(
+                      "DateTime time zone offset is invalid: " + $int.to_string(
+                        offset,
+                      ),
+                    ),
+                  );
                 }
-              })();
+              } else {
+                _block$1 = new Ok("");
+              }
+              let time_zone_offset = _block$1;
               return $result.try$(
                 time_zone_offset,
                 (time_zone_offset) => {
@@ -240,61 +240,61 @@ export function to_bytes(value) {
 }
 
 export function to_iso8601(date_time) {
-  let s = (() => {
-    let _pipe = date_time.year;
-    let _pipe$1 = $int.to_string(_pipe);
-    return $utils.pad_start(_pipe$1, 4, "0");
-  })();
-  let s$1 = (() => {
-    let $ = date_time.month;
-    if ($ instanceof Some) {
-      let month = $[0];
-      let s$1 = (s + "-") + (() => {
-        let _pipe = month;
-        let _pipe$1 = $int.to_string(_pipe);
-        return $utils.pad_start(_pipe$1, 2, "0");
+  let _block;
+  let _pipe = date_time.year;
+  let _pipe$1 = $int.to_string(_pipe);
+  _block = $utils.pad_start(_pipe$1, 4, "0");
+  let s = _block;
+  let _block$1;
+  let $ = date_time.month;
+  if ($ instanceof Some) {
+    let month = $[0];
+    let s$1 = (s + "-") + (() => {
+      let _pipe$2 = month;
+      let _pipe$3 = $int.to_string(_pipe$2);
+      return $utils.pad_start(_pipe$3, 2, "0");
+    })();
+    let $1 = date_time.day;
+    if ($1 instanceof Some) {
+      let day = $1[0];
+      let s$2 = (s$1 + "-") + (() => {
+        let _pipe$2 = day;
+        let _pipe$3 = $int.to_string(_pipe$2);
+        return $utils.pad_start(_pipe$3, 2, "0");
       })();
-      let $1 = date_time.day;
-      if ($1 instanceof Some) {
-        let day = $1[0];
-        let s$2 = (s$1 + "-") + (() => {
-          let _pipe = day;
-          let _pipe$1 = $int.to_string(_pipe);
-          return $utils.pad_start(_pipe$1, 2, "0");
-        })();
-        let $2 = date_time.hour;
-        if ($2 instanceof Some) {
-          let hour = $2[0];
-          return (s$2 + "T") + $time.to_iso8601(
-            new StructuredTime(hour, date_time.minute, date_time.second),
-          );
-        } else {
-          return s$2;
-        }
+      let $2 = date_time.hour;
+      if ($2 instanceof Some) {
+        let hour = $2[0];
+        _block$1 = (s$2 + "T") + $time.to_iso8601(
+          new StructuredTime(hour, date_time.minute, date_time.second),
+        );
       } else {
-        return s$1;
+        _block$1 = s$2;
       }
     } else {
-      return s;
+      _block$1 = s$1;
     }
-  })();
-  let $ = date_time.time_zone_offset;
-  if ($ instanceof Some) {
-    let offset = $[0];
-    let sign = (() => {
-      let $1 = offset < 0;
-      if ($1) {
-        return "-";
-      } else {
-        return "+";
-      }
-    })();
-    let value = (() => {
-      let _pipe = offset;
-      let _pipe$1 = $int.absolute_value(_pipe);
-      let _pipe$2 = $int.to_string(_pipe$1);
-      return $utils.pad_start(_pipe$2, 4, "0");
-    })();
+  } else {
+    _block$1 = s;
+  }
+  let s$1 = _block$1;
+  let $1 = date_time.time_zone_offset;
+  if ($1 instanceof Some) {
+    let offset = $1[0];
+    let _block$2;
+    let $2 = offset < 0;
+    if ($2) {
+      _block$2 = "-";
+    } else {
+      _block$2 = "+";
+    }
+    let sign = _block$2;
+    let _block$3;
+    let _pipe$2 = offset;
+    let _pipe$3 = $int.absolute_value(_pipe$2);
+    let _pipe$4 = $int.to_string(_pipe$3);
+    _block$3 = $utils.pad_start(_pipe$4, 4, "0");
+    let value = _block$3;
     return (s$1 + sign) + value;
   } else {
     return s$1;

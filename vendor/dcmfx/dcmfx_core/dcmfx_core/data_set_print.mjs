@@ -27,10 +27,10 @@ export function new_print_options() {
     term,
     new Ok("dumb")
   )))) && (!isEqual(no_color, new Ok("1")));
-  let max_width = (() => {
-    let _pipe = $term_size.columns();
-    return $result.unwrap(_pipe, 80);
-  })();
+  let _block;
+  let _pipe = $term_size.columns();
+  _block = $result.unwrap(_pipe, 80);
+  let max_width = _block;
   return new DataSetPrintOptions(styled, max_width);
 }
 
@@ -62,94 +62,94 @@ export function format_data_element_prefix(
   indent,
   print_options
 ) {
-  let tag$1 = (() => {
-    let $ = print_options.styled;
-    if ($) {
-      let _pipe = tag;
-      let _pipe$1 = $data_element_tag.to_string(_pipe);
-      return text_blue(_pipe$1);
-    } else {
-      let _pipe = tag;
-      return $data_element_tag.to_string(_pipe);
-    }
-  })();
+  let _block;
+  let $ = print_options.styled;
+  if ($) {
+    let _pipe = tag;
+    let _pipe$1 = $data_element_tag.to_string(_pipe);
+    _block = text_blue(_pipe$1);
+  } else {
+    let _pipe = tag;
+    _block = $data_element_tag.to_string(_pipe);
+  }
+  let tag$1 = _block;
   let tag_name_len = $utils.string_fast_length(tag_name);
-  let tag_name$1 = (() => {
-    let $ = print_options.styled;
-    if ($) {
-      return text_reset_to_bold(tag_name);
-    } else {
-      return tag_name;
-    }
-  })();
-  let output = (() => {
-    let $ = print_options.styled;
-    if ($) {
-      if (vr instanceof Some) {
-        let vr$1 = vr[0];
-        let vr$2 = (() => {
-          let $1 = print_options.styled;
-          if ($1) {
-            let _pipe = vr$1;
-            let _pipe$1 = $value_representation.to_string(_pipe);
-            return text_green(_pipe$1);
-          } else {
-            let _pipe = vr$1;
-            return $value_representation.to_string(_pipe);
-          }
-        })();
-        return (((tag$1 + " ") + vr$2) + " ") + tag_name$1;
-      } else {
-        return (tag$1 + " ") + tag_name$1;
-      }
-    } else {
-      if (vr instanceof Some) {
-        let vr$1 = vr[0];
-        return (((tag$1 + " ") + $value_representation.to_string(vr$1)) + " ") + tag_name$1;
-      } else {
-        return (tag$1 + " ") + tag_name$1;
-      }
-    }
-  })();
-  let tag_and_vr_width = (() => {
+  let _block$1;
+  let $1 = print_options.styled;
+  if ($1) {
+    _block$1 = text_reset_to_bold(tag_name);
+  } else {
+    _block$1 = tag_name;
+  }
+  let tag_name$1 = _block$1;
+  let _block$2;
+  let $2 = print_options.styled;
+  if ($2) {
     if (vr instanceof Some) {
-      return 15;
+      let vr$1 = vr[0];
+      let _block$3;
+      let $3 = print_options.styled;
+      if ($3) {
+        let _pipe = vr$1;
+        let _pipe$1 = $value_representation.to_string(_pipe);
+        _block$3 = text_green(_pipe$1);
+      } else {
+        let _pipe = vr$1;
+        _block$3 = $value_representation.to_string(_pipe);
+      }
+      let vr$2 = _block$3;
+      _block$2 = (((tag$1 + " ") + vr$2) + " ") + tag_name$1;
     } else {
-      return 12;
+      _block$2 = (tag$1 + " ") + tag_name$1;
     }
-  })();
+  } else {
+    if (vr instanceof Some) {
+      let vr$1 = vr[0];
+      _block$2 = (((tag$1 + " ") + $value_representation.to_string(vr$1)) + " ") + tag_name$1;
+    } else {
+      _block$2 = (tag$1 + " ") + tag_name$1;
+    }
+  }
+  let output = _block$2;
+  let _block$3;
+  if (vr instanceof Some) {
+    _block$3 = 15;
+  } else {
+    _block$3 = 12;
+  }
+  let tag_and_vr_width = _block$3;
   let has_length = !isEqual(length, new None());
-  let length$1 = (() => {
-    if (length instanceof Some) {
-      let length$1 = length[0];
-      return ("[" + (() => {
-        let _pipe = length$1;
-        let _pipe$1 = $int.to_string(_pipe);
-        return $utils.pad_start(_pipe$1, 6, " ");
-      })()) + " bytes] ";
-    } else {
-      return "";
-    }
-  })();
-  let length_width = (() => {
-    let _pipe = length$1;
-    return $utils.string_fast_length(_pipe);
-  })();
-  let length$2 = (() => {
-    let $ = print_options.styled;
-    if ($) {
-      return text_cyan_and_reset(length$1);
-    } else {
-      return length$1;
-    }
-  })();
-  let padding = (() => {
-    if (has_length) {
-      return $int.max(50 - (tag_and_vr_width + tag_name_len), 0) + 2;
-    } else {
-      return 0;
-    }
-  })();
+  let _block$4;
+  if (length instanceof Some) {
+    let length$1 = length[0];
+    _block$4 = ("[" + (() => {
+      let _pipe = length$1;
+      let _pipe$1 = $int.to_string(_pipe);
+      return $utils.pad_start(_pipe$1, 6, " ");
+    })()) + " bytes] ";
+  } else {
+    _block$4 = "";
+  }
+  let length$1 = _block$4;
+  let _block$5;
+  let _pipe = length$1;
+  _block$5 = $utils.string_fast_length(_pipe);
+  let length_width = _block$5;
+  let _block$6;
+  let $3 = print_options.styled;
+  if ($3) {
+    _block$6 = text_cyan_and_reset(length$1);
+  } else {
+    _block$6 = length$1;
+  }
+  let length$2 = _block$6;
+  let _block$7;
+  if (has_length) {
+    _block$7 = $int.max(50 - (tag_and_vr_width + tag_name_len), 0) + 2;
+  } else {
+    _block$7 = 0;
+  }
+  let padding = _block$7;
   let s = (($string.repeat(" ", indent * 2) + output) + $string.repeat(
     " ",
     padding,

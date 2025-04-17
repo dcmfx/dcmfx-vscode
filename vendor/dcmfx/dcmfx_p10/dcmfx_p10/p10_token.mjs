@@ -1,6 +1,5 @@
 /// <reference types="./p10_token.d.mts" />
 import * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
-import { DataElementTag } from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
 import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
 import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
@@ -64,13 +63,19 @@ export class SequenceDelimiter extends $CustomType {
   }
 }
 
-export class SequenceItemStart extends $CustomType {}
+export class SequenceItemStart extends $CustomType {
+  constructor(index) {
+    super();
+    this.index = index;
+  }
+}
 
 export class SequenceItemDelimiter extends $CustomType {}
 
 export class PixelDataItem extends $CustomType {
-  constructor(length) {
+  constructor(index, length) {
     super();
+    this.index = index;
     this.length = length;
   }
 }
@@ -124,12 +129,16 @@ export function to_string(token) {
   } else if (token instanceof SequenceDelimiter) {
     return "SequenceDelimiter";
   } else if (token instanceof SequenceItemStart) {
-    return "SequenceItemStart";
+    let index = token.index;
+    return "SequenceItemStart: item " + $int.to_string(index);
   } else if (token instanceof SequenceItemDelimiter) {
     return "SequenceItemDelimiter";
   } else if (token instanceof PixelDataItem) {
+    let index = token.index;
     let length = token.length;
-    return ("PixelDataItem: " + $int.to_string(length)) + " bytes";
+    return ((("PixelDataItem: item " + $int.to_string(index)) + ", ") + $int.to_string(
+      length,
+    )) + " bytes";
   } else {
     return "End";
   }
@@ -172,30 +181,36 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
       return $result.try$(
         token_callback(context, header_token),
         (context) => {
-          let context$1 = (() => {
-            let _pipe = items;
-            return $list.try_fold(
-              _pipe,
-              context,
-              (context, item) => {
-                let length = $bit_array.byte_size(item);
-                let item_header_token = new PixelDataItem(length);
-                let context$1 = token_callback(context, item_header_token);
-                return $result.try$(
-                  context$1,
-                  (context) => {
-                    let value_bytes_token = new DataElementValueBytes(
-                      $dictionary.item.tag,
-                      vr,
-                      item,
-                      0,
-                    );
-                    return token_callback(context, value_bytes_token);
-                  },
-                );
-              },
-            );
-          })();
+          let _block;
+          let _pipe = items;
+          let _pipe$1 = $list.try_fold(
+            _pipe,
+            [context, 0],
+            (acc, item) => {
+              let context$1 = acc[0];
+              let index = acc[1];
+              let length = $bit_array.byte_size(item);
+              let item_header_token = new PixelDataItem(index, length);
+              let context$2 = token_callback(context$1, item_header_token);
+              return $result.try$(
+                context$2,
+                (context) => {
+                  let value_bytes_token = new DataElementValueBytes(
+                    $dictionary.item.tag,
+                    vr,
+                    item,
+                    0,
+                  );
+                  return $result.map(
+                    token_callback(context, value_bytes_token),
+                    (context) => { return [context, index + 1]; },
+                  );
+                },
+              );
+            },
+          );
+          _block = $result.map(_pipe$1, (acc) => { return acc[0]; });
+          let context$1 = _block;
           return $result.try$(
             context$1,
             (context) => {
@@ -210,7 +225,7 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_token",
-          212,
+          226,
           "data_element_to_tokens",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }
@@ -221,29 +236,35 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
       return $result.try$(
         token_callback(context, header_token),
         (context) => {
-          let context$1 = (() => {
-            let _pipe = items;
-            return $list.try_fold(
-              _pipe,
-              context,
-              (context, item) => {
-                let item_start_token = new SequenceItemStart();
-                let context$1 = token_callback(context, item_start_token);
-                return $result.try$(
-                  context$1,
-                  (context) => {
-                    return $result.try$(
-                      data_elements_to_tokens(item, context, token_callback),
-                      (context) => {
-                        let item_delimiter_token = new SequenceItemDelimiter();
-                        return token_callback(context, item_delimiter_token);
-                      },
-                    );
-                  },
-                );
-              },
-            );
-          })();
+          let _block;
+          let _pipe = items;
+          let _pipe$1 = $list.try_fold(
+            _pipe,
+            [context, 0],
+            (acc, item) => {
+              let context$1 = acc[0];
+              let index = acc[1];
+              let item_start_token = new SequenceItemStart(index);
+              let context$2 = token_callback(context$1, item_start_token);
+              return $result.try$(
+                context$2,
+                (context) => {
+                  return $result.try$(
+                    data_elements_to_tokens(item, context, token_callback),
+                    (context) => {
+                      let item_delimiter_token = new SequenceItemDelimiter();
+                      return $result.map(
+                        token_callback(context, item_delimiter_token),
+                        (context) => { return [context, index + 1]; },
+                      );
+                    },
+                  );
+                },
+              );
+            },
+          );
+          _block = $result.map(_pipe$1, (acc) => { return acc[0]; });
+          let context$1 = _block;
           return $result.try$(
             context$1,
             (context) => {

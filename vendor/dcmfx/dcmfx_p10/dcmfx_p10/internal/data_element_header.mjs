@@ -1,6 +1,5 @@
 /// <reference types="./data_element_header.d.mts" />
 import * as $data_element_tag from "../../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
-import { DataElementTag } from "../../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as $dictionary from "../../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
@@ -22,15 +21,15 @@ export class ValueLengthU16 extends $CustomType {}
 export class ValueLengthU32 extends $CustomType {}
 
 export function to_string(header) {
-  let vr = (() => {
-    let $ = header.vr;
-    if ($ instanceof Some) {
-      let vr = $[0];
-      return $value_representation.to_string(vr);
-    } else {
-      return "  ";
-    }
-  })();
+  let _block;
+  let $ = header.vr;
+  if ($ instanceof Some) {
+    let vr = $[0];
+    _block = $value_representation.to_string(vr);
+  } else {
+    _block = "  ";
+  }
+  let vr = _block;
   return ((($data_element_tag.to_string(header.tag) + " ") + vr) + " ") + $dictionary.tag_name(
     header.tag,
     new None(),

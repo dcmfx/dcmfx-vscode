@@ -1,5 +1,6 @@
 import type * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag.d.mts";
 import type * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.d.mts";
+import type * as $data_error from "../../dcmfx_core/dcmfx_core/data_error.d.mts";
 import type * as $data_set_path from "../../dcmfx_core/dcmfx_core/data_set_path.d.mts";
 import type * as $transfer_syntax from "../../dcmfx_core/dcmfx_core/transfer_syntax.d.mts";
 import type * as $dict from "../../gleam_stdlib/gleam/dict.d.mts";
@@ -12,8 +13,14 @@ import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 export class P10WriteConfig extends _.CustomType {
-  constructor(zlib_compression_level: number);
+  constructor(
+    implementation_class_uid: string,
+    implementation_version_name: string,
+    zlib_compression_level: number
+  );
   
+  implementation_class_uid: string;
+  implementation_version_name: string;
   zlib_compression_level: number;
 }
 
@@ -60,29 +67,29 @@ export function data_element_header_to_bytes(
   context: P10WriteContext$
 ): _.Result<_.BitArray, $p10_error.P10Error$>;
 
-export function data_set_to_tokens<CBFE, CBFF>(
+export function data_set_to_tokens<CBGT, CBGU>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  callback_context: CBFE,
-  token_callback: (x0: CBFE, x1: $p10_token.P10Token$) => _.Result<CBFE, CBFF>
-): _.Result<CBFE, CBFF>;
+  callback_context: CBGT,
+  token_callback: (x0: CBGT, x1: $p10_token.P10Token$) => _.Result<CBGT, CBGU>
+): _.Result<CBGT, CBGU>;
 
 export function write_token(
   context: P10WriteContext$,
   token: $p10_token.P10Token$
 ): _.Result<P10WriteContext$, $p10_error.P10Error$>;
 
-export function data_set_to_bytes<CBFK>(
+export function data_set_to_bytes<CBGZ>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: CBFK,
-  bytes_callback: (x0: CBFK, x1: _.BitArray) => _.Result<
-    CBFK,
+  context: CBGZ,
+  bytes_callback: (x0: CBGZ, x1: _.BitArray) => _.Result<
+    CBGZ,
     $p10_error.P10Error$
   >,
   config: P10WriteConfig$
-): _.Result<CBFK, $p10_error.P10Error$>;
+): _.Result<CBGZ, $p10_error.P10Error$>;

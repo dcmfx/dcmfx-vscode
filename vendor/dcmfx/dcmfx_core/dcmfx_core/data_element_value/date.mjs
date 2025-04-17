@@ -21,22 +21,22 @@ export class StructuredDate extends $CustomType {
 }
 
 export function from_bytes(bytes) {
-  let date_string = (() => {
-    let _pipe = bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    return $result.replace_error(
-      _pipe$1,
-      $data_error.new_value_invalid("Date is invalid UTF-8"),
-    );
-  })();
+  let _block;
+  let _pipe = bytes;
+  let _pipe$1 = $bit_array.to_string(_pipe);
+  _block = $result.replace_error(
+    _pipe$1,
+    $data_error.new_value_invalid("Date is invalid UTF-8"),
+  );
+  let date_string = _block;
   return $result.try$(
     date_string,
     (date_string) => {
-      let date_string$1 = (() => {
-        let _pipe = date_string;
-        let _pipe$1 = $utils.trim_ascii(_pipe, 0x0);
-        return $string.trim(_pipe$1);
-      })();
+      let _block$1;
+      let _pipe$2 = date_string;
+      let _pipe$3 = $utils.trim_ascii(_pipe$2, 0x0);
+      _block$1 = $string.trim(_pipe$3);
+      let date_string$1 = _block$1;
       let $ = $regexp.from_string("^(\\d{4})(\\d\\d)(\\d\\d)$");
       if (!$.isOk()) {
         throw makeError(
@@ -117,67 +117,67 @@ export function components_to_string(year, month, day) {
       ),
     ),
     () => {
-      let year$1 = (() => {
-        let $ = (year >= 0) && (year <= 9999);
-        if ($) {
-          let _pipe = year;
-          let _pipe$1 = $int.to_string(_pipe);
-          let _pipe$2 = $utils.pad_start(_pipe$1, 4, "0");
-          return new Ok(_pipe$2);
-        } else {
-          return new Error(
-            $data_error.new_value_invalid(
-              "Date's year is invalid: " + $int.to_string(year),
-            ),
-          );
-        }
-      })();
+      let _block;
+      let $ = (year >= 0) && (year <= 9999);
+      if ($) {
+        let _pipe = year;
+        let _pipe$1 = $int.to_string(_pipe);
+        let _pipe$2 = $utils.pad_start(_pipe$1, 4, "0");
+        _block = new Ok(_pipe$2);
+      } else {
+        _block = new Error(
+          $data_error.new_value_invalid(
+            "Date's year is invalid: " + $int.to_string(year),
+          ),
+        );
+      }
+      let year$1 = _block;
       return $result.try$(
         year$1,
         (year) => {
-          let month$1 = (() => {
-            if (month instanceof Some) {
-              let month$1 = month[0];
-              let $ = (month$1 >= 1) && (month$1 <= 12);
-              if ($) {
-                let _pipe = month$1;
-                let _pipe$1 = $int.to_string(_pipe);
-                let _pipe$2 = $utils.pad_start(_pipe$1, 2, "0");
-                return new Ok(_pipe$2);
-              } else {
-                return new Error(
-                  $data_error.new_value_invalid(
-                    "Date's month is invalid: " + $int.to_string(month$1),
-                  ),
-                );
-              }
+          let _block$1;
+          if (month instanceof Some) {
+            let month$1 = month[0];
+            let $1 = (month$1 >= 1) && (month$1 <= 12);
+            if ($1) {
+              let _pipe = month$1;
+              let _pipe$1 = $int.to_string(_pipe);
+              let _pipe$2 = $utils.pad_start(_pipe$1, 2, "0");
+              _block$1 = new Ok(_pipe$2);
             } else {
-              return new Ok("");
+              _block$1 = new Error(
+                $data_error.new_value_invalid(
+                  "Date's month is invalid: " + $int.to_string(month$1),
+                ),
+              );
             }
-          })();
+          } else {
+            _block$1 = new Ok("");
+          }
+          let month$1 = _block$1;
           return $result.try$(
             month$1,
             (month) => {
-              let day$1 = (() => {
-                if (day instanceof Some) {
-                  let day$1 = day[0];
-                  let $ = (day$1 >= 1) && (day$1 <= 31);
-                  if ($) {
-                    let _pipe = day$1;
-                    let _pipe$1 = $int.to_string(_pipe);
-                    let _pipe$2 = $utils.pad_start(_pipe$1, 2, "0");
-                    return new Ok(_pipe$2);
-                  } else {
-                    return new Error(
-                      $data_error.new_value_invalid(
-                        "Date's day is invalid: " + $int.to_string(day$1),
-                      ),
-                    );
-                  }
+              let _block$2;
+              if (day instanceof Some) {
+                let day$1 = day[0];
+                let $1 = (day$1 >= 1) && (day$1 <= 31);
+                if ($1) {
+                  let _pipe = day$1;
+                  let _pipe$1 = $int.to_string(_pipe);
+                  let _pipe$2 = $utils.pad_start(_pipe$1, 2, "0");
+                  _block$2 = new Ok(_pipe$2);
                 } else {
-                  return new Ok("");
+                  _block$2 = new Error(
+                    $data_error.new_value_invalid(
+                      "Date's day is invalid: " + $int.to_string(day$1),
+                    ),
+                  );
                 }
-              })();
+              } else {
+                _block$2 = new Ok("");
+              }
+              let day$1 = _block$2;
               return $result.try$(
                 day$1,
                 (day) => { return new Ok((year + month) + day); },
@@ -200,20 +200,20 @@ export function to_bytes(value) {
 }
 
 export function to_iso8601(date) {
-  let year = (() => {
-    let _pipe = date.year;
-    let _pipe$1 = $int.to_string(_pipe);
-    return $utils.pad_start(_pipe$1, 4, "0");
-  })();
-  let month = (() => {
-    let _pipe = date.month;
-    let _pipe$1 = $int.to_string(_pipe);
-    return $utils.pad_start(_pipe$1, 2, "0");
-  })();
-  let day = (() => {
-    let _pipe = date.day;
-    let _pipe$1 = $int.to_string(_pipe);
-    return $utils.pad_start(_pipe$1, 2, "0");
-  })();
+  let _block;
+  let _pipe = date.year;
+  let _pipe$1 = $int.to_string(_pipe);
+  _block = $utils.pad_start(_pipe$1, 4, "0");
+  let year = _block;
+  let _block$1;
+  let _pipe$2 = date.month;
+  let _pipe$3 = $int.to_string(_pipe$2);
+  _block$1 = $utils.pad_start(_pipe$3, 2, "0");
+  let month = _block$1;
+  let _block$2;
+  let _pipe$4 = date.day;
+  let _pipe$5 = $int.to_string(_pipe$4);
+  _block$2 = $utils.pad_start(_pipe$5, 2, "0");
+  let day = _block$2;
   return (((year + "-") + month) + "-") + day;
 }
