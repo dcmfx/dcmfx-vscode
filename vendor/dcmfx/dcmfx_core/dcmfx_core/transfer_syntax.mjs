@@ -1,5 +1,5 @@
 /// <reference types="./transfer_syntax.d.mts" />
-import { Ok, Error, toList, CustomType as $CustomType } from "../gleam.mjs";
+import { Ok, Error, toList, CustomType as $CustomType, isEqual } from "../gleam.mjs";
 
 export class VrImplicit extends $CustomType {}
 
@@ -372,6 +372,19 @@ export const high_throughput_jpeg_2k = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+export function is_jpeg_2k(transfer_syntax) {
+  return ((((((isEqual(transfer_syntax, jpeg_2k_lossless_only)) || (isEqual(
+    transfer_syntax,
+    jpeg_2k
+  ))) || (isEqual(transfer_syntax, jpeg_2k_multi_component_lossless_only))) || (isEqual(
+    transfer_syntax,
+    jpeg_2k_multi_component
+  ))) || (isEqual(transfer_syntax, high_throughput_jpeg_2k_lossless_only))) || (isEqual(
+    transfer_syntax,
+    high_throughput_jpeg_2k_with_rpcl_options_lossless_only
+  ))) || (isEqual(transfer_syntax, high_throughput_jpeg_2k));
+}
+
 export const jpip_high_throughput_jpeg_2k_referenced = /* @__PURE__ */ new TransferSyntax(
   "JPIP HTJ2K Referenced",
   "1.2.840.10008.1.2.4.204",
@@ -405,7 +418,7 @@ export const smpte_st_2110_20_uncompressed_progressive_active_video = /* @__PURE
   /* @__PURE__ */ new VrExplicit(),
   /* @__PURE__ */ new LittleEndian(),
   false,
-  true,
+  false,
 );
 
 export const smpte_st_2110_20_uncompressed_interlaced_active_video = /* @__PURE__ */ new TransferSyntax(
@@ -414,7 +427,7 @@ export const smpte_st_2110_20_uncompressed_interlaced_active_video = /* @__PURE_
   /* @__PURE__ */ new VrExplicit(),
   /* @__PURE__ */ new LittleEndian(),
   false,
-  true,
+  false,
 );
 
 export const smpte_st_2110_30_pcm_audio = /* @__PURE__ */ new TransferSyntax(

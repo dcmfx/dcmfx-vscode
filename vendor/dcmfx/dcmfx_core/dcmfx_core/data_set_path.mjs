@@ -50,14 +50,20 @@ export function entries(path) {
   return path.entries;
 }
 
-export function size(path) {
+export function length(path) {
   let _pipe = path.entries;
   return $list.length(_pipe);
 }
 
-export function is_empty(path) {
-  let _pipe = path.entries;
-  return $list.is_empty(_pipe);
+export function is_root(path) {
+  let $ = path.entries;
+  if ($.hasLength(0)) {
+    return true;
+  } else if ($.hasLength(1) && $.head instanceof DataElement) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export function sequence_item_count(path) {
@@ -147,7 +153,7 @@ export function from_string(s) {
               throw makeError(
                 "let_assert",
                 "dcmfx_core/data_set_path",
-                149,
+                152,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $1 }
@@ -165,7 +171,7 @@ export function from_string(s) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_core/data_set_path",
-                  153,
+                  156,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $3 }

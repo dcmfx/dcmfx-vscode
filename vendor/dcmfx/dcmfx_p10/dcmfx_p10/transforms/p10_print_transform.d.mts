@@ -45,6 +45,6 @@ export type P10PrintTransform$ = P10PrintTransform;
 export function new$(print_options: $data_set_print.DataSetPrintOptions$): P10PrintTransform$;
 
 export function add_token(
-  context: P10PrintTransform$,
+  transform: P10PrintTransform$,
   token: $p10_token.P10Token$
 ): [string, P10PrintTransform$];

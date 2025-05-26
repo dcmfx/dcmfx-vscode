@@ -66,7 +66,7 @@ export function deserialize_error_to_lines(error, task_description) {
           }
         })(),
         (() => {
-          let $ = $data_set_path.is_empty(path);
+          let $ = $data_set_path.is_root(path);
           if ($) {
             return toList([]);
           } else {

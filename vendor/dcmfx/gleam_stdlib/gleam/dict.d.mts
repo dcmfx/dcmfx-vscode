@@ -1,7 +1,7 @@
 import type * as _ from "../gleam.d.mts";
 import type * as $option from "../gleam/option.d.mts";
 
-export type Dict$<KV, KU> = unknown;
+export type Dict$<KU, KV> = unknown;
 
 export function size(dict: Dict$<any, any>): number;
 

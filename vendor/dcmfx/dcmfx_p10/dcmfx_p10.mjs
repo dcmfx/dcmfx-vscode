@@ -1,5 +1,6 @@
 /// <reference types="./dcmfx_p10.d.mts" />
 import * as $data_set from "../dcmfx_core/dcmfx_core/data_set.mjs";
+import * as $data_set_path from "../dcmfx_core/dcmfx_core/data_set_path.mjs";
 import * as $file_stream from "../file_streams/file_streams/file_stream.mjs";
 import * as $file_stream_error from "../file_streams/file_streams/file_stream_error.mjs";
 import * as $bit_array from "../gleam_stdlib/gleam/bit_array.mjs";
@@ -228,7 +229,7 @@ export function read_bytes(bytes) {
     throw makeError(
       "let_assert",
       "dcmfx_p10",
-      164,
+      165,
       "read_bytes",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -256,6 +257,7 @@ export function write_stream(stream, data_set, config) {
   let config$1 = $option.lazy_unwrap(config, $p10_write.default_config);
   return $p10_write.data_set_to_bytes(
     data_set,
+    $data_set_path.new$(),
     undefined,
     bytes_callback,
     config$1,
@@ -286,6 +288,7 @@ export function write_bytes(data_set, config) {
   let config$1 = $option.lazy_unwrap(config, $p10_write.default_config);
   let _pipe = $p10_write.data_set_to_bytes(
     data_set,
+    $data_set_path.new$(),
     toList([]),
     (chunks, bytes) => { return new Ok(listPrepend(bytes, chunks)); },
     config$1,

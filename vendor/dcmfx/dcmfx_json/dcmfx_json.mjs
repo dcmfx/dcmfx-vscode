@@ -16,6 +16,7 @@ export function data_set_to_json(data_set, config) {
   let context = ["", transform];
   let _pipe = $p10_write.data_set_to_tokens(
     data_set,
+    $data_set_path.new$(),
     context,
     (context, token) => {
       let json = context[0];

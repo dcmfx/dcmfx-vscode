@@ -221,7 +221,12 @@ export function data_element_header_to_bytes(header, endianness, context) {
   );
 }
 
-export function data_set_to_tokens(data_set, callback_context, token_callback) {
+export function data_set_to_tokens(
+  data_set,
+  path,
+  callback_context,
+  token_callback
+) {
   let remove_fmi_transform = $p10_filter_transform.new$(
     (tag, _, _1, _2) => { return tag.group !== 2; },
   );
@@ -237,7 +242,7 @@ export function data_set_to_tokens(data_set, callback_context, token_callback) {
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      636,
+      637,
       "data_set_to_tokens",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -253,7 +258,7 @@ export function data_set_to_tokens(data_set, callback_context, token_callback) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/p10_write",
-        653,
+        654,
         "",
         "Pattern match failed, no pattern matched the value.",
         { value: $1 }
@@ -269,7 +274,7 @@ export function data_set_to_tokens(data_set, callback_context, token_callback) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_write",
-          660,
+          661,
           "",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }
@@ -307,7 +312,12 @@ export function data_set_to_tokens(data_set, callback_context, token_callback) {
         process_token(context, fmi_token),
         (context) => {
           return $result.try$(
-            $p10_token.data_elements_to_tokens(data_set, context, process_token),
+            $p10_token.data_elements_to_tokens(
+              data_set,
+              path,
+              context,
+              process_token,
+            ),
             (context) => {
               return $result.map(
                 process_token(context, new $p10_token.End()),
@@ -331,7 +341,7 @@ function prepare_file_meta_information_token_data_set(
     throw makeError(
       "let_assert",
       "dcmfx_p10/p10_write",
-      741,
+      744,
       "prepare_file_meta_information_token_data_set",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
@@ -1058,7 +1068,13 @@ export function write_token(context, token) {
   );
 }
 
-export function data_set_to_bytes(data_set, context, bytes_callback, config) {
+export function data_set_to_bytes(
+  data_set,
+  path,
+  context,
+  bytes_callback,
+  config
+) {
   let _block;
   let _pipe = new_write_context();
   _block = with_config(_pipe, config);
@@ -1081,6 +1097,7 @@ export function data_set_to_bytes(data_set, context, bytes_callback, config) {
   };
   let _pipe$1 = data_set_to_tokens(
     data_set,
+    path,
     [context, write_context],
     process_token,
   );

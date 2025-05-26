@@ -2,50 +2,63 @@
 import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
 import * as $int from "../../gleam_stdlib/gleam/int.mjs";
 import * as $list from "../../gleam_stdlib/gleam/list.mjs";
+import * as $option from "../../gleam_stdlib/gleam/option.mjs";
+import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import {
   toList,
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
+  divideInt,
   isEqual,
   toBitArray,
   bitArraySlice,
 } from "../gleam.mjs";
 
 class PixelDataFrame extends $CustomType {
-  constructor(frame_index, fragments, length, bit_offset) {
+  constructor(frame_index, chunks, length_in_bits, bit_offset) {
     super();
     this.frame_index = frame_index;
-    this.fragments = fragments;
-    this.length = length;
+    this.chunks = chunks;
+    this.length_in_bits = length_in_bits;
     this.bit_offset = bit_offset;
   }
 }
 
-export function new$(frame_index) {
-  return new PixelDataFrame(frame_index, toList([]), 0, 0);
+export function new$() {
+  return new PixelDataFrame(new None(), toList([]), 0, 0);
 }
 
 export function index(frame) {
   return frame.frame_index;
 }
 
-export function push_fragment(frame, data) {
+export function set_index(frame, index) {
   let _record = frame;
   return new PixelDataFrame(
-    _record.frame_index,
-    listPrepend(data, frame.fragments),
-    frame.length + $bit_array.byte_size(data),
+    new Some(index),
+    _record.chunks,
+    _record.length_in_bits,
     _record.bit_offset,
   );
 }
 
-export function length(frame) {
-  return frame.length;
+export function push_chunk(frame, data) {
+  let _record = frame;
+  return new PixelDataFrame(
+    _record.frame_index,
+    listPrepend(data, frame.chunks),
+    frame.length_in_bits + $bit_array.bit_size(data),
+    _record.bit_offset,
+  );
 }
 
 export function length_in_bits(frame) {
-  return $int.max(frame.length * 8 - frame.bit_offset, 0);
+  return $int.max(0, frame.length_in_bits - frame.bit_offset);
+}
+
+export function length(frame) {
+  return divideInt((length_in_bits(frame) + 7), 8);
 }
 
 export function bit_offset(frame) {
@@ -56,18 +69,18 @@ export function set_bit_offset(frame, bit_offset) {
   let _record = frame;
   return new PixelDataFrame(
     _record.frame_index,
-    _record.fragments,
-    _record.length,
+    _record.chunks,
+    _record.length_in_bits,
     bit_offset,
   );
 }
 
 export function is_empty(frame) {
-  return frame.length === 0;
+  return length_in_bits(frame) === 0;
 }
 
-export function fragments(frame) {
-  let _pipe = frame.fragments;
+export function chunks(frame) {
+  let _pipe = frame.chunks;
   return $list.reverse(_pipe);
 }
 
@@ -75,32 +88,33 @@ function do_drop_end_bytes(loop$frame, loop$target_length) {
   while (true) {
     let frame = loop$frame;
     let target_length = loop$target_length;
-    let $ = frame.length > target_length;
+    let $ = length_in_bits(frame) > target_length;
     if ($) {
-      let $1 = frame.fragments;
+      let $1 = frame.chunks;
       if ($1.atLeastLength(1)) {
-        let fragment = $1.head;
-        let fragments$1 = $1.tail;
-        let length$1 = frame.length - $bit_array.byte_size(fragment);
-        let $2 = length$1 < target_length;
+        let chunk = $1.head;
+        let chunks$1 = $1.tail;
+        let length_in_bits$1 = length_in_bits(frame) - $bit_array.bit_size(
+          chunk,
+        );
+        let $2 = length_in_bits$1 < target_length;
         if ($2) {
-          let fragment_length = target_length - length$1;
-          let $3 = $bit_array.slice(fragment, 0, fragment_length);
-          if (!$3.isOk()) {
+          let chunk_length = target_length - length_in_bits$1;
+          if (!(chunk.bitSize >= chunk_length)) {
             throw makeError(
               "let_assert",
               "dcmfx_pixel_data/pixel_data_frame",
-              118,
+              124,
               "do_drop_end_bytes",
               "Pattern match failed, no pattern matched the value.",
-              { value: $3 }
+              { value: chunk }
             )
           }
-          let new_fragment = $3[0];
+          let new_chunk = bitArraySlice(chunk, 0, chunk_length);
           let _record = frame;
           return new PixelDataFrame(
             _record.frame_index,
-            listPrepend(new_fragment, fragments$1),
+            listPrepend(new_chunk, chunks$1),
             target_length,
             _record.bit_offset,
           );
@@ -109,8 +123,8 @@ function do_drop_end_bytes(loop$frame, loop$target_length) {
           let _record = frame;
           _block = new PixelDataFrame(
             _record.frame_index,
-            fragments$1,
-            length$1,
+            chunks$1,
+            length_in_bits$1,
             _record.bit_offset,
           );
           let _pipe = _block;
@@ -127,7 +141,7 @@ function do_drop_end_bytes(loop$frame, loop$target_length) {
 }
 
 export function drop_end_bytes(frame, count) {
-  let target_length = $int.max(0, frame.length - count);
+  let target_length = $int.max(0, length_in_bits(frame) - count * 8);
   return do_drop_end_bytes(frame, target_length);
 }
 
@@ -150,7 +164,7 @@ function shift_low_bits_loop(loop$input, loop$acc, loop$bit_offset) {
         throw makeError(
           "let_assert",
           "dcmfx_pixel_data/pixel_data_frame",
-          179,
+          184,
           "shift_low_bits_loop",
           "Pattern match failed, no pattern matched the value.",
           { value: input }
@@ -179,13 +193,13 @@ function shift_low_bits(bytes, bit_offset) {
 
 export function to_bytes(frame) {
   let _block;
-  let $ = frame.fragments;
+  let $ = frame.chunks;
   if ($.hasLength(1)) {
-    let fragment = $.head;
-    _block = fragment;
+    let chunk = $.head;
+    _block = chunk;
   } else {
-    let fragments$1 = $;
-    let _pipe = fragments$1;
+    let chunks$1 = $;
+    let _pipe = chunks$1;
     let _pipe$1 = $list.reverse(_pipe);
     _block = $bit_array.concat(_pipe$1);
   }

@@ -29,9 +29,9 @@ export function new_with_data_element(tag: $data_element_tag.DataElementTag$): D
 
 export function entries(path: DataSetPath$): _.List<DataSetPathEntry$>;
 
-export function size(path: DataSetPath$): number;
+export function length(path: DataSetPath$): number;
 
-export function is_empty(path: DataSetPath$): boolean;
+export function is_root(path: DataSetPath$): boolean;
 
 export function sequence_item_count(path: DataSetPath$): number;
 

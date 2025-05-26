@@ -35,8 +35,7 @@ declare class P10ReadContext extends _.CustomType {
     next_action: NextAction$,
     transfer_syntax: $transfer_syntax.TransferSyntax$,
     path: $data_set_path.DataSetPath$,
-    location: _.List<$p10_location.LocationEntry$>,
-    sequence_depth: number
+    location: _.List<$p10_location.LocationEntry$>
   );
   
   config: P10ReadConfig$;
@@ -45,7 +44,6 @@ declare class P10ReadContext extends _.CustomType {
   transfer_syntax: $transfer_syntax.TransferSyntax$;
   path: $data_set_path.DataSetPath$;
   location: _.List<$p10_location.LocationEntry$>;
-  sequence_depth: number;
 }
 
 export type P10ReadContext$ = P10ReadContext;

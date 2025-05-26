@@ -48,7 +48,7 @@ export class P10ReadConfig extends $CustomType {
 }
 
 class P10ReadContext extends $CustomType {
-  constructor(config, stream, next_action, transfer_syntax, path, location, sequence_depth) {
+  constructor(config, stream, next_action, transfer_syntax, path, location) {
     super();
     this.config = config;
     this.stream = stream;
@@ -56,7 +56,6 @@ class P10ReadContext extends $CustomType {
     this.transfer_syntax = transfer_syntax;
     this.path = path;
     this.location = location;
-    this.sequence_depth = sequence_depth;
   }
 }
 
@@ -115,7 +114,6 @@ export function with_config(context, config) {
     _record$1.transfer_syntax,
     _record$1.path,
     _record$1.location,
-    _record$1.sequence_depth,
   );
 }
 
@@ -128,7 +126,6 @@ export function set_fallback_transfer_syntax(context, transfer_syntax) {
     transfer_syntax,
     _record.path,
     _record.location,
-    _record.sequence_depth,
   );
 }
 
@@ -144,7 +141,6 @@ export function new_read_context() {
     $transfer_syntax.implicit_vr_little_endian,
     $data_set_path.new$(),
     $p10_location.new$(),
-    0,
   );
 }
 
@@ -156,56 +152,48 @@ function next_delimiter_token(context) {
     let new_location = $[0][1];
     let _block;
     if (token instanceof $p10_token.SequenceDelimiter) {
-      _block = context.sequence_depth - 1;
-    } else {
-      _block = context.sequence_depth;
-    }
-    let new_sequence_depth = _block;
-    let _block$1;
-    if (token instanceof $p10_token.SequenceDelimiter) {
       let $1 = $data_set_path.pop(context.path);
       if (!$1.isOk()) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          349,
+          341,
           "next_delimiter_token",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
         )
       }
       let path = $1[0];
-      _block$1 = path;
+      _block = path;
     } else if (token instanceof $p10_token.SequenceItemDelimiter) {
       let $1 = $data_set_path.pop(context.path);
       if (!$1.isOk()) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          349,
+          341,
           "next_delimiter_token",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
         )
       }
       let path = $1[0];
-      _block$1 = path;
+      _block = path;
     } else {
-      _block$1 = context.path;
+      _block = context.path;
     }
-    let new_path = _block$1;
-    let _block$2;
+    let new_path = _block;
+    let _block$1;
     let _record = context;
-    _block$2 = new P10ReadContext(
+    _block$1 = new P10ReadContext(
       _record.config,
       _record.stream,
       _record.next_action,
       _record.transfer_syntax,
       new_path,
       new_location,
-      new_sequence_depth,
     );
-    let new_context = _block$2;
+    let new_context = _block$1;
     return [toList([token]), new_context];
   } else {
     return [toList([]), context];
@@ -246,7 +234,6 @@ function check_data_element_ordering(context, header) {
         _record.transfer_syntax,
         _record.path,
         new_location,
-        _record.sequence_depth,
       );
     },
   );
@@ -348,7 +335,6 @@ export function write_bytes(context, bytes, done) {
           _record.transfer_syntax,
           _record.path,
           _record.location,
-          _record.sequence_depth,
         );
       })(),
     );
@@ -380,7 +366,7 @@ function read_file_preamble_and_dicm_prefix_token(context) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          382,
+          369,
           "read_file_preamble_and_dicm_prefix_token",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
@@ -413,7 +399,6 @@ function read_file_preamble_and_dicm_prefix_token(context) {
         _record.transfer_syntax,
         _record.path,
         _record.location,
-        _record.sequence_depth,
       );
       let new_context = _block$1;
       return new Ok([toList([token]), new_context]);
@@ -459,7 +444,7 @@ function read_file_meta_information_data_set(
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              497,
+              484,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: data }
@@ -525,7 +510,7 @@ function read_file_meta_information_data_set(
                               throw makeError(
                                 "let_assert",
                                 "dcmfx_p10/p10_read",
-                                555,
+                                542,
                                 "",
                                 "Pattern match failed, no pattern matched the value.",
                                 { value: data }
@@ -541,7 +526,7 @@ function read_file_meta_information_data_set(
                                 throw makeError(
                                   "let_assert",
                                   "dcmfx_p10/p10_read",
-                                  563,
+                                  550,
                                   "",
                                   "Pattern match failed, no pattern matched the value.",
                                   { value: data$1 }
@@ -612,7 +597,7 @@ function read_file_meta_information_data_set(
                                         throw makeError(
                                           "let_assert",
                                           "dcmfx_p10/p10_read",
-                                          607,
+                                          594,
                                           "",
                                           "Pattern match failed, no pattern matched the value.",
                                           { value: $1 }
@@ -761,7 +746,6 @@ function read_file_meta_information_data_set(
                                                 transfer_syntax,
                                                 _record.path,
                                                 _record.location,
-                                                _record.sequence_depth,
                                               );
                                               let new_context = _block$8;
                                               return read_file_meta_information_data_set(
@@ -846,7 +830,7 @@ function read_file_meta_information_token(context, starts_at) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                454,
+                441,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: $2 }
@@ -865,7 +849,6 @@ function read_file_meta_information_token(context, starts_at) {
             _record.transfer_syntax,
             _record.path,
             _record.location,
-            _record.sequence_depth,
           );
           let new_context$1 = _block$2;
           return [fmi_data_set$1, new_context$1];
@@ -887,7 +870,7 @@ function read_implicit_vr_and_length(context, tag) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1139,
+          1119,
           "read_implicit_vr_and_length",
           "Pattern match failed, no pattern matched the value.",
           { value: data }
@@ -900,7 +883,7 @@ function read_implicit_vr_and_length(context, tag) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1143,
+          1123,
           "read_implicit_vr_and_length",
           "Pattern match failed, no pattern matched the value.",
           { value: data }
@@ -944,7 +927,7 @@ function read_explicit_vr_and_length(context, tag) {
       throw makeError(
         "let_assert",
         "dcmfx_p10/p10_read",
-        1180,
+        1160,
         "read_explicit_vr_and_length",
         "Pattern match failed, no pattern matched the value.",
         { value: data }
@@ -1008,7 +991,7 @@ function read_explicit_vr_and_length(context, tag) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                1231,
+                1211,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: data }
@@ -1021,7 +1004,7 @@ function read_explicit_vr_and_length(context, tag) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                1235,
+                1215,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: data }
@@ -1037,7 +1020,7 @@ function read_explicit_vr_and_length(context, tag) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                1242,
+                1222,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: data }
@@ -1050,7 +1033,7 @@ function read_explicit_vr_and_length(context, tag) {
               throw makeError(
                 "let_assert",
                 "dcmfx_p10/p10_read",
-                1246,
+                1226,
                 "",
                 "Pattern match failed, no pattern matched the value.",
                 { value: data }
@@ -1094,7 +1077,7 @@ function read_data_element_header(context) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1037,
+          1015,
           "read_data_element_header",
           "Pattern match failed, no pattern matched the value.",
           { value: data }
@@ -1108,7 +1091,7 @@ function read_data_element_header(context) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1042,
+          1020,
           "read_data_element_header",
           "Pattern match failed, no pattern matched the value.",
           { value: data }
@@ -1159,7 +1142,9 @@ function read_data_element_header(context) {
         new Error(
           new $p10_error.DataInvalid(
             "Reading data element header",
-            "File Meta Information data element found in the main data set",
+            ("File Meta Information data element '" + $data_element_tag.to_string(
+              tag,
+            )) + "' found in the main data set",
             context.path,
             $byte_stream.bytes_read(context.stream),
           ),
@@ -1220,10 +1205,6 @@ function read_data_element_header_token(context) {
             return $result.try$(
               check_data_element_ordering(context, header),
               (context) => {
-                let token = new $p10_token.SequenceStart(
-                  tag,
-                  new $value_representation.Sequence(),
-                );
                 let _block$1;
                 let $3 = header.length;
                 if ($3 instanceof $value_length.Defined) {
@@ -1262,7 +1243,7 @@ function read_data_element_header_token(context) {
                   new_location,
                   (new_location) => {
                     let _block$3;
-                    let $4 = context.sequence_depth < context.config.max_sequence_depth;
+                    let $4 = (divideInt($data_set_path.length(context.path), 2)) < context.config.max_sequence_depth;
                     if ($4) {
                       _block$3 = new Ok(undefined);
                     } else {
@@ -1286,13 +1267,18 @@ function read_data_element_header_token(context) {
                           throw makeError(
                             "let_assert",
                             "dcmfx_p10/p10_read",
-                            768,
+                            754,
                             "",
                             "Pattern match failed, no pattern matched the value.",
                             { value: $5 }
                           )
                         }
                         let new_path = $5[0];
+                        let token = new $p10_token.SequenceStart(
+                          tag,
+                          new $value_representation.Sequence(),
+                          new_path,
+                        );
                         let _block$4;
                         let _record = context;
                         _block$4 = new P10ReadContext(
@@ -1302,7 +1288,6 @@ function read_data_element_header_token(context) {
                           _record.transfer_syntax,
                           new_path,
                           new_location,
-                          context.sequence_depth + 1,
                         );
                         let new_context = _block$4;
                         return new Ok([toList([token]), new_context]);
@@ -1319,10 +1304,6 @@ function read_data_element_header_token(context) {
             return $result.try$(
               check_data_element_ordering(context, header),
               (context) => {
-                let token = new $p10_token.SequenceStart(
-                  tag,
-                  new $value_representation.Sequence(),
-                );
                 let _block$1;
                 let $3 = header.length;
                 if ($3 instanceof $value_length.Defined) {
@@ -1361,7 +1342,7 @@ function read_data_element_header_token(context) {
                   new_location,
                   (new_location) => {
                     let _block$3;
-                    let $4 = context.sequence_depth < context.config.max_sequence_depth;
+                    let $4 = (divideInt($data_set_path.length(context.path), 2)) < context.config.max_sequence_depth;
                     if ($4) {
                       _block$3 = new Ok(undefined);
                     } else {
@@ -1385,13 +1366,18 @@ function read_data_element_header_token(context) {
                           throw makeError(
                             "let_assert",
                             "dcmfx_p10/p10_read",
-                            768,
+                            754,
                             "",
                             "Pattern match failed, no pattern matched the value.",
                             { value: $5 }
                           )
                         }
                         let new_path = $5[0];
+                        let token = new $p10_token.SequenceStart(
+                          tag,
+                          new $value_representation.Sequence(),
+                          new_path,
+                        );
                         let _block$4;
                         let _record = context;
                         _block$4 = new P10ReadContext(
@@ -1401,7 +1387,6 @@ function read_data_element_header_token(context) {
                           _record.transfer_syntax,
                           new_path,
                           new_location,
-                          context.sequence_depth + 1,
                         );
                         let new_context = _block$4;
                         return new Ok([toList([token]), new_context]);
@@ -1450,7 +1435,7 @@ function read_data_element_header_token(context) {
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    804,
+                    792,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $4 }
@@ -1466,7 +1451,6 @@ function read_data_element_header_token(context) {
                   _record.transfer_syntax,
                   new_path,
                   new_location$1,
-                  _record.sequence_depth,
                 );
                 let new_context = _block$3;
                 let token = new $p10_token.SequenceItemStart(index);
@@ -1482,7 +1466,6 @@ function read_data_element_header_token(context) {
               check_data_element_ordering(context, header),
               (context) => {
                 let vr$1 = vr[0];
-                let token = new $p10_token.SequenceStart(tag, vr$1);
                 let _block$1;
                 let _pipe = $p10_location.add_sequence(
                   context.location,
@@ -1510,13 +1493,18 @@ function read_data_element_header_token(context) {
                       throw makeError(
                         "let_assert",
                         "dcmfx_p10/p10_read",
-                        843,
+                        830,
                         "",
                         "Pattern match failed, no pattern matched the value.",
                         { value: $3 }
                       )
                     }
                     let new_path = $3[0];
+                    let token = new $p10_token.SequenceStart(
+                      tag,
+                      vr$1,
+                      new_path,
+                    );
                     let _block$2;
                     let _record = context;
                     _block$2 = new P10ReadContext(
@@ -1526,7 +1514,6 @@ function read_data_element_header_token(context) {
                       _record.transfer_syntax,
                       new_path,
                       new_location,
-                      _record.sequence_depth,
                     );
                     let new_context = _block$2;
                     return new Ok([toList([token]), new_context]);
@@ -1543,7 +1530,6 @@ function read_data_element_header_token(context) {
               check_data_element_ordering(context, header),
               (context) => {
                 let vr$1 = vr[0];
-                let token = new $p10_token.SequenceStart(tag, vr$1);
                 let _block$1;
                 let _pipe = $p10_location.add_sequence(
                   context.location,
@@ -1571,13 +1557,18 @@ function read_data_element_header_token(context) {
                       throw makeError(
                         "let_assert",
                         "dcmfx_p10/p10_read",
-                        843,
+                        830,
                         "",
                         "Pattern match failed, no pattern matched the value.",
                         { value: $3 }
                       )
                     }
                     let new_path = $3[0];
+                    let token = new $p10_token.SequenceStart(
+                      tag,
+                      vr$1,
+                      new_path,
+                    );
                     let _block$2;
                     let _record = context;
                     _block$2 = new P10ReadContext(
@@ -1587,7 +1578,6 @@ function read_data_element_header_token(context) {
                       _record.transfer_syntax,
                       new_path,
                       new_location,
-                      _record.sequence_depth,
                     );
                     let new_context = _block$2;
                     return new Ok([toList([token]), new_context]);
@@ -1610,33 +1600,25 @@ function read_data_element_header_token(context) {
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  867,
+                  856,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $5 }
                 )
               }
               let new_path = $5[0];
-              let new_sequence_depth = context.sequence_depth - 1;
               _block$1 = [
                 toList([new $p10_token.SequenceDelimiter(tag$1)]),
                 new_path,
                 new_location,
-                new_sequence_depth,
               ];
             } else {
-              _block$1 = [
-                toList([]),
-                context.path,
-                context.location,
-                context.sequence_depth,
-              ];
+              _block$1 = [toList([]), context.path, context.location];
             }
             let $3 = _block$1;
             let tokens = $3[0];
             let new_path = $3[1];
             let new_location = $3[2];
-            let new_sequence_depth = $3[3];
             let _block$2;
             let _record = context;
             _block$2 = new P10ReadContext(
@@ -1646,7 +1628,6 @@ function read_data_element_header_token(context) {
               _record.transfer_syntax,
               new_path,
               new_location,
-              new_sequence_depth,
             );
             let new_context = _block$2;
             return new Ok([tokens, new_context]);
@@ -1678,7 +1659,7 @@ function read_data_element_header_token(context) {
                   throw makeError(
                     "let_assert",
                     "dcmfx_p10/p10_read",
-                    922,
+                    899,
                     "",
                     "Pattern match failed, no pattern matched the value.",
                     { value: $3 }
@@ -1694,7 +1675,6 @@ function read_data_element_header_token(context) {
                   _record.transfer_syntax,
                   new_path,
                   new_location,
-                  _record.sequence_depth,
                 );
                 let new_context = _block$2;
                 return new Ok([toList([token]), new_context]);
@@ -1736,37 +1716,12 @@ function read_data_element_header_token(context) {
                 return $result.try$(
                   max_size_check_result,
                   (_) => {
-                    let emit_tokens = (!isEqual(
-                      header.tag,
-                      $dictionary.data_set_trailing_padding.tag
-                    )) && (header.tag.element !== 0x0);
                     let _block$2;
-                    let $4 = emit_tokens && !materialized_value_required;
-                    if ($4) {
-                      _block$2 = toList([
-                        new $p10_token.DataElementHeader(
-                          header.tag,
-                          vr$1,
-                          length,
-                        ),
-                      ]);
-                    } else {
-                      _block$2 = toList([]);
-                    }
-                    let tokens = _block$2;
-                    let next_action = new ReadDataElementValueBytes(
-                      header.tag,
-                      vr$1,
-                      length,
-                      length,
-                      emit_tokens,
-                    );
-                    let _block$3;
                     let _pipe = $data_set_path.add_data_element(
                       context.path,
                       tag,
                     );
-                    _block$3 = $result.map_error(
+                    _block$2 = $result.map_error(
                       _pipe,
                       (_) => {
                         return new $p10_error.DataInvalid(
@@ -1779,10 +1734,36 @@ function read_data_element_header_token(context) {
                         );
                       },
                     );
-                    let new_path = _block$3;
+                    let new_path = _block$2;
                     return $result.try$(
                       new_path,
                       (new_path) => {
+                        let emit_tokens = (!isEqual(
+                          header.tag,
+                          $dictionary.data_set_trailing_padding.tag
+                        )) && (header.tag.element !== 0x0);
+                        let _block$3;
+                        let $4 = emit_tokens && !materialized_value_required;
+                        if ($4) {
+                          _block$3 = toList([
+                            new $p10_token.DataElementHeader(
+                              header.tag,
+                              vr$1,
+                              length,
+                              new_path,
+                            ),
+                          ]);
+                        } else {
+                          _block$3 = toList([]);
+                        }
+                        let tokens = _block$3;
+                        let next_action = new ReadDataElementValueBytes(
+                          header.tag,
+                          vr$1,
+                          length,
+                          length,
+                          emit_tokens,
+                        );
                         let _block$4;
                         let _record = context;
                         _block$4 = new P10ReadContext(
@@ -1792,7 +1773,6 @@ function read_data_element_header_token(context) {
                           _record.transfer_syntax,
                           new_path,
                           _record.location,
-                          _record.sequence_depth,
                         );
                         let new_context = _block$4;
                         return new Ok([tokens, new_context]);
@@ -1886,7 +1866,12 @@ function read_data_element_value_bytes_token(
             if ($2) {
               _block$3 = new Ok(
                 toList([
-                  new $p10_token.DataElementHeader(tag, vr, length),
+                  new $p10_token.DataElementHeader(
+                    tag,
+                    vr,
+                    length,
+                    context.path,
+                  ),
                   value_bytes_token,
                 ]),
               );
@@ -1937,7 +1922,7 @@ function read_data_element_value_bytes_token(
                 throw makeError(
                   "let_assert",
                   "dcmfx_p10/p10_read",
-                  1367,
+                  1347,
                   "",
                   "Pattern match failed, no pattern matched the value.",
                   { value: $2 }
@@ -1958,7 +1943,6 @@ function read_data_element_value_bytes_token(
               _record.transfer_syntax,
               new_path,
               new_location,
-              _record.sequence_depth,
             );
             let new_context = _block$6;
             return new Ok([tokens, new_context]);
@@ -2003,7 +1987,7 @@ function read_pixel_data_item_token(context, vr) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_read",
-          1482,
+          1462,
           "read_pixel_data_item_token",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
@@ -2019,7 +2003,6 @@ function read_pixel_data_item_token(context, vr) {
         _record.transfer_syntax,
         new_path,
         _record.location,
-        _record.sequence_depth,
       );
       let new_context = _block$1;
       let token = new $p10_token.PixelDataItem(index, length);
@@ -2054,7 +2037,7 @@ function read_pixel_data_item_token(context, vr) {
             throw makeError(
               "let_assert",
               "dcmfx_p10/p10_read",
-              1516,
+              1496,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: $1 }
@@ -2071,7 +2054,6 @@ function read_pixel_data_item_token(context, vr) {
             _record.transfer_syntax,
             new_path,
             new_location$1,
-            _record.sequence_depth,
           );
           let new_context = _block$1;
           return new Ok([toList([token]), new_context]);

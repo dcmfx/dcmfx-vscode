@@ -2,6 +2,7 @@
 import * as $data_element_tag from "../../dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
 import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
+import * as $data_set_path from "../../dcmfx_core/dcmfx_core/data_set_path.mjs";
 import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../../dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
@@ -30,11 +31,12 @@ export class FileMetaInformation extends $CustomType {
 }
 
 export class DataElementHeader extends $CustomType {
-  constructor(tag, vr, length) {
+  constructor(tag, vr, length, path) {
     super();
     this.tag = tag;
     this.vr = vr;
     this.length = length;
+    this.path = path;
   }
 }
 
@@ -49,10 +51,11 @@ export class DataElementValueBytes extends $CustomType {
 }
 
 export class SequenceStart extends $CustomType {
-  constructor(tag, vr) {
+  constructor(tag, vr, path) {
     super();
     this.tag = tag;
     this.vr = vr;
+    this.path = path;
   }
 }
 
@@ -154,7 +157,13 @@ export function is_header_token(token) {
   }
 }
 
-export function data_element_to_tokens(tag, value, context, token_callback) {
+export function data_element_to_tokens(
+  tag,
+  value,
+  path,
+  context,
+  token_callback
+) {
   let vr = $data_element_value.value_representation(value);
   let $ = $data_element_value.bytes(value);
   if ($.isOk()) {
@@ -163,6 +172,7 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
       tag,
       vr,
       $bit_array.byte_size(bytes),
+      path,
     );
     return $result.try$(
       token_callback(context, header_token),
@@ -177,7 +187,7 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
     let $1 = $data_element_value.encapsulated_pixel_data(value);
     if ($1.isOk()) {
       let items = $1[0];
-      let header_token = new SequenceStart(tag, vr);
+      let header_token = new SequenceStart(tag, vr, path);
       return $result.try$(
         token_callback(context, header_token),
         (context) => {
@@ -225,14 +235,14 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
         throw makeError(
           "let_assert",
           "dcmfx_p10/p10_token",
-          226,
+          237,
           "data_element_to_tokens",
           "Pattern match failed, no pattern matched the value.",
           { value: $2 }
         )
       }
       let items = $2[0];
-      let header_token = new SequenceStart(tag, vr);
+      let header_token = new SequenceStart(tag, vr, path);
       return $result.try$(
         token_callback(context, header_token),
         (context) => {
@@ -249,8 +259,25 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
               return $result.try$(
                 context$2,
                 (context) => {
+                  let $3 = $data_set_path.add_sequence_item(path, index);
+                  if (!$3.isOk()) {
+                    throw makeError(
+                      "let_assert",
+                      "dcmfx_p10/p10_token",
+                      251,
+                      "",
+                      "Pattern match failed, no pattern matched the value.",
+                      { value: $3 }
+                    )
+                  }
+                  let path$1 = $3[0];
                   return $result.try$(
-                    data_elements_to_tokens(item, context, token_callback),
+                    data_elements_to_tokens(
+                      item,
+                      path$1,
+                      context,
+                      token_callback,
+                    ),
                     (context) => {
                       let item_delimiter_token = new SequenceItemDelimiter();
                       return $result.map(
@@ -277,13 +304,25 @@ export function data_element_to_tokens(tag, value, context, token_callback) {
   }
 }
 
-export function data_elements_to_tokens(data_set, context, token_callback) {
+export function data_elements_to_tokens(data_set, path, context, token_callback) {
   let _pipe = data_set;
   return $data_set.try_fold(
     _pipe,
     context,
     (context, tag, value) => {
-      return data_element_to_tokens(tag, value, context, token_callback);
+      let $ = $data_set_path.add_data_element(path, tag);
+      if (!$.isOk()) {
+        throw makeError(
+          "let_assert",
+          "dcmfx_p10/p10_token",
+          170,
+          "",
+          "Pattern match failed, no pattern matched the value.",
+          { value: $ }
+        )
+      }
+      let path$1 = $[0];
+      return data_element_to_tokens(tag, value, path$1, context, token_callback);
     },
   );
 }

@@ -67,29 +67,31 @@ export function data_element_header_to_bytes(
   context: P10WriteContext$
 ): _.Result<_.BitArray, $p10_error.P10Error$>;
 
-export function data_set_to_tokens<CBGT, CBGU>(
+export function data_set_to_tokens<CBHR, CBHS>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  callback_context: CBGT,
-  token_callback: (x0: CBGT, x1: $p10_token.P10Token$) => _.Result<CBGT, CBGU>
-): _.Result<CBGT, CBGU>;
+  path: $data_set_path.DataSetPath$,
+  callback_context: CBHR,
+  token_callback: (x0: CBHR, x1: $p10_token.P10Token$) => _.Result<CBHR, CBHS>
+): _.Result<CBHR, CBHS>;
 
 export function write_token(
   context: P10WriteContext$,
   token: $p10_token.P10Token$
 ): _.Result<P10WriteContext$, $p10_error.P10Error$>;
 
-export function data_set_to_bytes<CBGZ>(
+export function data_set_to_bytes<CBHX>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  context: CBGZ,
-  bytes_callback: (x0: CBGZ, x1: _.BitArray) => _.Result<
-    CBGZ,
+  path: $data_set_path.DataSetPath$,
+  context: CBHX,
+  bytes_callback: (x0: CBHX, x1: _.BitArray) => _.Result<
+    CBHX,
     $p10_error.P10Error$
   >,
   config: P10WriteConfig$
-): _.Result<CBGZ, $p10_error.P10Error$>;
+): _.Result<CBHX, $p10_error.P10Error$>;

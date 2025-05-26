@@ -14,7 +14,6 @@ declare class P10FilterTransform extends _.CustomType {
       x2: $option.Option$<number>,
       x3: $data_set_path.DataSetPath$
     ) => boolean,
-    path: $data_set_path.DataSetPath$,
     path_filter_results: _.List<boolean>
   );
   
@@ -24,7 +23,6 @@ declare class P10FilterTransform extends _.CustomType {
     x2: $option.Option$<number>,
     x3: $data_set_path.DataSetPath$
   ) => boolean;
-  path: $data_set_path.DataSetPath$;
   path_filter_results: _.List<boolean>;
 }
 
@@ -46,9 +44,9 @@ export function new$(
   ) => boolean
 ): P10FilterTransform$;
 
-export function is_at_root(context: P10FilterTransform$): boolean;
+export function is_at_root(transform: P10FilterTransform$): boolean;
 
 export function add_token(
-  context: P10FilterTransform$,
+  transform: P10FilterTransform$,
   token: $p10_token.P10Token$
 ): _.Result<[boolean, P10FilterTransform$], $p10_error.P10Error$>;

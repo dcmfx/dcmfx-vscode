@@ -8,34 +8,27 @@ import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $p10_error from "../../dcmfx_p10/p10_error.mjs";
 import * as $p10_token from "../../dcmfx_p10/p10_token.mjs";
-import {
-  Ok,
-  toList,
-  prepend as listPrepend,
-  CustomType as $CustomType,
-  makeError,
-} from "../../gleam.mjs";
+import { Ok, toList, prepend as listPrepend, CustomType as $CustomType } from "../../gleam.mjs";
 
 class P10FilterTransform extends $CustomType {
-  constructor(predicate, path, path_filter_results) {
+  constructor(predicate, path_filter_results) {
     super();
     this.predicate = predicate;
-    this.path = path;
     this.path_filter_results = path_filter_results;
   }
 }
 
 export function new$(predicate) {
-  return new P10FilterTransform(predicate, $data_set_path.new$(), toList([]));
+  return new P10FilterTransform(predicate, toList([]));
 }
 
-export function is_at_root(context) {
-  return $data_set_path.is_empty(context.path);
+export function is_at_root(transform) {
+  return $list.length(transform.path_filter_results) <= 1;
 }
 
-export function add_token(context, token) {
+export function add_token(transform, token) {
   let _block;
-  let $ = context.path_filter_results;
+  let $ = transform.path_filter_results;
   if ($.atLeastLength(1)) {
     let filter_result = $.head;
     _block = filter_result;
@@ -43,189 +36,149 @@ export function add_token(context, token) {
     _block = true;
   }
   let current_filter_state = _block;
-  let map_data_set_path_error = (details) => {
-    return new $p10_error.TokenStreamInvalid(
-      "Filtering P10 token stream",
-      details,
-      token,
-    );
-  };
-  let run_predicate = (tag, vr, length) => {
+  let run_predicate = (tag, vr, length, path) => {
     let _block$1;
-    let $1 = context.path_filter_results;
+    let $1 = transform.path_filter_results;
     if ($1.hasLength(0)) {
-      _block$1 = context.predicate(tag, vr, length, context.path);
+      _block$1 = transform.predicate(tag, vr, length, path);
     } else if ($1.atLeastLength(1) && $1.head) {
-      _block$1 = context.predicate(tag, vr, length, context.path);
+      _block$1 = transform.predicate(tag, vr, length, path);
     } else {
       _block$1 = false;
     }
     let filter_result = _block$1;
-    let _block$2;
-    let _pipe = context.path;
-    let _pipe$1 = $data_set_path.add_data_element(_pipe, tag);
-    _block$2 = $result.map_error(_pipe$1, map_data_set_path_error);
-    let path = _block$2;
-    return $result.map(
-      path,
-      (path) => {
-        let path_filter_results = listPrepend(
-          filter_result,
-          context.path_filter_results,
-        );
-        let _block$3;
-        let _record = context;
-        _block$3 = new P10FilterTransform(
-          _record.predicate,
-          path,
-          path_filter_results,
-        );
-        let new_context = _block$3;
-        return [filter_result, new_context];
-      },
+    let path_filter_results = listPrepend(
+      filter_result,
+      transform.path_filter_results,
     );
+    let _block$2;
+    let _record = transform;
+    _block$2 = new P10FilterTransform(_record.predicate, path_filter_results);
+    let new_transform = _block$2;
+    return new Ok([filter_result, new_transform]);
   };
-  if (token instanceof $p10_token.SequenceStart) {
+  if (token instanceof $p10_token.FilePreambleAndDICMPrefix) {
+    return new Ok([true, transform]);
+  } else if (token instanceof $p10_token.FileMetaInformation) {
+    return new Ok([true, transform]);
+  } else if (token instanceof $p10_token.SequenceStart) {
     let tag = token.tag;
     let vr = token.vr;
-    return run_predicate(tag, vr, new None());
+    let path = token.path;
+    return run_predicate(tag, vr, new None(), path);
+  } else if (token instanceof $p10_token.SequenceDelimiter) {
+    let _block$1;
+    let _pipe = $list.rest(transform.path_filter_results);
+    _block$1 = $result.map_error(
+      _pipe,
+      (_) => {
+        return new $p10_error.TokenStreamInvalid(
+          "Adding token to filter transform",
+          "Sequence delimiter received when current path is empty",
+          token,
+        );
+      },
+    );
+    let path_filter_results = _block$1;
+    return $result.map(
+      path_filter_results,
+      (path_filter_results) => {
+        let _block$2;
+        let _record = transform;
+        _block$2 = new P10FilterTransform(
+          _record.predicate,
+          path_filter_results,
+        );
+        let new_transform = _block$2;
+        return [current_filter_state, new_transform];
+      },
+    );
+  } else if (token instanceof $p10_token.SequenceItemStart) {
+    let path_filter_results = listPrepend(
+      current_filter_state,
+      transform.path_filter_results,
+    );
+    let _block$1;
+    let _record = transform;
+    _block$1 = new P10FilterTransform(_record.predicate, path_filter_results);
+    let new_transform = _block$1;
+    return new Ok([current_filter_state, new_transform]);
+  } else if (token instanceof $p10_token.SequenceItemDelimiter) {
+    let _block$1;
+    let _pipe = $list.rest(transform.path_filter_results);
+    _block$1 = $result.map_error(
+      _pipe,
+      (_) => {
+        return new $p10_error.TokenStreamInvalid(
+          "Adding token to filter transform",
+          "Sequence item delimiter received when current path is empty",
+          token,
+        );
+      },
+    );
+    let path_filter_results = _block$1;
+    return $result.map(
+      path_filter_results,
+      (path_filter_results) => {
+        let _block$2;
+        let _record = transform;
+        _block$2 = new P10FilterTransform(
+          _record.predicate,
+          path_filter_results,
+        );
+        let new_transform = _block$2;
+        return [current_filter_state, new_transform];
+      },
+    );
   } else if (token instanceof $p10_token.DataElementHeader) {
     let tag = token.tag;
     let vr = token.vr;
     let length = token.length;
-    return run_predicate(tag, vr, new Some(length));
-  } else if (token instanceof $p10_token.SequenceItemStart) {
-    let index = token.index;
+    let path = token.path;
+    return run_predicate(tag, vr, new Some(length), path);
+  } else if (token instanceof $p10_token.DataElementValueBytes) {
+    let bytes_remaining = token.bytes_remaining;
     let _block$1;
-    let _pipe = context.path;
-    let _pipe$1 = $data_set_path.add_sequence_item(_pipe, index);
-    _block$1 = $result.map_error(_pipe$1, map_data_set_path_error);
-    let path = _block$1;
+    if (bytes_remaining === 0) {
+      let _pipe = $list.rest(transform.path_filter_results);
+      _block$1 = $result.map_error(
+        _pipe,
+        (_) => {
+          return new $p10_error.TokenStreamInvalid(
+            "Adding token to filter transform",
+            "Data element bytes ended when current path is empty",
+            token,
+          );
+        },
+      );
+    } else {
+      _block$1 = new Ok(transform.path_filter_results);
+    }
+    let path_filter_results = _block$1;
     return $result.map(
-      path,
-      (path) => {
+      path_filter_results,
+      (path_filter_results) => {
         let _block$2;
-        let _record = context;
+        let _record = transform;
         _block$2 = new P10FilterTransform(
           _record.predicate,
-          path,
-          _record.path_filter_results,
+          path_filter_results,
         );
-        let new_context = _block$2;
-        return [current_filter_state, new_context];
-      },
-    );
-  } else if (token instanceof $p10_token.SequenceItemDelimiter) {
-    let _block$1;
-    let _pipe = context.path;
-    let _pipe$1 = $data_set_path.pop(_pipe);
-    _block$1 = $result.map_error(_pipe$1, map_data_set_path_error);
-    let path = _block$1;
-    return $result.map(
-      path,
-      (path) => {
-        let _block$2;
-        let _record = context;
-        _block$2 = new P10FilterTransform(
-          _record.predicate,
-          path,
-          _record.path_filter_results,
-        );
-        let new_context = _block$2;
-        return [current_filter_state, new_context];
+        let new_transform = _block$2;
+        return [current_filter_state, new_transform];
       },
     );
   } else if (token instanceof $p10_token.PixelDataItem) {
-    let index = token.index;
-    let _block$1;
-    let _pipe = context.path;
-    let _pipe$1 = $data_set_path.add_sequence_item(_pipe, index);
-    _block$1 = $result.map_error(_pipe$1, map_data_set_path_error);
-    let path = _block$1;
-    return $result.map(
-      path,
-      (path) => {
-        let path_filter_results = listPrepend(
-          current_filter_state,
-          context.path_filter_results,
-        );
-        let _block$2;
-        let _record = context;
-        _block$2 = new P10FilterTransform(
-          _record.predicate,
-          path,
-          path_filter_results,
-        );
-        let new_context = _block$2;
-        return [current_filter_state, new_context];
-      },
+    let path_filter_results = listPrepend(
+      current_filter_state,
+      transform.path_filter_results,
     );
-  } else if (token instanceof $p10_token.SequenceDelimiter) {
     let _block$1;
-    let _pipe = context.path;
-    let _pipe$1 = $data_set_path.pop(_pipe);
-    _block$1 = $result.map_error(_pipe$1, map_data_set_path_error);
-    let path = _block$1;
-    return $result.map(
-      path,
-      (path) => {
-        let $1 = $list.rest(context.path_filter_results);
-        if (!$1.isOk()) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_p10/transforms/p10_filter_transform",
-            155,
-            "",
-            "Pattern match failed, no pattern matched the value.",
-            { value: $1 }
-          )
-        }
-        let path_filter_results = $1[0];
-        let _block$2;
-        let _record = context;
-        _block$2 = new P10FilterTransform(
-          _record.predicate,
-          path,
-          path_filter_results,
-        );
-        let new_context = _block$2;
-        return [current_filter_state, new_context];
-      },
-    );
-  } else if (token instanceof $p10_token.DataElementValueBytes &&
-  token.bytes_remaining === 0) {
-    let _block$1;
-    let _pipe = context.path;
-    let _pipe$1 = $data_set_path.pop(_pipe);
-    _block$1 = $result.map_error(_pipe$1, map_data_set_path_error);
-    let path = _block$1;
-    return $result.map(
-      path,
-      (path) => {
-        let $1 = $list.rest(context.path_filter_results);
-        if (!$1.isOk()) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_p10/transforms/p10_filter_transform",
-            155,
-            "",
-            "Pattern match failed, no pattern matched the value.",
-            { value: $1 }
-          )
-        }
-        let path_filter_results = $1[0];
-        let _block$2;
-        let _record = context;
-        _block$2 = new P10FilterTransform(
-          _record.predicate,
-          path,
-          path_filter_results,
-        );
-        let new_context = _block$2;
-        return [current_filter_state, new_context];
-      },
-    );
+    let _record = transform;
+    _block$1 = new P10FilterTransform(_record.predicate, path_filter_results);
+    let new_transform = _block$1;
+    return new Ok([current_filter_state, new_transform]);
   } else {
-    return new Ok([current_filter_state, context]);
+    return new Ok([true, transform]);
   }
 }

@@ -1,25 +1,25 @@
-/// <reference types="./p10_pixel_data_frame_filter.d.mts" />
-import * as $bigi from "../../bigi/bigi.mjs";
-import * as $data_element_value from "../../dcmfx_core/dcmfx_core/data_element_value.mjs";
-import * as $data_error from "../../dcmfx_core/dcmfx_core/data_error.mjs";
-import * as $data_set from "../../dcmfx_core/dcmfx_core/data_set.mjs";
-import * as $data_set_path from "../../dcmfx_core/dcmfx_core/data_set_path.mjs";
-import * as $dictionary from "../../dcmfx_core/dcmfx_core/dictionary.mjs";
-import * as $bit_array_utils from "../../dcmfx_core/dcmfx_core/internal/bit_array_utils.mjs";
-import * as $value_representation from "../../dcmfx_core/dcmfx_core/value_representation.mjs";
-import * as $p10_error from "../../dcmfx_p10/dcmfx_p10/p10_error.mjs";
-import * as $p10_token from "../../dcmfx_p10/dcmfx_p10/p10_token.mjs";
-import * as $p10_custom_type_transform from "../../dcmfx_p10/dcmfx_p10/transforms/p10_custom_type_transform.mjs";
-import * as $p10_filter_transform from "../../dcmfx_p10/dcmfx_p10/transforms/p10_filter_transform.mjs";
-import * as $deque from "../../gleam_deque/gleam/deque.mjs";
-import * as $bit_array from "../../gleam_stdlib/gleam/bit_array.mjs";
-import * as $bool from "../../gleam_stdlib/gleam/bool.mjs";
-import * as $int from "../../gleam_stdlib/gleam/int.mjs";
-import * as $list from "../../gleam_stdlib/gleam/list.mjs";
-import * as $option from "../../gleam_stdlib/gleam/option.mjs";
-import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
-import * as $result from "../../gleam_stdlib/gleam/result.mjs";
-import * as $pixel_data_frame from "../dcmfx_pixel_data/pixel_data_frame.mjs";
+/// <reference types="./p10_pixel_data_frame_transform.d.mts" />
+import * as $bigi from "../../../bigi/bigi.mjs";
+import * as $data_element_value from "../../../dcmfx_core/dcmfx_core/data_element_value.mjs";
+import * as $data_error from "../../../dcmfx_core/dcmfx_core/data_error.mjs";
+import * as $data_set from "../../../dcmfx_core/dcmfx_core/data_set.mjs";
+import * as $data_set_path from "../../../dcmfx_core/dcmfx_core/data_set_path.mjs";
+import * as $dictionary from "../../../dcmfx_core/dcmfx_core/dictionary.mjs";
+import * as $bit_array_utils from "../../../dcmfx_core/dcmfx_core/internal/bit_array_utils.mjs";
+import * as $value_representation from "../../../dcmfx_core/dcmfx_core/value_representation.mjs";
+import * as $p10_error from "../../../dcmfx_p10/dcmfx_p10/p10_error.mjs";
+import * as $p10_token from "../../../dcmfx_p10/dcmfx_p10/p10_token.mjs";
+import * as $p10_custom_type_transform from "../../../dcmfx_p10/dcmfx_p10/transforms/p10_custom_type_transform.mjs";
+import * as $p10_filter_transform from "../../../dcmfx_p10/dcmfx_p10/transforms/p10_filter_transform.mjs";
+import * as $deque from "../../../gleam_deque/gleam/deque.mjs";
+import * as $bit_array from "../../../gleam_stdlib/gleam/bit_array.mjs";
+import * as $bool from "../../../gleam_stdlib/gleam/bool.mjs";
+import * as $int from "../../../gleam_stdlib/gleam/int.mjs";
+import * as $list from "../../../gleam_stdlib/gleam/list.mjs";
+import * as $option from "../../../gleam_stdlib/gleam/option.mjs";
+import { None, Some } from "../../../gleam_stdlib/gleam/option.mjs";
+import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
+import * as $pixel_data_frame from "../../dcmfx_pixel_data/pixel_data_frame.mjs";
 import {
   Ok,
   Error,
@@ -32,9 +32,9 @@ import {
   isEqual,
   toBitArray,
   bitArraySlice,
-} from "../gleam.mjs";
+} from "../../gleam.mjs";
 
-class P10PixelDataFrameFilter extends $CustomType {
+class P10PixelDataFrameTransform extends $CustomType {
   constructor(is_encapsulated, details, pixel_data_filter, native_pixel_data_frame_size, pixel_data, pixel_data_write_offset, pixel_data_read_offset, offset_table, next_frame_index) {
     super();
     this.is_encapsulated = is_encapsulated;
@@ -49,7 +49,7 @@ class P10PixelDataFrameFilter extends $CustomType {
   }
 }
 
-class PixelDataFilterDetails extends $CustomType {
+class PixelDataFrameTransformDetails extends $CustomType {
   constructor(number_of_frames, rows, columns, bits_allocated, extended_offset_table, extended_offset_table_lengths) {
     super();
     this.number_of_frames = number_of_frames;
@@ -75,7 +75,7 @@ export class DataError extends $CustomType {
   }
 }
 
-function pixel_data_filter_details_from_data_set(data_set) {
+function pixel_data_frame_transform_details_from_data_set(data_set) {
   let number_of_frames = $data_set.get_int_with_default(
     data_set,
     $dictionary.number_of_frames.tag,
@@ -142,7 +142,7 @@ function pixel_data_filter_details_from_data_set(data_set) {
                         extended_offset_table_lengths,
                         (extended_offset_table_lengths) => {
                           return new Ok(
-                            new PixelDataFilterDetails(
+                            new PixelDataFrameTransformDetails(
                               number_of_frames,
                               rows,
                               columns,
@@ -175,16 +175,16 @@ export function new$() {
       $dictionary.extended_offset_table.tag,
       $dictionary.extended_offset_table_lengths.tag,
     ]),
-    pixel_data_filter_details_from_data_set,
+    pixel_data_frame_transform_details_from_data_set,
   );
   let pixel_data_filter = $p10_filter_transform.new$(
     (tag, _, _1, path) => {
-      return (isEqual(tag, $dictionary.pixel_data.tag)) && $data_set_path.is_empty(
+      return (isEqual(tag, $dictionary.pixel_data.tag)) && $data_set_path.is_root(
         path,
       );
     },
   );
-  return new P10PixelDataFrameFilter(
+  return new P10PixelDataFrameTransform(
     false,
     details,
     pixel_data_filter,
@@ -197,8 +197,8 @@ export function new$() {
   );
 }
 
-function get_number_of_frames(filter) {
-  let $ = $p10_custom_type_transform.get_output(filter.details);
+function get_number_of_frames(transform) {
+  let $ = $p10_custom_type_transform.get_output(transform.details);
   if ($ instanceof Some) {
     let details = $[0];
     return details.number_of_frames;
@@ -207,23 +207,23 @@ function get_number_of_frames(filter) {
   }
 }
 
-function get_pending_native_frame(loop$filter, loop$frame) {
+function get_pending_native_frame(loop$transform, loop$frame) {
   while (true) {
-    let filter = loop$filter;
+    let transform = loop$transform;
     let frame = loop$frame;
-    let frame_size = filter.native_pixel_data_frame_size;
+    let frame_size = transform.native_pixel_data_frame_size;
     let frame_length = $pixel_data_frame.length_in_bits(frame);
     let $ = frame_length < frame_size;
     if ($) {
       let _block;
-      let _pipe = filter.pixel_data;
+      let _pipe = transform.pixel_data;
       _block = $deque.pop_front(_pipe);
       let $1 = _block;
       if (!$1.isOk()) {
         throw makeError(
           "let_assert",
-          "dcmfx_pixel_data/p10_pixel_data_frame_filter",
-          427,
+          "dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform",
+          439,
           "get_pending_native_frame",
           "Pattern match failed, no pattern matched the value.",
           { value: $1 }
@@ -234,8 +234,8 @@ function get_pending_native_frame(loop$filter, loop$frame) {
       let pixel_data = $1[0][1];
       let chunk_length = $bit_array.byte_size(chunk);
       let _block$1;
-      let _record = filter;
-      _block$1 = new P10PixelDataFrameFilter(
+      let _record = transform;
+      _block$1 = new P10PixelDataFrameTransform(
         _record.is_encapsulated,
         _record.details,
         _record.pixel_data_filter,
@@ -246,36 +246,36 @@ function get_pending_native_frame(loop$filter, loop$frame) {
         _record.offset_table,
         _record.next_frame_index,
       );
-      let filter$1 = _block$1;
+      let transform$1 = _block$1;
       let $2 = (chunk_length * 8 - chunk_offset) <= (frame_size - frame_length);
       if ($2) {
         if (!(chunk.bitSize >= chunk_offset)) {
           throw makeError(
             "let_assert",
-            "dcmfx_pixel_data/p10_pixel_data_frame_filter",
-            437,
+            "dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform",
+            449,
             "get_pending_native_frame",
             "Pattern match failed, no pattern matched the value.",
             { value: chunk }
           )
         }
         let fragment = bitArraySlice(chunk, chunk_offset);
-        let frame$1 = $pixel_data_frame.push_fragment(frame, fragment);
+        let frame$1 = $pixel_data_frame.push_chunk(frame, fragment);
         let _block$2;
-        let _record$1 = filter$1;
-        _block$2 = new P10PixelDataFrameFilter(
+        let _record$1 = transform$1;
+        _block$2 = new P10PixelDataFrameTransform(
           _record$1.is_encapsulated,
           _record$1.details,
           _record$1.pixel_data_filter,
           _record$1.native_pixel_data_frame_size,
           pixel_data,
           _record$1.pixel_data_write_offset,
-          (filter$1.pixel_data_read_offset + chunk_length * 8) - chunk_offset,
+          (transform$1.pixel_data_read_offset + chunk_length * 8) - chunk_offset,
           _record$1.offset_table,
           _record$1.next_frame_index,
         );
-        let filter$2 = _block$2;
-        loop$filter = filter$2;
+        let transform$2 = _block$2;
+        loop$transform = transform$2;
         loop$frame = frame$1;
       } else {
         let length_in_bits = frame_size - frame_length;
@@ -289,8 +289,8 @@ function get_pending_native_frame(loop$filter, loop$frame) {
         ) {
           throw makeError(
             "let_assert",
-            "dcmfx_pixel_data/p10_pixel_data_frame_filter",
-            461,
+            "dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform",
+            473,
             "get_pending_native_frame",
             "Pattern match failed, no pattern matched the value.",
             { value: chunk }
@@ -299,49 +299,49 @@ function get_pending_native_frame(loop$filter, loop$frame) {
         let fragment = bitArraySlice(chunk, chunk_offset_in_bytes * 8, chunk_offset_in_bytes * 8 + fragment_length_in_bytes * 8);
         let _block$2;
         let _pipe$1 = frame;
-        _block$2 = $pixel_data_frame.push_fragment(_pipe$1, fragment);
+        _block$2 = $pixel_data_frame.push_chunk(_pipe$1, fragment);
         let frame$1 = _block$2;
         let _block$3;
-        let _pipe$2 = filter$1.pixel_data;
+        let _pipe$2 = transform$1.pixel_data;
         _block$3 = $deque.push_front(
           _pipe$2,
           [chunk, chunk_offset + length_in_bits],
         );
         let pixel_data$1 = _block$3;
         let _block$4;
-        let _record$1 = filter$1;
-        _block$4 = new P10PixelDataFrameFilter(
+        let _record$1 = transform$1;
+        _block$4 = new P10PixelDataFrameTransform(
           _record$1.is_encapsulated,
           _record$1.details,
           _record$1.pixel_data_filter,
           _record$1.native_pixel_data_frame_size,
           pixel_data$1,
           _record$1.pixel_data_write_offset,
-          filter$1.pixel_data_read_offset + length_in_bits,
+          transform$1.pixel_data_read_offset + length_in_bits,
           _record$1.offset_table,
           _record$1.next_frame_index,
         );
-        let filter$2 = _block$4;
-        return [frame$1, filter$2];
+        let transform$2 = _block$4;
+        return [frame$1, transform$2];
       }
     } else {
-      return [frame, filter];
+      return [frame, transform];
     }
   }
 }
 
-function get_pending_native_frames(loop$filter, loop$frames) {
+function get_pending_native_frames(loop$transform, loop$frames) {
   while (true) {
-    let filter = loop$filter;
+    let transform = loop$transform;
     let frames = loop$frames;
-    let $ = (filter.pixel_data_write_offset - filter.pixel_data_read_offset) < filter.native_pixel_data_frame_size;
+    let $ = (transform.pixel_data_write_offset - transform.pixel_data_read_offset) < transform.native_pixel_data_frame_size;
     if ($) {
-      return new Ok([$list.reverse(frames), filter]);
+      return new Ok([$list.reverse(frames), transform]);
     } else {
-      let frame_index = filter.next_frame_index;
+      let frame_index = transform.next_frame_index;
       let _block;
-      let _record = filter;
-      _block = new P10PixelDataFrameFilter(
+      let _record = transform;
+      _block = new P10PixelDataFrameTransform(
         _record.is_encapsulated,
         _record.details,
         _record.pixel_data_filter,
@@ -352,56 +352,69 @@ function get_pending_native_frames(loop$filter, loop$frames) {
         _record.offset_table,
         frame_index + 1,
       );
-      let filter$1 = _block;
+      let transform$1 = _block;
       let _block$1;
-      let _pipe = $pixel_data_frame.new$(frame_index);
+      let _pipe = $pixel_data_frame.new$();
+      let _pipe$1 = $pixel_data_frame.set_index(_pipe, frame_index);
       _block$1 = $pixel_data_frame.set_bit_offset(
-        _pipe,
-        remainderInt(filter$1.pixel_data_read_offset, 8),
+        _pipe$1,
+        remainderInt(transform$1.pixel_data_read_offset, 8),
       );
       let frame = _block$1;
-      let $1 = get_pending_native_frame(filter$1, frame);
+      let $1 = get_pending_native_frame(transform$1, frame);
       let frame$1 = $1[0];
-      let filter$2 = $1[1];
+      let transform$2 = $1[1];
+      let $2 = $pixel_data_frame.index(frame$1);
+      if (!($2 instanceof Some)) {
+        throw makeError(
+          "let_assert",
+          "dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform",
+          419,
+          "get_pending_native_frames",
+          "Pattern match failed, no pattern matched the value.",
+          { value: $2 }
+        )
+      }
+      let frame_index$1 = $2[0];
       let _block$2;
-      let $2 = $pixel_data_frame.index(frame$1) < get_number_of_frames(filter$2);
-      if ($2) {
+      let $3 = frame_index$1 < get_number_of_frames(transform$2);
+      if ($3) {
         _block$2 = listPrepend(frame$1, frames);
       } else {
         _block$2 = frames;
       }
       let frames$1 = _block$2;
-      loop$filter = filter$2;
+      loop$transform = transform$2;
       loop$frames = frames$1;
     }
   }
 }
 
 function get_pending_encapsulated_frame(
-  loop$filter,
+  loop$transform,
   loop$frame,
   loop$next_offset
 ) {
   while (true) {
-    let filter = loop$filter;
+    let transform = loop$transform;
     let frame = loop$frame;
     let next_offset = loop$next_offset;
-    let $ = filter.pixel_data_read_offset < next_offset;
+    let $ = transform.pixel_data_read_offset < next_offset;
     if ($) {
-      let $1 = $deque.pop_front(filter.pixel_data);
+      let $1 = $deque.pop_front(transform.pixel_data);
       if ($1.isOk()) {
         let chunk = $1[0][0][0];
         let pixel_data = $1[0][1];
         let _block;
         let _pipe = frame;
-        _block = $pixel_data_frame.push_fragment(_pipe, chunk);
+        _block = $pixel_data_frame.push_chunk(_pipe, chunk);
         let frame$1 = _block;
-        let pixel_data_read_offset = filter.pixel_data_read_offset + (8 + $bit_array.byte_size(
+        let pixel_data_read_offset = transform.pixel_data_read_offset + (8 + $bit_array.byte_size(
           chunk,
         )) * 8;
         let _block$1;
-        let _record = filter;
-        _block$1 = new P10PixelDataFrameFilter(
+        let _record = transform;
+        _block$1 = new P10PixelDataFrameTransform(
           _record.is_encapsulated,
           _record.details,
           _record.pixel_data_filter,
@@ -412,15 +425,15 @@ function get_pending_encapsulated_frame(
           _record.offset_table,
           _record.next_frame_index,
         );
-        let filter$1 = _block$1;
-        loop$filter = filter$1;
+        let transform$1 = _block$1;
+        loop$transform = transform$1;
         loop$frame = frame$1;
         loop$next_offset = next_offset;
       } else {
-        return [frame, filter];
+        return [frame, transform];
       }
     } else {
-      return [frame, filter];
+      return [frame, transform];
     }
   }
 }
@@ -444,7 +457,7 @@ function apply_length_to_frame(frame, frame_length) {
 }
 
 function get_pending_encapsulated_frames_using_offset_table(
-  filter,
+  transform,
   offset_table,
   frames
 ) {
@@ -452,13 +465,13 @@ function get_pending_encapsulated_frames_using_offset_table(
     let frame_length = offset_table.head[1];
     let offset = offset_table.tail.head[0];
     return $bool.guard(
-      filter.pixel_data_write_offset < offset * 8,
-      new Ok([frames, filter]),
+      transform.pixel_data_write_offset < offset * 8,
+      new Ok([frames, transform]),
       () => {
-        let frame_index = filter.next_frame_index;
+        let frame_index = transform.next_frame_index;
         let _block;
-        let _record = filter;
-        _block = new P10PixelDataFrameFilter(
+        let _record = transform;
+        _block = new P10PixelDataFrameTransform(
           _record.is_encapsulated,
           _record.details,
           _record.pixel_data_filter,
@@ -469,20 +482,23 @@ function get_pending_encapsulated_frames_using_offset_table(
           _record.offset_table,
           frame_index + 1,
         );
-        let filter$1 = _block;
+        let transform$1 = _block;
         let $ = get_pending_encapsulated_frame(
-          filter$1,
-          $pixel_data_frame.new$(frame_index),
+          transform$1,
+          (() => {
+            let _pipe = $pixel_data_frame.new$();
+            return $pixel_data_frame.set_index(_pipe, frame_index);
+          })(),
           offset * 8,
         );
         let frame = $[0];
-        let filter$2 = $[1];
+        let transform$2 = $[1];
         let $1 = $list.rest(offset_table);
         if (!$1.isOk()) {
           throw makeError(
             "let_assert",
-            "dcmfx_pixel_data/p10_pixel_data_frame_filter",
-            596,
+            "dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform",
+            613,
             "",
             "Pattern match failed, no pattern matched the value.",
             { value: $1 }
@@ -490,8 +506,8 @@ function get_pending_encapsulated_frames_using_offset_table(
         }
         let offset_table$1 = $1[0];
         let _block$1;
-        let _record$1 = filter$2;
-        _block$1 = new P10PixelDataFrameFilter(
+        let _record$1 = transform$2;
+        _block$1 = new P10PixelDataFrameTransform(
           _record$1.is_encapsulated,
           _record$1.details,
           _record$1.pixel_data_filter,
@@ -502,9 +518,9 @@ function get_pending_encapsulated_frames_using_offset_table(
           new Some(offset_table$1),
           _record$1.next_frame_index,
         );
-        let filter$3 = _block$1;
+        let transform$3 = _block$1;
         return $bool.guard(
-          filter$3.pixel_data_read_offset !== offset * 8,
+          transform$3.pixel_data_read_offset !== offset * 8,
           new Error(
             $data_error.new_value_invalid(
               "Pixel data offset table is malformed",
@@ -523,7 +539,7 @@ function get_pending_encapsulated_frames_using_offset_table(
               frame$1,
               (frame) => {
                 return get_pending_encapsulated_frames_using_offset_table(
-                  filter$3,
+                  transform$3,
                   offset_table$1,
                   listPrepend(frame, frames),
                 );
@@ -534,7 +550,7 @@ function get_pending_encapsulated_frames_using_offset_table(
       },
     );
   } else {
-    return new Ok([$list.reverse(frames), filter]);
+    return new Ok([$list.reverse(frames), transform]);
   }
 }
 
@@ -557,9 +573,9 @@ function is_list_sorted(loop$list) {
   }
 }
 
-function read_basic_offset_table(filter) {
+function read_basic_offset_table(transform) {
   let _block;
-  let _pipe = filter.pixel_data;
+  let _pipe = transform.pixel_data;
   let _pipe$1 = $deque.to_list(_pipe);
   let _pipe$2 = $list.map(_pipe$1, (chunk) => { return chunk[0]; });
   _block = $bit_array.concat(_pipe$2);
@@ -614,10 +630,10 @@ function read_basic_offset_table(filter) {
   );
 }
 
-function read_extended_offset_table(filter) {
-  let $ = $p10_custom_type_transform.get_output(filter.details);
+function read_extended_offset_table(transform) {
+  let $ = $p10_custom_type_transform.get_output(transform.details);
   if ($ instanceof Some &&
-  $[0] instanceof PixelDataFilterDetails &&
+  $[0] instanceof PixelDataFrameTransformDetails &&
   $[0].extended_offset_table instanceof Some &&
   $[0].extended_offset_table_lengths instanceof Some) {
     let extended_offset_table = $[0].extended_offset_table[0];
@@ -751,12 +767,12 @@ function read_extended_offset_table(filter) {
   }
 }
 
-function read_offset_table(filter) {
+function read_offset_table(transform) {
   return $result.try$(
-    read_basic_offset_table(filter),
+    read_basic_offset_table(transform),
     (basic_offset_table) => {
       return $result.try$(
-        read_extended_offset_table(filter),
+        read_extended_offset_table(transform),
         (extended_offset_table) => {
           if (basic_offset_table.hasLength(0)) {
             let _pipe = extended_offset_table;
@@ -779,15 +795,15 @@ function read_offset_table(filter) {
   );
 }
 
-function get_pending_encapsulated_frames(filter) {
-  let $ = filter.offset_table;
+function get_pending_encapsulated_frames(transform) {
+  let $ = transform.offset_table;
   if ($ instanceof None) {
     return $result.try$(
-      read_offset_table(filter),
+      read_offset_table(transform),
       (offset_table) => {
         let _block;
-        let _record = filter;
-        _block = new P10PixelDataFrameFilter(
+        let _record = transform;
+        _block = new P10PixelDataFrameTransform(
           _record.is_encapsulated,
           _record.details,
           _record.pixel_data_filter,
@@ -798,20 +814,20 @@ function get_pending_encapsulated_frames(filter) {
           new Some(offset_table),
           _record.next_frame_index,
         );
-        let filter$1 = _block;
-        return new Ok([toList([]), filter$1]);
+        let transform$1 = _block;
+        return new Ok([toList([]), transform$1]);
       },
     );
   } else {
     let offset_table = $[0];
     if (offset_table.hasLength(0)) {
-      let number_of_frames = get_number_of_frames(filter);
+      let number_of_frames = get_number_of_frames(transform);
       let $1 = number_of_frames > 1;
       if ($1) {
-        let frame_index = filter.next_frame_index;
+        let frame_index = transform.next_frame_index;
         let _block;
-        let _record = filter;
-        _block = new P10PixelDataFrameFilter(
+        let _record = transform;
+        _block = new P10PixelDataFrameTransform(
           _record.is_encapsulated,
           _record.details,
           _record.pixel_data_filter,
@@ -822,40 +838,43 @@ function get_pending_encapsulated_frames(filter) {
           _record.offset_table,
           frame_index + 1,
         );
-        let filter$1 = _block;
+        let transform$1 = _block;
         let _block$1;
-        let _pipe = filter$1.pixel_data;
+        let _pipe = transform$1.pixel_data;
         let _pipe$1 = $deque.to_list(_pipe);
         _block$1 = $list.fold(
           _pipe$1,
-          $pixel_data_frame.new$(frame_index),
+          (() => {
+            let _pipe$2 = $pixel_data_frame.new$();
+            return $pixel_data_frame.set_index(_pipe$2, frame_index);
+          })(),
           (frame, chunk) => {
-            return $pixel_data_frame.push_fragment(frame, chunk[0]);
+            return $pixel_data_frame.push_chunk(frame, chunk[0]);
           },
         );
         let frame = _block$1;
         let _block$2;
-        let _record$1 = filter$1;
-        _block$2 = new P10PixelDataFrameFilter(
+        let _record$1 = transform$1;
+        _block$2 = new P10PixelDataFrameTransform(
           _record$1.is_encapsulated,
           _record$1.details,
           _record$1.pixel_data_filter,
           _record$1.native_pixel_data_frame_size,
           $deque.new$(),
           _record$1.pixel_data_write_offset,
-          filter$1.pixel_data_write_offset,
+          transform$1.pixel_data_write_offset,
           _record$1.offset_table,
           _record$1.next_frame_index,
         );
-        let filter$2 = _block$2;
-        return new Ok([toList([frame]), filter$2]);
+        let transform$2 = _block$2;
+        return new Ok([toList([frame]), transform$2]);
       } else {
-        return new Ok([toList([]), filter]);
+        return new Ok([toList([]), transform]);
       }
     } else {
       let offset_table$1 = offset_table;
       return get_pending_encapsulated_frames_using_offset_table(
-        filter,
+        transform,
         offset_table$1,
         toList([]),
       );
@@ -863,17 +882,17 @@ function get_pending_encapsulated_frames(filter) {
   }
 }
 
-function process_next_pixel_data_token(filter, token) {
+function process_next_pixel_data_token(transform, token) {
   if (token instanceof $p10_token.DataElementHeader) {
     let length = token.length;
-    let number_of_frames = get_number_of_frames(filter);
+    let number_of_frames = get_number_of_frames(transform);
     let $ = number_of_frames > 0;
     if ($) {
-      let $1 = $p10_custom_type_transform.get_output(filter.details);
+      let $1 = $p10_custom_type_transform.get_output(transform.details);
       if (!($1 instanceof Some)) {
         throw makeError(
           "let_assert",
-          "dcmfx_pixel_data/p10_pixel_data_frame_filter",
+          "dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform",
           220,
           "process_next_pixel_data_token",
           "Pattern match failed, no pattern matched the value.",
@@ -920,8 +939,8 @@ function process_next_pixel_data_token(filter, token) {
             [
               toList([]),
               (() => {
-                let _record = filter;
-                return new P10PixelDataFrameFilter(
+                let _record = transform;
+                return new P10PixelDataFrameTransform(
                   false,
                   _record.details,
                   _record.pixel_data_filter,
@@ -938,12 +957,12 @@ function process_next_pixel_data_token(filter, token) {
         },
       );
     } else {
-      return new Ok([toList([]), filter]);
+      return new Ok([toList([]), transform]);
     }
   } else if (token instanceof $p10_token.SequenceStart) {
     let _block;
-    let _record = filter;
-    _block = new P10PixelDataFrameFilter(
+    let _record = transform;
+    _block = new P10PixelDataFrameTransform(
       true,
       _record.details,
       _record.pixel_data_filter,
@@ -954,21 +973,21 @@ function process_next_pixel_data_token(filter, token) {
       _record.offset_table,
       _record.next_frame_index,
     );
-    let filter$1 = _block;
-    return new Ok([toList([]), filter$1]);
+    let transform$1 = _block;
+    return new Ok([toList([]), transform$1]);
   } else if (token instanceof $p10_token.SequenceDelimiter) {
     let _block;
     let $ = (() => {
-      let _pipe = filter.pixel_data;
+      let _pipe = transform.pixel_data;
       return $deque.is_empty(_pipe);
     })();
     if ($) {
       _block = new Ok(toList([]));
     } else {
-      let frame_index = filter.next_frame_index;
+      let frame_index = transform.next_frame_index;
       let _block$1;
-      let _record = filter;
-      _block$1 = new P10PixelDataFrameFilter(
+      let _record = transform;
+      _block$1 = new P10PixelDataFrameTransform(
         _record.is_encapsulated,
         _record.details,
         _record.pixel_data_filter,
@@ -979,33 +998,36 @@ function process_next_pixel_data_token(filter, token) {
         _record.offset_table,
         frame_index + 1,
       );
-      let filter$1 = _block$1;
+      let transform$1 = _block$1;
       let _block$2;
-      let _pipe = filter$1.pixel_data;
+      let _pipe = transform$1.pixel_data;
       let _pipe$1 = $deque.to_list(_pipe);
       _block$2 = $list.fold(
         _pipe$1,
-        $pixel_data_frame.new$(frame_index),
+        (() => {
+          let _pipe$2 = $pixel_data_frame.new$();
+          return $pixel_data_frame.set_index(_pipe$2, frame_index);
+        })(),
         (frame, pixel_data) => {
           let offset = pixel_data[1];
           let $1 = pixel_data[0];
           if (!($1.bitSize >= offset)) {
             throw makeError(
               "let_assert",
-              "dcmfx_pixel_data/p10_pixel_data_frame_filter",
-              299,
+              "dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform",
+              304,
               "",
               "Pattern match failed, no pattern matched the value.",
               { value: $1 }
             )
           }
           let fragment = bitArraySlice($1, offset);
-          return $pixel_data_frame.push_fragment(frame, fragment);
+          return $pixel_data_frame.push_chunk(frame, fragment);
         },
       );
       let frame = _block$2;
       let _block$3;
-      let $1 = filter$1.offset_table;
+      let $1 = transform$1.offset_table;
       if ($1 instanceof Some) {
         let offset_table = $1[0];
         if (offset_table.atLeastLength(1) &&
@@ -1022,36 +1044,36 @@ function process_next_pixel_data_token(filter, token) {
       _block = $result.map(frame$1, (frame) => { return toList([frame]); });
     }
     let frames = _block;
-    return $result.map(frames, (frames) => { return [frames, filter]; });
+    return $result.map(frames, (frames) => { return [frames, transform]; });
   } else if (token instanceof $p10_token.PixelDataItem) {
     let _block;
-    let _record = filter;
-    _block = new P10PixelDataFrameFilter(
+    let _record = transform;
+    _block = new P10PixelDataFrameTransform(
       _record.is_encapsulated,
       _record.details,
       _record.pixel_data_filter,
       _record.native_pixel_data_frame_size,
       _record.pixel_data,
-      filter.pixel_data_write_offset + 64,
+      transform.pixel_data_write_offset + 64,
       _record.pixel_data_read_offset,
       _record.offset_table,
       _record.next_frame_index,
     );
-    let filter$1 = _block;
-    return new Ok([toList([]), filter$1]);
+    let transform$1 = _block;
+    return new Ok([toList([]), transform$1]);
   } else if (token instanceof $p10_token.DataElementValueBytes) {
     let data = token.data;
     let bytes_remaining = token.bytes_remaining;
     let _block;
-    let _pipe = filter.pixel_data;
+    let _pipe = transform.pixel_data;
     _block = $deque.push_back(_pipe, [data, 0]);
     let pixel_data = _block;
-    let pixel_data_write_offset = filter.pixel_data_write_offset + $bit_array.byte_size(
+    let pixel_data_write_offset = transform.pixel_data_write_offset + $bit_array.byte_size(
       data,
     ) * 8;
     let _block$1;
-    let _record = filter;
-    _block$1 = new P10PixelDataFrameFilter(
+    let _record = transform;
+    _block$1 = new P10PixelDataFrameTransform(
       _record.is_encapsulated,
       _record.details,
       _record.pixel_data_filter,
@@ -1062,30 +1084,30 @@ function process_next_pixel_data_token(filter, token) {
       _record.offset_table,
       _record.next_frame_index,
     );
-    let filter$1 = _block$1;
-    let $ = filter$1.is_encapsulated;
+    let transform$1 = _block$1;
+    let $ = transform$1.is_encapsulated;
     if ($) {
       if (bytes_remaining === 0) {
-        return get_pending_encapsulated_frames(filter$1);
+        return get_pending_encapsulated_frames(transform$1);
       } else {
-        return new Ok([toList([]), filter$1]);
+        return new Ok([toList([]), transform$1]);
       }
     } else {
-      let $1 = filter$1.native_pixel_data_frame_size > 0;
+      let $1 = transform$1.native_pixel_data_frame_size > 0;
       if ($1) {
-        return get_pending_native_frames(filter$1, toList([]));
+        return get_pending_native_frames(transform$1, toList([]));
       } else {
-        return new Ok([toList([]), filter$1]);
+        return new Ok([toList([]), transform$1]);
       }
     }
   } else {
-    return new Ok([toList([]), filter]);
+    return new Ok([toList([]), transform]);
   }
 }
 
-export function add_token(filter, token) {
+export function add_token(transform, token) {
   let _block;
-  let _pipe = $p10_custom_type_transform.add_token(filter.details, token);
+  let _pipe = $p10_custom_type_transform.add_token(transform.details, token);
   _block = $result.map_error(
     _pipe,
     (e) => {
@@ -1103,8 +1125,8 @@ export function add_token(filter, token) {
     details,
     (details) => {
       let _block$1;
-      let _record = filter;
-      _block$1 = new P10PixelDataFrameFilter(
+      let _record = transform;
+      _block$1 = new P10PixelDataFrameTransform(
         _record.is_encapsulated,
         details,
         _record.pixel_data_filter,
@@ -1115,14 +1137,14 @@ export function add_token(filter, token) {
         _record.offset_table,
         _record.next_frame_index,
       );
-      let filter$1 = _block$1;
+      let transform$1 = _block$1;
       return $bool.guard(
         $p10_token.is_header_token(token),
-        new Ok([toList([]), filter$1]),
+        new Ok([toList([]), transform$1]),
         () => {
           let _block$2;
           let _pipe$1 = $p10_filter_transform.add_token(
-            filter$1.pixel_data_filter,
+            transform$1.pixel_data_filter,
             token,
           );
           _block$2 = $result.map_error(
@@ -1136,8 +1158,8 @@ export function add_token(filter, token) {
               let is_pixel_data_token = _use0[0];
               let pixel_data_filter = _use0[1];
               let _block$3;
-              let _record$1 = filter$1;
-              _block$3 = new P10PixelDataFrameFilter(
+              let _record$1 = transform$1;
+              _block$3 = new P10PixelDataFrameTransform(
                 _record$1.is_encapsulated,
                 _record$1.details,
                 pixel_data_filter,
@@ -1148,12 +1170,15 @@ export function add_token(filter, token) {
                 _record$1.offset_table,
                 _record$1.next_frame_index,
               );
-              let filter$2 = _block$3;
+              let transform$2 = _block$3;
               return $bool.guard(
                 !is_pixel_data_token,
-                new Ok([toList([]), filter$2]),
+                new Ok([toList([]), transform$2]),
                 () => {
-                  let _pipe$2 = process_next_pixel_data_token(filter$2, token);
+                  let _pipe$2 = process_next_pixel_data_token(
+                    transform$2,
+                    token,
+                  );
                   return $result.map_error(
                     _pipe$2,
                     (var0) => { return new DataError(var0); },

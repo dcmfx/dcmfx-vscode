@@ -211,11 +211,11 @@ export function read_float64_be(stream: FileStream$): _.Result<
   $file_stream_error.FileStreamError$
 >;
 
-export function read_list<BYRT>(
+export function read_list<BYRS>(
   stream: FileStream$,
   item_read_fn: (x0: FileStream$) => _.Result<
-    BYRT,
+    BYRS,
     $file_stream_error.FileStreamError$
   >,
   item_count: number
-): _.Result<_.List<BYRT>, $file_stream_error.FileStreamError$>;
+): _.Result<_.List<BYRS>, $file_stream_error.FileStreamError$>;

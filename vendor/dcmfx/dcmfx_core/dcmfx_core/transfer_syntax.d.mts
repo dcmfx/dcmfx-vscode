@@ -110,6 +110,8 @@ export const high_throughput_jpeg_2k_with_rpcl_options_lossless_only: TransferSy
 
 export const high_throughput_jpeg_2k: TransferSyntax$;
 
+export function is_jpeg_2k(transfer_syntax: TransferSyntax$): boolean;
+
 export const jpip_high_throughput_jpeg_2k_referenced: TransferSyntax$;
 
 export const jpip_high_throughput_jpeg_2k_referenced_deflate: TransferSyntax$;

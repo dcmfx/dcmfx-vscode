@@ -1,13 +1,14 @@
 /// <reference types="./dcmfx_pixel_data.d.mts" />
 import * as $data_set from "../dcmfx_core/dcmfx_core/data_set.mjs";
+import * as $data_set_path from "../dcmfx_core/dcmfx_core/data_set_path.mjs";
 import * as $dictionary from "../dcmfx_core/dcmfx_core/dictionary.mjs";
 import * as $transfer_syntax from "../dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import * as $p10_write from "../dcmfx_p10/dcmfx_p10/p10_write.mjs";
 import * as $list from "../gleam_stdlib/gleam/list.mjs";
 import * as $pair from "../gleam_stdlib/gleam/pair.mjs";
 import * as $result from "../gleam_stdlib/gleam/result.mjs";
-import * as $p10_pixel_data_frame_filter from "./dcmfx_pixel_data/p10_pixel_data_frame_filter.mjs";
 import * as $pixel_data_frame from "./dcmfx_pixel_data/pixel_data_frame.mjs";
+import * as $p10_pixel_data_frame_transform from "./dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform.mjs";
 import { toList, isEqual } from "./gleam.mjs";
 
 export function get_pixel_data_frames(data_set) {
@@ -35,16 +36,17 @@ export function get_pixel_data_frames(data_set) {
     },
   );
   let ds = _block;
-  let context = [toList([]), $p10_pixel_data_frame_filter.new$()];
+  let context = [toList([]), $p10_pixel_data_frame_transform.new$()];
   let _pipe$1 = ds;
   let _pipe$2 = $p10_write.data_set_to_tokens(
     _pipe$1,
+    $data_set_path.new$(),
     context,
     (context, token) => {
       let frames = context[0];
       let filter = context[1];
       return $result.map(
-        $p10_pixel_data_frame_filter.add_token(filter, token),
+        $p10_pixel_data_frame_transform.add_token(filter, token),
         (_use0) => {
           let new_frames = _use0[0];
           let filter$1 = _use0[1];
@@ -81,7 +83,7 @@ export function file_extension_for_transfer_syntax(ts) {
     $transfer_syntax.jpeg_2k_multi_component
   ))) {
     let ts$1 = ts;
-    return ".jp2";
+    return ".j2k";
   } else if ((((isEqual(ts, $transfer_syntax.mpeg2_main_profile_main_level)) || (isEqual(
     ts,
     $transfer_syntax.fragmentable_mpeg2_main_profile_main_level
