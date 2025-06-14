@@ -38,6 +38,8 @@ import {
   bitArraySliceToInt,
 } from "../gleam.mjs";
 
+const FILEPATH = "src/file_streams/file_stream.gleam";
+
 class FileStream extends $CustomType {
   constructor(io_device, encoding) {
     super();
@@ -88,10 +90,12 @@ export function open(filename, modes) {
   _block$1 = $option.from_result(_pipe$2);
   let encoding = _block$1;
   let _block$2;
-  if (is_raw && encoding instanceof Some) {
-    _block$2 = new Error(new $file_stream_error.Enotsup());
-  } else if (is_raw && encoding instanceof None) {
-    _block$2 = new Ok(new None());
+  if (is_raw) {
+    if (encoding instanceof Some) {
+      _block$2 = new Error(new $file_stream_error.Enotsup());
+    } else {
+      _block$2 = new Ok(new None());
+    }
   } else {
     _block$2 = new Ok(
       (() => {
@@ -237,12 +241,12 @@ export function write_bytes(stream, bytes) {
 
 export function write_chars(stream, chars) {
   let $ = stream.encoding;
-  if ($ instanceof None) {
+  if ($ instanceof Some) {
+    return io_put_chars(stream.io_device, chars);
+  } else {
     let _pipe = chars;
     let _pipe$1 = $bit_array.from_string(_pipe);
     return ((_capture) => { return write_bytes(stream, _capture); })(_pipe$1);
-  } else {
-    return io_put_chars(stream.io_device, chars);
   }
 }
 
@@ -280,7 +284,7 @@ export function read_bytes(stream, byte_count) {
 
 export function read_bytes_exact(stream, byte_count) {
   let $ = read_bytes(stream, byte_count);
-  if ($.isOk()) {
+  if ($ instanceof Ok) {
     let bytes = $[0];
     let $1 = $bit_array.byte_size(bytes) === byte_count;
     if ($1) {
@@ -299,18 +303,21 @@ function do_read_remaining_bytes(loop$stream, loop$acc) {
     let stream = loop$stream;
     let acc = loop$acc;
     let $ = read_bytes(stream, 64 * 1024);
-    if ($.isOk()) {
+    if ($ instanceof Ok) {
       let bytes = $[0];
       loop$stream = stream;
       loop$acc = listPrepend(bytes, acc);
-    } else if (!$.isOk() && $[0] instanceof $file_stream_error.Eof) {
-      let _pipe = acc;
-      let _pipe$1 = $list.reverse(_pipe);
-      let _pipe$2 = $bit_array.concat(_pipe$1);
-      return new Ok(_pipe$2);
     } else {
-      let e = $[0];
-      return new Error(e);
+      let $1 = $[0];
+      if ($1 instanceof $file_stream_error.Eof) {
+        let _pipe = acc;
+        let _pipe$1 = $list.reverse(_pipe);
+        let _pipe$2 = $bit_array.concat(_pipe$1);
+        return new Ok(_pipe$2);
+      } else {
+        let e = $1;
+        return new Error(e);
+      }
     }
   }
 }
@@ -321,7 +328,18 @@ export function read_remaining_bytes(stream) {
 
 export function read_line(stream) {
   let $ = stream.encoding;
-  if ($ instanceof None) {
+  if ($ instanceof Some) {
+    let $1 = io_get_line(stream.io_device);
+    if ($1 instanceof $raw_read_result.Ok) {
+      let data = $1[0];
+      return new Ok(data);
+    } else if ($1 instanceof $raw_read_result.Eof) {
+      return new Error(new $file_stream_error.Eof());
+    } else {
+      let e = $1.error;
+      return new Error(e);
+    }
+  } else {
     let $1 = file_read_line(stream.io_device);
     if ($1 instanceof $raw_read_result.Ok) {
       let data = $1[0];
@@ -331,17 +349,6 @@ export function read_line(stream) {
         _pipe$1,
         new $file_stream_error.InvalidUnicode(),
       );
-    } else if ($1 instanceof $raw_read_result.Eof) {
-      return new Error(new $file_stream_error.Eof());
-    } else {
-      let e = $1.error;
-      return new Error(e);
-    }
-  } else {
-    let $1 = io_get_line(stream.io_device);
-    if ($1 instanceof $raw_read_result.Ok) {
-      let data = $1[0];
-      return new Ok(data);
     } else if ($1 instanceof $raw_read_result.Eof) {
       return new Error(new $file_stream_error.Eof());
     } else {
@@ -373,14 +380,21 @@ export function read_int8(stream) {
   return $result.map(
     read_bytes_exact(stream, 1),
     (bits) => {
-      if (!(bits.bitSize == 8)) {
+      if (bits.bitSize !== 8) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           496,
-          "",
+          "read_int8",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 15855,
+            end: 15893,
+            pattern_start: 15866,
+            pattern_end: 15886
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 8, true, true);
@@ -393,14 +407,21 @@ export function read_uint8(stream) {
   return $result.map(
     read_bytes_exact(stream, 1),
     (bits) => {
-      if (!(bits.bitSize == 8)) {
+      if (bits.bitSize !== 8) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           505,
-          "",
+          "read_uint8",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 16090,
+            end: 16130,
+            pattern_start: 16101,
+            pattern_end: 16123
+          }
         )
       }
       let v = bits.byteAt(0);
@@ -413,14 +434,21 @@ export function read_int16_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 2),
     (bits) => {
-      if (!(bits.bitSize == 16)) {
+      if (bits.bitSize !== 16) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           514,
-          "",
+          "read_int16_le",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 16342,
+            end: 16388,
+            pattern_start: 16353,
+            pattern_end: 16381
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 16, false, true);
@@ -433,14 +461,21 @@ export function read_int16_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 2),
     (bits) => {
-      if (!(bits.bitSize == 16)) {
+      if (bits.bitSize !== 16) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           523,
-          "",
+          "read_int16_be",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 16597,
+            end: 16640,
+            pattern_start: 16608,
+            pattern_end: 16633
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 16, true, true);
@@ -453,14 +488,21 @@ export function read_uint16_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 2),
     (bits) => {
-      if (!(bits.bitSize == 16)) {
+      if (bits.bitSize !== 16) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           532,
-          "",
+          "read_uint16_le",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 16855,
+            end: 16903,
+            pattern_start: 16866,
+            pattern_end: 16896
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 16, false, false);
@@ -473,14 +515,21 @@ export function read_uint16_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 2),
     (bits) => {
-      if (!(bits.bitSize == 16)) {
+      if (bits.bitSize !== 16) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           541,
-          "",
+          "read_uint16_be",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 17115,
+            end: 17160,
+            pattern_start: 17126,
+            pattern_end: 17153
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 16, true, false);
@@ -493,14 +542,21 @@ export function read_int32_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.bitSize == 32)) {
+      if (bits.bitSize !== 32) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           550,
-          "",
+          "read_int32_le",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 17372,
+            end: 17418,
+            pattern_start: 17383,
+            pattern_end: 17411
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 32, false, true);
@@ -513,14 +569,21 @@ export function read_int32_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.bitSize == 32)) {
+      if (bits.bitSize !== 32) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           559,
-          "",
+          "read_int32_be",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 17627,
+            end: 17670,
+            pattern_start: 17638,
+            pattern_end: 17663
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 32, true, true);
@@ -533,14 +596,21 @@ export function read_uint32_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.bitSize == 32)) {
+      if (bits.bitSize !== 32) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           568,
-          "",
+          "read_uint32_le",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 17885,
+            end: 17933,
+            pattern_start: 17896,
+            pattern_end: 17926
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 32, false, false);
@@ -553,14 +623,21 @@ export function read_uint32_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.bitSize == 32)) {
+      if (bits.bitSize !== 32) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           577,
-          "",
+          "read_uint32_be",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 18145,
+            end: 18190,
+            pattern_start: 18156,
+            pattern_end: 18183
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 32, true, false);
@@ -573,14 +650,21 @@ export function read_int64_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.bitSize == 64)) {
+      if (bits.bitSize !== 64) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           586,
-          "",
+          "read_int64_le",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 18402,
+            end: 18448,
+            pattern_start: 18413,
+            pattern_end: 18441
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 64, false, true);
@@ -593,14 +677,21 @@ export function read_int64_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.bitSize == 64)) {
+      if (bits.bitSize !== 64) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           595,
-          "",
+          "read_int64_be",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 18657,
+            end: 18700,
+            pattern_start: 18668,
+            pattern_end: 18693
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 64, true, true);
@@ -613,14 +704,21 @@ export function read_uint64_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.bitSize == 64)) {
+      if (bits.bitSize !== 64) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           604,
-          "",
+          "read_uint64_le",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 18915,
+            end: 18963,
+            pattern_start: 18926,
+            pattern_end: 18956
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 64, false, false);
@@ -633,14 +731,21 @@ export function read_uint64_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.bitSize == 64)) {
+      if (bits.bitSize !== 64) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           613,
-          "",
+          "read_uint64_be",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 19175,
+            end: 19220,
+            pattern_start: 19186,
+            pattern_end: 19213
+          }
         )
       }
       let v = bitArraySliceToInt(bits, 0, 64, true, false);
@@ -653,14 +758,24 @@ export function read_float32_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.bitSize == 32)) {
+      if (
+        bits.bitSize !== 32 ||
+        !Number.isFinite(bitArraySliceToFloat(bits, 0, 32, false))
+      ) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           622,
-          "",
+          "read_float32_le",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 19427,
+            end: 19472,
+            pattern_start: 19438,
+            pattern_end: 19465
+          }
         )
       }
       let v = bitArraySliceToFloat(bits, 0, 32, false);
@@ -673,14 +788,24 @@ export function read_float32_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 4),
     (bits) => {
-      if (!(bits.bitSize == 32)) {
+      if (
+        bits.bitSize !== 32 ||
+        !Number.isFinite(bitArraySliceToFloat(bits, 0, 32, true))
+      ) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           631,
-          "",
+          "read_float32_be",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 19676,
+            end: 19718,
+            pattern_start: 19687,
+            pattern_end: 19711
+          }
         )
       }
       let v = bitArraySliceToFloat(bits, 0, 32, true);
@@ -693,14 +818,24 @@ export function read_float64_le(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.bitSize == 64)) {
+      if (
+        bits.bitSize !== 64 ||
+        !Number.isFinite(bitArraySliceToFloat(bits, 0, 64, false))
+      ) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           640,
-          "",
+          "read_float64_le",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 19925,
+            end: 19970,
+            pattern_start: 19936,
+            pattern_end: 19963
+          }
         )
       }
       let v = bitArraySliceToFloat(bits, 0, 64, false);
@@ -713,14 +848,24 @@ export function read_float64_be(stream) {
   return $result.map(
     read_bytes_exact(stream, 8),
     (bits) => {
-      if (!(bits.bitSize == 64)) {
+      if (
+        bits.bitSize !== 64 ||
+        !Number.isFinite(bitArraySliceToFloat(bits, 0, 64, true))
+      ) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "file_streams/file_stream",
           649,
-          "",
+          "read_float64_be",
           "Pattern match failed, no pattern matched the value.",
-          { value: bits }
+          {
+            value: bits,
+            start: 20174,
+            end: 20216,
+            pattern_start: 20185,
+            pattern_end: 20209
+          }
         )
       }
       let v = bitArraySliceToFloat(bits, 0, 64, true);
@@ -739,7 +884,7 @@ function do_read_list(loop$stream, loop$item_read_fn, loop$item_count, loop$acc)
       return new Ok(acc);
     } else {
       let $ = item_read_fn(stream);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let item = $[0];
         loop$stream = stream;
         loop$item_read_fn = item_read_fn;

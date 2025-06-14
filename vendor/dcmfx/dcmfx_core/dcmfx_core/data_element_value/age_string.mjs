@@ -10,7 +10,9 @@ import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
-import { Ok, Error, CustomType as $CustomType, makeError } from "../../gleam.mjs";
+import { Ok, Error, Empty as $Empty, CustomType as $CustomType, makeError } from "../../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_core/data_element_value/age_string.gleam";
 
 export class Days extends $CustomType {}
 
@@ -70,55 +72,119 @@ export function from_bytes(bytes) {
       _block$1 = $string.trim(_pipe$3);
       let age_string$1 = _block$1;
       let $ = $regexp.from_string("^(\\d\\d\\d)([DWMY])$");
-      if (!$.isOk()) {
+      if (!($ instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_core/data_element_value/age_string",
           60,
-          "",
+          "from_bytes",
           "Pattern match failed, no pattern matched the value.",
-          { value: $ }
+          {
+            value: $,
+            start: 1351,
+            end: 1414,
+            pattern_start: 1362,
+            pattern_end: 1368
+          }
         )
       }
       let re = $[0];
       let $1 = $regexp.scan(re, age_string$1);
-      if ($1.hasLength(1) &&
-      $1.head instanceof $regexp.Match &&
-      $1.head.submatches.hasLength(2) &&
-      $1.head.submatches.head instanceof Some &&
-      $1.head.submatches.tail.head instanceof Some) {
-        let number = $1.head.submatches.head[0];
-        let unit = $1.head.submatches.tail.head[0];
-        let $2 = $int.parse(number);
-        if (!$2.isOk()) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_core/data_element_value/age_string",
-            64,
-            "",
-            "Pattern match failed, no pattern matched the value.",
-            { value: $2 }
-          )
-        }
-        let number$1 = $2[0];
-        let _block$2;
-        if (unit === "D") {
-          _block$2 = new Days();
-        } else if (unit === "W") {
-          _block$2 = new Weeks();
-        } else if (unit === "M") {
-          _block$2 = new Months();
-        } else {
-          _block$2 = new Years();
-        }
-        let unit$1 = _block$2;
-        return new Ok(new StructuredAge(number$1, unit$1));
-      } else {
+      if ($1 instanceof $Empty) {
         return new Error(
           $data_error.new_value_invalid(
             ("AgeString is invalid: '" + age_string$1) + "'",
           ),
         );
+      } else {
+        let $2 = $1.tail;
+        if ($2 instanceof $Empty) {
+          let $3 = $1.head.submatches;
+          if ($3 instanceof $Empty) {
+            return new Error(
+              $data_error.new_value_invalid(
+                ("AgeString is invalid: '" + age_string$1) + "'",
+              ),
+            );
+          } else {
+            let $4 = $3.tail;
+            if ($4 instanceof $Empty) {
+              return new Error(
+                $data_error.new_value_invalid(
+                  ("AgeString is invalid: '" + age_string$1) + "'",
+                ),
+              );
+            } else {
+              let $5 = $4.tail;
+              if ($5 instanceof $Empty) {
+                let $6 = $4.head;
+                if ($6 instanceof Some) {
+                  let $7 = $3.head;
+                  if ($7 instanceof Some) {
+                    let unit = $6[0];
+                    let number = $7[0];
+                    let $8 = $int.parse(number);
+                    if (!($8 instanceof Ok)) {
+                      throw makeError(
+                        "let_assert",
+                        FILEPATH,
+                        "dcmfx_core/data_element_value/age_string",
+                        64,
+                        "from_bytes",
+                        "Pattern match failed, no pattern matched the value.",
+                        {
+                          value: $8,
+                          start: 1527,
+                          end: 1568,
+                          pattern_start: 1538,
+                          pattern_end: 1548
+                        }
+                      )
+                    }
+                    let number$1 = $8[0];
+                    let _block$2;
+                    if (unit === "D") {
+                      _block$2 = new Days();
+                    } else if (unit === "W") {
+                      _block$2 = new Weeks();
+                    } else if (unit === "M") {
+                      _block$2 = new Months();
+                    } else {
+                      _block$2 = new Years();
+                    }
+                    let unit$1 = _block$2;
+                    return new Ok(new StructuredAge(number$1, unit$1));
+                  } else {
+                    return new Error(
+                      $data_error.new_value_invalid(
+                        ("AgeString is invalid: '" + age_string$1) + "'",
+                      ),
+                    );
+                  }
+                } else {
+                  return new Error(
+                    $data_error.new_value_invalid(
+                      ("AgeString is invalid: '" + age_string$1) + "'",
+                    ),
+                  );
+                }
+              } else {
+                return new Error(
+                  $data_error.new_value_invalid(
+                    ("AgeString is invalid: '" + age_string$1) + "'",
+                  ),
+                );
+              }
+            }
+          }
+        } else {
+          return new Error(
+            $data_error.new_value_invalid(
+              ("AgeString is invalid: '" + age_string$1) + "'",
+            ),
+          );
+        }
       }
     },
   );

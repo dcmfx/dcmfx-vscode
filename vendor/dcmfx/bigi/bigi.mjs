@@ -1,5 +1,6 @@
 /// <reference types="./bigi.d.mts" />
 import * as $dynamic from "../gleam_stdlib/gleam/dynamic.mjs";
+import * as $decode from "../gleam_stdlib/gleam/dynamic/decode.mjs";
 import * as $list from "../gleam_stdlib/gleam/list.mjs";
 import * as $order from "../gleam_stdlib/gleam/order.mjs";
 import {
@@ -70,6 +71,8 @@ export {
   to_string,
   zero,
 };
+
+const FILEPATH = "src/bigi.gleam";
 
 export class LittleEndian extends $CustomType {}
 
@@ -147,9 +150,9 @@ export function undigits(digits, base) {
       (acc, digit) => {
         let digit$1 = from_int(digit);
         let $1 = compare(digit$1, base$1);
-        if ($1 instanceof $order.Gt) {
+        if ($1 instanceof $order.Eq) {
           return new Error(undefined);
-        } else if ($1 instanceof $order.Eq) {
+        } else if ($1 instanceof $order.Gt) {
           return new Error(undefined);
         } else {
           return new Ok(add(multiply(acc, base$1), digit$1));
@@ -167,14 +170,21 @@ function get_digit(loop$bigint, loop$digits, loop$divisor) {
     let $ = compare(bigint, divisor);
     if ($ instanceof $order.Lt) {
       let $1 = to_int(bigint);
-      if (!$1.isOk()) {
+      if (!($1 instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "bigi",
-          314,
+          315,
           "get_digit",
           "Pattern match failed, no pattern matched the value.",
-          { value: $1 }
+          {
+            value: $1,
+            start: 10904,
+            end: 10941,
+            pattern_start: 10915,
+            pattern_end: 10924
+          }
         )
       }
       let digit = $1[0];
@@ -184,14 +194,21 @@ function get_digit(loop$bigint, loop$digits, loop$divisor) {
       let _pipe = remainder(bigint, divisor);
       _block = to_int(_pipe);
       let $1 = _block;
-      if (!$1.isOk()) {
+      if (!($1 instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "bigi",
-          318,
+          319,
           "get_digit",
           "Pattern match failed, no pattern matched the value.",
-          { value: $1 }
+          {
+            value: $1,
+            start: 10989,
+            end: 11066,
+            pattern_start: 11000,
+            pattern_end: 11009
+          }
         )
       }
       let digit = $1[0];

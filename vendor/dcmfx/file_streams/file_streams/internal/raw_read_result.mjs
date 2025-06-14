@@ -3,9 +3,9 @@ import * as $file_stream_error from "../../file_streams/file_stream_error.mjs";
 import { CustomType as $CustomType } from "../../gleam.mjs";
 
 export class Ok extends $CustomType {
-  constructor(x0) {
+  constructor($0) {
     super();
-    this[0] = x0;
+    this[0] = $0;
   }
 }
 

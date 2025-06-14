@@ -14,7 +14,16 @@ import { StructuredTime } from "../../dcmfx_core/data_element_value/time.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
-import { Ok, Error, CustomType as $CustomType, makeError, remainderInt } from "../../gleam.mjs";
+import {
+  Ok,
+  Error,
+  Empty as $Empty,
+  CustomType as $CustomType,
+  makeError,
+  remainderInt,
+} from "../../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_core/data_element_value/date_time.gleam";
 
 export class StructuredDateTime extends $CustomType {
   constructor(year, month, day, hour, minute, second, time_zone_offset) {
@@ -49,35 +58,39 @@ export function from_bytes(bytes) {
       let $ = $regexp.from_string(
         "^(\\d{4})((\\d{2})((\\d{2})((\\d{2})((\\d{2})((\\d{2})(\\.\\d{1,6})?)?)?)?)?)?([\\+\\-]\\d{4})?$",
       );
-      if (!$.isOk()) {
+      if (!($ instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_core/data_element_value/date_time",
           45,
-          "",
+          "from_bytes",
           "Pattern match failed, no pattern matched the value.",
-          { value: $ }
+          {
+            value: $,
+            start: 1229,
+            end: 1384,
+            pattern_start: 1240,
+            pattern_end: 1246
+          }
         )
       }
       let re = $[0];
       let $1 = $regexp.scan(re, date_time_string$1);
-      if ($1.atLeastLength(1)) {
+      if ($1 instanceof $Empty) {
+        return new Error(
+          $data_error.new_value_invalid(
+            ("DateTime is invalid: '" + date_time_string$1) + "'",
+          ),
+        );
+      } else {
         let match = $1.head;
         let submatches = $list.append(
           match.submatches,
           $list.repeat(new None(), 13 - $list.length(match.submatches)),
         );
         let _block$2;
-        if (submatches.hasLength(13) && submatches.head instanceof Some) {
-          let year = submatches.head[0];
-          let month = submatches.tail.tail.head;
-          let day = submatches.tail.tail.tail.tail.head;
-          let hour = submatches.tail.tail.tail.tail.tail.tail.head;
-          let minute = submatches.tail.tail.tail.tail.tail.tail.tail.tail.head;
-          let second = submatches.tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
-          let offset = submatches.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
-          _block$2 = [year, month, day, hour, minute, second, offset];
-        } else {
+        if (submatches instanceof $Empty) {
           _block$2 = [
             "0",
             new None(),
@@ -87,6 +100,205 @@ export function from_bytes(bytes) {
             new None(),
             new None(),
           ];
+        } else {
+          let $3 = submatches.tail;
+          if ($3 instanceof $Empty) {
+            _block$2 = [
+              "0",
+              new None(),
+              new None(),
+              new None(),
+              new None(),
+              new None(),
+              new None(),
+            ];
+          } else {
+            let $4 = $3.tail;
+            if ($4 instanceof $Empty) {
+              _block$2 = [
+                "0",
+                new None(),
+                new None(),
+                new None(),
+                new None(),
+                new None(),
+                new None(),
+              ];
+            } else {
+              let $5 = $4.tail;
+              if ($5 instanceof $Empty) {
+                _block$2 = [
+                  "0",
+                  new None(),
+                  new None(),
+                  new None(),
+                  new None(),
+                  new None(),
+                  new None(),
+                ];
+              } else {
+                let $6 = $5.tail;
+                if ($6 instanceof $Empty) {
+                  _block$2 = [
+                    "0",
+                    new None(),
+                    new None(),
+                    new None(),
+                    new None(),
+                    new None(),
+                    new None(),
+                  ];
+                } else {
+                  let $7 = $6.tail;
+                  if ($7 instanceof $Empty) {
+                    _block$2 = [
+                      "0",
+                      new None(),
+                      new None(),
+                      new None(),
+                      new None(),
+                      new None(),
+                      new None(),
+                    ];
+                  } else {
+                    let $8 = $7.tail;
+                    if ($8 instanceof $Empty) {
+                      _block$2 = [
+                        "0",
+                        new None(),
+                        new None(),
+                        new None(),
+                        new None(),
+                        new None(),
+                        new None(),
+                      ];
+                    } else {
+                      let $9 = $8.tail;
+                      if ($9 instanceof $Empty) {
+                        _block$2 = [
+                          "0",
+                          new None(),
+                          new None(),
+                          new None(),
+                          new None(),
+                          new None(),
+                          new None(),
+                        ];
+                      } else {
+                        let $10 = $9.tail;
+                        if ($10 instanceof $Empty) {
+                          _block$2 = [
+                            "0",
+                            new None(),
+                            new None(),
+                            new None(),
+                            new None(),
+                            new None(),
+                            new None(),
+                          ];
+                        } else {
+                          let $11 = $10.tail;
+                          if ($11 instanceof $Empty) {
+                            _block$2 = [
+                              "0",
+                              new None(),
+                              new None(),
+                              new None(),
+                              new None(),
+                              new None(),
+                              new None(),
+                            ];
+                          } else {
+                            let $12 = $11.tail;
+                            if ($12 instanceof $Empty) {
+                              _block$2 = [
+                                "0",
+                                new None(),
+                                new None(),
+                                new None(),
+                                new None(),
+                                new None(),
+                                new None(),
+                              ];
+                            } else {
+                              let $13 = $12.tail;
+                              if ($13 instanceof $Empty) {
+                                _block$2 = [
+                                  "0",
+                                  new None(),
+                                  new None(),
+                                  new None(),
+                                  new None(),
+                                  new None(),
+                                  new None(),
+                                ];
+                              } else {
+                                let $14 = $13.tail;
+                                if ($14 instanceof $Empty) {
+                                  _block$2 = [
+                                    "0",
+                                    new None(),
+                                    new None(),
+                                    new None(),
+                                    new None(),
+                                    new None(),
+                                    new None(),
+                                  ];
+                                } else {
+                                  let $15 = $14.tail;
+                                  if ($15 instanceof $Empty) {
+                                    let $16 = submatches.head;
+                                    if ($16 instanceof Some) {
+                                      let month = $4.head;
+                                      let day = $6.head;
+                                      let hour = $8.head;
+                                      let minute = $10.head;
+                                      let second = $11.head;
+                                      let offset = $14.head;
+                                      let year = $16[0];
+                                      _block$2 = [
+                                        year,
+                                        month,
+                                        day,
+                                        hour,
+                                        minute,
+                                        second,
+                                        offset,
+                                      ];
+                                    } else {
+                                      _block$2 = [
+                                        "0",
+                                        new None(),
+                                        new None(),
+                                        new None(),
+                                        new None(),
+                                        new None(),
+                                        new None(),
+                                      ];
+                                    }
+                                  } else {
+                                    _block$2 = [
+                                      "0",
+                                      new None(),
+                                      new None(),
+                                      new None(),
+                                      new None(),
+                                      new None(),
+                                      new None(),
+                                    ];
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
         let $2 = _block$2;
         let year = $2[0];
@@ -97,14 +309,21 @@ export function from_bytes(bytes) {
         let second = $2[5];
         let offset = $2[6];
         let $3 = $int.parse(year);
-        if (!$3.isOk()) {
+        if (!($3 instanceof Ok)) {
           throw makeError(
             "let_assert",
+            FILEPATH,
             "dcmfx_core/data_element_value/date_time",
             75,
-            "",
+            "from_bytes",
             "Pattern match failed, no pattern matched the value.",
-            { value: $3 }
+            {
+              value: $3,
+              start: 2153,
+              end: 2190,
+              pattern_start: 2164,
+              pattern_end: 2172
+            }
           )
         }
         let year$1 = $3[0];
@@ -138,12 +357,6 @@ export function from_bytes(bytes) {
             minute$1,
             second$1,
             offset$1,
-          ),
-        );
-      } else {
-        return new Error(
-          $data_error.new_value_invalid(
-            ("DateTime is invalid: '" + date_time_string$1) + "'",
           ),
         );
       }

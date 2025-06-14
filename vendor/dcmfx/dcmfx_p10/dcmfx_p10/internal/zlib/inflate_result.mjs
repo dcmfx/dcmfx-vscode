@@ -2,15 +2,15 @@
 import { CustomType as $CustomType } from "../../../gleam.mjs";
 
 export class Continue extends $CustomType {
-  constructor(x0) {
+  constructor($0) {
     super();
-    this[0] = x0;
+    this[0] = $0;
   }
 }
 
 export class Finished extends $CustomType {
-  constructor(x0) {
+  constructor($0) {
     super();
-    this[0] = x0;
+    this[0] = $0;
   }
 }

@@ -1,17 +1,17 @@
-export function first<YA>(pair: [YA, any]): YA;
+export function first<COI>(pair: [COI, any]): COI;
 
-export function second<YD>(pair: [any, YD]): YD;
+export function second<COL>(pair: [any, COL]): COL;
 
-export function swap<YE, YF>(pair: [YE, YF]): [YF, YE];
+export function swap<COM, CON>(pair: [COM, CON]): [CON, COM];
 
-export function map_first<YG, YH, YI>(pair: [YG, YH], fun: (x0: YG) => YI): [
-  YI,
-  YH
-];
+export function map_first<COO, COP, COQ>(
+  pair: [COO, COP],
+  fun: (x0: COO) => COQ
+): [COQ, COP];
 
-export function map_second<YJ, YK, YL>(pair: [YJ, YK], fun: (x0: YK) => YL): [
-  YJ,
-  YL
-];
+export function map_second<COR, COS, COT>(
+  pair: [COR, COS],
+  fun: (x0: COS) => COT
+): [COR, COT];
 
-export function new$<YM, YN>(first: YM, second: YN): [YM, YN];
+export function new$<COU, COV>(first: COU, second: COV): [COU, COV];

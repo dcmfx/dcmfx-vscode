@@ -1,6 +1,4 @@
 /// <reference types="./ieee_float.d.mts" />
-import * as $erlang from "../gleam_erlang/gleam/erlang.mjs";
-import * as $atom from "../gleam_erlang/gleam/erlang/atom.mjs";
 import * as $float from "../gleam_stdlib/gleam/float.mjs";
 import * as $int from "../gleam_stdlib/gleam/int.mjs";
 import * as $order from "../gleam_stdlib/gleam/order.mjs";

@@ -16,28 +16,28 @@ export function is_some(option: Option$<any>): boolean;
 
 export function is_none(option: Option$<any>): boolean;
 
-export function to_result<GQ, GT>(option: Option$<GQ>, e: GT): _.Result<GQ, GT>;
+export function to_result<GX, HA>(option: Option$<GX>, e: HA): _.Result<GX, HA>;
 
-export function from_result<GW>(result: _.Result<GW, any>): Option$<GW>;
+export function from_result<HD>(result: _.Result<HD, any>): Option$<HD>;
 
-export function unwrap<HB>(option: Option$<HB>, default$: HB): HB;
+export function unwrap<HI>(option: Option$<HI>, default$: HI): HI;
 
-export function lazy_unwrap<HD>(option: Option$<HD>, default$: () => HD): HD;
+export function lazy_unwrap<HK>(option: Option$<HK>, default$: () => HK): HK;
 
-export function map<HF, HH>(option: Option$<HF>, fun: (x0: HF) => HH): Option$<
-  HH
+export function map<HM, HO>(option: Option$<HM>, fun: (x0: HM) => HO): Option$<
+  HO
 >;
 
-export function flatten<HJ>(option: Option$<Option$<HJ>>): Option$<HJ>;
+export function flatten<HQ>(option: Option$<Option$<HQ>>): Option$<HQ>;
 
-export function then$<HN, HP>(option: Option$<HN>, fun: (x0: HN) => Option$<HP>): Option$<
-  HP
->;
-
-export function or<HS>(first: Option$<HS>, second: Option$<HS>): Option$<HS>;
-
-export function lazy_or<HW>(first: Option$<HW>, second: () => Option$<HW>): Option$<
+export function then$<HU, HW>(option: Option$<HU>, fun: (x0: HU) => Option$<HW>): Option$<
   HW
 >;
 
-export function values<IA>(options: _.List<Option$<IA>>): _.List<IA>;
+export function or<HZ>(first: Option$<HZ>, second: Option$<HZ>): Option$<HZ>;
+
+export function lazy_or<ID>(first: Option$<ID>, second: () => Option$<ID>): Option$<
+  ID
+>;
+
+export function values<IH>(options: _.List<Option$<IH>>): _.List<IH>;

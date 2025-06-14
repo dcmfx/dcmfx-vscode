@@ -21,51 +21,27 @@ export class UnexpectedSequence extends _.CustomType {
   0: string;
 }
 
-export class UnexpectedFormat extends _.CustomType {
-  constructor(argument$0: _.List<$dynamic.DecodeError$>);
-  
-  0: _.List<$dynamic.DecodeError$>;
-}
-
 export class UnableToDecode extends _.CustomType {
   constructor(argument$0: _.List<$decode.DecodeError$>);
   
   0: _.List<$decode.DecodeError$>;
 }
 
-export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnexpectedFormat | UnableToDecode;
+export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnableToDecode;
 
-export function decode<CCIS>(
-  json: string,
-  decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCIS,
-    _.List<$dynamic.DecodeError$>
-  >
-): _.Result<CCIS, DecodeError$>;
-
-export function parse<CCIW>(json: string, decoder: $decode.Decoder$<CCIW>): _.Result<
-  CCIW,
+export function parse<CAKA>(json: string, decoder: $decode.Decoder$<CAKA>): _.Result<
+  CAKA,
   DecodeError$
 >;
 
-export function decode_bits<CCJK>(
+export function parse_bits<CAKK>(
   json: _.BitArray,
-  decoder: (x0: $dynamic.Dynamic$) => _.Result<
-    CCJK,
-    _.List<$dynamic.DecodeError$>
-  >
-): _.Result<CCJK, DecodeError$>;
-
-export function parse_bits<CCJO>(
-  json: _.BitArray,
-  decoder: $decode.Decoder$<CCJO>
-): _.Result<CCJO, DecodeError$>;
+  decoder: $decode.Decoder$<CAKK>
+): _.Result<CAKK, DecodeError$>;
 
 export function to_string(json: Json$): string;
 
 export function to_string_tree(json: Json$): $string_tree.StringTree$;
-
-export function to_string_builder(json: Json$): $string_tree.StringTree$;
 
 export function string(input: string): Json$;
 
@@ -77,22 +53,22 @@ export function float(input: number): Json$;
 
 export function null$(): Json$;
 
-export function nullable<CCJU>(
-  input: $option.Option$<CCJU>,
-  inner_type: (x0: CCJU) => Json$
+export function nullable<CAKQ>(
+  input: $option.Option$<CAKQ>,
+  inner_type: (x0: CAKQ) => Json$
 ): Json$;
 
 export function object(entries: _.List<[string, Json$]>): Json$;
 
 export function preprocessed_array(from: _.List<Json$>): Json$;
 
-export function array<CCJY>(
-  entries: _.List<CCJY>,
-  inner_type: (x0: CCJY) => Json$
+export function array<CAKU>(
+  entries: _.List<CAKU>,
+  inner_type: (x0: CAKU) => Json$
 ): Json$;
 
-export function dict<CCKC, CCKD>(
-  dict: $dict.Dict$<CCKC, CCKD>,
-  keys: (x0: CCKC) => string,
-  values: (x0: CCKD) => Json$
+export function dict<CAKY, CAKZ>(
+  dict: $dict.Dict$<CAKY, CAKZ>,
+  keys: (x0: CAKY) => string,
+  values: (x0: CAKZ) => Json$
 ): Json$;

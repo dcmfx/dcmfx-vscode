@@ -8,7 +8,7 @@ import * as $data_element_tag from "../dcmfx_core/data_element_tag.mjs";
 import * as $data_set_path from "../dcmfx_core/data_set_path.mjs";
 import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../dcmfx_core/value_representation.mjs";
-import { toList, CustomType as $CustomType } from "../gleam.mjs";
+import { Ok, toList, CustomType as $CustomType } from "../gleam.mjs";
 
 export class TagNotPresent extends $CustomType {
   constructor(path) {
@@ -201,7 +201,7 @@ export function to_lines(error, task_description) {
     let path$1 = error.path;
     let path_line = "  Path: " + $data_set_path.to_string(path$1);
     let $ = $data_set_path.final_data_element(path$1);
-    if ($.isOk()) {
+    if ($ instanceof Ok) {
       let tag = $[0];
       _block = toList([
         "  Tag: " + $data_element_tag.to_string(tag),
@@ -211,61 +211,81 @@ export function to_lines(error, task_description) {
     } else {
       _block = toList([path_line]);
     }
-  } else if (error instanceof ValueNotPresent && error.path instanceof Some) {
-    let path$1 = error.path[0];
-    let path_line = "  Path: " + $data_set_path.to_string(path$1);
-    let $ = $data_set_path.final_data_element(path$1);
-    if ($.isOk()) {
-      let tag = $[0];
-      _block = toList([
-        "  Tag: " + $data_element_tag.to_string(tag),
-        "  Name: " + $dictionary.tag_name(tag, new None()),
-        path_line,
-      ]);
+  } else if (error instanceof ValueNotPresent) {
+    let $ = error.path;
+    if ($ instanceof Some) {
+      let path$1 = $[0];
+      let path_line = "  Path: " + $data_set_path.to_string(path$1);
+      let $1 = $data_set_path.final_data_element(path$1);
+      if ($1 instanceof Ok) {
+        let tag = $1[0];
+        _block = toList([
+          "  Tag: " + $data_element_tag.to_string(tag),
+          "  Name: " + $dictionary.tag_name(tag, new None()),
+          path_line,
+        ]);
+      } else {
+        _block = toList([path_line]);
+      }
     } else {
-      _block = toList([path_line]);
+      _block = toList([]);
     }
-  } else if (error instanceof MultiplicityMismatch && error.path instanceof Some) {
-    let path$1 = error.path[0];
-    let path_line = "  Path: " + $data_set_path.to_string(path$1);
-    let $ = $data_set_path.final_data_element(path$1);
-    if ($.isOk()) {
-      let tag = $[0];
-      _block = toList([
-        "  Tag: " + $data_element_tag.to_string(tag),
-        "  Name: " + $dictionary.tag_name(tag, new None()),
-        path_line,
-      ]);
+  } else if (error instanceof MultiplicityMismatch) {
+    let $ = error.path;
+    if ($ instanceof Some) {
+      let path$1 = $[0];
+      let path_line = "  Path: " + $data_set_path.to_string(path$1);
+      let $1 = $data_set_path.final_data_element(path$1);
+      if ($1 instanceof Ok) {
+        let tag = $1[0];
+        _block = toList([
+          "  Tag: " + $data_element_tag.to_string(tag),
+          "  Name: " + $dictionary.tag_name(tag, new None()),
+          path_line,
+        ]);
+      } else {
+        _block = toList([path_line]);
+      }
     } else {
-      _block = toList([path_line]);
+      _block = toList([]);
     }
-  } else if (error instanceof ValueInvalid && error.path instanceof Some) {
-    let path$1 = error.path[0];
-    let path_line = "  Path: " + $data_set_path.to_string(path$1);
-    let $ = $data_set_path.final_data_element(path$1);
-    if ($.isOk()) {
-      let tag = $[0];
-      _block = toList([
-        "  Tag: " + $data_element_tag.to_string(tag),
-        "  Name: " + $dictionary.tag_name(tag, new None()),
-        path_line,
-      ]);
+  } else if (error instanceof ValueInvalid) {
+    let $ = error.path;
+    if ($ instanceof Some) {
+      let path$1 = $[0];
+      let path_line = "  Path: " + $data_set_path.to_string(path$1);
+      let $1 = $data_set_path.final_data_element(path$1);
+      if ($1 instanceof Ok) {
+        let tag = $1[0];
+        _block = toList([
+          "  Tag: " + $data_element_tag.to_string(tag),
+          "  Name: " + $dictionary.tag_name(tag, new None()),
+          path_line,
+        ]);
+      } else {
+        _block = toList([path_line]);
+      }
     } else {
-      _block = toList([path_line]);
+      _block = toList([]);
     }
-  } else if (error instanceof ValueLengthInvalid && error.path instanceof Some) {
-    let path$1 = error.path[0];
-    let path_line = "  Path: " + $data_set_path.to_string(path$1);
-    let $ = $data_set_path.final_data_element(path$1);
-    if ($.isOk()) {
-      let tag = $[0];
-      _block = toList([
-        "  Tag: " + $data_element_tag.to_string(tag),
-        "  Name: " + $dictionary.tag_name(tag, new None()),
-        path_line,
-      ]);
+  } else if (error instanceof ValueLengthInvalid) {
+    let $ = error.path;
+    if ($ instanceof Some) {
+      let path$1 = $[0];
+      let path_line = "  Path: " + $data_set_path.to_string(path$1);
+      let $1 = $data_set_path.final_data_element(path$1);
+      if ($1 instanceof Ok) {
+        let tag = $1[0];
+        _block = toList([
+          "  Tag: " + $data_element_tag.to_string(tag),
+          "  Name: " + $dictionary.tag_name(tag, new None()),
+          path_line,
+        ]);
+      } else {
+        _block = toList([path_line]);
+      }
     } else {
-      _block = toList([path_line]);
+      _block = toList([]);
     }
   } else {
     _block = toList([]);

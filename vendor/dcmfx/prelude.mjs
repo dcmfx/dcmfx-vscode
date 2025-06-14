@@ -477,7 +477,13 @@ export function bitArraySliceToFloat(bitArray, start, end, isBigEndian) {
  * @param {boolean} isSigned
  * @returns {number}
  */
-export function bitArraySliceToInt(bitArray, start, end, isBigEndian, isSigned) {
+export function bitArraySliceToInt(
+  bitArray,
+  start,
+  end,
+  isBigEndian,
+  isSigned,
+) {
   bitArrayValidateRange(bitArray, start, end);
 
   if (start === end) {
@@ -718,8 +724,7 @@ export function toBitArray(segments) {
  */
 export function sizedFloat(value, size, isBigEndian) {
   if (size !== 16 && size !== 32 && size !== 64) {
-    const msg =
-      `Sized floats must be 16-bit, 32-bit or 64-bit, got size of ${size} bits`;
+    const msg = `Sized floats must be 16-bit, 32-bit or 64-bit, got size of ${size} bits`;
     throw new globalThis.Error(msg);
   }
 
@@ -1234,7 +1239,7 @@ function intFromUnalignedSliceUsingBigInt(
 
 /**
  * Interprets a 16-bit unsigned integer value as a 16-bit floating point value.
- * 
+ *
  * @param {number} intValue
  * @returns {number}
  */
@@ -1354,6 +1359,80 @@ export function stringBits(string) {
  */
 export function codepointBits(codepoint) {
   return stringBits(String.fromCodePoint(codepoint.value));
+}
+
+/**
+ * @internal
+ *
+ * Returns the UTF-16 bytes for a string.
+ *
+ * @param {string} string
+ * @param {boolean} isBigEndian
+ * @returns {Uint8Array}
+ */
+export function stringToUtf16(string, isBigEndian) {
+  const buffer = new ArrayBuffer(string.length * 2);
+  const bufferView = new DataView(buffer);
+
+  for (let i = 0; i < string.length; i++) {
+    bufferView.setUint16(i * 2, string.charCodeAt(i), !isBigEndian);
+  }
+
+  return new Uint8Array(buffer);
+}
+
+/**
+ * @internal
+ *
+ * Returns the UTF-16 bytes for a single UTF codepoint.
+ *
+ * @param {UtfCodepoint} codepoint
+ * @param {boolean} isBigEndian
+ * @returns {Uint8Array}
+ */
+export function codepointToUtf16(codepoint, isBigEndian) {
+  return stringToUtf16(String.fromCodePoint(codepoint.value), isBigEndian);
+}
+
+/**
+ * @internal
+ *
+ * Returns the UTF-32 bytes for a string.
+ *
+ * @param {string} string
+ * @param {boolean} isBigEndian
+ * @returns {Uint8Array}
+ */
+export function stringToUtf32(string, isBigEndian) {
+  const buffer = new ArrayBuffer(string.length * 4);
+  const bufferView = new DataView(buffer);
+  let length = 0;
+
+  for (let i = 0; i < string.length; i++) {
+    const codepoint = string.codePointAt(i);
+
+    bufferView.setUint32(length * 4, codepoint, !isBigEndian);
+    length++;
+
+    if (codepoint > 0xffff) {
+      i++;
+    }
+  }
+
+  return new Uint8Array(buffer.slice(0, length * 4));
+}
+
+/**
+ * @internal
+ *
+ * Returns the UTF-32 bytes for a single UTF codepoint.
+ *
+ * @param {UtfCodepoint} codepoint
+ * @param {boolean} isBigEndian
+ * @returns {Uint8Array}
+ */
+export function codepointToUtf32(codepoint, isBigEndian) {
+  return stringToUtf32(String.fromCodePoint(codepoint.value), isBigEndian);
 }
 
 export class Result extends CustomType {
@@ -1501,9 +1580,10 @@ export function divideFloat(a, b) {
 }
 
 // @internal
-export function makeError(variant, module, line, fn, message, extra) {
+export function makeError(variant, file, module, line, fn, message, extra) {
   let error = new globalThis.Error(message);
   error.gleam_error = variant;
+  error.file = file;
   error.module = module;
   error.line = line;
   error.function = fn;

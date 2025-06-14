@@ -40,6 +40,8 @@ import {
   stringBits,
 } from "../gleam.mjs";
 
+const FILEPATH = "src/dcmfx_p10/p10_write.gleam";
+
 export class P10WriteConfig extends $CustomType {
   constructor(implementation_class_uid, implementation_version_name, zlib_compression_level) {
     super();
@@ -153,13 +155,7 @@ export function data_element_header_to_bytes(header, endianness, context) {
       }
       let tag_bytes = _block;
       let $ = header.vr;
-      if ($ instanceof None) {
-        if (endianness instanceof LittleEndian) {
-          return new Ok(toBitArray([tag_bytes, sizedInt(length, 32, false)]));
-        } else {
-          return new Ok(toBitArray([tag_bytes, sizedInt(length, 32, true)]));
-        }
-      } else {
+      if ($ instanceof Some) {
         let vr = $[0];
         let length$1 = $value_length.to_int(header.length);
         let _block$1;
@@ -216,6 +212,12 @@ export function data_element_header_to_bytes(header, endianness, context) {
             );
           },
         );
+      } else {
+        if (endianness instanceof LittleEndian) {
+          return new Ok(toBitArray([tag_bytes, sizedInt(length, 32, false)]));
+        } else {
+          return new Ok(toBitArray([tag_bytes, sizedInt(length, 32, true)]));
+        }
       }
     },
   );
@@ -238,14 +240,21 @@ export function data_set_to_tokens(
     toList(["ISO_IR 192"]),
   );
   let $ = _block;
-  if (!$.isOk()) {
+  if (!($ instanceof Ok)) {
     throw makeError(
       "let_assert",
+      FILEPATH,
       "dcmfx_p10/p10_write",
       637,
       "data_set_to_tokens",
       "Pattern match failed, no pattern matched the value.",
-      { value: $ }
+      {
+        value: $,
+        start: 20080,
+        end: 20239,
+        pattern_start: 20091,
+        pattern_end: 20118
+      }
     )
   }
   let data_elements_to_insert = $[0];
@@ -254,30 +263,42 @@ export function data_set_to_tokens(
   );
   let process_token = (context, token) => {
     let $1 = $p10_filter_transform.add_token(context[1], token);
-    if (!$1.isOk()) {
+    if (!($1 instanceof Ok)) {
       throw makeError(
         "let_assert",
+        FILEPATH,
         "dcmfx_p10/p10_write",
         654,
-        "",
+        "data_set_to_tokens",
         "Pattern match failed, no pattern matched the value.",
-        { value: $1 }
+        {
+          value: $1,
+          start: 20702,
+          end: 20808,
+          pattern_start: 20713,
+          pattern_end: 20751
+        }
       )
     }
     let filter_result = $1[0][0];
     let filter_transform = $1[0][1];
-    if (!filter_result) {
-      return new Ok([context[0], filter_transform, context[2]]);
-    } else {
+    if (filter_result) {
       let $2 = $p10_insert_transform.add_token(context[2], token);
-      if (!$2.isOk()) {
+      if (!($2 instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_p10/p10_write",
           661,
-          "",
+          "data_set_to_tokens",
           "Pattern match failed, no pattern matched the value.",
-          { value: $2 }
+          {
+            value: $2,
+            start: 20921,
+            end: 21024,
+            pattern_start: 20932,
+            pattern_end: 20963
+          }
         )
       }
       let tokens = $2[0][0];
@@ -288,6 +309,8 @@ export function data_set_to_tokens(
           return new Ok([callback_context, filter_transform, insert_transform]);
         },
       );
+    } else {
+      return new Ok([context[0], filter_transform, context[2]]);
     }
   };
   let context = [
@@ -337,14 +360,21 @@ function prepare_file_meta_information_token_data_set(
   implementation_version_name
 ) {
   let $ = $data_element_value.new_other_byte_string(toBitArray([0, 1]));
-  if (!$.isOk()) {
+  if (!($ instanceof Ok)) {
     throw makeError(
       "let_assert",
+      FILEPATH,
       "dcmfx_p10/p10_write",
       744,
       "prepare_file_meta_information_token_data_set",
       "Pattern match failed, no pattern matched the value.",
-      { value: $ }
+      {
+        value: $,
+        start: 23256,
+        end: 23357,
+        pattern_start: 23267,
+        pattern_end: 23300
+      }
     )
   }
   let file_meta_information_version = $[0];
@@ -491,10 +521,10 @@ function token_to_bytes(token, context) {
     let length = token.length;
     let _block;
     let $ = transfer_syntax.vr_serialization;
-    if ($ instanceof $transfer_syntax.VrExplicit) {
-      _block = new Some(vr);
-    } else {
+    if ($ instanceof $transfer_syntax.VrImplicit) {
       _block = new None();
+    } else {
+      _block = new Some(vr);
     }
     let vr$1 = _block;
     let _pipe = new DataElementHeader(tag, vr$1, $value_length.new$(length));
@@ -521,10 +551,10 @@ function token_to_bytes(token, context) {
     let vr = token.vr;
     let _block;
     let $ = transfer_syntax.vr_serialization;
-    if ($ instanceof $transfer_syntax.VrExplicit) {
-      _block = new Some(vr);
-    } else {
+    if ($ instanceof $transfer_syntax.VrImplicit) {
       _block = new None();
+    } else {
+      _block = new Some(vr);
     }
     let vr$1 = _block;
     let _pipe = new DataElementHeader(tag, vr$1, new $value_length.Undefined());
@@ -729,6 +759,7 @@ export function write_token(context, token) {
             },
           );
         };
+        let _block;
         let _block$1;
         if (token instanceof $p10_token.DataElementHeader) {
           let tag = token.tag;
@@ -868,7 +899,6 @@ export function write_token(context, token) {
         } else {
           _block$1 = new Ok(context);
         }
-        let _block;
         let _pipe = _block$1;
         _block = map_to_p10_token_stream_error(_pipe);
         let context$1 = _block;
@@ -879,103 +909,76 @@ export function write_token(context, token) {
               token_to_bytes(token, context),
               (token_bytes) => {
                 let _block$2;
-                if (token instanceof $p10_token.DataElementValueBytes &&
-                token.bytes_remaining === 0) {
-                  let tag = token.tag;
-                  let vr = token.vr;
-                  let data = token.data;
-                  let is_pixel_or_waveform_data = (isEqual(
-                    tag,
-                    $dictionary.bits_allocated.tag
-                  )) || (isEqual(tag, $dictionary.waveform_bits_allocated.tag));
-                  let _block$3;
-                  if (is_pixel_or_waveform_data) {
-                    let _pipe$1 = $p10_location.add_clarifying_data_element(
-                      context.location,
+                if (token instanceof $p10_token.DataElementValueBytes) {
+                  let $ = token.bytes_remaining;
+                  if ($ === 0) {
+                    let tag = token.tag;
+                    let vr = token.vr;
+                    let data = token.data;
+                    let is_pixel_or_waveform_data = (isEqual(
                       tag,
-                      vr,
-                      data,
-                    );
-                    _block$3 = $result.map(_pipe$1, $pair.second);
-                  } else {
-                    _block$3 = new Ok(context.location);
-                  }
-                  let location = _block$3;
-                  _block$2 = $result.try$(
-                    location,
-                    (location) => { let _block$4;
-                      {
-                        let _block$5;
-                        let $ = isEqual(tag, $dictionary.item.tag);
-                        if ($) {
-                          _block$5 = $p10_location.end_item(location);
-                        } else {
-                          _block$5 = new Ok(location);
-                        }
-                        let location$1 = _block$5;
-                        _block$4 = $result.try$(
-                          location$1,
-                          (location) => {
-                            let path = $data_set_path.pop(context.path);
-                            return $result.try$(
-                              path,
-                              (path) => {
-                                return new Ok(
-                                  (() => {
-                                    let _record = context;
-                                    return new P10WriteContext(
-                                      _record.config,
-                                      _record.p10_bytes,
-                                      _record.p10_total_byte_count,
-                                      _record.is_ended,
-                                      _record.transfer_syntax,
-                                      _record.zlib_stream,
-                                      location,
-                                      path,
-                                    );
-                                  })(),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      }
-                      let _pipe$1 = _block$4;
-                      return map_to_p10_token_stream_error(_pipe$1); },
-                  );
-                } else if (token instanceof $p10_token.SequenceItemDelimiter) {
-                  let _block$3;
-                  {
-                    let location = $p10_location.end_item(context.location);
-                    _block$3 = $result.try$(
+                      $dictionary.bits_allocated.tag
+                    )) || (isEqual(tag, $dictionary.waveform_bits_allocated.tag));
+                    let _block$3;
+                    if (is_pixel_or_waveform_data) {
+                      let _pipe$1 = $p10_location.add_clarifying_data_element(
+                        context.location,
+                        tag,
+                        vr,
+                        data,
+                      );
+                      _block$3 = $result.map(_pipe$1, $pair.second);
+                    } else {
+                      _block$3 = new Ok(context.location);
+                    }
+                    let location = _block$3;
+                    _block$2 = $result.try$(
                       location,
                       (location) => {
-                        let path = $data_set_path.pop(context.path);
-                        return $result.try$(
-                          path,
-                          (path) => {
-                            return new Ok(
-                              (() => {
-                                let _record = context;
-                                return new P10WriteContext(
-                                  _record.config,
-                                  _record.p10_bytes,
-                                  _record.p10_total_byte_count,
-                                  _record.is_ended,
-                                  _record.transfer_syntax,
-                                  _record.zlib_stream,
-                                  location,
-                                  path,
-                                );
-                              })(),
-                            );
-                          },
-                        );
+                        let _block$4;
+                        {
+                          let _block$5;
+                          let $1 = isEqual(tag, $dictionary.item.tag);
+                          if ($1) {
+                            _block$5 = $p10_location.end_item(location);
+                          } else {
+                            _block$5 = new Ok(location);
+                          }
+                          let location$1 = _block$5;
+                          _block$4 = $result.try$(
+                            location$1,
+                            (location) => {
+                              let path = $data_set_path.pop(context.path);
+                              return $result.try$(
+                                path,
+                                (path) => {
+                                  return new Ok(
+                                    (() => {
+                                      let _record = context;
+                                      return new P10WriteContext(
+                                        _record.config,
+                                        _record.p10_bytes,
+                                        _record.p10_total_byte_count,
+                                        _record.is_ended,
+                                        _record.transfer_syntax,
+                                        _record.zlib_stream,
+                                        location,
+                                        path,
+                                      );
+                                    })(),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        }
+                        let _pipe$1 = _block$4;
+                        return map_to_p10_token_stream_error(_pipe$1);
                       },
                     );
+                  } else {
+                    _block$2 = new Ok(context);
                   }
-                  let _pipe$1 = _block$3;
-                  _block$2 = map_to_p10_token_stream_error(_pipe$1);
                 } else if (token instanceof $p10_token.SequenceDelimiter) {
                   let _block$3;
                   {
@@ -999,6 +1002,39 @@ export function write_token(context, token) {
                                   _record.transfer_syntax,
                                   _record.zlib_stream,
                                   location$1,
+                                  path,
+                                );
+                              })(),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  }
+                  let _pipe$1 = _block$3;
+                  _block$2 = map_to_p10_token_stream_error(_pipe$1);
+                } else if (token instanceof $p10_token.SequenceItemDelimiter) {
+                  let _block$3;
+                  {
+                    let location = $p10_location.end_item(context.location);
+                    _block$3 = $result.try$(
+                      location,
+                      (location) => {
+                        let path = $data_set_path.pop(context.path);
+                        return $result.try$(
+                          path,
+                          (path) => {
+                            return new Ok(
+                              (() => {
+                                let _record = context;
+                                return new P10WriteContext(
+                                  _record.config,
+                                  _record.p10_bytes,
+                                  _record.p10_total_byte_count,
+                                  _record.is_ended,
+                                  _record.transfer_syntax,
+                                  _record.zlib_stream,
+                                  location,
                                   path,
                                 );
                               })(),

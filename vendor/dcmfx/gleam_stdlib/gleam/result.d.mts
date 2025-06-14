@@ -4,75 +4,75 @@ export function is_ok(result: _.Result<any, any>): boolean;
 
 export function is_error(result: _.Result<any, any>): boolean;
 
-export function map<BZB, BZC, BZF>(
-  result: _.Result<BZB, BZC>,
-  fun: (x0: BZB) => BZF
-): _.Result<BZF, BZC>;
+export function map<CPF, CPG, CPJ>(
+  result: _.Result<CPF, CPG>,
+  fun: (x0: CPF) => CPJ
+): _.Result<CPJ, CPG>;
 
-export function map_error<BZI, BZJ, BZM>(
-  result: _.Result<BZI, BZJ>,
-  fun: (x0: BZJ) => BZM
-): _.Result<BZI, BZM>;
+export function map_error<CPM, CPN, CPQ>(
+  result: _.Result<CPM, CPN>,
+  fun: (x0: CPN) => CPQ
+): _.Result<CPM, CPQ>;
 
-export function flatten<BZP, BZQ>(result: _.Result<_.Result<BZP, BZQ>, BZQ>): _.Result<
-  BZP,
-  BZQ
+export function flatten<CPT, CPU>(result: _.Result<_.Result<CPT, CPU>, CPU>): _.Result<
+  CPT,
+  CPU
 >;
 
-export function try$<BZX, BZY, CAB>(
-  result: _.Result<BZX, BZY>,
-  fun: (x0: BZX) => _.Result<CAB, BZY>
-): _.Result<CAB, BZY>;
+export function try$<CQB, CQC, CQF>(
+  result: _.Result<CQB, CQC>,
+  fun: (x0: CQB) => _.Result<CQF, CQC>
+): _.Result<CQF, CQC>;
 
-export function then$<CAG, CAH, CAK>(
-  result: _.Result<CAG, CAH>,
-  fun: (x0: CAG) => _.Result<CAK, CAH>
-): _.Result<CAK, CAH>;
+export function then$<CQK, CQL, CQO>(
+  result: _.Result<CQK, CQL>,
+  fun: (x0: CQK) => _.Result<CQO, CQL>
+): _.Result<CQO, CQL>;
 
-export function unwrap<CAP>(result: _.Result<CAP, any>, default$: CAP): CAP;
+export function unwrap<CQT>(result: _.Result<CQT, any>, default$: CQT): CQT;
 
-export function lazy_unwrap<CAT>(
-  result: _.Result<CAT, any>,
-  default$: () => CAT
-): CAT;
+export function lazy_unwrap<CQX>(
+  result: _.Result<CQX, any>,
+  default$: () => CQX
+): CQX;
 
-export function unwrap_error<CAY>(result: _.Result<any, CAY>, default$: CAY): CAY;
+export function unwrap_error<CRC>(result: _.Result<any, CRC>, default$: CRC): CRC;
 
-export function unwrap_both<CBB>(result: _.Result<CBB, CBB>): CBB;
+export function unwrap_both<CRF>(result: _.Result<CRF, CRF>): CRF;
 
-export function or<CBE, CBF>(
-  first: _.Result<CBE, CBF>,
-  second: _.Result<CBE, CBF>
-): _.Result<CBE, CBF>;
+export function or<CRI, CRJ>(
+  first: _.Result<CRI, CRJ>,
+  second: _.Result<CRI, CRJ>
+): _.Result<CRI, CRJ>;
 
-export function lazy_or<CBM, CBN>(
-  first: _.Result<CBM, CBN>,
-  second: () => _.Result<CBM, CBN>
-): _.Result<CBM, CBN>;
+export function lazy_or<CRQ, CRR>(
+  first: _.Result<CRQ, CRR>,
+  second: () => _.Result<CRQ, CRR>
+): _.Result<CRQ, CRR>;
 
-export function all<CBU, CBV>(results: _.List<_.Result<CBU, CBV>>): _.Result<
-  _.List<CBU>,
-  CBV
+export function all<CRY, CRZ>(results: _.List<_.Result<CRY, CRZ>>): _.Result<
+  _.List<CRY>,
+  CRZ
 >;
 
-export function partition<CCC, CCD>(results: _.List<_.Result<CCC, CCD>>): [
-  _.List<CCC>,
-  _.List<CCD>
+export function partition<CSG, CSH>(results: _.List<_.Result<CSG, CSH>>): [
+  _.List<CSG>,
+  _.List<CSH>
 ];
 
-export function replace<CCS, CCV>(result: _.Result<any, CCS>, value: CCV): _.Result<
-  CCV,
-  CCS
+export function replace<CSW, CSZ>(result: _.Result<any, CSW>, value: CSZ): _.Result<
+  CSZ,
+  CSW
 >;
 
-export function replace_error<CCY, CDC>(result: _.Result<CCY, any>, error: CDC): _.Result<
-  CCY,
-  CDC
+export function replace_error<CTC, CTG>(result: _.Result<CTC, any>, error: CTG): _.Result<
+  CTC,
+  CTG
 >;
 
-export function values<CDF>(results: _.List<_.Result<CDF, any>>): _.List<CDF>;
+export function values<CTJ>(results: _.List<_.Result<CTJ, any>>): _.List<CTJ>;
 
-export function try_recover<CDL, CDM, CDP>(
-  result: _.Result<CDL, CDM>,
-  fun: (x0: CDM) => _.Result<CDL, CDP>
-): _.Result<CDL, CDP>;
+export function try_recover<CTP, CTQ, CTT>(
+  result: _.Result<CTP, CTQ>,
+  fun: (x0: CTQ) => _.Result<CTP, CTT>
+): _.Result<CTP, CTT>;

@@ -1,8 +1,4 @@
 /// <reference types="./function.d.mts" />
-export function flip(fun) {
-  return (b, a) => { return fun(a, b); };
-}
-
 export function identity(x) {
   return x;
 }

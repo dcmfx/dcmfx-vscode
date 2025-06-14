@@ -16,7 +16,7 @@ import {
 } from "../../gleam.mjs";
 
 export function to_int16(bytes) {
-  if (bytes.bitSize == 16) {
+  if (bytes.bitSize === 16) {
     let value = bitArraySliceToInt(bytes, 0, 16, false, true);
     return new Ok(value);
   } else {
@@ -25,7 +25,7 @@ export function to_int16(bytes) {
 }
 
 export function to_uint16(bytes) {
-  if (bytes.bitSize == 16) {
+  if (bytes.bitSize === 16) {
     let value = bitArraySliceToInt(bytes, 0, 16, false, false);
     return new Ok(value);
   } else {
@@ -34,7 +34,7 @@ export function to_uint16(bytes) {
 }
 
 export function to_int32(bytes) {
-  if (bytes.bitSize == 32) {
+  if (bytes.bitSize === 32) {
     let value = bitArraySliceToInt(bytes, 0, 32, false, true);
     return new Ok(value);
   } else {
@@ -43,7 +43,7 @@ export function to_int32(bytes) {
 }
 
 export function to_uint32(bytes) {
-  if (bytes.bitSize == 32) {
+  if (bytes.bitSize === 32) {
     let value = bitArraySliceToInt(bytes, 0, 32, false, false);
     return new Ok(value);
   } else {
@@ -104,7 +104,7 @@ function do_to_list(
       let _pipe$1 = $bit_array.slice(_pipe, i * item_size, item_size);
       _block = $result.then$(_pipe$1, read_item);
       let item = _block;
-      if (item.isOk()) {
+      if (item instanceof Ok) {
         let item$1 = item[0];
         loop$bytes = bytes;
         loop$item_size = item_size;
@@ -184,19 +184,24 @@ function do_reverse_index(loop$bytes, loop$predicate, loop$index) {
     let predicate = loop$predicate;
     let index = loop$index;
     let $ = $bit_array.slice(bytes, index, 1);
-    if ($.isOk() && $[0].bitSize == 8) {
-      let final_byte = $[0].byteAt(0);
-      let $1 = predicate(final_byte);
-      if ($1) {
-        return new Ok(index);
-      } else {
-        if (index === 0) {
-          return new Error(undefined);
+    if ($ instanceof Ok) {
+      let $1 = $[0];
+      if ($1.bitSize === 8) {
+        let final_byte = $1.byteAt(0);
+        let $2 = predicate(final_byte);
+        if ($2) {
+          return new Ok(index);
         } else {
-          loop$bytes = bytes;
-          loop$predicate = predicate;
-          loop$index = index - 1;
+          if (index === 0) {
+            return new Error(undefined);
+          } else {
+            loop$bytes = bytes;
+            loop$predicate = predicate;
+            loop$index = index - 1;
+          }
         }
+      } else {
+        return new Error(undefined);
       }
     } else {
       return new Error(undefined);

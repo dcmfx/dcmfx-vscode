@@ -4,8 +4,8 @@ import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import { Ok, Error, isEqual } from "../gleam.mjs";
 
 export function describe(value, tag) {
-  if (isEqual(tag, $dictionary.modality.tag)) {
-    let tag$1 = tag;
+  let tag$1 = tag;
+  if (isEqual(tag$1, $dictionary.modality.tag)) {
     if (value === "ANN") {
       return new Ok("Annotation");
     } else if (value === "AR") {
@@ -167,371 +167,496 @@ export function describe(value, tag) {
     } else {
       return new Error(undefined);
     }
-  } else if (isEqual(tag, $dictionary.patient_sex.tag)) {
-    let tag$1 = tag;
-    if (value === "M") {
-      return new Ok("Male");
-    } else if (value === "F") {
-      return new Ok("Female");
-    } else if (value === "O") {
-      return new Ok("Other");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.conversion_type.tag)) {
-    let tag$1 = tag;
-    if (value === "DV") {
-      return new Ok("Digitized Video");
-    } else if (value === "DI") {
-      return new Ok("Digital Interface");
-    } else if (value === "DF") {
-      return new Ok("Digitized Film");
-    } else if (value === "WSD") {
-      return new Ok("Workstation");
-    } else if (value === "SD") {
-      return new Ok("Scanned Document");
-    } else if (value === "SI") {
-      return new Ok("Scanned Image");
-    } else if (value === "DRW") {
-      return new Ok("Drawing");
-    } else if (value === "SYN") {
-      return new Ok("Synthetic Image");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.scanning_sequence.tag)) {
-    let tag$1 = tag;
-    if (value === "SE") {
-      return new Ok("Spin Echo");
-    } else if (value === "IR") {
-      return new Ok("Inversion Recovery");
-    } else if (value === "GR") {
-      return new Ok("Gradient Recalled");
-    } else if (value === "EP") {
-      return new Ok("Echo Planar");
-    } else if (value === "RM") {
-      return new Ok("Research Mode");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.sequence_variant.tag)) {
-    let tag$1 = tag;
-    if (value === "SK") {
-      return new Ok("Segmented k-space");
-    } else if (value === "MTC") {
-      return new Ok("Magnetization transfer contrast");
-    } else if (value === "SS") {
-      return new Ok("Steady state");
-    } else if (value === "TRSS") {
-      return new Ok("Time reversed steady state");
-    } else if (value === "SP") {
-      return new Ok("Spoiled");
-    } else if (value === "MP") {
-      return new Ok("MAG prepared");
-    } else if (value === "OSP") {
-      return new Ok("Oversampling phase");
-    } else if (value === "NONE") {
-      return new Ok("No sequence variant");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.scan_options.tag)) {
-    let tag$1 = tag;
-    if (value === "PER") {
-      return new Ok("Phase Encode Reordering");
-    } else if (value === "RG") {
-      return new Ok("Respiratory Gating");
-    } else if (value === "CG") {
-      return new Ok("Cardiac Gating");
-    } else if (value === "PPG") {
-      return new Ok("Peripheral Pulse Gating");
-    } else if (value === "FC") {
-      return new Ok("Flow Compensation");
-    } else if (value === "PFF") {
-      return new Ok("Partial Fourier - Frequency");
-    } else if (value === "PFP") {
-      return new Ok("Partial Fourier - Phase");
-    } else if (value === "SP") {
-      return new Ok("Spatial Presaturation");
-    } else if (value === "FS") {
-      return new Ok("Fat Saturation");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.acquisition_termination_condition.tag)) {
-    let tag$1 = tag;
-    if (value === "CNTS") {
-      return new Ok("Preset counts was reached");
-    } else if (value === "DENS") {
-      return new Ok("Preset count density (counts/sec) was reached");
-    } else if (value === "RDD") {
-      let _pipe = "Preset relative count density difference (change in counts/sec) was reached";
-      return new Ok(_pipe);
-    } else if (value === "MANU") {
-      return new Ok("Acquisition was terminated manually");
-    } else if (value === "OVFL") {
-      return new Ok("Data overflow occurred");
-    } else if (value === "TIME") {
-      return new Ok("Preset time limit was reached");
-    } else if (value === "CARD_TRIG") {
-      return new Ok("Preset number of cardiac triggers was reached");
-    } else if (value === "RESP_TRIG") {
-      return new Ok("Preset number of respiratory triggers was reached");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.rotation_direction.tag)) {
-    let tag$1 = tag;
-    if (value === "CW") {
-      return new Ok("Clockwise");
-    } else if (value === "CC") {
-      return new Ok("Counter clockwise");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.radiation_setting.tag)) {
-    let tag$1 = tag;
-    if (value === "SC") {
-      let _pipe = "Low dose exposure generally corresponding to fluoroscopic settings";
-      return new Ok(_pipe);
-    } else if (value === "GR") {
-      return new Ok("High dose for diagnostic quality image acquisition");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.collimator_type.tag)) {
-    let tag$1 = tag;
-    if (value === "PARA") {
-      return new Ok("Parallel (default)");
-    } else if (value === "PINH") {
-      return new Ok("Pinhole");
-    } else if (value === "FANB") {
-      return new Ok("Fan-beam");
-    } else if (value === "CONE") {
-      return new Ok("Cone-beam");
-    } else if (value === "SLNT") {
-      return new Ok("Slant hole");
-    } else if (value === "ASTG") {
-      return new Ok("Astigmatic");
-    } else if (value === "DIVG") {
-      return new Ok("Diverging");
-    } else if (value === "NONE") {
-      return new Ok("No collimator");
-    } else if (value === "UNKN") {
-      return new Ok("Unknown");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.whole_body_technique.tag)) {
-    let tag$1 = tag;
-    if (value === "1PS") {
-      return new Ok("One pass");
-    } else if (value === "2PS") {
-      return new Ok("Two pass");
-    } else if (value === "PCN") {
-      return new Ok("Patient contour following employed");
-    } else if (value === "MSP") {
-      return new Ok("Multiple static frames collected into a whole body frame");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.patient_position.tag)) {
-    let tag$1 = tag;
-    if (value === "HFP") {
-      return new Ok("Head First-Prone");
-    } else if (value === "HFS") {
-      return new Ok("Head First-Supine");
-    } else if (value === "HFDR") {
-      return new Ok("Head First-Decubitus Right");
-    } else if (value === "HFDL") {
-      return new Ok("Head First-Decubitus Left");
-    } else if (value === "FFDR") {
-      return new Ok("Feet First-Decubitus Right");
-    } else if (value === "FFDL") {
-      return new Ok("Feet First-Decubitus Left");
-    } else if (value === "FFP") {
-      return new Ok("Feet First-Prone");
-    } else if (value === "FFS") {
-      return new Ok("Feet First-Supine");
-    } else if (value === "LFP") {
-      return new Ok("Left First-Prone");
-    } else if (value === "LFS") {
-      return new Ok("Left First-Supine");
-    } else if (value === "RFP") {
-      return new Ok("Right First-Prone");
-    } else if (value === "RFS") {
-      return new Ok("Right First-Supine");
-    } else if (value === "AFDR") {
-      return new Ok("Anterior First-Decubitus Right");
-    } else if (value === "AFDL") {
-      return new Ok("Anterior First-Decubitus Left");
-    } else if (value === "PFDR") {
-      return new Ok("Posterior First-Decubitus Right");
-    } else if (value === "PFDL") {
-      return new Ok("Posterior First-Decubitus Left");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.view_position.tag)) {
-    let tag$1 = tag;
-    if (value === "AP") {
-      return new Ok("Anterior/Posterior");
-    } else if (value === "PA") {
-      return new Ok("Posterior/Anterior");
-    } else if (value === "LL") {
-      return new Ok("Left Lateral");
-    } else if (value === "RL") {
-      return new Ok("Right Lateral");
-    } else if (value === "RLD") {
-      return new Ok("Right Lateral Decubitus");
-    } else if (value === "LLD") {
-      return new Ok("Left Lateral Decubitus");
-    } else if (value === "RLO") {
-      return new Ok("Right Lateral Oblique");
-    } else if (value === "LLO") {
-      return new Ok("Left Lateral Oblique");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.image_laterality.tag)) {
-    let tag$1 = tag;
-    if (value === "R") {
-      return new Ok("Right");
-    } else if (value === "L") {
-      return new Ok("Left");
-    } else if (value === "U") {
-      return new Ok("Unpaired");
-    } else if (value === "B") {
-      return new Ok("Both left and right");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.multienergy_detector_type.tag)) {
-    let tag$1 = tag;
-    if (value === "INTEGRATING") {
-      return new Ok("Physical detector integrates the full X-Ray spectrum");
-    } else if (value === "MULTILAYER") {
-      let _pipe = "Physical detector layers absorb different parts of the X-Ray spectrum";
-      return new Ok(_pipe);
-    } else if (value === "PHOTON_COUNTING") {
-      let _pipe = "Physical detector counts photons with energy discrimination capability";
-      return new Ok(_pipe);
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.corrected_image.tag)) {
-    let tag$1 = tag;
-    if (value === "UNIF") {
-      return new Ok("Flood corrected");
-    } else if (value === "COR") {
-      return new Ok("Center of rotation corrected");
-    } else if (value === "NCO") {
-      return new Ok("Non-circular orbit corrected");
-    } else if (value === "DECY") {
-      return new Ok("Decay corrected");
-    } else if (value === "ATTN") {
-      return new Ok("Attenuation corrected");
-    } else if (value === "SCAT") {
-      return new Ok("Scatter corrected");
-    } else if (value === "DTIM") {
-      return new Ok("Dead time corrected");
-    } else if (value === "NRGY") {
-      return new Ok("Energy corrected");
-    } else if (value === "LIN") {
-      return new Ok("Linearity corrected");
-    } else if (value === "MOTN") {
-      return new Ok("Motion corrected");
-    } else if (value === "CLN") {
-      return new Ok("Count loss normalization");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.pixel_intensity_relationship.tag)) {
-    let tag$1 = tag;
-    if (value === "LIN") {
-      return new Ok("Approximately proportional to X-Ray beam intensity");
-    } else if (value === "LOG") {
-      return new Ok("Non-linear \"Log Function\"");
-    } else if (value === "OTHER") {
-      return new Ok("Not proportional to X-Ray beam intensity");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.lossy_image_compression.tag)) {
-    let tag$1 = tag;
-    if (value === "00") {
-      return new Ok("Image has not been subjected to lossy compression");
-    } else if (value === "01") {
-      return new Ok("Image has been subjected to lossy compression");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.lossy_image_compression_method.tag)) {
-    let tag$1 = tag;
-    if (value === "ISO_10918_1") {
-      return new Ok("JPEG Lossy Compression [ISO/IEC 10918-1]");
-    } else if (value === "ISO_14495_1") {
-      return new Ok("JPEG-LS Near-lossless Compression [ISO/IEC 14495-1]");
-    } else if (value === "ISO_15444_1") {
-      return new Ok("JPEG 2000 Irreversible Compression [ISO/IEC 15444-1]");
-    } else if (value === "ISO_15444_15") {
-      let _pipe = "High-Throughput JPEG 2000 Irreversible Compression [ISO/IEC 15444-15]";
-      return new Ok(_pipe);
-    } else if (value === "ISO_13818_2") {
-      return new Ok("MPEG2 Compression [ISO/IEC 13818-2]");
-    } else if (value === "ISO_14496_10") {
-      return new Ok("MPEG-4 AVC/H.264 Compression [ISO/IEC 14496-10]");
-    } else if (value === "ISO_23008_2") {
-      return new Ok("HEVC/H.265 Lossy Compression [ISO/IEC 23008-2]");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.universal_entity_id_type.tag)) {
-    let tag$1 = tag;
-    if (value === "DNS") {
-      return new Ok("An Internet dotted name. Either in ASCII or as integers");
-    } else if (value === "EUI64") {
-      return new Ok("An IEEE Extended Unique Identifier");
-    } else if (value === "ISO") {
-      return new Ok("An International Standards Organization Object Identifier");
-    } else if (value === "URI") {
-      return new Ok("Uniform Resource Identifier");
-    } else if (value === "UUID") {
-      return new Ok("The DCE Universal Unique Identifier");
-    } else if (value === "X400") {
-      return new Ok("An X.400 MHS identifier");
-    } else if (value === "X500") {
-      return new Ok("An X.500 directory name");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (isEqual(tag, $dictionary.slice_progression_direction.tag)) {
-    let tag$1 = tag;
-    if (value === "APEX_TO_BASE") {
-      return new Ok("Apex to base");
-    } else if (value === "BASE_TO_APEX") {
-      return new Ok("Base to apex");
-    } else if (value === "ANT_TO_INF") {
-      return new Ok("Anterior to inferior");
-    } else if (value === "INF_TO_ANT") {
-      return new Ok("Inferior to anterior");
-    } else if (value === "SEPTUM_TO_WALL") {
-      return new Ok("Septum to lateral wall");
-    } else if (value === "WALL_TO_SEPTUM") {
-      return new Ok("Lateral wall to septum");
-    } else {
-      return new Error(undefined);
-    }
-  } else if (((tag.group >= $dictionary.overlay_type.tag.group) && (tag.group <= ($dictionary.overlay_type.tag.group + 0xFF))) && (tag.element === $dictionary.overlay_type.tag.element)) {
-    let tag$1 = tag;
-    if (value === "G") {
-      return new Ok("Graphics");
-    } else if (value === "R") {
-      return new Ok("ROI");
-    } else {
-      return new Error(undefined);
-    }
   } else {
-    return new Error(undefined);
+    let tag$2 = tag;
+    if (isEqual(tag$2, $dictionary.patient_sex.tag)) {
+      if (value === "M") {
+        return new Ok("Male");
+      } else if (value === "F") {
+        return new Ok("Female");
+      } else if (value === "O") {
+        return new Ok("Other");
+      } else {
+        return new Error(undefined);
+      }
+    } else {
+      let tag$3 = tag;
+      if (isEqual(tag$3, $dictionary.conversion_type.tag)) {
+        if (value === "DV") {
+          return new Ok("Digitized Video");
+        } else if (value === "DI") {
+          return new Ok("Digital Interface");
+        } else if (value === "DF") {
+          return new Ok("Digitized Film");
+        } else if (value === "WSD") {
+          return new Ok("Workstation");
+        } else if (value === "SD") {
+          return new Ok("Scanned Document");
+        } else if (value === "SI") {
+          return new Ok("Scanned Image");
+        } else if (value === "DRW") {
+          return new Ok("Drawing");
+        } else if (value === "SYN") {
+          return new Ok("Synthetic Image");
+        } else {
+          return new Error(undefined);
+        }
+      } else {
+        let tag$4 = tag;
+        if (isEqual(tag$4, $dictionary.scanning_sequence.tag)) {
+          if (value === "SE") {
+            return new Ok("Spin Echo");
+          } else if (value === "IR") {
+            return new Ok("Inversion Recovery");
+          } else if (value === "GR") {
+            return new Ok("Gradient Recalled");
+          } else if (value === "EP") {
+            return new Ok("Echo Planar");
+          } else if (value === "RM") {
+            return new Ok("Research Mode");
+          } else {
+            return new Error(undefined);
+          }
+        } else {
+          let tag$5 = tag;
+          if (isEqual(tag$5, $dictionary.sequence_variant.tag)) {
+            if (value === "SK") {
+              return new Ok("Segmented k-space");
+            } else if (value === "MTC") {
+              return new Ok("Magnetization transfer contrast");
+            } else if (value === "SS") {
+              return new Ok("Steady state");
+            } else if (value === "TRSS") {
+              return new Ok("Time reversed steady state");
+            } else if (value === "SP") {
+              return new Ok("Spoiled");
+            } else if (value === "MP") {
+              return new Ok("MAG prepared");
+            } else if (value === "OSP") {
+              return new Ok("Oversampling phase");
+            } else if (value === "NONE") {
+              return new Ok("No sequence variant");
+            } else {
+              return new Error(undefined);
+            }
+          } else {
+            let tag$6 = tag;
+            if (isEqual(tag$6, $dictionary.scan_options.tag)) {
+              if (value === "PER") {
+                return new Ok("Phase Encode Reordering");
+              } else if (value === "RG") {
+                return new Ok("Respiratory Gating");
+              } else if (value === "CG") {
+                return new Ok("Cardiac Gating");
+              } else if (value === "PPG") {
+                return new Ok("Peripheral Pulse Gating");
+              } else if (value === "FC") {
+                return new Ok("Flow Compensation");
+              } else if (value === "PFF") {
+                return new Ok("Partial Fourier - Frequency");
+              } else if (value === "PFP") {
+                return new Ok("Partial Fourier - Phase");
+              } else if (value === "SP") {
+                return new Ok("Spatial Presaturation");
+              } else if (value === "FS") {
+                return new Ok("Fat Saturation");
+              } else {
+                return new Error(undefined);
+              }
+            } else {
+              let tag$7 = tag;
+              if (isEqual(
+                tag$7,
+                $dictionary.acquisition_termination_condition.tag
+              )) {
+                if (value === "CNTS") {
+                  return new Ok("Preset counts was reached");
+                } else if (value === "DENS") {
+                  return new Ok("Preset count density (counts/sec) was reached");
+                } else if (value === "RDD") {
+                  let _pipe = "Preset relative count density difference (change in counts/sec) was reached";
+                  return new Ok(_pipe);
+                } else if (value === "MANU") {
+                  return new Ok("Acquisition was terminated manually");
+                } else if (value === "OVFL") {
+                  return new Ok("Data overflow occurred");
+                } else if (value === "TIME") {
+                  return new Ok("Preset time limit was reached");
+                } else if (value === "CARD_TRIG") {
+                  return new Ok("Preset number of cardiac triggers was reached");
+                } else if (value === "RESP_TRIG") {
+                  return new Ok(
+                    "Preset number of respiratory triggers was reached",
+                  );
+                } else {
+                  return new Error(undefined);
+                }
+              } else {
+                let tag$8 = tag;
+                if (isEqual(tag$8, $dictionary.rotation_direction.tag)) {
+                  if (value === "CW") {
+                    return new Ok("Clockwise");
+                  } else if (value === "CC") {
+                    return new Ok("Counter clockwise");
+                  } else {
+                    return new Error(undefined);
+                  }
+                } else {
+                  let tag$9 = tag;
+                  if (isEqual(tag$9, $dictionary.radiation_setting.tag)) {
+                    if (value === "SC") {
+                      let _pipe = "Low dose exposure generally corresponding to fluoroscopic settings";
+                      return new Ok(_pipe);
+                    } else if (value === "GR") {
+                      return new Ok(
+                        "High dose for diagnostic quality image acquisition",
+                      );
+                    } else {
+                      return new Error(undefined);
+                    }
+                  } else {
+                    let tag$10 = tag;
+                    if (isEqual(tag$10, $dictionary.collimator_type.tag)) {
+                      if (value === "PARA") {
+                        return new Ok("Parallel (default)");
+                      } else if (value === "PINH") {
+                        return new Ok("Pinhole");
+                      } else if (value === "FANB") {
+                        return new Ok("Fan-beam");
+                      } else if (value === "CONE") {
+                        return new Ok("Cone-beam");
+                      } else if (value === "SLNT") {
+                        return new Ok("Slant hole");
+                      } else if (value === "ASTG") {
+                        return new Ok("Astigmatic");
+                      } else if (value === "DIVG") {
+                        return new Ok("Diverging");
+                      } else if (value === "NONE") {
+                        return new Ok("No collimator");
+                      } else if (value === "UNKN") {
+                        return new Ok("Unknown");
+                      } else {
+                        return new Error(undefined);
+                      }
+                    } else {
+                      let tag$11 = tag;
+                      if (isEqual(tag$11, $dictionary.whole_body_technique.tag)) {
+                        if (value === "1PS") {
+                          return new Ok("One pass");
+                        } else if (value === "2PS") {
+                          return new Ok("Two pass");
+                        } else if (value === "PCN") {
+                          return new Ok("Patient contour following employed");
+                        } else if (value === "MSP") {
+                          return new Ok(
+                            "Multiple static frames collected into a whole body frame",
+                          );
+                        } else {
+                          return new Error(undefined);
+                        }
+                      } else {
+                        let tag$12 = tag;
+                        if (isEqual(tag$12, $dictionary.patient_position.tag)) {
+                          if (value === "HFP") {
+                            return new Ok("Head First-Prone");
+                          } else if (value === "HFS") {
+                            return new Ok("Head First-Supine");
+                          } else if (value === "HFDR") {
+                            return new Ok("Head First-Decubitus Right");
+                          } else if (value === "HFDL") {
+                            return new Ok("Head First-Decubitus Left");
+                          } else if (value === "FFDR") {
+                            return new Ok("Feet First-Decubitus Right");
+                          } else if (value === "FFDL") {
+                            return new Ok("Feet First-Decubitus Left");
+                          } else if (value === "FFP") {
+                            return new Ok("Feet First-Prone");
+                          } else if (value === "FFS") {
+                            return new Ok("Feet First-Supine");
+                          } else if (value === "LFP") {
+                            return new Ok("Left First-Prone");
+                          } else if (value === "LFS") {
+                            return new Ok("Left First-Supine");
+                          } else if (value === "RFP") {
+                            return new Ok("Right First-Prone");
+                          } else if (value === "RFS") {
+                            return new Ok("Right First-Supine");
+                          } else if (value === "AFDR") {
+                            return new Ok("Anterior First-Decubitus Right");
+                          } else if (value === "AFDL") {
+                            return new Ok("Anterior First-Decubitus Left");
+                          } else if (value === "PFDR") {
+                            return new Ok("Posterior First-Decubitus Right");
+                          } else if (value === "PFDL") {
+                            return new Ok("Posterior First-Decubitus Left");
+                          } else {
+                            return new Error(undefined);
+                          }
+                        } else {
+                          let tag$13 = tag;
+                          if (isEqual(tag$13, $dictionary.view_position.tag)) {
+                            if (value === "AP") {
+                              return new Ok("Anterior/Posterior");
+                            } else if (value === "PA") {
+                              return new Ok("Posterior/Anterior");
+                            } else if (value === "LL") {
+                              return new Ok("Left Lateral");
+                            } else if (value === "RL") {
+                              return new Ok("Right Lateral");
+                            } else if (value === "RLD") {
+                              return new Ok("Right Lateral Decubitus");
+                            } else if (value === "LLD") {
+                              return new Ok("Left Lateral Decubitus");
+                            } else if (value === "RLO") {
+                              return new Ok("Right Lateral Oblique");
+                            } else if (value === "LLO") {
+                              return new Ok("Left Lateral Oblique");
+                            } else {
+                              return new Error(undefined);
+                            }
+                          } else {
+                            let tag$14 = tag;
+                            if (isEqual(
+                              tag$14,
+                              $dictionary.image_laterality.tag
+                            )) {
+                              if (value === "R") {
+                                return new Ok("Right");
+                              } else if (value === "L") {
+                                return new Ok("Left");
+                              } else if (value === "U") {
+                                return new Ok("Unpaired");
+                              } else if (value === "B") {
+                                return new Ok("Both left and right");
+                              } else {
+                                return new Error(undefined);
+                              }
+                            } else {
+                              let tag$15 = tag;
+                              if (isEqual(
+                                tag$15,
+                                $dictionary.multienergy_detector_type.tag
+                              )) {
+                                if (value === "INTEGRATING") {
+                                  return new Ok(
+                                    "Physical detector integrates the full X-Ray spectrum",
+                                  );
+                                } else if (value === "MULTILAYER") {
+                                  let _pipe = "Physical detector layers absorb different parts of the X-Ray spectrum";
+                                  return new Ok(_pipe);
+                                } else if (value === "PHOTON_COUNTING") {
+                                  let _pipe = "Physical detector counts photons with energy discrimination capability";
+                                  return new Ok(_pipe);
+                                } else {
+                                  return new Error(undefined);
+                                }
+                              } else {
+                                let tag$16 = tag;
+                                if (isEqual(
+                                  tag$16,
+                                  $dictionary.corrected_image.tag
+                                )) {
+                                  if (value === "UNIF") {
+                                    return new Ok("Flood corrected");
+                                  } else if (value === "COR") {
+                                    return new Ok(
+                                      "Center of rotation corrected",
+                                    );
+                                  } else if (value === "NCO") {
+                                    return new Ok(
+                                      "Non-circular orbit corrected",
+                                    );
+                                  } else if (value === "DECY") {
+                                    return new Ok("Decay corrected");
+                                  } else if (value === "ATTN") {
+                                    return new Ok("Attenuation corrected");
+                                  } else if (value === "SCAT") {
+                                    return new Ok("Scatter corrected");
+                                  } else if (value === "DTIM") {
+                                    return new Ok("Dead time corrected");
+                                  } else if (value === "NRGY") {
+                                    return new Ok("Energy corrected");
+                                  } else if (value === "LIN") {
+                                    return new Ok("Linearity corrected");
+                                  } else if (value === "MOTN") {
+                                    return new Ok("Motion corrected");
+                                  } else if (value === "CLN") {
+                                    return new Ok("Count loss normalization");
+                                  } else {
+                                    return new Error(undefined);
+                                  }
+                                } else {
+                                  let tag$17 = tag;
+                                  if (isEqual(
+                                    tag$17,
+                                    $dictionary.pixel_intensity_relationship.tag
+                                  )) {
+                                    if (value === "LIN") {
+                                      return new Ok(
+                                        "Approximately proportional to X-Ray beam intensity",
+                                      );
+                                    } else if (value === "LOG") {
+                                      return new Ok(
+                                        "Non-linear \"Log Function\"",
+                                      );
+                                    } else if (value === "OTHER") {
+                                      return new Ok(
+                                        "Not proportional to X-Ray beam intensity",
+                                      );
+                                    } else {
+                                      return new Error(undefined);
+                                    }
+                                  } else {
+                                    let tag$18 = tag;
+                                    if (isEqual(
+                                      tag$18,
+                                      $dictionary.lossy_image_compression.tag
+                                    )) {
+                                      if (value === "00") {
+                                        return new Ok(
+                                          "Image has not been subjected to lossy compression",
+                                        );
+                                      } else if (value === "01") {
+                                        return new Ok(
+                                          "Image has been subjected to lossy compression",
+                                        );
+                                      } else {
+                                        return new Error(undefined);
+                                      }
+                                    } else {
+                                      let tag$19 = tag;
+                                      if (isEqual(
+                                        tag$19,
+                                        $dictionary.lossy_image_compression_method.tag
+                                      )) {
+                                        if (value === "ISO_10918_1") {
+                                          return new Ok(
+                                            "JPEG Lossy Compression [ISO/IEC 10918-1]",
+                                          );
+                                        } else if (value === "ISO_14495_1") {
+                                          return new Ok(
+                                            "JPEG-LS Near-lossless Compression [ISO/IEC 14495-1]",
+                                          );
+                                        } else if (value === "ISO_15444_1") {
+                                          return new Ok(
+                                            "JPEG 2000 Irreversible Compression [ISO/IEC 15444-1]",
+                                          );
+                                        } else if (value === "ISO_15444_15") {
+                                          let _pipe = "High-Throughput JPEG 2000 Irreversible Compression [ISO/IEC 15444-15]";
+                                          return new Ok(_pipe);
+                                        } else if (value === "ISO_13818_2") {
+                                          return new Ok(
+                                            "MPEG2 Compression [ISO/IEC 13818-2]",
+                                          );
+                                        } else if (value === "ISO_14496_10") {
+                                          return new Ok(
+                                            "MPEG-4 AVC/H.264 Compression [ISO/IEC 14496-10]",
+                                          );
+                                        } else if (value === "ISO_23008_2") {
+                                          return new Ok(
+                                            "HEVC/H.265 Lossy Compression [ISO/IEC 23008-2]",
+                                          );
+                                        } else {
+                                          return new Error(undefined);
+                                        }
+                                      } else {
+                                        let tag$20 = tag;
+                                        if (isEqual(
+                                          tag$20,
+                                          $dictionary.universal_entity_id_type.tag
+                                        )) {
+                                          if (value === "DNS") {
+                                            return new Ok(
+                                              "An Internet dotted name. Either in ASCII or as integers",
+                                            );
+                                          } else if (value === "EUI64") {
+                                            return new Ok(
+                                              "An IEEE Extended Unique Identifier",
+                                            );
+                                          } else if (value === "ISO") {
+                                            return new Ok(
+                                              "An International Standards Organization Object Identifier",
+                                            );
+                                          } else if (value === "URI") {
+                                            return new Ok(
+                                              "Uniform Resource Identifier",
+                                            );
+                                          } else if (value === "UUID") {
+                                            return new Ok(
+                                              "The DCE Universal Unique Identifier",
+                                            );
+                                          } else if (value === "X400") {
+                                            return new Ok(
+                                              "An X.400 MHS identifier",
+                                            );
+                                          } else if (value === "X500") {
+                                            return new Ok(
+                                              "An X.500 directory name",
+                                            );
+                                          } else {
+                                            return new Error(undefined);
+                                          }
+                                        } else {
+                                          let tag$21 = tag;
+                                          if (isEqual(
+                                            tag$21,
+                                            $dictionary.slice_progression_direction.tag
+                                          )) {
+                                            if (value === "APEX_TO_BASE") {
+                                              return new Ok("Apex to base");
+                                            } else if (value === "BASE_TO_APEX") {
+                                              return new Ok("Base to apex");
+                                            } else if (value === "ANT_TO_INF") {
+                                              return new Ok(
+                                                "Anterior to inferior",
+                                              );
+                                            } else if (value === "INF_TO_ANT") {
+                                              return new Ok(
+                                                "Inferior to anterior",
+                                              );
+                                            } else if (value === "SEPTUM_TO_WALL") {
+                                              return new Ok(
+                                                "Septum to lateral wall",
+                                              );
+                                            } else if (value === "WALL_TO_SEPTUM") {
+                                              return new Ok(
+                                                "Lateral wall to septum",
+                                              );
+                                            } else {
+                                              return new Error(undefined);
+                                            }
+                                          } else {
+                                            let tag$22 = tag;
+                                            if (((tag$22.group >= $dictionary.overlay_type.tag.group) && (tag$22.group <= ($dictionary.overlay_type.tag.group + 0xFF))) && (tag$22.element === $dictionary.overlay_type.tag.element)) {
+                                              if (value === "G") {
+                                                return new Ok("Graphics");
+                                              } else if (value === "R") {
+                                                return new Ok("ROI");
+                                              } else {
+                                                return new Error(undefined);
+                                              }
+                                            } else {
+                                              return new Error(undefined);
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

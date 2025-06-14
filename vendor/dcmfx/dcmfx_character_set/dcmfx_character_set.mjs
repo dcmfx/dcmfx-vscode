@@ -19,6 +19,7 @@ import {
   Ok,
   Error,
   toList,
+  Empty as $Empty,
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
@@ -26,6 +27,8 @@ import {
   toBitArray,
   bitArraySlice,
 } from "./gleam.mjs";
+
+const FILEPATH = "src/dcmfx_character_set.gleam";
 
 class SpecificCharacterSet extends $CustomType {
   constructor(charsets) {
@@ -42,14 +45,27 @@ export function from_string(specific_character_set) {
   _block = $list.map(_pipe$2, $string.uppercase);
   let charsets = _block;
   let _block$1;
-  if (charsets.hasLength(1) && charsets.head === "") {
-    _block$1 = toList(["ISO_IR 6"]);
-  } else if (charsets.atLeastLength(2) && charsets.head === "") {
-    let c = charsets.tail.head;
-    let rest = charsets.tail.tail;
-    _block$1 = listPrepend("ISO 2022 IR 6", listPrepend(c, rest));
-  } else {
+  if (charsets instanceof $Empty) {
     _block$1 = charsets;
+  } else {
+    let $ = charsets.tail;
+    if ($ instanceof $Empty) {
+      let $1 = charsets.head;
+      if ($1 === "") {
+        _block$1 = toList(["ISO_IR 6"]);
+      } else {
+        _block$1 = charsets;
+      }
+    } else {
+      let $1 = charsets.head;
+      if ($1 === "") {
+        let c = $.head;
+        let rest = $.tail;
+        _block$1 = listPrepend("ISO 2022 IR 6", listPrepend(c, rest));
+      } else {
+        _block$1 = charsets;
+      }
+    }
   }
   let charsets$1 = _block$1;
   let _block$2;
@@ -61,9 +77,7 @@ export function from_string(specific_character_set) {
     charsets$2,
     (charsets) => {
       let _block$3;
-      if (charsets.hasLength(1)) {
-        _block$3 = new Ok(charsets);
-      } else {
+      if (charsets instanceof $Empty) {
         let _block$4;
         let _pipe$5 = charsets;
         _block$4 = $list.find(
@@ -79,7 +93,7 @@ export function from_string(specific_character_set) {
           },
         );
         let has_non_iso_2022_charset = _block$4;
-        if (has_non_iso_2022_charset.isOk()) {
+        if (has_non_iso_2022_charset instanceof Ok) {
           _block$3 = new Error(
             "SpecificCharacterSet has multiple non-ISO 2022 values",
           );
@@ -96,6 +110,45 @@ export function from_string(specific_character_set) {
           }
           let _pipe$6 = _block$5;
           _block$3 = new Ok(_pipe$6);
+        }
+      } else {
+        let $ = charsets.tail;
+        if ($ instanceof $Empty) {
+          _block$3 = new Ok(charsets);
+        } else {
+          let _block$4;
+          let _pipe$5 = charsets;
+          _block$4 = $list.find(
+            _pipe$5,
+            (charset) => {
+              if (charset instanceof SingleByteWithoutExtensions) {
+                return true;
+              } else if (charset instanceof MultiByteWithoutExtensions) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+          );
+          let has_non_iso_2022_charset = _block$4;
+          if (has_non_iso_2022_charset instanceof Ok) {
+            _block$3 = new Error(
+              "SpecificCharacterSet has multiple non-ISO 2022 values",
+            );
+          } else {
+            let _block$5;
+            let $1 = $list.contains(charsets, $character_set.iso_2022_ir_6);
+            if ($1) {
+              _block$5 = charsets;
+            } else {
+              _block$5 = $list.append(
+                charsets,
+                toList([$character_set.iso_2022_ir_6]),
+              );
+            }
+            let _pipe$6 = _block$5;
+            _block$3 = new Ok(_pipe$6);
+          }
         }
       }
       let charsets$1 = _block$3;
@@ -118,20 +171,22 @@ export function is_utf8_compatible(specific_character_set) {
 }
 
 function default_code_elements(specific_character_set) {
-  if (specific_character_set instanceof SpecificCharacterSet &&
-  specific_character_set.charsets.atLeastLength(1) &&
-  specific_character_set.charsets.head instanceof SingleByteWithExtensions) {
-    let code_element_g0 = specific_character_set.charsets.head.code_element_g0;
-    let code_element_g1 = specific_character_set.charsets.head.code_element_g1;
-    return [new Some(code_element_g0), code_element_g1];
-  } else if (specific_character_set instanceof SpecificCharacterSet &&
-  specific_character_set.charsets.atLeastLength(1) &&
-  specific_character_set.charsets.head instanceof MultiByteWithExtensions) {
-    let code_element_g0 = specific_character_set.charsets.head.code_element_g0;
-    let code_element_g1 = specific_character_set.charsets.head.code_element_g1;
-    return [code_element_g0, code_element_g1];
-  } else {
+  let $ = specific_character_set.charsets;
+  if ($ instanceof $Empty) {
     return [new None(), new None()];
+  } else {
+    let $1 = $.head;
+    if ($1 instanceof SingleByteWithExtensions) {
+      let code_element_g0 = $1.code_element_g0;
+      let code_element_g1 = $1.code_element_g1;
+      return [new Some(code_element_g0), code_element_g1];
+    } else if ($1 instanceof MultiByteWithExtensions) {
+      let code_element_g0 = $1.code_element_g0;
+      let code_element_g1 = $1.code_element_g1;
+      return [code_element_g0, code_element_g1];
+    } else {
+      return [new None(), new None()];
+    }
   }
 }
 
@@ -147,14 +202,21 @@ function update_code_element(candidate, bytes) {
       let esc_length = $bit_array.byte_size(esc);
       let byte_count = $bit_array.byte_size(bytes);
       let $1 = $bit_array.slice(bytes, esc_length, byte_count - esc_length);
-      if (!$1.isOk()) {
+      if (!($1 instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_character_set",
           301,
           "update_code_element",
           "Pattern match failed, no pattern matched the value.",
-          { value: $1 }
+          {
+            value: $1,
+            start: 9282,
+            end: 9375,
+            pattern_start: 9293,
+            pattern_end: 9301
+          }
         )
       }
       let rest = $1[0];
@@ -179,12 +241,12 @@ function apply_escape_sequence(
     (current, charset) => {
       let code_elements = $character_set.code_elements(charset);
       let $ = update_code_element(code_elements[0], bytes);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let bytes$1 = $[0];
         return new $list.Stop([[code_elements[0], current[0][1]], bytes$1]);
       } else {
         let $1 = update_code_element(code_elements[1], bytes);
-        if ($1.isOk()) {
+        if ($1 instanceof Ok) {
           let bytes$1 = $1[0];
           return new $list.Stop([[current[0][0], code_elements[1]], bytes$1]);
         } else {
@@ -208,69 +270,335 @@ function decode_iso_2022_bytes(
     let string_type = loop$string_type;
     let active_code_elements = loop$active_code_elements;
     let acc = loop$acc;
-    if (bytes.bitSize == 0) {
+    if (bytes.bitSize === 0) {
       return acc;
-    } else if (bytes.byteAt(0) === 27 &&
-    (bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0)) {
-      let rest = bitArraySlice(bytes, 8);
-      let $ = apply_escape_sequence(
-        specific_character_set,
-        rest,
-        active_code_elements,
-      );
-      let active_code_elements$1 = $[0];
-      let bytes$1 = $[1];
-      loop$specific_character_set = specific_character_set;
-      loop$bytes = bytes$1;
-      loop$string_type = string_type;
-      loop$active_code_elements = active_code_elements$1;
-      loop$acc = acc;
+    } else if (bytes.bitSize >= 8) {
+      if (bytes.byteAt(0) === 27) {
+        if ((bytes.bitSize - 8) % 8 === 0) {
+          let rest = bitArraySlice(bytes, 8);
+          let $ = apply_escape_sequence(
+            specific_character_set,
+            rest,
+            active_code_elements,
+          );
+          let active_code_elements$1 = $[0];
+          let bytes$1 = $[1];
+          loop$specific_character_set = specific_character_set;
+          loop$bytes = bytes$1;
+          loop$string_type = string_type;
+          loop$active_code_elements = active_code_elements$1;
+          loop$acc = acc;
+        } else {
+          let _block;
+          let $ = active_code_elements[1];
+          if ($ instanceof Some) {
+            if (bytes.bitSize >= 8) {
+              if ((bytes.bitSize - 8) % 8 === 0) {
+                let byte = bytes.byteAt(0);
+                if (byte >= 0x80) {
+                  let g1 = $[0];
+                  _block = g1.decoder;
+                } else {
+                  let $1 = active_code_elements[0];
+                  if ($1 instanceof Some) {
+                    let g0 = $1[0];
+                    _block = g0.decoder;
+                  } else {
+                    _block = $iso_ir_6.decode_next_codepoint;
+                  }
+                }
+              } else {
+                let $1 = active_code_elements[0];
+                if ($1 instanceof Some) {
+                  let g0 = $1[0];
+                  _block = g0.decoder;
+                } else {
+                  _block = $iso_ir_6.decode_next_codepoint;
+                }
+              }
+            } else {
+              let $1 = active_code_elements[0];
+              if ($1 instanceof Some) {
+                let g0 = $1[0];
+                _block = g0.decoder;
+              } else {
+                _block = $iso_ir_6.decode_next_codepoint;
+              }
+            }
+          } else {
+            let $1 = active_code_elements[0];
+            if ($1 instanceof Some) {
+              let g0 = $1[0];
+              _block = g0.decoder;
+            } else {
+              _block = $iso_ir_6.decode_next_codepoint;
+            }
+          }
+          let decoder = _block;
+          let $1 = decoder(bytes);
+          if (!($1 instanceof Ok)) {
+            throw makeError(
+              "let_assert",
+              FILEPATH,
+              "dcmfx_character_set",
+              196,
+              "decode_iso_2022_bytes",
+              "Pattern match failed, no pattern matched the value.",
+              {
+                value: $1,
+                start: 6147,
+                end: 6198,
+                pattern_start: 6158,
+                pattern_end: 6181
+              }
+            )
+          }
+          let codepoint = $1[0][0];
+          let bytes$1 = $1[0][1];
+          let _block$1;
+          let $2 = $string.utf_codepoint_to_int(codepoint);
+          if ($2 === 0x9) {
+            _block$1 = default_code_elements(specific_character_set);
+          } else if ($2 === 0xA) {
+            _block$1 = default_code_elements(specific_character_set);
+          } else if ($2 === 0xC) {
+            _block$1 = default_code_elements(specific_character_set);
+          } else if ($2 === 0xD) {
+            _block$1 = default_code_elements(specific_character_set);
+          } else if ($2 === 0x5C) {
+            if (string_type instanceof $string_type.MultiValue) {
+              _block$1 = default_code_elements(specific_character_set);
+            } else if (string_type instanceof $string_type.PersonName) {
+              _block$1 = default_code_elements(specific_character_set);
+            } else {
+              _block$1 = active_code_elements;
+            }
+          } else if ($2 === 0x3D) {
+            if (string_type instanceof $string_type.PersonName) {
+              _block$1 = default_code_elements(specific_character_set);
+            } else {
+              _block$1 = active_code_elements;
+            }
+          } else if ($2 === 0x5E) {
+            if (string_type instanceof $string_type.PersonName) {
+              _block$1 = default_code_elements(specific_character_set);
+            } else {
+              _block$1 = active_code_elements;
+            }
+          } else {
+            _block$1 = active_code_elements;
+          }
+          let active_code_elements$1 = _block$1;
+          loop$specific_character_set = specific_character_set;
+          loop$bytes = bytes$1;
+          loop$string_type = string_type;
+          loop$active_code_elements = active_code_elements$1;
+          loop$acc = listPrepend(codepoint, acc);
+        }
+      } else {
+        let _block;
+        let $ = active_code_elements[1];
+        if ($ instanceof Some) {
+          if (bytes.bitSize >= 8) {
+            if ((bytes.bitSize - 8) % 8 === 0) {
+              let byte = bytes.byteAt(0);
+              if (byte >= 0x80) {
+                let g1 = $[0];
+                _block = g1.decoder;
+              } else {
+                let $1 = active_code_elements[0];
+                if ($1 instanceof Some) {
+                  let g0 = $1[0];
+                  _block = g0.decoder;
+                } else {
+                  _block = $iso_ir_6.decode_next_codepoint;
+                }
+              }
+            } else {
+              let $1 = active_code_elements[0];
+              if ($1 instanceof Some) {
+                let g0 = $1[0];
+                _block = g0.decoder;
+              } else {
+                _block = $iso_ir_6.decode_next_codepoint;
+              }
+            }
+          } else {
+            let $1 = active_code_elements[0];
+            if ($1 instanceof Some) {
+              let g0 = $1[0];
+              _block = g0.decoder;
+            } else {
+              _block = $iso_ir_6.decode_next_codepoint;
+            }
+          }
+        } else {
+          let $1 = active_code_elements[0];
+          if ($1 instanceof Some) {
+            let g0 = $1[0];
+            _block = g0.decoder;
+          } else {
+            _block = $iso_ir_6.decode_next_codepoint;
+          }
+        }
+        let decoder = _block;
+        let $1 = decoder(bytes);
+        if (!($1 instanceof Ok)) {
+          throw makeError(
+            "let_assert",
+            FILEPATH,
+            "dcmfx_character_set",
+            196,
+            "decode_iso_2022_bytes",
+            "Pattern match failed, no pattern matched the value.",
+            {
+              value: $1,
+              start: 6147,
+              end: 6198,
+              pattern_start: 6158,
+              pattern_end: 6181
+            }
+          )
+        }
+        let codepoint = $1[0][0];
+        let bytes$1 = $1[0][1];
+        let _block$1;
+        let $2 = $string.utf_codepoint_to_int(codepoint);
+        if ($2 === 0x9) {
+          _block$1 = default_code_elements(specific_character_set);
+        } else if ($2 === 0xA) {
+          _block$1 = default_code_elements(specific_character_set);
+        } else if ($2 === 0xC) {
+          _block$1 = default_code_elements(specific_character_set);
+        } else if ($2 === 0xD) {
+          _block$1 = default_code_elements(specific_character_set);
+        } else if ($2 === 0x5C) {
+          if (string_type instanceof $string_type.MultiValue) {
+            _block$1 = default_code_elements(specific_character_set);
+          } else if (string_type instanceof $string_type.PersonName) {
+            _block$1 = default_code_elements(specific_character_set);
+          } else {
+            _block$1 = active_code_elements;
+          }
+        } else if ($2 === 0x3D) {
+          if (string_type instanceof $string_type.PersonName) {
+            _block$1 = default_code_elements(specific_character_set);
+          } else {
+            _block$1 = active_code_elements;
+          }
+        } else if ($2 === 0x5E) {
+          if (string_type instanceof $string_type.PersonName) {
+            _block$1 = default_code_elements(specific_character_set);
+          } else {
+            _block$1 = active_code_elements;
+          }
+        } else {
+          _block$1 = active_code_elements;
+        }
+        let active_code_elements$1 = _block$1;
+        loop$specific_character_set = specific_character_set;
+        loop$bytes = bytes$1;
+        loop$string_type = string_type;
+        loop$active_code_elements = active_code_elements$1;
+        loop$acc = listPrepend(codepoint, acc);
+      }
     } else {
       let _block;
-      if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0) &&
-      active_code_elements[1] instanceof Some &&
-      (bytes.byteAt(0) >= 0x80)) {
-        let byte = bytes.byteAt(0);
-        let g1 = active_code_elements[1][0];
-        _block = g1.decoder;
-      } else if (active_code_elements[0] instanceof Some) {
-        let g0 = active_code_elements[0][0];
-        _block = g0.decoder;
+      let $ = active_code_elements[1];
+      if ($ instanceof Some) {
+        if (bytes.bitSize >= 8) {
+          if ((bytes.bitSize - 8) % 8 === 0) {
+            let byte = bytes.byteAt(0);
+            if (byte >= 0x80) {
+              let g1 = $[0];
+              _block = g1.decoder;
+            } else {
+              let $1 = active_code_elements[0];
+              if ($1 instanceof Some) {
+                let g0 = $1[0];
+                _block = g0.decoder;
+              } else {
+                _block = $iso_ir_6.decode_next_codepoint;
+              }
+            }
+          } else {
+            let $1 = active_code_elements[0];
+            if ($1 instanceof Some) {
+              let g0 = $1[0];
+              _block = g0.decoder;
+            } else {
+              _block = $iso_ir_6.decode_next_codepoint;
+            }
+          }
+        } else {
+          let $1 = active_code_elements[0];
+          if ($1 instanceof Some) {
+            let g0 = $1[0];
+            _block = g0.decoder;
+          } else {
+            _block = $iso_ir_6.decode_next_codepoint;
+          }
+        }
       } else {
-        _block = $iso_ir_6.decode_next_codepoint;
+        let $1 = active_code_elements[0];
+        if ($1 instanceof Some) {
+          let g0 = $1[0];
+          _block = g0.decoder;
+        } else {
+          _block = $iso_ir_6.decode_next_codepoint;
+        }
       }
       let decoder = _block;
-      let $ = decoder(bytes);
-      if (!$.isOk()) {
+      let $1 = decoder(bytes);
+      if (!($1 instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_character_set",
           196,
           "decode_iso_2022_bytes",
           "Pattern match failed, no pattern matched the value.",
-          { value: $ }
+          {
+            value: $1,
+            start: 6147,
+            end: 6198,
+            pattern_start: 6158,
+            pattern_end: 6181
+          }
         )
       }
-      let codepoint = $[0][0];
-      let bytes$1 = $[0][1];
+      let codepoint = $1[0][0];
+      let bytes$1 = $1[0][1];
       let _block$1;
-      let $1 = $string.utf_codepoint_to_int(codepoint);
-      if ($1 === 0x9) {
+      let $2 = $string.utf_codepoint_to_int(codepoint);
+      if ($2 === 0x9) {
         _block$1 = default_code_elements(specific_character_set);
-      } else if ($1 === 0xA) {
+      } else if ($2 === 0xA) {
         _block$1 = default_code_elements(specific_character_set);
-      } else if ($1 === 0xC) {
+      } else if ($2 === 0xC) {
         _block$1 = default_code_elements(specific_character_set);
-      } else if ($1 === 0xD) {
+      } else if ($2 === 0xD) {
         _block$1 = default_code_elements(specific_character_set);
-      } else if ($1 === 0x5C && string_type instanceof $string_type.MultiValue) {
-        _block$1 = default_code_elements(specific_character_set);
-      } else if ($1 === 0x5C && string_type instanceof $string_type.PersonName) {
-        _block$1 = default_code_elements(specific_character_set);
-      } else if ($1 === 0x3D && string_type instanceof $string_type.PersonName) {
-        _block$1 = default_code_elements(specific_character_set);
-      } else if ($1 === 0x5E && string_type instanceof $string_type.PersonName) {
-        _block$1 = default_code_elements(specific_character_set);
+      } else if ($2 === 0x5C) {
+        if (string_type instanceof $string_type.MultiValue) {
+          _block$1 = default_code_elements(specific_character_set);
+        } else if (string_type instanceof $string_type.PersonName) {
+          _block$1 = default_code_elements(specific_character_set);
+        } else {
+          _block$1 = active_code_elements;
+        }
+      } else if ($2 === 0x3D) {
+        if (string_type instanceof $string_type.PersonName) {
+          _block$1 = default_code_elements(specific_character_set);
+        } else {
+          _block$1 = active_code_elements;
+        }
+      } else if ($2 === 0x5E) {
+        if (string_type instanceof $string_type.PersonName) {
+          _block$1 = default_code_elements(specific_character_set);
+        } else {
+          _block$1 = active_code_elements;
+        }
       } else {
         _block$1 = active_code_elements;
       }
@@ -286,28 +614,8 @@ function decode_iso_2022_bytes(
 
 export function decode_bytes(specific_character_set, bytes, string_type) {
   let _block;
-  if (specific_character_set instanceof SpecificCharacterSet &&
-  specific_character_set.charsets.hasLength(1) &&
-  specific_character_set.charsets.head instanceof SingleByteWithoutExtensions) {
-    let term = specific_character_set.charsets.head.defined_term;
-    let decoder = specific_character_set.charsets.head.decoder;
-    let _block$1;
-    if (term === "ISO_IR 13" && string_type instanceof $string_type.MultiValue) {
-      _block$1 = $jis_x_0201.decode_next_codepoint_allowing_backslash;
-    } else if (term === "ISO_IR 13" &&
-    string_type instanceof $string_type.PersonName) {
-      _block$1 = $jis_x_0201.decode_next_codepoint_allowing_backslash;
-    } else {
-      _block$1 = decoder;
-    }
-    let decoder$1 = _block$1;
-    _block = $character_set.decode_bytes(bytes, decoder$1, toList([]));
-  } else if (specific_character_set instanceof SpecificCharacterSet &&
-  specific_character_set.charsets.hasLength(1) &&
-  specific_character_set.charsets.head instanceof MultiByteWithoutExtensions) {
-    let decoder = specific_character_set.charsets.head.decoder;
-    _block = $character_set.decode_bytes(bytes, decoder, toList([]));
-  } else {
+  let $ = specific_character_set.charsets;
+  if ($ instanceof $Empty) {
     _block = decode_iso_2022_bytes(
       specific_character_set,
       bytes,
@@ -315,6 +623,52 @@ export function decode_bytes(specific_character_set, bytes, string_type) {
       default_code_elements(specific_character_set),
       toList([]),
     );
+  } else {
+    let $1 = $.tail;
+    if ($1 instanceof $Empty) {
+      let $2 = $.head;
+      if ($2 instanceof SingleByteWithoutExtensions) {
+        let term = $2.defined_term;
+        let decoder = $2.decoder;
+        let _block$1;
+        if (string_type instanceof $string_type.MultiValue) {
+          if (term === "ISO_IR 13") {
+            _block$1 = $jis_x_0201.decode_next_codepoint_allowing_backslash;
+          } else {
+            _block$1 = decoder;
+          }
+        } else if (string_type instanceof $string_type.PersonName) {
+          if (term === "ISO_IR 13") {
+            _block$1 = $jis_x_0201.decode_next_codepoint_allowing_backslash;
+          } else {
+            _block$1 = decoder;
+          }
+        } else {
+          _block$1 = decoder;
+        }
+        let decoder$1 = _block$1;
+        _block = $character_set.decode_bytes(bytes, decoder$1, toList([]));
+      } else if ($2 instanceof MultiByteWithoutExtensions) {
+        let decoder = $2.decoder;
+        _block = $character_set.decode_bytes(bytes, decoder, toList([]));
+      } else {
+        _block = decode_iso_2022_bytes(
+          specific_character_set,
+          bytes,
+          string_type,
+          default_code_elements(specific_character_set),
+          toList([]),
+        );
+      }
+    } else {
+      _block = decode_iso_2022_bytes(
+        specific_character_set,
+        bytes,
+        string_type,
+        default_code_elements(specific_character_set),
+        toList([]),
+      );
+    }
   }
   let _pipe = _block;
   let _pipe$1 = $list.reverse(_pipe);
@@ -327,46 +681,65 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
     let i = loop$i;
     let acc = loop$acc;
     let $ = $bit_array.slice(bytes, i, 1);
-    if ($.isOk() && $[0].bitSize == 8) {
-      let byte = $[0].byteAt(0);
-      let $1 = byte > 0x7F;
-      if ($1) {
-        let $2 = $bit_array.slice(bytes, 0, i);
-        if (!$2.isOk()) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_character_set",
-            333,
-            "do_sanitize_default_charset_bytes",
-            "Pattern match failed, no pattern matched the value.",
-            { value: $2 }
-          )
+    if ($ instanceof Ok) {
+      let $1 = $[0];
+      if ($1.bitSize === 8) {
+        let byte = $1.byteAt(0);
+        let $2 = byte > 0x7F;
+        if ($2) {
+          let $3 = $bit_array.slice(bytes, 0, i);
+          if (!($3 instanceof Ok)) {
+            throw makeError(
+              "let_assert",
+              FILEPATH,
+              "dcmfx_character_set",
+              333,
+              "do_sanitize_default_charset_bytes",
+              "Pattern match failed, no pattern matched the value.",
+              {
+                value: $3,
+                start: 10065,
+                end: 10117,
+                pattern_start: 10076,
+                pattern_end: 10086
+              }
+            )
+          }
+          let before = $3[0];
+          let $4 = $bit_array.slice(
+            bytes,
+            i + 1,
+            ($bit_array.byte_size(bytes) - i) - 1,
+          );
+          if (!($4 instanceof Ok)) {
+            throw makeError(
+              "let_assert",
+              FILEPATH,
+              "dcmfx_character_set",
+              334,
+              "do_sanitize_default_charset_bytes",
+              "Pattern match failed, no pattern matched the value.",
+              {
+                value: $4,
+                start: 10128,
+                end: 10228,
+                pattern_start: 10139,
+                pattern_end: 10148
+              }
+            )
+          }
+          let after = $4[0];
+          let acc$1 = $bit_array.concat(toList([acc, before, toBitArray([63])]));
+          loop$bytes = after;
+          loop$i = 0;
+          loop$acc = acc$1;
+        } else {
+          loop$bytes = bytes;
+          loop$i = i + 1;
+          loop$acc = acc;
         }
-        let before = $2[0];
-        let $3 = $bit_array.slice(
-          bytes,
-          i + 1,
-          ($bit_array.byte_size(bytes) - i) - 1,
-        );
-        if (!$3.isOk()) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_character_set",
-            334,
-            "do_sanitize_default_charset_bytes",
-            "Pattern match failed, no pattern matched the value.",
-            { value: $3 }
-          )
-        }
-        let after = $3[0];
-        let acc$1 = $bit_array.concat(toList([acc, before, toBitArray([63])]));
-        loop$bytes = after;
-        loop$i = 0;
-        loop$acc = acc$1;
       } else {
-        loop$bytes = bytes;
-        loop$i = i + 1;
-        loop$acc = acc;
+        return $bit_array.concat(toList([acc, bytes]));
       }
     } else {
       return $bit_array.concat(toList([acc, bytes]));

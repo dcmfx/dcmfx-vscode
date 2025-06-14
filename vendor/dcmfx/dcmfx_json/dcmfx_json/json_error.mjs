@@ -8,7 +8,7 @@ import * as $io from "../../gleam_stdlib/gleam/io.mjs";
 import * as $list from "../../gleam_stdlib/gleam/list.mjs";
 import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None } from "../../gleam_stdlib/gleam/option.mjs";
-import { toList, CustomType as $CustomType } from "../gleam.mjs";
+import { Ok, toList, CustomType as $CustomType } from "../gleam.mjs";
 
 export class DataError extends $CustomType {
   constructor(data_error) {
@@ -43,39 +43,37 @@ export function serialize_error_to_lines(error, task_description) {
 }
 
 export function deserialize_error_to_lines(error, task_description) {
-  {
-    let details = error.details;
-    let path = error.path;
-    return $list.flatten(
+  let details = error.details;
+  let path = error.path;
+  return $list.flatten(
+    toList([
       toList([
-        toList([
-          "DICOM JSON deserialize error " + task_description,
-          "",
-          "  Details: " + details,
-        ]),
-        (() => {
-          let $ = $data_set_path.final_data_element(path);
-          if ($.isOk()) {
-            let tag = $[0];
-            return toList([
-              "  Tag: " + $data_element_tag.to_string(tag),
-              "  Name: " + $dictionary.tag_name(tag, new None()),
-            ]);
-          } else {
-            return toList([]);
-          }
-        })(),
-        (() => {
-          let $ = $data_set_path.is_root(path);
-          if ($) {
-            return toList([]);
-          } else {
-            return toList(["  Path: " + $data_set_path.to_string(path)]);
-          }
-        })(),
+        "DICOM JSON deserialize error " + task_description,
+        "",
+        "  Details: " + details,
       ]),
-    );
-  }
+      (() => {
+        let $ = $data_set_path.final_data_element(path);
+        if ($ instanceof Ok) {
+          let tag = $[0];
+          return toList([
+            "  Tag: " + $data_element_tag.to_string(tag),
+            "  Name: " + $dictionary.tag_name(tag, new None()),
+          ]);
+        } else {
+          return toList([]);
+        }
+      })(),
+      (() => {
+        let $ = $data_set_path.is_root(path);
+        if ($) {
+          return toList([]);
+        } else {
+          return toList(["  Path: " + $data_set_path.to_string(path)]);
+        }
+      })(),
+    ]),
+  );
 }
 
 export function print_serialize_error(error, task_description) {

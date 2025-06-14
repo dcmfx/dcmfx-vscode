@@ -14,7 +14,9 @@ import * as $result from "../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../gleam_stdlib/gleam/string.mjs";
 import * as $data_element_header from "../dcmfx_p10/internal/data_element_header.mjs";
 import * as $value_length from "../dcmfx_p10/internal/value_length.mjs";
-import { CustomType as $CustomType, makeError } from "../gleam.mjs";
+import { Ok, CustomType as $CustomType, makeError } from "../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_p10/p10_token.gleam";
 
 export class FilePreambleAndDICMPrefix extends $CustomType {
   constructor(preamble) {
@@ -166,7 +168,7 @@ export function data_element_to_tokens(
 ) {
   let vr = $data_element_value.value_representation(value);
   let $ = $data_element_value.bytes(value);
-  if ($.isOk()) {
+  if ($ instanceof Ok) {
     let bytes = $[0];
     let header_token = new DataElementHeader(
       tag,
@@ -185,7 +187,7 @@ export function data_element_to_tokens(
     );
   } else {
     let $1 = $data_element_value.encapsulated_pixel_data(value);
-    if ($1.isOk()) {
+    if ($1 instanceof Ok) {
       let items = $1[0];
       let header_token = new SequenceStart(tag, vr, path);
       return $result.try$(
@@ -231,14 +233,21 @@ export function data_element_to_tokens(
       );
     } else {
       let $2 = $data_element_value.sequence_items(value);
-      if (!$2.isOk()) {
+      if (!($2 instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_p10/p10_token",
           237,
           "data_element_to_tokens",
           "Pattern match failed, no pattern matched the value.",
-          { value: $2 }
+          {
+            value: $2,
+            start: 7905,
+            end: 7968,
+            pattern_start: 7916,
+            pattern_end: 7925
+          }
         )
       }
       let items = $2[0];
@@ -260,14 +269,21 @@ export function data_element_to_tokens(
                 context$2,
                 (context) => {
                   let $3 = $data_set_path.add_sequence_item(path, index);
-                  if (!$3.isOk()) {
+                  if (!($3 instanceof Ok)) {
                     throw makeError(
                       "let_assert",
+                      FILEPATH,
                       "dcmfx_p10/p10_token",
                       251,
-                      "",
+                      "data_element_to_tokens",
                       "Pattern match failed, no pattern matched the value.",
-                      { value: $3 }
+                      {
+                        value: $3,
+                        start: 8446,
+                        end: 8512,
+                        pattern_start: 8457,
+                        pattern_end: 8465
+                      }
                     )
                   }
                   let path$1 = $3[0];
@@ -311,14 +327,21 @@ export function data_elements_to_tokens(data_set, path, context, token_callback)
     context,
     (context, tag, value) => {
       let $ = $data_set_path.add_data_element(path, tag);
-      if (!$.isOk()) {
+      if (!($ instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_p10/p10_token",
           170,
-          "",
+          "data_elements_to_tokens",
           "Pattern match failed, no pattern matched the value.",
-          { value: $ }
+          {
+            value: $,
+            start: 5586,
+            end: 5649,
+            pattern_start: 5597,
+            pattern_end: 5605
+          }
         )
       }
       let path$1 = $[0];

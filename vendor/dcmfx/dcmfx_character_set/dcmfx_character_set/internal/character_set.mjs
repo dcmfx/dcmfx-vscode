@@ -22,7 +22,13 @@ import * as $jis_x_0208 from "../../dcmfx_character_set/internal/jis_x_0208.mjs"
 import * as $jis_x_0212 from "../../dcmfx_character_set/internal/jis_x_0212.mjs";
 import * as $ks_x_1001 from "../../dcmfx_character_set/internal/ks_x_1001.mjs";
 import * as $utf8 from "../../dcmfx_character_set/internal/utf8.mjs";
-import { toList, prepend as listPrepend, CustomType as $CustomType, toBitArray } from "../../gleam.mjs";
+import {
+  Ok,
+  toList,
+  prepend as listPrepend,
+  CustomType as $CustomType,
+  toBitArray,
+} from "../../gleam.mjs";
 
 export class SingleByteWithoutExtensions extends $CustomType {
   constructor(defined_term, description, decoder) {
@@ -76,7 +82,7 @@ export function decode_bytes(loop$bytes, loop$decoder, loop$acc) {
     let decoder = loop$decoder;
     let acc = loop$acc;
     let $ = decoder(bytes);
-    if ($.isOk()) {
+    if ($ instanceof Ok) {
       let codepoint = $[0][0];
       let rest = $[0][1];
       loop$bytes = rest;

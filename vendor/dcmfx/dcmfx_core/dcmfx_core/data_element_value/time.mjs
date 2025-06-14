@@ -10,7 +10,9 @@ import * as $result from "../../../gleam_stdlib/gleam/result.mjs";
 import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
-import { Ok, Error, CustomType as $CustomType, makeError } from "../../gleam.mjs";
+import { Ok, Error, Empty as $Empty, CustomType as $CustomType, makeError } from "../../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_core/data_element_value/time.gleam";
 
 export class StructuredTime extends $CustomType {
   constructor(hour, minute, second) {
@@ -41,78 +43,122 @@ export function from_bytes(bytes) {
       let $ = $regexp.from_string(
         "^(\\d\\d)((\\d\\d)((\\d\\d)(\\.\\d{1,6})?)?)?$",
       );
-      if (!$.isOk()) {
+      if (!($ instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_core/data_element_value/time",
           33,
-          "",
+          "from_bytes",
           "Pattern match failed, no pattern matched the value.",
-          { value: $ }
+          {
+            value: $,
+            start: 905,
+            end: 997,
+            pattern_start: 916,
+            pattern_end: 922
+          }
         )
       }
       let re = $[0];
       let $1 = $regexp.scan(re, time_string$1);
-      if ($1.hasLength(1)) {
-        let match = $1.head;
-        let _block$2;
-        let $3 = match.submatches;
-        if ($3.atLeastLength(4) && $3.head instanceof Some) {
-          let hour = $3.head[0];
-          let minute = $3.tail.tail.head;
-          let second = $3.tail.tail.tail.head;
-          _block$2 = [hour, minute, second];
-        } else if ($3.atLeastLength(3) &&
-        $3.head instanceof Some &&
-        $3.tail.tail.head instanceof Some) {
-          let hour = $3.head[0];
-          let minute = $3.tail.tail.head[0];
-          _block$2 = [hour, new Some(minute), new None()];
-        } else if ($3.atLeastLength(1) && $3.head instanceof Some) {
-          let hour = $3.head[0];
-          _block$2 = [hour, new None(), new None()];
-        } else {
-          _block$2 = ["0", new None(), new None()];
-        }
-        let $2 = _block$2;
-        let hour = $2[0];
-        let minute = $2[1];
-        let second = $2[2];
-        let $4 = $int.parse(hour);
-        if (!$4.isOk()) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_core/data_element_value/time",
-            45,
-            "",
-            "Pattern match failed, no pattern matched the value.",
-            { value: $4 }
-          )
-        }
-        let hour$1 = $4[0];
-        let _block$3;
-        if (minute instanceof Some) {
-          let minute$1 = minute[0];
-          _block$3 = $option.from_result($int.parse(minute$1));
-        } else {
-          _block$3 = new None();
-        }
-        let minute$1 = _block$3;
-        let _block$4;
-        if (second instanceof Some) {
-          let second$1 = second[0];
-          _block$4 = $option.from_result($utils.smart_parse_float(second$1));
-        } else {
-          _block$4 = new None();
-        }
-        let second$1 = _block$4;
-        return new Ok(new StructuredTime(hour$1, minute$1, second$1));
-      } else {
+      if ($1 instanceof $Empty) {
         return new Error(
           $data_error.new_value_invalid(
             ("Time is invalid: '" + time_string$1) + "'",
           ),
         );
+      } else {
+        let $2 = $1.tail;
+        if ($2 instanceof $Empty) {
+          let match = $1.head;
+          let _block$2;
+          let $4 = match.submatches;
+          if ($4 instanceof $Empty) {
+            _block$2 = ["0", new None(), new None()];
+          } else {
+            let $5 = $4.head;
+            if ($5 instanceof Some) {
+              let $6 = $4.tail;
+              if ($6 instanceof $Empty) {
+                let hour = $5[0];
+                _block$2 = [hour, new None(), new None()];
+              } else {
+                let $7 = $6.tail;
+                if ($7 instanceof $Empty) {
+                  let hour = $5[0];
+                  _block$2 = [hour, new None(), new None()];
+                } else {
+                  let $8 = $7.tail;
+                  if ($8 instanceof $Empty) {
+                    let $9 = $7.head;
+                    if ($9 instanceof Some) {
+                      let hour = $5[0];
+                      let minute = $9[0];
+                      _block$2 = [hour, new Some(minute), new None()];
+                    } else {
+                      let hour = $5[0];
+                      _block$2 = [hour, new None(), new None()];
+                    }
+                  } else {
+                    let hour = $5[0];
+                    let minute = $7.head;
+                    let second = $8.head;
+                    _block$2 = [hour, minute, second];
+                  }
+                }
+              }
+            } else {
+              _block$2 = ["0", new None(), new None()];
+            }
+          }
+          let $3 = _block$2;
+          let hour = $3[0];
+          let minute = $3[1];
+          let second = $3[2];
+          let $5 = $int.parse(hour);
+          if (!($5 instanceof Ok)) {
+            throw makeError(
+              "let_assert",
+              FILEPATH,
+              "dcmfx_core/data_element_value/time",
+              45,
+              "from_bytes",
+              "Pattern match failed, no pattern matched the value.",
+              {
+                value: $5,
+                start: 1353,
+                end: 1390,
+                pattern_start: 1364,
+                pattern_end: 1372
+              }
+            )
+          }
+          let hour$1 = $5[0];
+          let _block$3;
+          if (minute instanceof Some) {
+            let minute$1 = minute[0];
+            _block$3 = $option.from_result($int.parse(minute$1));
+          } else {
+            _block$3 = new None();
+          }
+          let minute$1 = _block$3;
+          let _block$4;
+          if (second instanceof Some) {
+            let second$1 = second[0];
+            _block$4 = $option.from_result($utils.smart_parse_float(second$1));
+          } else {
+            _block$4 = new None();
+          }
+          let second$1 = _block$4;
+          return new Ok(new StructuredTime(hour$1, minute$1, second$1));
+        } else {
+          return new Error(
+            $data_error.new_value_invalid(
+              ("Time is invalid: '" + time_string$1) + "'",
+            ),
+          );
+        }
       }
     },
   );

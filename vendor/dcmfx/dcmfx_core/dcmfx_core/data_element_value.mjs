@@ -30,6 +30,7 @@ import {
   Ok,
   Error,
   toList,
+  Empty as $Empty,
   CustomType as $CustomType,
   remainderInt,
   divideInt,
@@ -73,13 +74,18 @@ class SequenceValue extends $CustomType {
 function validate_default_charset_bytes(loop$bytes) {
   while (true) {
     let bytes = loop$bytes;
-    if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0) &&
-    (((((((bytes.byteAt(0) !== 0x0) && (bytes.byteAt(0) !== 0x9)) && (bytes.byteAt(0) !== 0xA)) && (bytes.byteAt(0) !== 0xC)) && (bytes.byteAt(0) !== 0xD)) && (bytes.byteAt(0) !== 0x1B)) && ((bytes.byteAt(0) < 0x20) || (bytes.byteAt(0) > 0x7E)))) {
-      let b = bytes.byteAt(0);
-      return new Error(b);
-    } else if ((bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0)) {
-      let rest = bitArraySlice(bytes, 8);
-      loop$bytes = rest;
+    if (bytes.bitSize >= 8) {
+      if ((bytes.bitSize - 8) % 8 === 0) {
+        let b = bytes.byteAt(0);
+        if (((((((b !== 0x0) && (b !== 0x9)) && (b !== 0xA)) && (b !== 0xC)) && (b !== 0xD)) && (b !== 0x1B)) && ((b < 0x20) || (b > 0x7E))) {
+          return new Error(b);
+        } else {
+          let rest = bitArraySlice(bytes, 8);
+          loop$bytes = rest;
+        }
+      } else {
+        return new Ok(undefined);
+      }
     } else {
       return new Ok(undefined);
     }
@@ -243,306 +249,346 @@ export function total_byte_size(value) {
 }
 
 export function get_strings(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.CodeString) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => { return $string.split(_capture, "\\"); },
-    );
-    return $result.map(
-      _pipe$3,
-      (_capture) => {
-        return $list.map(
-          _capture,
-          (s) => {
-            let $ = value_representation(value);
-            if ($ instanceof $value_representation.UniqueIdentifier) {
-              return $utils.trim_ascii_end(s, 0x0);
-            } else if ($ instanceof $value_representation.UnlimitedCharacters) {
-              return $utils.trim_ascii_end(s, 0x20);
-            } else {
-              return $utils.trim_ascii(s, 0x20);
-            }
-          },
-        );
-      },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.UniqueIdentifier) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => { return $string.split(_capture, "\\"); },
-    );
-    return $result.map(
-      _pipe$3,
-      (_capture) => {
-        return $list.map(
-          _capture,
-          (s) => {
-            let $ = value_representation(value);
-            if ($ instanceof $value_representation.UniqueIdentifier) {
-              return $utils.trim_ascii_end(s, 0x0);
-            } else if ($ instanceof $value_representation.UnlimitedCharacters) {
-              return $utils.trim_ascii_end(s, 0x20);
-            } else {
-              return $utils.trim_ascii(s, 0x20);
-            }
-          },
-        );
-      },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.LongString) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => { return $string.split(_capture, "\\"); },
-    );
-    return $result.map(
-      _pipe$3,
-      (_capture) => {
-        return $list.map(
-          _capture,
-          (s) => {
-            let $ = value_representation(value);
-            if ($ instanceof $value_representation.UniqueIdentifier) {
-              return $utils.trim_ascii_end(s, 0x0);
-            } else if ($ instanceof $value_representation.UnlimitedCharacters) {
-              return $utils.trim_ascii_end(s, 0x20);
-            } else {
-              return $utils.trim_ascii(s, 0x20);
-            }
-          },
-        );
-      },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.ShortString) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => { return $string.split(_capture, "\\"); },
-    );
-    return $result.map(
-      _pipe$3,
-      (_capture) => {
-        return $list.map(
-          _capture,
-          (s) => {
-            let $ = value_representation(value);
-            if ($ instanceof $value_representation.UniqueIdentifier) {
-              return $utils.trim_ascii_end(s, 0x0);
-            } else if ($ instanceof $value_representation.UnlimitedCharacters) {
-              return $utils.trim_ascii_end(s, 0x20);
-            } else {
-              return $utils.trim_ascii(s, 0x20);
-            }
-          },
-        );
-      },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.UnlimitedCharacters) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => { return $string.split(_capture, "\\"); },
-    );
-    return $result.map(
-      _pipe$3,
-      (_capture) => {
-        return $list.map(
-          _capture,
-          (s) => {
-            let $ = value_representation(value);
-            if ($ instanceof $value_representation.UniqueIdentifier) {
-              return $utils.trim_ascii_end(s, 0x0);
-            } else if ($ instanceof $value_representation.UnlimitedCharacters) {
-              return $utils.trim_ascii_end(s, 0x20);
-            } else {
-              return $utils.trim_ascii(s, 0x20);
-            }
-          },
-        );
-      },
-    );
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.CodeString) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else if ($ instanceof $value_representation.LongString) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else if ($ instanceof $value_representation.ShortString) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else if ($ instanceof $value_representation.UniqueIdentifier) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else if ($ instanceof $value_representation.UnlimitedCharacters) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
 }
 
 export function get_string(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.ApplicationEntity) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    return $result.map(
-      _pipe$2,
-      (s) => {
-        let $ = value_representation(value);
-        if ($ instanceof $value_representation.ApplicationEntity) {
-          return $utils.trim_ascii(s, 0x20);
-        } else if ($ instanceof $value_representation.UniversalResourceIdentifier) {
-          return $utils.trim_ascii(s, 0x20);
-        } else {
-          return $utils.trim_ascii_end(s, 0x20);
-        }
-      },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.LongText) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    return $result.map(
-      _pipe$2,
-      (s) => {
-        let $ = value_representation(value);
-        if ($ instanceof $value_representation.ApplicationEntity) {
-          return $utils.trim_ascii(s, 0x20);
-        } else if ($ instanceof $value_representation.UniversalResourceIdentifier) {
-          return $utils.trim_ascii(s, 0x20);
-        } else {
-          return $utils.trim_ascii_end(s, 0x20);
-        }
-      },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.ShortText) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    return $result.map(
-      _pipe$2,
-      (s) => {
-        let $ = value_representation(value);
-        if ($ instanceof $value_representation.ApplicationEntity) {
-          return $utils.trim_ascii(s, 0x20);
-        } else if ($ instanceof $value_representation.UniversalResourceIdentifier) {
-          return $utils.trim_ascii(s, 0x20);
-        } else {
-          return $utils.trim_ascii_end(s, 0x20);
-        }
-      },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.UniversalResourceIdentifier) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    return $result.map(
-      _pipe$2,
-      (s) => {
-        let $ = value_representation(value);
-        if ($ instanceof $value_representation.ApplicationEntity) {
-          return $utils.trim_ascii(s, 0x20);
-        } else if ($ instanceof $value_representation.UniversalResourceIdentifier) {
-          return $utils.trim_ascii(s, 0x20);
-        } else {
-          return $utils.trim_ascii_end(s, 0x20);
-        }
-      },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.UnlimitedText) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    return $result.map(
-      _pipe$2,
-      (s) => {
-        let $ = value_representation(value);
-        if ($ instanceof $value_representation.ApplicationEntity) {
-          return $utils.trim_ascii(s, 0x20);
-        } else if ($ instanceof $value_representation.UniversalResourceIdentifier) {
-          return $utils.trim_ascii(s, 0x20);
-        } else {
-          return $utils.trim_ascii_end(s, 0x20);
-        }
-      },
-    );
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.ApplicationEntity) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      return $result.map(
+        _pipe$2,
+        (s) => {
+          let $1 = value_representation(value);
+          if ($1 instanceof $value_representation.ApplicationEntity) {
+            return $utils.trim_ascii(s, 0x20);
+          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+            return $utils.trim_ascii(s, 0x20);
+          } else {
+            return $utils.trim_ascii_end(s, 0x20);
+          }
+        },
+      );
+    } else if ($ instanceof $value_representation.LongText) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      return $result.map(
+        _pipe$2,
+        (s) => {
+          let $1 = value_representation(value);
+          if ($1 instanceof $value_representation.ApplicationEntity) {
+            return $utils.trim_ascii(s, 0x20);
+          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+            return $utils.trim_ascii(s, 0x20);
+          } else {
+            return $utils.trim_ascii_end(s, 0x20);
+          }
+        },
+      );
+    } else if ($ instanceof $value_representation.ShortText) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      return $result.map(
+        _pipe$2,
+        (s) => {
+          let $1 = value_representation(value);
+          if ($1 instanceof $value_representation.ApplicationEntity) {
+            return $utils.trim_ascii(s, 0x20);
+          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+            return $utils.trim_ascii(s, 0x20);
+          } else {
+            return $utils.trim_ascii_end(s, 0x20);
+          }
+        },
+      );
+    } else if ($ instanceof $value_representation.UniversalResourceIdentifier) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      return $result.map(
+        _pipe$2,
+        (s) => {
+          let $1 = value_representation(value);
+          if ($1 instanceof $value_representation.ApplicationEntity) {
+            return $utils.trim_ascii(s, 0x20);
+          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+            return $utils.trim_ascii(s, 0x20);
+          } else {
+            return $utils.trim_ascii_end(s, 0x20);
+          }
+        },
+      );
+    } else if ($ instanceof $value_representation.UnlimitedText) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      return $result.map(
+        _pipe$2,
+        (s) => {
+          let $1 = value_representation(value);
+          if ($1 instanceof $value_representation.ApplicationEntity) {
+            return $utils.trim_ascii(s, 0x20);
+          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+            return $utils.trim_ascii(s, 0x20);
+          } else {
+            return $utils.trim_ascii_end(s, 0x20);
+          }
+        },
+      );
+    } else {
+      return $result.try$(
+        get_strings(value),
+        (strings) => {
+          if (strings instanceof $Empty) {
+            return new Error($data_error.new_multiplicity_mismatch());
+          } else {
+            let $1 = strings.tail;
+            if ($1 instanceof $Empty) {
+              let s = strings.head;
+              return new Ok(s);
+            } else {
+              return new Error($data_error.new_multiplicity_mismatch());
+            }
+          }
+        },
+      );
+    }
   } else {
     return $result.try$(
       get_strings(value),
       (strings) => {
-        if (strings.hasLength(1)) {
-          let s = strings.head;
-          return new Ok(s);
-        } else {
+        if (strings instanceof $Empty) {
           return new Error($data_error.new_multiplicity_mismatch());
+        } else {
+          let $ = strings.tail;
+          if ($ instanceof $Empty) {
+            let s = strings.head;
+            return new Ok(s);
+          } else {
+            return new Error($data_error.new_multiplicity_mismatch());
+          }
         }
       },
     );
@@ -553,17 +599,34 @@ export function get_lookup_table_descriptor(value) {
   if (value instanceof LookupTableDescriptorValue) {
     let vr = value.vr;
     let bytes$1 = value.bytes;
-    if (vr instanceof $value_representation.SignedShort && bytes$1.bitSize == 48) {
-      let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
-      let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, true);
-      let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
-      return new Ok([entry_count, first_input_value, bits_per_entry]);
-    } else if (vr instanceof $value_representation.UnsignedShort &&
-    bytes$1.bitSize == 48) {
-      let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
-      let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, false);
-      let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
-      return new Ok([entry_count, first_input_value, bits_per_entry]);
+    if (bytes$1.bitSize >= 16) {
+      if (bytes$1.bitSize >= 32) {
+        if (bytes$1.bitSize === 48) {
+          if (vr instanceof $value_representation.SignedShort) {
+            let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
+            let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, true);
+            let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
+            return new Ok([entry_count, first_input_value, bits_per_entry]);
+          } else if (vr instanceof $value_representation.UnsignedShort) {
+            let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
+            let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, false);
+            let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
+            return new Ok([entry_count, first_input_value, bits_per_entry]);
+          } else {
+            return new Error(
+              $data_error.new_value_invalid("Invalid lookup table descriptor"),
+            );
+          }
+        } else {
+          return new Error(
+            $data_error.new_value_invalid("Invalid lookup table descriptor"),
+          );
+        }
+      } else {
+        return new Error(
+          $data_error.new_value_invalid("Invalid lookup table descriptor"),
+        );
+      }
     } else {
       return new Error(
         $data_error.new_value_invalid("Invalid lookup table descriptor"),
@@ -575,42 +638,42 @@ export function get_lookup_table_descriptor(value) {
 }
 
 export function get_ints(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.IntegerString) {
-    let bytes$1 = value.bytes;
-    return $integer_string.from_bytes(bytes$1);
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.SignedLong) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_int32_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Int32 data"),
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.SignedShort) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_int16_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Int16 data"),
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.UnsignedLong) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_uint32_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Uint32 data"),
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.UnsignedShort) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_uint16_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Uint16 data"),
-    );
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.IntegerString) {
+      let bytes$1 = value.bytes;
+      return $integer_string.from_bytes(bytes$1);
+    } else if ($ instanceof $value_representation.SignedLong) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_int32_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Int32 data"),
+      );
+    } else if ($ instanceof $value_representation.SignedShort) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_int16_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Int16 data"),
+      );
+    } else if ($ instanceof $value_representation.UnsignedLong) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_uint32_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Uint32 data"),
+      );
+    } else if ($ instanceof $value_representation.UnsignedShort) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_uint16_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Uint16 data"),
+      );
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else if (value instanceof LookupTableDescriptorValue) {
     return $result.map(
       get_lookup_table_descriptor(value),
@@ -630,34 +693,42 @@ export function get_int(value) {
   return $result.try$(
     get_ints(value),
     (ints) => {
-      if (ints.hasLength(1)) {
-        let i = ints.head;
-        return new Ok(i);
-      } else {
+      if (ints instanceof $Empty) {
         return new Error($data_error.new_multiplicity_mismatch());
+      } else {
+        let $ = ints.tail;
+        if ($ instanceof $Empty) {
+          let i = ints.head;
+          return new Ok(i);
+        } else {
+          return new Error($data_error.new_multiplicity_mismatch());
+        }
       }
     },
   );
 }
 
 export function get_big_ints(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.SignedVeryLong) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_int64_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Int64 data"),
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.UnsignedVeryLong) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $bit_array_utils.to_uint64_list(_pipe);
-    return $result.replace_error(
-      _pipe$1,
-      $data_error.new_value_invalid("Invalid Uint64 data"),
-    );
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.SignedVeryLong) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_int64_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Int64 data"),
+      );
+    } else if ($ instanceof $value_representation.UnsignedVeryLong) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array_utils.to_uint64_list(_pipe);
+      return $result.replace_error(
+        _pipe$1,
+        $data_error.new_value_invalid("Invalid Uint64 data"),
+      );
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
@@ -667,58 +738,63 @@ export function get_big_int(value) {
   return $result.try$(
     get_big_ints(value),
     (ints) => {
-      if (ints.hasLength(1)) {
-        let i = ints.head;
-        return new Ok(i);
-      } else {
+      if (ints instanceof $Empty) {
         return new Error($data_error.new_multiplicity_mismatch());
+      } else {
+        let $ = ints.tail;
+        if ($ instanceof $Empty) {
+          let i = ints.head;
+          return new Ok(i);
+        } else {
+          return new Error($data_error.new_multiplicity_mismatch());
+        }
       }
     },
   );
 }
 
 export function get_floats(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.DecimalString) {
-    let bytes$1 = value.bytes;
-    let _pipe = bytes$1;
-    let _pipe$1 = $decimal_string.from_bytes(_pipe);
-    return $result.map(
-      _pipe$1,
-      (_capture) => { return $list.map(_capture, $ieee_float.finite); },
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.FloatingPointDouble) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_float64_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Float64 data"),
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.OtherDoubleString) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_float64_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Float64 data"),
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.FloatingPointSingle) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_float32_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Float32 data"),
-    );
-  } else if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.OtherFloatString) {
-    let bytes$1 = value.bytes;
-    let _pipe = $bit_array_utils.to_float32_list(bytes$1);
-    return $result.replace_error(
-      _pipe,
-      $data_error.new_value_invalid("Invalid Float32 data"),
-    );
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.DecimalString) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $decimal_string.from_bytes(_pipe);
+      return $result.map(
+        _pipe$1,
+        (_capture) => { return $list.map(_capture, $ieee_float.finite); },
+      );
+    } else if ($ instanceof $value_representation.FloatingPointDouble) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_float64_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Float64 data"),
+      );
+    } else if ($ instanceof $value_representation.FloatingPointSingle) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_float32_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Float32 data"),
+      );
+    } else if ($ instanceof $value_representation.OtherDoubleString) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_float64_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Float64 data"),
+      );
+    } else if ($ instanceof $value_representation.OtherFloatString) {
+      let bytes$1 = value.bytes;
+      let _pipe = $bit_array_utils.to_float32_list(bytes$1);
+      return $result.replace_error(
+        _pipe,
+        $data_error.new_value_invalid("Invalid Float32 data"),
+      );
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
@@ -730,204 +806,401 @@ export function to_string(value, tag, output_width) {
     value_representation(value),
   );
   let _block;
-  if (value instanceof BinaryValue && (vr_is_string)) {
-    let vr = value.vr;
-    let bytes$1 = value.bytes;
-    let _block$1;
-    let $ = $bit_array.to_string(bytes$1);
-    if ($.isOk()) {
-      let utf8 = $[0];
-      _block$1 = new Ok(utf8);
-    } else {
-      let _pipe = $bit_array_utils.reverse_index(
-        bytes$1,
-        (b) => { return $int.bitwise_and(b, 0b1100_0000) !== 0b1000_0000; },
-      );
-      let _pipe$1 = $result.then$(
-        _pipe,
-        (_capture) => { return $bit_array.slice(bytes$1, 0, _capture); },
-      );
-      _block$1 = $result.then$(_pipe$1, $bit_array.to_string);
-    }
-    let utf8 = _block$1;
-    if (utf8.isOk()) {
-      let value$1 = utf8[0];
-      let _block$2;
-      if (vr instanceof $value_representation.AgeString) {
-        let _pipe = value$1;
-        let _pipe$1 = $bit_array.from_string(_pipe);
-        let _pipe$2 = $age_string.from_bytes(_pipe$1);
-        let _pipe$3 = $result.map(_pipe$2, $age_string.to_string);
-        _block$2 = $result.lazy_unwrap(
-          _pipe$3,
-          () => { return $string.inspect(value$1); },
-        );
-      } else if (vr instanceof $value_representation.ApplicationEntity) {
-        let _pipe = value$1;
-        let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
-        _block$2 = $string.inspect(_pipe$1);
-      } else if (vr instanceof $value_representation.Date) {
-        let _pipe = value$1;
-        let _pipe$1 = $bit_array.from_string(_pipe);
-        let _pipe$2 = $date.from_bytes(_pipe$1);
-        let _pipe$3 = $result.map(_pipe$2, $date.to_iso8601);
-        _block$2 = $result.lazy_unwrap(
-          _pipe$3,
-          () => { return $string.inspect(value$1); },
-        );
-      } else if (vr instanceof $value_representation.DateTime) {
-        let _pipe = value$1;
-        let _pipe$1 = $bit_array.from_string(_pipe);
-        let _pipe$2 = $date_time.from_bytes(_pipe$1);
-        let _pipe$3 = $result.map(_pipe$2, $date_time.to_iso8601);
-        _block$2 = $result.lazy_unwrap(
-          _pipe$3,
-          () => { return $string.inspect(value$1); },
-        );
-      } else if (vr instanceof $value_representation.Time) {
-        let _pipe = value$1;
-        let _pipe$1 = $bit_array.from_string(_pipe);
-        let _pipe$2 = $time.from_bytes(_pipe$1);
-        let _pipe$3 = $result.map(_pipe$2, $time.to_iso8601);
-        _block$2 = $result.lazy_unwrap(
-          _pipe$3,
-          () => { return $string.inspect(value$1); },
-        );
-      } else if (vr instanceof $value_representation.CodeString) {
-        let _pipe = value$1;
-        let _pipe$1 = $string.split(_pipe, "\\");
-        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
-            if (vr instanceof $value_representation.UniqueIdentifier) {
-              _block$3 = $utils.trim_ascii_end(s, 0x0);
-            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-              _block$3 = $utils.trim_ascii_end(s, 0x20);
-            } else {
-              _block$3 = $utils.trim_ascii(s, 0x20);
-            }
-            let _pipe$2 = _block$3;
-            return $string.inspect(_pipe$2); });
-        _block$2 = $string.join(_pipe$2, ", ");
-      } else if (vr instanceof $value_representation.DecimalString) {
-        let _pipe = value$1;
-        let _pipe$1 = $string.split(_pipe, "\\");
-        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
-            if (vr instanceof $value_representation.UniqueIdentifier) {
-              _block$3 = $utils.trim_ascii_end(s, 0x0);
-            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-              _block$3 = $utils.trim_ascii_end(s, 0x20);
-            } else {
-              _block$3 = $utils.trim_ascii(s, 0x20);
-            }
-            let _pipe$2 = _block$3;
-            return $string.inspect(_pipe$2); });
-        _block$2 = $string.join(_pipe$2, ", ");
-      } else if (vr instanceof $value_representation.UniqueIdentifier) {
-        let _pipe = value$1;
-        let _pipe$1 = $string.split(_pipe, "\\");
-        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
-            if (vr instanceof $value_representation.UniqueIdentifier) {
-              _block$3 = $utils.trim_ascii_end(s, 0x0);
-            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-              _block$3 = $utils.trim_ascii_end(s, 0x20);
-            } else {
-              _block$3 = $utils.trim_ascii(s, 0x20);
-            }
-            let _pipe$2 = _block$3;
-            return $string.inspect(_pipe$2); });
-        _block$2 = $string.join(_pipe$2, ", ");
-      } else if (vr instanceof $value_representation.IntegerString) {
-        let _pipe = value$1;
-        let _pipe$1 = $string.split(_pipe, "\\");
-        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
-            if (vr instanceof $value_representation.UniqueIdentifier) {
-              _block$3 = $utils.trim_ascii_end(s, 0x0);
-            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-              _block$3 = $utils.trim_ascii_end(s, 0x20);
-            } else {
-              _block$3 = $utils.trim_ascii(s, 0x20);
-            }
-            let _pipe$2 = _block$3;
-            return $string.inspect(_pipe$2); });
-        _block$2 = $string.join(_pipe$2, ", ");
-      } else if (vr instanceof $value_representation.LongString) {
-        let _pipe = value$1;
-        let _pipe$1 = $string.split(_pipe, "\\");
-        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
-            if (vr instanceof $value_representation.UniqueIdentifier) {
-              _block$3 = $utils.trim_ascii_end(s, 0x0);
-            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-              _block$3 = $utils.trim_ascii_end(s, 0x20);
-            } else {
-              _block$3 = $utils.trim_ascii(s, 0x20);
-            }
-            let _pipe$2 = _block$3;
-            return $string.inspect(_pipe$2); });
-        _block$2 = $string.join(_pipe$2, ", ");
-      } else if (vr instanceof $value_representation.ShortString) {
-        let _pipe = value$1;
-        let _pipe$1 = $string.split(_pipe, "\\");
-        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
-            if (vr instanceof $value_representation.UniqueIdentifier) {
-              _block$3 = $utils.trim_ascii_end(s, 0x0);
-            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-              _block$3 = $utils.trim_ascii_end(s, 0x20);
-            } else {
-              _block$3 = $utils.trim_ascii(s, 0x20);
-            }
-            let _pipe$2 = _block$3;
-            return $string.inspect(_pipe$2); });
-        _block$2 = $string.join(_pipe$2, ", ");
-      } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-        let _pipe = value$1;
-        let _pipe$1 = $string.split(_pipe, "\\");
-        let _pipe$2 = $list.map(_pipe$1, (s) => { let _block$3;
-            if (vr instanceof $value_representation.UniqueIdentifier) {
-              _block$3 = $utils.trim_ascii_end(s, 0x0);
-            } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-              _block$3 = $utils.trim_ascii_end(s, 0x20);
-            } else {
-              _block$3 = $utils.trim_ascii(s, 0x20);
-            }
-            let _pipe$2 = _block$3;
-            return $string.inspect(_pipe$2); });
-        _block$2 = $string.join(_pipe$2, ", ");
+  if (value instanceof BinaryValue) {
+    if (vr_is_string) {
+      let vr = value.vr;
+      let bytes$1 = value.bytes;
+      let _block$1;
+      let $ = $bit_array.to_string(bytes$1);
+      if ($ instanceof Ok) {
+        let utf8 = $[0];
+        _block$1 = new Ok(utf8);
       } else {
-        let _pipe = value$1;
-        let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
-        _block$2 = $string.inspect(_pipe$1);
+        let _pipe = $bit_array_utils.reverse_index(
+          bytes$1,
+          (b) => { return $int.bitwise_and(b, 0b1100_0000) !== 0b1000_0000; },
+        );
+        let _pipe$1 = $result.then$(
+          _pipe,
+          (_capture) => { return $bit_array.slice(bytes$1, 0, _capture); },
+        );
+        _block$1 = $result.then$(_pipe$1, $bit_array.to_string);
       }
-      let formatted_value = _block$2;
-      let _block$3;
-      if (vr instanceof $value_representation.UniqueIdentifier) {
-        let $1 = $dictionary.uid_name($utils.trim_ascii_end(value$1, 0x0));
-        if ($1.isOk()) {
-          let uid_name = $1[0];
-          _block$3 = new Some((" (" + uid_name) + ")");
+      let utf8 = _block$1;
+      if (utf8 instanceof Ok) {
+        let value$1 = utf8[0];
+        let _block$2;
+        if (vr instanceof $value_representation.AgeString) {
+          let _pipe = value$1;
+          let _pipe$1 = $bit_array.from_string(_pipe);
+          let _pipe$2 = $age_string.from_bytes(_pipe$1);
+          let _pipe$3 = $result.map(_pipe$2, $age_string.to_string);
+          _block$2 = $result.lazy_unwrap(
+            _pipe$3,
+            () => { return $string.inspect(value$1); },
+          );
+        } else if (vr instanceof $value_representation.ApplicationEntity) {
+          let _pipe = value$1;
+          let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
+          _block$2 = $string.inspect(_pipe$1);
+        } else if (vr instanceof $value_representation.CodeString) {
+          let _pipe = value$1;
+          let _pipe$1 = $string.split(_pipe, "\\");
+          let _pipe$2 = $list.map(
+            _pipe$1,
+            (s) => {
+              let _block$3;
+              if (vr instanceof $value_representation.UniqueIdentifier) {
+                _block$3 = $utils.trim_ascii_end(s, 0x0);
+              } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+                _block$3 = $utils.trim_ascii_end(s, 0x20);
+              } else {
+                _block$3 = $utils.trim_ascii(s, 0x20);
+              }
+              let _pipe$2 = _block$3;
+              return $string.inspect(_pipe$2);
+            },
+          );
+          _block$2 = $string.join(_pipe$2, ", ");
+        } else if (vr instanceof $value_representation.Date) {
+          let _pipe = value$1;
+          let _pipe$1 = $bit_array.from_string(_pipe);
+          let _pipe$2 = $date.from_bytes(_pipe$1);
+          let _pipe$3 = $result.map(_pipe$2, $date.to_iso8601);
+          _block$2 = $result.lazy_unwrap(
+            _pipe$3,
+            () => { return $string.inspect(value$1); },
+          );
+        } else if (vr instanceof $value_representation.DateTime) {
+          let _pipe = value$1;
+          let _pipe$1 = $bit_array.from_string(_pipe);
+          let _pipe$2 = $date_time.from_bytes(_pipe$1);
+          let _pipe$3 = $result.map(_pipe$2, $date_time.to_iso8601);
+          _block$2 = $result.lazy_unwrap(
+            _pipe$3,
+            () => { return $string.inspect(value$1); },
+          );
+        } else if (vr instanceof $value_representation.DecimalString) {
+          let _pipe = value$1;
+          let _pipe$1 = $string.split(_pipe, "\\");
+          let _pipe$2 = $list.map(
+            _pipe$1,
+            (s) => {
+              let _block$3;
+              if (vr instanceof $value_representation.UniqueIdentifier) {
+                _block$3 = $utils.trim_ascii_end(s, 0x0);
+              } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+                _block$3 = $utils.trim_ascii_end(s, 0x20);
+              } else {
+                _block$3 = $utils.trim_ascii(s, 0x20);
+              }
+              let _pipe$2 = _block$3;
+              return $string.inspect(_pipe$2);
+            },
+          );
+          _block$2 = $string.join(_pipe$2, ", ");
+        } else if (vr instanceof $value_representation.IntegerString) {
+          let _pipe = value$1;
+          let _pipe$1 = $string.split(_pipe, "\\");
+          let _pipe$2 = $list.map(
+            _pipe$1,
+            (s) => {
+              let _block$3;
+              if (vr instanceof $value_representation.UniqueIdentifier) {
+                _block$3 = $utils.trim_ascii_end(s, 0x0);
+              } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+                _block$3 = $utils.trim_ascii_end(s, 0x20);
+              } else {
+                _block$3 = $utils.trim_ascii(s, 0x20);
+              }
+              let _pipe$2 = _block$3;
+              return $string.inspect(_pipe$2);
+            },
+          );
+          _block$2 = $string.join(_pipe$2, ", ");
+        } else if (vr instanceof $value_representation.LongString) {
+          let _pipe = value$1;
+          let _pipe$1 = $string.split(_pipe, "\\");
+          let _pipe$2 = $list.map(
+            _pipe$1,
+            (s) => {
+              let _block$3;
+              if (vr instanceof $value_representation.UniqueIdentifier) {
+                _block$3 = $utils.trim_ascii_end(s, 0x0);
+              } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+                _block$3 = $utils.trim_ascii_end(s, 0x20);
+              } else {
+                _block$3 = $utils.trim_ascii(s, 0x20);
+              }
+              let _pipe$2 = _block$3;
+              return $string.inspect(_pipe$2);
+            },
+          );
+          _block$2 = $string.join(_pipe$2, ", ");
+        } else if (vr instanceof $value_representation.ShortString) {
+          let _pipe = value$1;
+          let _pipe$1 = $string.split(_pipe, "\\");
+          let _pipe$2 = $list.map(
+            _pipe$1,
+            (s) => {
+              let _block$3;
+              if (vr instanceof $value_representation.UniqueIdentifier) {
+                _block$3 = $utils.trim_ascii_end(s, 0x0);
+              } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+                _block$3 = $utils.trim_ascii_end(s, 0x20);
+              } else {
+                _block$3 = $utils.trim_ascii(s, 0x20);
+              }
+              let _pipe$2 = _block$3;
+              return $string.inspect(_pipe$2);
+            },
+          );
+          _block$2 = $string.join(_pipe$2, ", ");
+        } else if (vr instanceof $value_representation.Time) {
+          let _pipe = value$1;
+          let _pipe$1 = $bit_array.from_string(_pipe);
+          let _pipe$2 = $time.from_bytes(_pipe$1);
+          let _pipe$3 = $result.map(_pipe$2, $time.to_iso8601);
+          _block$2 = $result.lazy_unwrap(
+            _pipe$3,
+            () => { return $string.inspect(value$1); },
+          );
+        } else if (vr instanceof $value_representation.UniqueIdentifier) {
+          let _pipe = value$1;
+          let _pipe$1 = $string.split(_pipe, "\\");
+          let _pipe$2 = $list.map(
+            _pipe$1,
+            (s) => {
+              let _block$3;
+              if (vr instanceof $value_representation.UniqueIdentifier) {
+                _block$3 = $utils.trim_ascii_end(s, 0x0);
+              } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+                _block$3 = $utils.trim_ascii_end(s, 0x20);
+              } else {
+                _block$3 = $utils.trim_ascii(s, 0x20);
+              }
+              let _pipe$2 = _block$3;
+              return $string.inspect(_pipe$2);
+            },
+          );
+          _block$2 = $string.join(_pipe$2, ", ");
+        } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+          let _pipe = value$1;
+          let _pipe$1 = $string.split(_pipe, "\\");
+          let _pipe$2 = $list.map(
+            _pipe$1,
+            (s) => {
+              let _block$3;
+              if (vr instanceof $value_representation.UniqueIdentifier) {
+                _block$3 = $utils.trim_ascii_end(s, 0x0);
+              } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+                _block$3 = $utils.trim_ascii_end(s, 0x20);
+              } else {
+                _block$3 = $utils.trim_ascii(s, 0x20);
+              }
+              let _pipe$2 = _block$3;
+              return $string.inspect(_pipe$2);
+            },
+          );
+          _block$2 = $string.join(_pipe$2, ", ");
+        } else {
+          let _pipe = value$1;
+          let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
+          _block$2 = $string.inspect(_pipe$1);
+        }
+        let formatted_value = _block$2;
+        let _block$3;
+        if (vr instanceof $value_representation.CodeString) {
+          let $1 = $code_strings.describe($string.trim(value$1), tag);
+          if ($1 instanceof Ok) {
+            let description = $1[0];
+            _block$3 = new Some((" (" + description) + ")");
+          } else {
+            _block$3 = new None();
+          }
+        } else if (vr instanceof $value_representation.UniqueIdentifier) {
+          let $1 = $dictionary.uid_name($utils.trim_ascii_end(value$1, 0x0));
+          if ($1 instanceof Ok) {
+            let uid_name = $1[0];
+            _block$3 = new Some((" (" + uid_name) + ")");
+          } else {
+            _block$3 = new None();
+          }
         } else {
           _block$3 = new None();
         }
-      } else if (vr instanceof $value_representation.CodeString) {
-        let $1 = $code_strings.describe($string.trim(value$1), tag);
-        if ($1.isOk()) {
-          let description = $1[0];
-          _block$3 = new Some((" (" + description) + ")");
+        let suffix = _block$3;
+        _block = new Ok([formatted_value, suffix]);
+      } else {
+        _block = new Ok(["!! Invalid UTF-8 data", new None()]);
+      }
+    } else {
+      let vr = value.vr;
+      let bytes$1 = value.bytes;
+      if (vr instanceof $value_representation.AttributeTag) {
+        let $ = $attribute_tag.from_bytes(bytes$1);
+        if ($ instanceof Ok) {
+          let tags = $[0];
+          let _block$1;
+          let _pipe = tags;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $data_element_tag.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
         } else {
-          _block$3 = new None();
+          _block = new Error(undefined);
+        }
+      } else if (vr instanceof $value_representation.FloatingPointDouble) {
+        let $ = get_floats(value);
+        if ($ instanceof Ok) {
+          let floats = $[0];
+          let _block$1;
+          let _pipe = floats;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
+        } else {
+          _block = new Error(undefined);
+        }
+      } else if (vr instanceof $value_representation.FloatingPointSingle) {
+        let $ = get_floats(value);
+        if ($ instanceof Ok) {
+          let floats = $[0];
+          let _block$1;
+          let _pipe = floats;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
+        } else {
+          _block = new Error(undefined);
+        }
+      } else if (vr instanceof $value_representation.OtherByteString) {
+        _block = new Ok(
+          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+        );
+      } else if (vr instanceof $value_representation.OtherDoubleString) {
+        _block = new Ok(
+          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+        );
+      } else if (vr instanceof $value_representation.OtherFloatString) {
+        _block = new Ok(
+          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+        );
+      } else if (vr instanceof $value_representation.OtherLongString) {
+        _block = new Ok(
+          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+        );
+      } else if (vr instanceof $value_representation.OtherVeryLongString) {
+        _block = new Ok(
+          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+        );
+      } else if (vr instanceof $value_representation.OtherWordString) {
+        _block = new Ok(
+          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+        );
+      } else if (vr instanceof $value_representation.SignedLong) {
+        let $ = get_ints(value);
+        if ($ instanceof Ok) {
+          let ints = $[0];
+          let _block$1;
+          let _pipe = ints;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
+        } else {
+          _block = new Error(undefined);
+        }
+      } else if (vr instanceof $value_representation.SignedShort) {
+        let $ = get_ints(value);
+        if ($ instanceof Ok) {
+          let ints = $[0];
+          let _block$1;
+          let _pipe = ints;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
+        } else {
+          _block = new Error(undefined);
+        }
+      } else if (vr instanceof $value_representation.SignedVeryLong) {
+        let $ = get_big_ints(value);
+        if ($ instanceof Ok) {
+          let ints = $[0];
+          let _block$1;
+          let _pipe = ints;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
+        } else {
+          _block = new Error(undefined);
+        }
+      } else if (vr instanceof $value_representation.Unknown) {
+        _block = new Ok(
+          [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
+        );
+      } else if (vr instanceof $value_representation.UnsignedLong) {
+        let $ = get_ints(value);
+        if ($ instanceof Ok) {
+          let ints = $[0];
+          let _block$1;
+          let _pipe = ints;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
+        } else {
+          _block = new Error(undefined);
+        }
+      } else if (vr instanceof $value_representation.UnsignedShort) {
+        let $ = get_ints(value);
+        if ($ instanceof Ok) {
+          let ints = $[0];
+          let _block$1;
+          let _pipe = ints;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $int.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
+        } else {
+          _block = new Error(undefined);
+        }
+      } else if (vr instanceof $value_representation.UnsignedVeryLong) {
+        let $ = get_big_ints(value);
+        if ($ instanceof Ok) {
+          let ints = $[0];
+          let _block$1;
+          let _pipe = ints;
+          let _pipe$1 = $list.take(_pipe, output_list_max_size);
+          let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
+          _block$1 = $string.join(_pipe$2, ", ");
+          let s = _block$1;
+          _block = new Ok([s, new None()]);
+        } else {
+          _block = new Error(undefined);
         }
       } else {
-        _block$3 = new None();
+        _block = new Error(undefined);
       }
-      let suffix = _block$3;
-      _block = new Ok([formatted_value, suffix]);
-    } else {
-      _block = new Ok(["!! Invalid UTF-8 data", new None()]);
     }
   } else if (value instanceof LookupTableDescriptorValue) {
     let vr = value.vr;
     let bytes$1 = value.bytes;
     if (vr instanceof $value_representation.AttributeTag) {
       let $ = $attribute_tag.from_bytes(bytes$1);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let tags = $[0];
         let _block$1;
         let _pipe = tags;
@@ -941,7 +1214,7 @@ export function to_string(value, tag, output_width) {
       }
     } else if (vr instanceof $value_representation.FloatingPointDouble) {
       let $ = get_floats(value);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let floats = $[0];
         let _block$1;
         let _pipe = floats;
@@ -955,7 +1228,7 @@ export function to_string(value, tag, output_width) {
       }
     } else if (vr instanceof $value_representation.FloatingPointSingle) {
       let $ = get_floats(value);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let floats = $[0];
         let _block$1;
         let _pipe = floats;
@@ -991,13 +1264,9 @@ export function to_string(value, tag, output_width) {
       _block = new Ok(
         [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
       );
-    } else if (vr instanceof $value_representation.Unknown) {
-      _block = new Ok(
-        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-      );
     } else if (vr instanceof $value_representation.SignedLong) {
       let $ = get_ints(value);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let ints = $[0];
         let _block$1;
         let _pipe = ints;
@@ -1011,35 +1280,7 @@ export function to_string(value, tag, output_width) {
       }
     } else if (vr instanceof $value_representation.SignedShort) {
       let $ = get_ints(value);
-      if ($.isOk()) {
-        let ints = $[0];
-        let _block$1;
-        let _pipe = ints;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
-    } else if (vr instanceof $value_representation.UnsignedLong) {
-      let $ = get_ints(value);
-      if ($.isOk()) {
-        let ints = $[0];
-        let _block$1;
-        let _pipe = ints;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
-    } else if (vr instanceof $value_representation.UnsignedShort) {
-      let $ = get_ints(value);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let ints = $[0];
         let _block$1;
         let _pipe = ints;
@@ -1053,7 +1294,7 @@ export function to_string(value, tag, output_width) {
       }
     } else if (vr instanceof $value_representation.SignedVeryLong) {
       let $ = get_big_ints(value);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let ints = $[0];
         let _block$1;
         let _pipe = ints;
@@ -1065,127 +1306,13 @@ export function to_string(value, tag, output_width) {
       } else {
         _block = new Error(undefined);
       }
-    } else if (vr instanceof $value_representation.UnsignedVeryLong) {
-      let $ = get_big_ints(value);
-      if ($.isOk()) {
-        let ints = $[0];
-        let _block$1;
-        let _pipe = ints;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
-    } else {
-      _block = new Error(undefined);
-    }
-  } else if (value instanceof BinaryValue) {
-    let vr = value.vr;
-    let bytes$1 = value.bytes;
-    if (vr instanceof $value_representation.AttributeTag) {
-      let $ = $attribute_tag.from_bytes(bytes$1);
-      if ($.isOk()) {
-        let tags = $[0];
-        let _block$1;
-        let _pipe = tags;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $data_element_tag.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
-    } else if (vr instanceof $value_representation.FloatingPointDouble) {
-      let $ = get_floats(value);
-      if ($.isOk()) {
-        let floats = $[0];
-        let _block$1;
-        let _pipe = floats;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
-    } else if (vr instanceof $value_representation.FloatingPointSingle) {
-      let $ = get_floats(value);
-      if ($.isOk()) {
-        let floats = $[0];
-        let _block$1;
-        let _pipe = floats;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $ieee_float.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
-    } else if (vr instanceof $value_representation.OtherByteString) {
-      _block = new Ok(
-        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-      );
-    } else if (vr instanceof $value_representation.OtherDoubleString) {
-      _block = new Ok(
-        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-      );
-    } else if (vr instanceof $value_representation.OtherFloatString) {
-      _block = new Ok(
-        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-      );
-    } else if (vr instanceof $value_representation.OtherLongString) {
-      _block = new Ok(
-        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-      );
-    } else if (vr instanceof $value_representation.OtherVeryLongString) {
-      _block = new Ok(
-        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-      );
-    } else if (vr instanceof $value_representation.OtherWordString) {
-      _block = new Ok(
-        [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
-      );
     } else if (vr instanceof $value_representation.Unknown) {
       _block = new Ok(
         [$utils.inspect_bit_array(bytes$1, output_list_max_size), new None()],
       );
-    } else if (vr instanceof $value_representation.SignedLong) {
-      let $ = get_ints(value);
-      if ($.isOk()) {
-        let ints = $[0];
-        let _block$1;
-        let _pipe = ints;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
-    } else if (vr instanceof $value_representation.SignedShort) {
-      let $ = get_ints(value);
-      if ($.isOk()) {
-        let ints = $[0];
-        let _block$1;
-        let _pipe = ints;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $int.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
     } else if (vr instanceof $value_representation.UnsignedLong) {
       let $ = get_ints(value);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let ints = $[0];
         let _block$1;
         let _pipe = ints;
@@ -1199,7 +1326,7 @@ export function to_string(value, tag, output_width) {
       }
     } else if (vr instanceof $value_representation.UnsignedShort) {
       let $ = get_ints(value);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let ints = $[0];
         let _block$1;
         let _pipe = ints;
@@ -1211,23 +1338,9 @@ export function to_string(value, tag, output_width) {
       } else {
         _block = new Error(undefined);
       }
-    } else if (vr instanceof $value_representation.SignedVeryLong) {
-      let $ = get_big_ints(value);
-      if ($.isOk()) {
-        let ints = $[0];
-        let _block$1;
-        let _pipe = ints;
-        let _pipe$1 = $list.take(_pipe, output_list_max_size);
-        let _pipe$2 = $list.map(_pipe$1, $bigi.to_string);
-        _block$1 = $string.join(_pipe$2, ", ");
-        let s = _block$1;
-        _block = new Ok([s, new None()]);
-      } else {
-        _block = new Error(undefined);
-      }
     } else if (vr instanceof $value_representation.UnsignedVeryLong) {
       let $ = get_big_ints(value);
-      if ($.isOk()) {
+      if ($ instanceof Ok) {
         let ints = $[0];
         let _block$1;
         let _pipe = ints;
@@ -1292,71 +1405,100 @@ export function get_float(value) {
   return $result.try$(
     get_floats(value),
     (floats) => {
-      if (floats.hasLength(1)) {
-        let f = floats.head;
-        return new Ok(f);
-      } else {
+      if (floats instanceof $Empty) {
         return new Error($data_error.new_multiplicity_mismatch());
+      } else {
+        let $ = floats.tail;
+        if ($ instanceof $Empty) {
+          let f = floats.head;
+          return new Ok(f);
+        } else {
+          return new Error($data_error.new_multiplicity_mismatch());
+        }
       }
     },
   );
 }
 
 export function get_age(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.AgeString) {
-    let bytes$1 = value.bytes;
-    return $age_string.from_bytes(bytes$1);
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.AgeString) {
+      let bytes$1 = value.bytes;
+      return $age_string.from_bytes(bytes$1);
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
 }
 
 export function get_attribute_tags(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.AttributeTag) {
-    let bytes$1 = value.bytes;
-    return $attribute_tag.from_bytes(bytes$1);
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.AttributeTag) {
+      let bytes$1 = value.bytes;
+      return $attribute_tag.from_bytes(bytes$1);
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
 }
 
 export function get_date(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.Date) {
-    let bytes$1 = value.bytes;
-    return $date.from_bytes(bytes$1);
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.Date) {
+      let bytes$1 = value.bytes;
+      return $date.from_bytes(bytes$1);
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
 }
 
 export function get_date_time(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.DateTime) {
-    let bytes$1 = value.bytes;
-    return $date_time.from_bytes(bytes$1);
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.DateTime) {
+      let bytes$1 = value.bytes;
+      return $date_time.from_bytes(bytes$1);
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
 }
 
 export function get_time(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.Time) {
-    let bytes$1 = value.bytes;
-    return $time.from_bytes(bytes$1);
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.Time) {
+      let bytes$1 = value.bytes;
+      return $time.from_bytes(bytes$1);
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
 }
 
 export function get_person_names(value) {
-  if (value instanceof BinaryValue &&
-  value.vr instanceof $value_representation.PersonName) {
-    let bytes$1 = value.bytes;
-    return $person_name.from_bytes(bytes$1);
+  if (value instanceof BinaryValue) {
+    let $ = value.vr;
+    if ($ instanceof $value_representation.PersonName) {
+      let bytes$1 = value.bytes;
+      return $person_name.from_bytes(bytes$1);
+    } else {
+      return new Error($data_error.new_value_not_present());
+    }
   } else {
     return new Error($data_error.new_value_not_present());
   }
@@ -1366,11 +1508,16 @@ export function get_person_name(value) {
   return $result.try$(
     get_person_names(value),
     (person_names) => {
-      if (person_names.hasLength(1)) {
-        let n = person_names.head;
-        return new Ok(n);
-      } else {
+      if (person_names instanceof $Empty) {
         return new Error($data_error.new_multiplicity_mismatch());
+      } else {
+        let $ = person_names.tail;
+        if ($ instanceof $Empty) {
+          let n = person_names.head;
+          return new Ok(n);
+        } else {
+          return new Error($data_error.new_multiplicity_mismatch());
+        }
       }
     },
   );
@@ -1382,20 +1529,7 @@ export function validate_length(value) {
   let _pipe$1 = $result.unwrap(_pipe, toBitArray([]));
   _block = $bit_array.byte_size(_pipe$1);
   let value_length = _block;
-  if (value instanceof LookupTableDescriptorValue) {
-    let vr = value.vr;
-    if (value_length === 6) {
-      return new Ok(value);
-    } else {
-      return new Error(
-        $data_error.new_value_length_invalid(
-          vr,
-          value_length,
-          "Lookup table descriptor length must be exactly 6 bytes",
-        ),
-      );
-    }
-  } else if (value instanceof BinaryValue) {
+  if (value instanceof BinaryValue) {
     let vr = value.vr;
     let $ = $value_representation.length_requirements(vr);
     let bytes_max = $.bytes_max;
@@ -1426,6 +1560,19 @@ export function validate_length(value) {
           ),
         );
       }
+    }
+  } else if (value instanceof LookupTableDescriptorValue) {
+    let vr = value.vr;
+    if (value_length === 6) {
+      return new Ok(value);
+    } else {
+      return new Error(
+        $data_error.new_value_length_invalid(
+          vr,
+          value_length,
+          "Lookup table descriptor length must be exactly 6 bytes",
+        ),
+      );
     }
   } else if (value instanceof EncapsulatedPixelDataValue) {
     let vr = value.vr;
@@ -1498,7 +1645,7 @@ export function new_binary(vr, bytes) {
         let $1 = $value_representation.is_string(vr);
         if ($1) {
           let $2 = validate_default_charset_bytes(bytes);
-          if ($2.isOk() && !$2[0]) {
+          if ($2 instanceof Ok) {
             _block$1 = new Ok(undefined);
           } else {
             let invalid_byte = $2[0];

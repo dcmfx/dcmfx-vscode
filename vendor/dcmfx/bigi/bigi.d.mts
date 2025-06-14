@@ -1,4 +1,5 @@
 import type * as $dynamic from "../gleam_stdlib/gleam/dynamic.d.mts";
+import type * as $decode from "../gleam_stdlib/gleam/dynamic/decode.d.mts";
 import type * as $order from "../gleam_stdlib/gleam/order.d.mts";
 import type * as _ from "./gleam.d.mts";
 
@@ -81,7 +82,7 @@ export function power(a: BigInt$, b: BigInt$): _.Result<BigInt$, undefined>;
 
 export function decode(dyn: $dynamic.Dynamic$): _.Result<
   BigInt$,
-  _.List<$dynamic.DecodeError$>
+  _.List<$decode.DecodeError$>
 >;
 
 export function bitwise_and(a: BigInt$, b: BigInt$): BigInt$;

@@ -13,6 +13,8 @@ import * as $p10_token from "../../dcmfx_p10/p10_token.mjs";
 import * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filter_transform.mjs";
 import { Ok, Error, CustomType as $CustomType, makeError, isEqual } from "../../gleam.mjs";
 
+const FILEPATH = "src/dcmfx_p10/transforms/p10_custom_type_transform.gleam";
+
 class P10CustomTypeTransform extends $CustomType {
   constructor(filter, highest_tag, target_from_data_set, target) {
     super();
@@ -24,16 +26,16 @@ class P10CustomTypeTransform extends $CustomType {
 }
 
 export class P10Error extends $CustomType {
-  constructor(x0) {
+  constructor($0) {
     super();
-    this[0] = x0;
+    this[0] = $0;
   }
 }
 
 export class DataError extends $CustomType {
-  constructor(x0) {
+  constructor($0) {
     super();
-    this[0] = x0;
+    this[0] = $0;
   }
 }
 
@@ -63,23 +65,26 @@ export function add_token(transform, token) {
     return $result.try$(
       (() => {
         let $1 = $p10_filter_transform.add_token(filter, token);
-        if ($1.isOk() && $1[0][0]) {
-          let filter$1 = $1[0][1];
-          let _block;
-          let _pipe = builder;
-          let _pipe$1 = $data_set_builder.add_token(_pipe, token);
-          _block = $result.map_error(
-            _pipe$1,
-            (var0) => { return new P10Error(var0); },
-          );
-          let builder$1 = _block;
-          return $result.map(
-            builder$1,
-            (builder) => { return [filter$1, builder]; },
-          );
-        } else if ($1.isOk() && !$1[0][0]) {
-          let filter$1 = $1[0][1];
-          return new Ok([filter$1, builder]);
+        if ($1 instanceof Ok) {
+          let $2 = $1[0][0];
+          if ($2) {
+            let filter$1 = $1[0][1];
+            let _block;
+            let _pipe = builder;
+            let _pipe$1 = $data_set_builder.add_token(_pipe, token);
+            _block = $result.map_error(
+              _pipe$1,
+              (var0) => { return new P10Error(var0); },
+            );
+            let builder$1 = _block;
+            return $result.map(
+              builder$1,
+              (builder) => { return [filter$1, builder]; },
+            );
+          } else {
+            let filter$1 = $1[0][1];
+            return new Ok([filter$1, builder]);
+          }
         } else {
           let e = $1[0];
           return new Error(new P10Error(e));
@@ -95,16 +100,20 @@ export function add_token(transform, token) {
               $data_element_tag.compare(tag, transform.highest_tag),
               new $order.Gt()
             );
+          } else if (token instanceof $p10_token.DataElementValueBytes) {
+            let $1 = token.bytes_remaining;
+            if ($1 === 0) {
+              let tag = token.tag;
+              return isEqual(tag, transform.highest_tag);
+            } else {
+              return false;
+            }
           } else if (token instanceof $p10_token.SequenceStart) {
             let tag = token.tag;
             return isEqual(
               $data_element_tag.compare(tag, transform.highest_tag),
               new $order.Gt()
             );
-          } else if (token instanceof $p10_token.DataElementValueBytes &&
-          token.bytes_remaining === 0) {
-            let tag = token.tag;
-            return isEqual(tag, transform.highest_tag);
           } else if (token instanceof $p10_token.SequenceDelimiter) {
             let tag = token.tag;
             return isEqual(tag, transform.highest_tag);
@@ -120,14 +129,21 @@ export function add_token(transform, token) {
           let _pipe$1 = $data_set_builder.force_end(_pipe);
           _block = $data_set_builder.final_data_set(_pipe$1);
           let $1 = _block;
-          if (!$1.isOk()) {
+          if (!($1 instanceof Ok)) {
             throw makeError(
               "let_assert",
+              FILEPATH,
               "dcmfx_p10/transforms/p10_custom_type_transform",
               119,
-              "",
+              "add_token",
               "Pattern match failed, no pattern matched the value.",
-              { value: $1 }
+              {
+                value: $1,
+                start: 3820,
+                end: 3954,
+                pattern_start: 3831,
+                pattern_end: 3843
+              }
             )
           }
           let data_set = $1[0];
@@ -138,7 +154,10 @@ export function add_token(transform, token) {
             (var0) => { return new DataError(var0); },
           );
           let target = _block$1;
-          return $result.try$(target, (target) => { let _block$2;
+          return $result.try$(
+            target,
+            (target) => {
+              let _block$2;
               let _record = transform;
               _block$2 = new P10CustomTypeTransform(
                 new None(),
@@ -147,7 +166,9 @@ export function add_token(transform, token) {
                 new Some(target),
               );
               let _pipe$3 = _block$2;
-              return new Ok(_pipe$3); });
+              return new Ok(_pipe$3);
+            },
+          );
         } else {
           let _block;
           let _record = transform;

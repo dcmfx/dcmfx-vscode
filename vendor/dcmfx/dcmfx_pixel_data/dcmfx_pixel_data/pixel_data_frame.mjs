@@ -6,6 +6,7 @@ import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import {
   toList,
+  Empty as $Empty,
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
@@ -14,6 +15,8 @@ import {
   toBitArray,
   bitArraySlice,
 } from "../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_pixel_data/pixel_data_frame.gleam";
 
 class PixelDataFrame extends $CustomType {
   constructor(frame_index, chunks, length_in_bits, bit_offset) {
@@ -91,7 +94,9 @@ function do_drop_end_bytes(loop$frame, loop$target_length) {
     let $ = length_in_bits(frame) > target_length;
     if ($) {
       let $1 = frame.chunks;
-      if ($1.atLeastLength(1)) {
+      if ($1 instanceof $Empty) {
+        return frame;
+      } else {
         let chunk = $1.head;
         let chunks$1 = $1.tail;
         let length_in_bits$1 = length_in_bits(frame) - $bit_array.bit_size(
@@ -100,14 +105,21 @@ function do_drop_end_bytes(loop$frame, loop$target_length) {
         let $2 = length_in_bits$1 < target_length;
         if ($2) {
           let chunk_length = target_length - length_in_bits$1;
-          if (!(chunk.bitSize >= chunk_length)) {
+          if (chunk_length < 0 || chunk.bitSize < chunk_length) {
             throw makeError(
               "let_assert",
+              FILEPATH,
               "dcmfx_pixel_data/pixel_data_frame",
               124,
               "do_drop_end_bytes",
               "Pattern match failed, no pattern matched the value.",
-              { value: chunk }
+              {
+                value: chunk,
+                start: 3568,
+                end: 3632,
+                pattern_start: 3579,
+                pattern_end: 3624
+              }
             )
           }
           let new_chunk = bitArraySlice(chunk, 0, chunk_length);
@@ -131,8 +143,6 @@ function do_drop_end_bytes(loop$frame, loop$target_length) {
           loop$frame = _pipe;
           loop$target_length = target_length;
         }
-      } else {
-        return frame;
       }
     } else {
       return frame;
@@ -150,34 +160,43 @@ function shift_low_bits_loop(loop$input, loop$acc, loop$bit_offset) {
     let input = loop$input;
     let acc = loop$acc;
     let bit_offset = loop$bit_offset;
-    if (input.bitSize >= 16) {
-      let a = input.byteAt(0);
-      let b = input.byteAt(1);
-      let _block;
-      let _pipe = $int.bitwise_shift_right(a, bit_offset);
-      _block = $int.bitwise_or(
-        _pipe,
-        $int.bitwise_shift_left(b, 8 - bit_offset),
-      );
-      let byte = _block;
-      if (!(input.bitSize >= 8)) {
-        throw makeError(
-          "let_assert",
-          "dcmfx_pixel_data/pixel_data_frame",
-          184,
-          "shift_low_bits_loop",
-          "Pattern match failed, no pattern matched the value.",
-          { value: input }
-        )
+    if (input.bitSize >= 8) {
+      if (input.bitSize >= 16) {
+        let a = input.byteAt(0);
+        let b = input.byteAt(1);
+        let _block;
+        let _pipe = $int.bitwise_shift_right(a, bit_offset);
+        _block = $int.bitwise_or(
+          _pipe,
+          $int.bitwise_shift_left(b, 8 - bit_offset),
+        );
+        let byte = _block;
+        if (input.bitSize < 8) {
+          throw makeError(
+            "let_assert",
+            FILEPATH,
+            "dcmfx_pixel_data/pixel_data_frame",
+            184,
+            "shift_low_bits_loop",
+            "Pattern match failed, no pattern matched the value.",
+            {
+              value: input,
+              start: 5125,
+              end: 5161,
+              pattern_start: 5136,
+              pattern_end: 5153
+            }
+          )
+        }
+        let input$1 = bitArraySlice(input, 8);
+        loop$input = input$1;
+        loop$acc = listPrepend(toBitArray([byte]), acc);
+        loop$bit_offset = bit_offset;
+      } else {
+        let a = input.byteAt(0);
+        let byte = $int.bitwise_shift_right(a, bit_offset);
+        return listPrepend(toBitArray([byte]), acc);
       }
-      let input$1 = bitArraySlice(input, 8);
-      loop$input = input$1;
-      loop$acc = listPrepend(toBitArray([byte]), acc);
-      loop$bit_offset = bit_offset;
-    } else if (input.bitSize >= 8) {
-      let a = input.byteAt(0);
-      let byte = $int.bitwise_shift_right(a, bit_offset);
-      return listPrepend(toBitArray([byte]), acc);
     } else {
       return acc;
     }
@@ -194,14 +213,22 @@ function shift_low_bits(bytes, bit_offset) {
 export function to_bytes(frame) {
   let _block;
   let $ = frame.chunks;
-  if ($.hasLength(1)) {
-    let chunk = $.head;
-    _block = chunk;
-  } else {
+  if ($ instanceof $Empty) {
     let chunks$1 = $;
     let _pipe = chunks$1;
     let _pipe$1 = $list.reverse(_pipe);
     _block = $bit_array.concat(_pipe$1);
+  } else {
+    let $1 = $.tail;
+    if ($1 instanceof $Empty) {
+      let chunk = $.head;
+      _block = chunk;
+    } else {
+      let chunks$1 = $;
+      let _pipe = chunks$1;
+      let _pipe$1 = $list.reverse(_pipe);
+      _block = $bit_array.concat(_pipe$1);
+    }
   }
   let bytes = _block;
   let $1 = frame.bit_offset;

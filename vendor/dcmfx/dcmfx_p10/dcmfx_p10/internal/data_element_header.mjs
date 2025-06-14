@@ -69,24 +69,6 @@ export function value_length_size(vr) {
     return new ValueLengthU16();
   } else if (vr instanceof $value_representation.LongText) {
     return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.PersonName) {
-    return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.ShortString) {
-    return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.ShortText) {
-    return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.SignedLong) {
-    return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.SignedShort) {
-    return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.Time) {
-    return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.UniqueIdentifier) {
-    return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.UnsignedLong) {
-    return new ValueLengthU16();
-  } else if (vr instanceof $value_representation.UnsignedShort) {
-    return new ValueLengthU16();
   } else if (vr instanceof $value_representation.OtherByteString) {
     return new ValueLengthU32();
   } else if (vr instanceof $value_representation.OtherDoubleString) {
@@ -99,10 +81,24 @@ export function value_length_size(vr) {
     return new ValueLengthU32();
   } else if (vr instanceof $value_representation.OtherWordString) {
     return new ValueLengthU32();
+  } else if (vr instanceof $value_representation.PersonName) {
+    return new ValueLengthU16();
   } else if (vr instanceof $value_representation.Sequence) {
     return new ValueLengthU32();
+  } else if (vr instanceof $value_representation.ShortString) {
+    return new ValueLengthU16();
+  } else if (vr instanceof $value_representation.ShortText) {
+    return new ValueLengthU16();
+  } else if (vr instanceof $value_representation.SignedLong) {
+    return new ValueLengthU16();
+  } else if (vr instanceof $value_representation.SignedShort) {
+    return new ValueLengthU16();
   } else if (vr instanceof $value_representation.SignedVeryLong) {
     return new ValueLengthU32();
+  } else if (vr instanceof $value_representation.Time) {
+    return new ValueLengthU16();
+  } else if (vr instanceof $value_representation.UniqueIdentifier) {
+    return new ValueLengthU16();
   } else if (vr instanceof $value_representation.UniversalResourceIdentifier) {
     return new ValueLengthU32();
   } else if (vr instanceof $value_representation.Unknown) {
@@ -111,6 +107,10 @@ export function value_length_size(vr) {
     return new ValueLengthU32();
   } else if (vr instanceof $value_representation.UnlimitedText) {
     return new ValueLengthU32();
+  } else if (vr instanceof $value_representation.UnsignedLong) {
+    return new ValueLengthU16();
+  } else if (vr instanceof $value_representation.UnsignedShort) {
+    return new ValueLengthU16();
   } else {
     return new ValueLengthU32();
   }

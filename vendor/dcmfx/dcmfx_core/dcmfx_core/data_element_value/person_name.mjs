@@ -10,7 +10,17 @@ import * as $string from "../../../gleam_stdlib/gleam/string.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
-import { Ok, Error, toList, CustomType as $CustomType, makeError } from "../../gleam.mjs";
+import {
+  Ok,
+  Error,
+  toList,
+  Empty as $Empty,
+  NonEmpty as $NonEmpty,
+  CustomType as $CustomType,
+  makeError,
+} from "../../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_core/data_element_value/person_name.gleam";
 
 export class PersonNameComponents extends $CustomType {
   constructor(last_name, first_name, middle_name, prefix, suffix) {
@@ -62,14 +72,28 @@ function parse_person_name_component_group(component_group) {
             components,
             $list.repeat("", 5 - component_count),
           );
-          if (!components$1.hasLength(5)) {
+          if (
+            components$1 instanceof $Empty ||
+            components$1.tail instanceof $Empty ||
+            components$1.tail.tail instanceof $Empty ||
+            components$1.tail.tail.tail instanceof $Empty ||
+            components$1.tail.tail.tail.tail instanceof $Empty ||
+            components$1.tail.tail.tail.tail.tail instanceof $NonEmpty
+          ) {
             throw makeError(
               "let_assert",
+              FILEPATH,
               "dcmfx_core/data_element_value/person_name",
               117,
-              "",
+              "parse_person_name_component_group",
               "Pattern match failed, no pattern matched the value.",
-              { value: components$1 }
+              {
+                value: components$1,
+                start: 3577,
+                end: 3653,
+                pattern_start: 3588,
+                pattern_end: 3640
+              }
             )
           }
           let last_name = components$1.head;
@@ -117,20 +141,31 @@ function parse_person_name_string(person_name_string) {
         person_names,
         (person_names) => {
           let _block$1;
-          if (person_names.hasLength(1)) {
-            let alphabetic = person_names.head;
-            _block$1 = [alphabetic, new None(), new None()];
-          } else if (person_names.hasLength(2)) {
-            let alphabetic = person_names.head;
-            let ideographic = person_names.tail.head;
-            _block$1 = [alphabetic, ideographic, new None()];
-          } else if (person_names.hasLength(3)) {
-            let alphabetic = person_names.head;
-            let ideographic = person_names.tail.head;
-            let phonetic = person_names.tail.tail.head;
-            _block$1 = [alphabetic, ideographic, phonetic];
-          } else {
+          if (person_names instanceof $Empty) {
             _block$1 = [new None(), new None(), new None()];
+          } else {
+            let $1 = person_names.tail;
+            if ($1 instanceof $Empty) {
+              let alphabetic = person_names.head;
+              _block$1 = [alphabetic, new None(), new None()];
+            } else {
+              let $2 = $1.tail;
+              if ($2 instanceof $Empty) {
+                let alphabetic = person_names.head;
+                let ideographic = $1.head;
+                _block$1 = [alphabetic, ideographic, new None()];
+              } else {
+                let $3 = $2.tail;
+                if ($3 instanceof $Empty) {
+                  let alphabetic = person_names.head;
+                  let ideographic = $1.head;
+                  let phonetic = $2.head;
+                  _block$1 = [alphabetic, ideographic, phonetic];
+                } else {
+                  _block$1 = [new None(), new None(), new None()];
+                }
+              }
+            }
           }
           let $ = _block$1;
           let alphabetic = $[0];

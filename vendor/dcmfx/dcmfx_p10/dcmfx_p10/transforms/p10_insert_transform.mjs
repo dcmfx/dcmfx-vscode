@@ -12,11 +12,14 @@ import * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filter_tr
 import {
   Ok,
   toList,
+  Empty as $Empty,
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
   isEqual,
 } from "../../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_p10/transforms/p10_insert_transform.gleam";
 
 class P10InsertTransform extends $CustomType {
   constructor(data_elements_to_insert, filter_transform) {
@@ -52,14 +55,21 @@ function prepend_data_element_tokens(data_element, path, acc) {
     acc,
     (acc, token) => { return new Ok(listPrepend(token, acc)); },
   );
-  if (!$.isOk()) {
+  if (!($ instanceof Ok)) {
     throw makeError(
       "let_assert",
+      FILEPATH,
       "dcmfx_p10/transforms/p10_insert_transform",
       181,
       "prepend_data_element_tokens",
       "Pattern match failed, no pattern matched the value.",
-      { value: $ }
+      {
+        value: $,
+        start: 5900,
+        end: 6032,
+        pattern_start: 5911,
+        pattern_end: 5921
+      }
     )
   }
   let tokens = $[0];
@@ -97,7 +107,9 @@ function tokens_to_insert_before_tag(
   token,
   acc
 ) {
-  if (data_elements_to_insert.atLeastLength(1)) {
+  if (data_elements_to_insert instanceof $Empty) {
+    return new Ok([acc, data_elements_to_insert]);
+  } else {
     let data_element = data_elements_to_insert.head;
     let rest = data_elements_to_insert.tail;
     let $ = $data_element_tag.to_int(data_element[0]) < $data_element_tag.to_int(
@@ -137,8 +149,6 @@ function tokens_to_insert_before_tag(
     } else {
       return new Ok([acc, data_elements_to_insert]);
     }
-  } else {
-    return new Ok([acc, data_elements_to_insert]);
   }
 }
 
@@ -174,7 +184,7 @@ export function add_token(transform, token) {
                 !is_at_root,
                 new Ok([toList([token]), transform$1]),
                 () => {
-                  if (token instanceof $p10_token.SequenceStart) {
+                  if (token instanceof $p10_token.DataElementHeader) {
                     let tag = token.tag;
                     let path = token.path;
                     return $result.map(
@@ -202,7 +212,7 @@ export function add_token(transform, token) {
                         return [tokens, transform$2];
                       },
                     );
-                  } else if (token instanceof $p10_token.DataElementHeader) {
+                  } else if (token instanceof $p10_token.SequenceStart) {
                     let tag = token.tag;
                     let path = token.path;
                     return $result.map(

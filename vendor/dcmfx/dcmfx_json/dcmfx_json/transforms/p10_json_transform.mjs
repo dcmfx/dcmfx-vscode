@@ -28,6 +28,7 @@ import {
   Ok,
   Error,
   toList,
+  Empty as $Empty,
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
@@ -36,6 +37,8 @@ import {
   toBitArray,
   sizedInt,
 } from "../../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_json/transforms/p10_json_transform.gleam";
 
 export class P10JsonTransform extends $CustomType {
   constructor(config, insert_comma, current_data_element, ignore_data_element_value_bytes, in_encapsulated_pixel_data, pending_base64_input, data_set_path, sequence_item_counts) {
@@ -87,7 +90,7 @@ function begin(transform, file_meta_information) {
       file_meta_information,
       $dictionary.transfer_syntax_uid.tag,
     );
-    if (transfer_syntax_uid.isOk()) {
+    if (transfer_syntax_uid instanceof Ok) {
       let transfer_syntax_uid$1 = transfer_syntax_uid[0];
       let _block$1;
       let _record = transform;
@@ -482,14 +485,21 @@ function write_base64(transform, input, finish) {
       }
       let input_bytes_consumed = _block;
       let $ = $bit_array.slice(input, 0, input_bytes_consumed);
-      if (!$.isOk()) {
+      if (!($ instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_json/transforms/p10_json_transform",
           706,
-          "",
+          "write_base64",
           "Pattern match failed, no pattern matched the value.",
-          { value: $ }
+          {
+            value: $,
+            start: 20554,
+            end: 20631,
+            pattern_start: 20565,
+            pattern_end: 20581
+          }
         )
       }
       let base64_input = $[0];
@@ -511,7 +521,7 @@ function write_base64(transform, input, finish) {
             input_bytes_consumed,
             input_size - input_bytes_consumed,
           );
-          if ($1.isOk()) {
+          if ($1 instanceof Ok) {
             let bytes = $1[0];
             return bytes;
           } else {
@@ -617,7 +627,7 @@ function prepare_json_string(value) {
 
 function encode_ieee_float(f) {
   let $ = $ieee_float.to_finite(f);
-  if ($.isOk()) {
+  if ($ instanceof Ok) {
     let f$1 = $[0];
     return $float.to_string(f$1);
   } else {
@@ -637,7 +647,32 @@ function encode_ieee_float(f) {
 
 function convert_binary_value_to_json(value, bytes, transform) {
   let $ = $data_element_value.value_representation(value);
-  if ($ instanceof $value_representation.AttributeTag) {
+  if ($ instanceof $value_representation.AgeString) {
+    let _pipe = bytes;
+    let _pipe$1 = $bit_array.to_string(_pipe);
+    let _pipe$2 = $result.map_error(
+      _pipe$1,
+      (_) => {
+        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
+      },
+    );
+    let _pipe$3 = $result.map(
+      _pipe$2,
+      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
+    );
+    let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
+    return $result.map(_pipe$4, (s) => { return toList([s]); });
+  } else if ($ instanceof $value_representation.ApplicationEntity) {
+    return $result.try$(
+      $data_element_value.get_string(value),
+      (value) => {
+        let _pipe = value;
+        let _pipe$1 = prepare_json_string(_pipe);
+        let _pipe$2 = ((s) => { return toList([s]); })(_pipe$1);
+        return new Ok(_pipe$2);
+      },
+    );
+  } else if ($ instanceof $value_representation.AttributeTag) {
     return $result.try$(
       $attribute_tag.from_bytes(bytes),
       (tags) => {
@@ -651,6 +686,45 @@ function convert_binary_value_to_json(value, bytes, transform) {
         return new Ok(_pipe$1);
       },
     );
+  } else if ($ instanceof $value_representation.CodeString) {
+    return $result.try$(
+      $data_element_value.get_strings(value),
+      (value) => {
+        let _pipe = value;
+        let _pipe$1 = $list.map(_pipe, prepare_json_string);
+        return new Ok(_pipe$1);
+      },
+    );
+  } else if ($ instanceof $value_representation.Date) {
+    let _pipe = bytes;
+    let _pipe$1 = $bit_array.to_string(_pipe);
+    let _pipe$2 = $result.map_error(
+      _pipe$1,
+      (_) => {
+        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
+      },
+    );
+    let _pipe$3 = $result.map(
+      _pipe$2,
+      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
+    );
+    let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
+    return $result.map(_pipe$4, (s) => { return toList([s]); });
+  } else if ($ instanceof $value_representation.DateTime) {
+    let _pipe = bytes;
+    let _pipe$1 = $bit_array.to_string(_pipe);
+    let _pipe$2 = $result.map_error(
+      _pipe$1,
+      (_) => {
+        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
+      },
+    );
+    let _pipe$3 = $result.map(
+      _pipe$2,
+      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
+    );
+    let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
+    return $result.map(_pipe$4, (s) => { return toList([s]); });
   } else if ($ instanceof $value_representation.DecimalString) {
     return $result.try$(
       $data_element_value.get_floats(value),
@@ -665,6 +739,32 @@ function convert_binary_value_to_json(value, bytes, transform) {
     return $result.try$(
       $data_element_value.get_floats(value),
       (value) => { return new Ok($list.map(value, encode_ieee_float)); },
+    );
+  } else if ($ instanceof $value_representation.IntegerString) {
+    let _pipe = value;
+    let _pipe$1 = $data_element_value.get_ints(_pipe);
+    return $result.map(
+      _pipe$1,
+      (_capture) => { return $list.map(_capture, $int.to_string); },
+    );
+  } else if ($ instanceof $value_representation.LongString) {
+    return $result.try$(
+      $data_element_value.get_strings(value),
+      (value) => {
+        let _pipe = value;
+        let _pipe$1 = $list.map(_pipe, prepare_json_string);
+        return new Ok(_pipe$1);
+      },
+    );
+  } else if ($ instanceof $value_representation.LongText) {
+    return $result.try$(
+      $data_element_value.get_string(value),
+      (value) => {
+        let _pipe = value;
+        let _pipe$1 = prepare_json_string(_pipe);
+        let _pipe$2 = ((s) => { return toList([s]); })(_pipe$1);
+        return new Ok(_pipe$2);
+      },
     );
   } else if ($ instanceof $value_representation.PersonName) {
     let _block;
@@ -772,6 +872,25 @@ function convert_binary_value_to_json(value, bytes, transform) {
         return $result.all(_pipe$3);
       },
     );
+  } else if ($ instanceof $value_representation.ShortString) {
+    return $result.try$(
+      $data_element_value.get_strings(value),
+      (value) => {
+        let _pipe = value;
+        let _pipe$1 = $list.map(_pipe, prepare_json_string);
+        return new Ok(_pipe$1);
+      },
+    );
+  } else if ($ instanceof $value_representation.ShortText) {
+    return $result.try$(
+      $data_element_value.get_string(value),
+      (value) => {
+        let _pipe = value;
+        let _pipe$1 = prepare_json_string(_pipe);
+        let _pipe$2 = ((s) => { return toList([s]); })(_pipe$1);
+        return new Ok(_pipe$2);
+      },
+    );
   } else if ($ instanceof $value_representation.SignedLong) {
     let _pipe = value;
     let _pipe$1 = $data_element_value.get_ints(_pipe);
@@ -786,52 +905,45 @@ function convert_binary_value_to_json(value, bytes, transform) {
       _pipe$1,
       (_capture) => { return $list.map(_capture, $int.to_string); },
     );
-  } else if ($ instanceof $value_representation.UnsignedLong) {
-    let _pipe = value;
-    let _pipe$1 = $data_element_value.get_ints(_pipe);
-    return $result.map(
-      _pipe$1,
-      (_capture) => { return $list.map(_capture, $int.to_string); },
-    );
-  } else if ($ instanceof $value_representation.UnsignedShort) {
-    let _pipe = value;
-    let _pipe$1 = $data_element_value.get_ints(_pipe);
-    return $result.map(
-      _pipe$1,
-      (_capture) => { return $list.map(_capture, $int.to_string); },
-    );
-  } else if ($ instanceof $value_representation.IntegerString) {
-    let _pipe = value;
-    let _pipe$1 = $data_element_value.get_ints(_pipe);
-    return $result.map(
-      _pipe$1,
-      (_capture) => { return $list.map(_capture, $int.to_string); },
-    );
   } else if ($ instanceof $value_representation.SignedVeryLong) {
     return $result.try$(
       $data_element_value.get_big_ints(value),
       (value) => {
         let $1 = $bigi.from_string("-9007199254740991");
-        if (!$1.isOk()) {
+        if (!($1 instanceof Ok)) {
           throw makeError(
             "let_assert",
+            FILEPATH,
             "dcmfx_json/transforms/p10_json_transform",
             849,
-            "",
+            "convert_binary_value_to_json",
             "Pattern match failed, no pattern matched the value.",
-            { value: $1 }
+            {
+              value: $1,
+              start: 24803,
+              end: 24874,
+              pattern_start: 24814,
+              pattern_end: 24834
+            }
           )
         }
         let min_safe_integer = $1[0];
         let $2 = $bigi.from_string("9007199254740991");
-        if (!$2.isOk()) {
+        if (!($2 instanceof Ok)) {
           throw makeError(
             "let_assert",
+            FILEPATH,
             "dcmfx_json/transforms/p10_json_transform",
             850,
-            "",
+            "convert_binary_value_to_json",
             "Pattern match failed, no pattern matched the value.",
-            { value: $2 }
+            {
+              value: $2,
+              start: 24881,
+              end: 24951,
+              pattern_start: 24892,
+              pattern_end: 24912
+            }
           )
         }
         let max_safe_integer = $2[0];
@@ -845,14 +957,21 @@ function convert_binary_value_to_json(value, bytes, transform) {
             )) && (!isEqual($bigi.compare(i, max_safe_integer), new $order.Gt()));
             if ($3) {
               let $4 = $bigi.to_int(i);
-              if (!$4.isOk()) {
+              if (!($4 instanceof Ok)) {
                 throw makeError(
                   "let_assert",
+                  FILEPATH,
                   "dcmfx_json/transforms/p10_json_transform",
                   859,
-                  "",
+                  "convert_binary_value_to_json",
                   "Pattern match failed, no pattern matched the value.",
-                  { value: $4 }
+                  {
+                    value: $4,
+                    start: 25161,
+                    end: 25194,
+                    pattern_start: 25172,
+                    pattern_end: 25177
+                  }
                 )
               }
               let i$1 = $4[0];
@@ -865,109 +984,6 @@ function convert_binary_value_to_json(value, bytes, transform) {
         return new Ok(_pipe$1);
       },
     );
-  } else if ($ instanceof $value_representation.UnsignedVeryLong) {
-    return $result.try$(
-      $data_element_value.get_big_ints(value),
-      (value) => {
-        let $1 = $bigi.from_string("-9007199254740991");
-        if (!$1.isOk()) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_json/transforms/p10_json_transform",
-            849,
-            "",
-            "Pattern match failed, no pattern matched the value.",
-            { value: $1 }
-          )
-        }
-        let min_safe_integer = $1[0];
-        let $2 = $bigi.from_string("9007199254740991");
-        if (!$2.isOk()) {
-          throw makeError(
-            "let_assert",
-            "dcmfx_json/transforms/p10_json_transform",
-            850,
-            "",
-            "Pattern match failed, no pattern matched the value.",
-            { value: $2 }
-          )
-        }
-        let max_safe_integer = $2[0];
-        let _pipe = value;
-        let _pipe$1 = $list.map(
-          _pipe,
-          (i) => {
-            let $3 = (!isEqual(
-              $bigi.compare(i, min_safe_integer),
-              new $order.Lt()
-            )) && (!isEqual($bigi.compare(i, max_safe_integer), new $order.Gt()));
-            if ($3) {
-              let $4 = $bigi.to_int(i);
-              if (!$4.isOk()) {
-                throw makeError(
-                  "let_assert",
-                  "dcmfx_json/transforms/p10_json_transform",
-                  859,
-                  "",
-                  "Pattern match failed, no pattern matched the value.",
-                  { value: $4 }
-                )
-              }
-              let i$1 = $4[0];
-              return $int.to_string(i$1);
-            } else {
-              return ("\"" + $bigi.to_string(i)) + "\"";
-            }
-          },
-        );
-        return new Ok(_pipe$1);
-      },
-    );
-  } else if ($ instanceof $value_representation.AgeString) {
-    let _pipe = bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
-    );
-    let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
-    return $result.map(_pipe$4, (s) => { return toList([s]); });
-  } else if ($ instanceof $value_representation.Date) {
-    let _pipe = bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
-    );
-    let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
-    return $result.map(_pipe$4, (s) => { return toList([s]); });
-  } else if ($ instanceof $value_representation.DateTime) {
-    let _pipe = bytes;
-    let _pipe$1 = $bit_array.to_string(_pipe);
-    let _pipe$2 = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return $data_error.new_value_invalid("String bytes are not valid UTF-8");
-      },
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => { return $utils.trim_ascii_end(_capture, 0x20); },
-    );
-    let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
-    return $result.map(_pipe$4, (s) => { return toList([s]); });
   } else if ($ instanceof $value_representation.Time) {
     let _pipe = bytes;
     let _pipe$1 = $bit_array.to_string(_pipe);
@@ -983,34 +999,13 @@ function convert_binary_value_to_json(value, bytes, transform) {
     );
     let _pipe$4 = $result.map(_pipe$3, prepare_json_string);
     return $result.map(_pipe$4, (s) => { return toList([s]); });
-  } else if ($ instanceof $value_representation.ApplicationEntity) {
+  } else if ($ instanceof $value_representation.UniqueIdentifier) {
     return $result.try$(
-      $data_element_value.get_string(value),
+      $data_element_value.get_strings(value),
       (value) => {
         let _pipe = value;
-        let _pipe$1 = prepare_json_string(_pipe);
-        let _pipe$2 = ((s) => { return toList([s]); })(_pipe$1);
-        return new Ok(_pipe$2);
-      },
-    );
-  } else if ($ instanceof $value_representation.LongText) {
-    return $result.try$(
-      $data_element_value.get_string(value),
-      (value) => {
-        let _pipe = value;
-        let _pipe$1 = prepare_json_string(_pipe);
-        let _pipe$2 = ((s) => { return toList([s]); })(_pipe$1);
-        return new Ok(_pipe$2);
-      },
-    );
-  } else if ($ instanceof $value_representation.ShortText) {
-    return $result.try$(
-      $data_element_value.get_string(value),
-      (value) => {
-        let _pipe = value;
-        let _pipe$1 = prepare_json_string(_pipe);
-        let _pipe$2 = ((s) => { return toList([s]); })(_pipe$1);
-        return new Ok(_pipe$2);
+        let _pipe$1 = $list.map(_pipe, prepare_json_string);
+        return new Ok(_pipe$1);
       },
     );
   } else if ($ instanceof $value_representation.UniversalResourceIdentifier) {
@@ -1023,6 +1018,15 @@ function convert_binary_value_to_json(value, bytes, transform) {
         return new Ok(_pipe$2);
       },
     );
+  } else if ($ instanceof $value_representation.UnlimitedCharacters) {
+    return $result.try$(
+      $data_element_value.get_strings(value),
+      (value) => {
+        let _pipe = value;
+        let _pipe$1 = $list.map(_pipe, prepare_json_string);
+        return new Ok(_pipe$1);
+      },
+    );
   } else if ($ instanceof $value_representation.UnlimitedText) {
     return $result.try$(
       $data_element_value.get_string(value),
@@ -1033,48 +1037,96 @@ function convert_binary_value_to_json(value, bytes, transform) {
         return new Ok(_pipe$2);
       },
     );
-  } else if ($ instanceof $value_representation.CodeString) {
-    return $result.try$(
-      $data_element_value.get_strings(value),
-      (value) => {
-        let _pipe = value;
-        let _pipe$1 = $list.map(_pipe, prepare_json_string);
-        return new Ok(_pipe$1);
-      },
+  } else if ($ instanceof $value_representation.UnsignedLong) {
+    let _pipe = value;
+    let _pipe$1 = $data_element_value.get_ints(_pipe);
+    return $result.map(
+      _pipe$1,
+      (_capture) => { return $list.map(_capture, $int.to_string); },
     );
-  } else if ($ instanceof $value_representation.LongString) {
-    return $result.try$(
-      $data_element_value.get_strings(value),
-      (value) => {
-        let _pipe = value;
-        let _pipe$1 = $list.map(_pipe, prepare_json_string);
-        return new Ok(_pipe$1);
-      },
+  } else if ($ instanceof $value_representation.UnsignedShort) {
+    let _pipe = value;
+    let _pipe$1 = $data_element_value.get_ints(_pipe);
+    return $result.map(
+      _pipe$1,
+      (_capture) => { return $list.map(_capture, $int.to_string); },
     );
-  } else if ($ instanceof $value_representation.ShortString) {
+  } else if ($ instanceof $value_representation.UnsignedVeryLong) {
     return $result.try$(
-      $data_element_value.get_strings(value),
+      $data_element_value.get_big_ints(value),
       (value) => {
+        let $1 = $bigi.from_string("-9007199254740991");
+        if (!($1 instanceof Ok)) {
+          throw makeError(
+            "let_assert",
+            FILEPATH,
+            "dcmfx_json/transforms/p10_json_transform",
+            849,
+            "convert_binary_value_to_json",
+            "Pattern match failed, no pattern matched the value.",
+            {
+              value: $1,
+              start: 24803,
+              end: 24874,
+              pattern_start: 24814,
+              pattern_end: 24834
+            }
+          )
+        }
+        let min_safe_integer = $1[0];
+        let $2 = $bigi.from_string("9007199254740991");
+        if (!($2 instanceof Ok)) {
+          throw makeError(
+            "let_assert",
+            FILEPATH,
+            "dcmfx_json/transforms/p10_json_transform",
+            850,
+            "convert_binary_value_to_json",
+            "Pattern match failed, no pattern matched the value.",
+            {
+              value: $2,
+              start: 24881,
+              end: 24951,
+              pattern_start: 24892,
+              pattern_end: 24912
+            }
+          )
+        }
+        let max_safe_integer = $2[0];
         let _pipe = value;
-        let _pipe$1 = $list.map(_pipe, prepare_json_string);
-        return new Ok(_pipe$1);
-      },
-    );
-  } else if ($ instanceof $value_representation.UnlimitedCharacters) {
-    return $result.try$(
-      $data_element_value.get_strings(value),
-      (value) => {
-        let _pipe = value;
-        let _pipe$1 = $list.map(_pipe, prepare_json_string);
-        return new Ok(_pipe$1);
-      },
-    );
-  } else if ($ instanceof $value_representation.UniqueIdentifier) {
-    return $result.try$(
-      $data_element_value.get_strings(value),
-      (value) => {
-        let _pipe = value;
-        let _pipe$1 = $list.map(_pipe, prepare_json_string);
+        let _pipe$1 = $list.map(
+          _pipe,
+          (i) => {
+            let $3 = (!isEqual(
+              $bigi.compare(i, min_safe_integer),
+              new $order.Lt()
+            )) && (!isEqual($bigi.compare(i, max_safe_integer), new $order.Gt()));
+            if ($3) {
+              let $4 = $bigi.to_int(i);
+              if (!($4 instanceof Ok)) {
+                throw makeError(
+                  "let_assert",
+                  FILEPATH,
+                  "dcmfx_json/transforms/p10_json_transform",
+                  859,
+                  "convert_binary_value_to_json",
+                  "Pattern match failed, no pattern matched the value.",
+                  {
+                    value: $4,
+                    start: 25161,
+                    end: 25194,
+                    pattern_start: 25172,
+                    pattern_end: 25177
+                  }
+                )
+              }
+              let i$1 = $4[0];
+              return $int.to_string(i$1);
+            } else {
+              return ("\"" + $bigi.to_string(i)) + "\"";
+            }
+          },
+        );
         return new Ok(_pipe$1);
       },
     );
@@ -1375,7 +1427,9 @@ export function add_token(transform, token) {
   } else if (token instanceof $p10_token.SequenceItemStart) {
     let _block;
     let $ = transform.sequence_item_counts;
-    if ($.atLeastLength(1)) {
+    if ($ instanceof $Empty) {
+      _block = new Ok([transform.data_set_path, transform.sequence_item_counts]);
+    } else {
       let count = $.head;
       let rest = $.tail;
       let _pipe = transform.data_set_path;
@@ -1385,8 +1439,6 @@ export function add_token(transform, token) {
         _pipe$2,
         (path) => { return [path, listPrepend(count + 1, rest)]; },
       );
-    } else {
-      _block = new Ok([transform.data_set_path, transform.sequence_item_counts]);
     }
     let path_and_item_counts = _block;
     return $result.map(
@@ -1441,7 +1493,9 @@ export function add_token(transform, token) {
     let length = token.length;
     let _block;
     let $ = transform.sequence_item_counts;
-    if ($.atLeastLength(1)) {
+    if ($ instanceof $Empty) {
+      _block = new Ok([transform.data_set_path, transform.sequence_item_counts]);
+    } else {
       let count = $.head;
       let rest = $.tail;
       let _pipe = transform.data_set_path;
@@ -1451,8 +1505,6 @@ export function add_token(transform, token) {
         _pipe$2,
         (path) => { return [path, listPrepend(count + 1, rest)]; },
       );
-    } else {
-      _block = new Ok([transform.data_set_path, transform.sequence_item_counts]);
     }
     let path_and_item_counts = _block;
     return $result.try$(

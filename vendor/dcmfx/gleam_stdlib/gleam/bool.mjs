@@ -28,10 +28,10 @@ export function exclusive_nor(a, b) {
 }
 
 export function to_string(bool) {
-  if (!bool) {
-    return "False";
-  } else {
+  if (bool) {
     return "True";
+  } else {
+    return "False";
   }
 }
 

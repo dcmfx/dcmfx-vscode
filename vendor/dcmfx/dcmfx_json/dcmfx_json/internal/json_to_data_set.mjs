@@ -27,6 +27,7 @@ import {
   Ok,
   Error,
   toList,
+  Empty as $Empty,
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
@@ -36,6 +37,8 @@ import {
   bitArraySliceToInt,
   sizedInt,
 } from "../../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_json/internal/json_to_data_set.gleam";
 
 class PersonNameVariants extends $CustomType {
   constructor(alphabetic, ideographic, phonetic) {
@@ -184,29 +187,49 @@ function read_dicom_json_person_name_value(value, path) {
 }
 
 function read_encapsulated_pixel_data_items(bytes, vr, items) {
-  if (bytes.byteAt(0) === 254 &&
-  bytes.byteAt(1) === 255 &&
-  bytes.byteAt(2) === 0 &&
-  bytes.byteAt(3) === 224 &&
-  (bytes.bitSize >= 64 && (bytes.bitSize - 64) % 8 === 0)) {
-    let length = bitArraySliceToInt(bytes, 32, 64, false, false);
-    let rest = bitArraySlice(bytes, 64);
-    return $result.try$(
-      $bit_array.slice(rest, 0, length),
-      (item) => {
-        return $result.try$(
-          $bit_array.slice(rest, length, $bit_array.byte_size(rest) - length),
-          (rest) => {
-            return read_encapsulated_pixel_data_items(
-              rest,
-              vr,
-              listPrepend(item, items),
-            );
-          },
-        );
-      },
-    );
-  } else if (bytes.bitSize == 0) {
+  if (bytes.bitSize >= 16) {
+    if (bytes.byteAt(0) === 254 && bytes.byteAt(1) === 255) {
+      if (bytes.bitSize >= 32) {
+        if (bytes.byteAt(2) === 0 && bytes.byteAt(3) === 224) {
+          if (bytes.bitSize >= 64) {
+            if ((bytes.bitSize - 64) % 8 === 0) {
+              let length = bitArraySliceToInt(bytes, 32, 64, false, false);
+              let rest = bitArraySlice(bytes, 64);
+              return $result.try$(
+                $bit_array.slice(rest, 0, length),
+                (item) => {
+                  return $result.try$(
+                    $bit_array.slice(
+                      rest,
+                      length,
+                      $bit_array.byte_size(rest) - length,
+                    ),
+                    (rest) => {
+                      return read_encapsulated_pixel_data_items(
+                        rest,
+                        vr,
+                        listPrepend(item, items),
+                      );
+                    },
+                  );
+                },
+              );
+            } else {
+              return new Error(undefined);
+            }
+          } else {
+            return new Error(undefined);
+          }
+        } else {
+          return new Error(undefined);
+        }
+      } else {
+        return new Error(undefined);
+      }
+    } else {
+      return new Error(undefined);
+    }
+  } else if (bytes.bitSize === 0) {
     let _pipe = items;
     let _pipe$1 = $list.reverse(_pipe);
     let _pipe$2 = ((_capture) => {
@@ -362,6 +385,55 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
         })(_pipe$6);
       },
     );
+  } else if (vr instanceof $value_representation.AttributeTag) {
+    let _block;
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.string));
+    _block = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("AttributeTag value is invalid", path),
+    );
+    let tags = _block;
+    return $result.try$(
+      tags,
+      (tags) => {
+        let _block$1;
+        let _pipe$2 = tags;
+        let _pipe$3 = $list.map(
+          _pipe$2,
+          (tag) => {
+            let _pipe$3 = tag;
+            let _pipe$4 = $data_element_tag.from_hex_string(_pipe$3);
+            return $result.map(
+              _pipe$4,
+              (tag) => {
+                return toBitArray([
+                  sizedInt(tag.group, 16, false),
+                  sizedInt(tag.element, 16, false),
+                ]);
+              },
+            );
+          },
+        );
+        let _pipe$4 = $result.all(_pipe$3);
+        _block$1 = $result.replace_error(
+          _pipe$4,
+          new $json_error.JsonInvalid("AttributeTag value is invalid", path),
+        );
+        let tags$1 = _block$1;
+        return $result.try$(
+          tags$1,
+          (tags) => {
+            let _pipe$5 = tags;
+            let _pipe$6 = $bit_array.concat(_pipe$5);
+            let _pipe$7 = ((_capture) => {
+              return $data_element_value.new_binary_unchecked(vr, _capture);
+            })(_pipe$6);
+            return new Ok(_pipe$7);
+          },
+        );
+      },
+    );
   } else if (vr instanceof $value_representation.CodeString) {
     let _block;
     let _pipe = value;
@@ -458,6 +530,115 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
         })(_pipe$6);
       },
     );
+  } else if (vr instanceof $value_representation.DecimalString) {
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
+    let _pipe$2 = $result.then$(
+      _pipe$1,
+      (lst) => {
+        let _pipe$2 = $list.map(
+          lst,
+          (i) => {
+            let $ = $decode.run(i, $decode.float);
+            if ($ instanceof Ok) {
+              let i$1 = $[0];
+              return new Ok(i$1);
+            } else {
+              let $1 = $decode.run(i, $decode.int);
+              if ($1 instanceof Ok) {
+                let i$1 = $1[0];
+                return new Ok($int.to_float(i$1));
+              } else {
+                let e = $1[0];
+                return new Error(e);
+              }
+            }
+          },
+        );
+        return $result.all(_pipe$2);
+      },
+    );
+    let _pipe$3 = $result.replace_error(
+      _pipe$2,
+      new $json_error.JsonInvalid("DecimalString value is invalid", path),
+    );
+    let _pipe$4 = $result.map(_pipe$3, $decimal_string.to_bytes);
+    return $result.map(
+      _pipe$4,
+      (_capture) => {
+        return $data_element_value.new_binary_unchecked(vr, _capture);
+      },
+    );
+  } else if (vr instanceof $value_representation.FloatingPointDouble) {
+    let _block;
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list(decode_ieee_float()));
+    _block = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("FloatingPointDouble value is invalid", path),
+    );
+    let floats = _block;
+    return $result.try$(
+      floats,
+      (floats) => {
+        let _pipe$2 = floats;
+        let _pipe$3 = $list.map(_pipe$2, $ieee_float.to_bytes_64_le);
+        let _pipe$4 = $bit_array.concat(_pipe$3);
+        let _pipe$5 = ((_capture) => {
+          return $data_element_value.new_binary_unchecked(vr, _capture);
+        })(_pipe$4);
+        return new Ok(_pipe$5);
+      },
+    );
+  } else if (vr instanceof $value_representation.FloatingPointSingle) {
+    let _block;
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list(decode_ieee_float()));
+    _block = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("FloatingPointSingle value is invalid", path),
+    );
+    let floats = _block;
+    return $result.try$(
+      floats,
+      (floats) => {
+        let _pipe$2 = floats;
+        let _pipe$3 = $list.map(_pipe$2, $ieee_float.to_bytes_32_le);
+        let _pipe$4 = $bit_array.concat(_pipe$3);
+        let _pipe$5 = ((_capture) => {
+          return $data_element_value.new_binary_unchecked(vr, _capture);
+        })(_pipe$4);
+        return new Ok(_pipe$5);
+      },
+    );
+  } else if (vr instanceof $value_representation.IntegerString) {
+    let _block;
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
+    _block = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("IntegerString value is invalid", path),
+    );
+    let ints = _block;
+    return $result.try$(
+      ints,
+      (ints) => {
+        let _block$1;
+        let _pipe$2 = ints;
+        let _pipe$3 = $integer_string.to_bytes(_pipe$2);
+        _block$1 = $result.replace_error(
+          _pipe$3,
+          new $json_error.JsonInvalid("IntegerString value is invalid", path),
+        );
+        let bytes = _block$1;
+        return $result.try$(
+          bytes,
+          (bytes) => {
+            return new Ok($data_element_value.new_binary_unchecked(vr, bytes));
+          },
+        );
+      },
+    );
   } else if (vr instanceof $value_representation.LongString) {
     let _block;
     let _pipe = value;
@@ -522,6 +703,29 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
         })(_pipe$6);
       },
     );
+  } else if (vr instanceof $value_representation.PersonName) {
+    return read_dicom_json_person_name_value(value, path);
+  } else if (vr instanceof $value_representation.Sequence) {
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
+    let _pipe$2 = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("Sequence value is invalid", path),
+    );
+    let _pipe$3 = $result.map(
+      _pipe$2,
+      (_capture) => {
+        return $list.map(
+          _capture,
+          (json) => {
+            return convert_json_to_data_set(json, $data_set_path.new$());
+          },
+        );
+      },
+    );
+    let _pipe$4 = $result.map(_pipe$3, $result.all);
+    let _pipe$5 = $result.flatten(_pipe$4);
+    return $result.map(_pipe$5, $data_element_value.new_sequence);
   } else if (vr instanceof $value_representation.ShortString) {
     let _block;
     let _pipe = value;
@@ -586,71 +790,348 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
         })(_pipe$6);
       },
     );
+  } else if (vr instanceof $value_representation.SignedLong) {
+    let _block;
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
+    _block = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("SignedLong value is invalid", path),
+    );
+    let ints = _block;
+    return $result.try$(
+      ints,
+      (ints) => {
+        let is_valid = $list.all(
+          ints,
+          (i) => { return (i >= -1 * 0x80000000) && (i <= 0x7FFFFFFF); },
+        );
+        return $bool.guard(
+          !is_valid,
+          new Error(
+            new $json_error.JsonInvalid(
+              "SignedLong value is out of range",
+              path,
+            ),
+          ),
+          () => {
+            let _pipe$2 = ints;
+            let _pipe$3 = $list.map(
+              _pipe$2,
+              (x) => { return toBitArray([sizedInt(x, 32, false)]); },
+            );
+            let _pipe$4 = $bit_array.concat(_pipe$3);
+            let _pipe$5 = ((_capture) => {
+              return $data_element_value.new_binary_unchecked(vr, _capture);
+            })(_pipe$4);
+            return new Ok(_pipe$5);
+          },
+        );
+      },
+    );
+  } else if (vr instanceof $value_representation.SignedShort) {
+    let _block;
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
+    _block = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("Short value is invalid", path),
+    );
+    let ints = _block;
+    return $result.try$(
+      ints,
+      (ints) => {
+        let $ = $dictionary.is_lut_descriptor_tag(tag);
+        if (ints instanceof $Empty) {
+          let _block$1;
+          if (vr instanceof $value_representation.SignedShort) {
+            _block$1 = [-1 * 0x8000, 0x7FFF];
+          } else {
+            _block$1 = [0, 0xFFFF];
+          }
+          let $1 = _block$1;
+          let min = $1[0];
+          let max = $1[1];
+          let is_valid = $list.all(
+            ints,
+            (i) => { return (i >= min) && (i <= max); },
+          );
+          return $bool.guard(
+            !is_valid,
+            new Error(
+              new $json_error.JsonInvalid("Short value is out of range", path),
+            ),
+            () => {
+              let _pipe$2 = ints;
+              let _pipe$3 = $list.map(
+                _pipe$2,
+                (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+              );
+              let _pipe$4 = $bit_array.concat(_pipe$3);
+              let _pipe$5 = ((_capture) => {
+                return $data_element_value.new_binary_unchecked(vr, _capture);
+              })(_pipe$4);
+              return new Ok(_pipe$5);
+            },
+          );
+        } else {
+          let $1 = ints.tail;
+          if ($1 instanceof $Empty) {
+            let _block$1;
+            if (vr instanceof $value_representation.SignedShort) {
+              _block$1 = [-1 * 0x8000, 0x7FFF];
+            } else {
+              _block$1 = [0, 0xFFFF];
+            }
+            let $2 = _block$1;
+            let min = $2[0];
+            let max = $2[1];
+            let is_valid = $list.all(
+              ints,
+              (i) => { return (i >= min) && (i <= max); },
+            );
+            return $bool.guard(
+              !is_valid,
+              new Error(
+                new $json_error.JsonInvalid("Short value is out of range", path),
+              ),
+              () => {
+                let _pipe$2 = ints;
+                let _pipe$3 = $list.map(
+                  _pipe$2,
+                  (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                );
+                let _pipe$4 = $bit_array.concat(_pipe$3);
+                let _pipe$5 = ((_capture) => {
+                  return $data_element_value.new_binary_unchecked(vr, _capture);
+                })(_pipe$4);
+                return new Ok(_pipe$5);
+              },
+            );
+          } else {
+            let $2 = $1.tail;
+            if ($2 instanceof $Empty) {
+              let _block$1;
+              if (vr instanceof $value_representation.SignedShort) {
+                _block$1 = [-1 * 0x8000, 0x7FFF];
+              } else {
+                _block$1 = [0, 0xFFFF];
+              }
+              let $3 = _block$1;
+              let min = $3[0];
+              let max = $3[1];
+              let is_valid = $list.all(
+                ints,
+                (i) => { return (i >= min) && (i <= max); },
+              );
+              return $bool.guard(
+                !is_valid,
+                new Error(
+                  new $json_error.JsonInvalid(
+                    "Short value is out of range",
+                    path,
+                  ),
+                ),
+                () => {
+                  let _pipe$2 = ints;
+                  let _pipe$3 = $list.map(
+                    _pipe$2,
+                    (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                  );
+                  let _pipe$4 = $bit_array.concat(_pipe$3);
+                  let _pipe$5 = ((_capture) => {
+                    return $data_element_value.new_binary_unchecked(
+                      vr,
+                      _capture,
+                    );
+                  })(_pipe$4);
+                  return new Ok(_pipe$5);
+                },
+              );
+            } else {
+              let $3 = $2.tail;
+              if ($3 instanceof $Empty) {
+                if ($) {
+                  let entry_count = ints.head;
+                  let first_input_value = $1.head;
+                  let bits_per_entry = $2.head;
+                  let _pipe$2 = toBitArray([
+                    sizedInt(entry_count, 16, false),
+                    sizedInt(first_input_value, 16, false),
+                    sizedInt(bits_per_entry, 16, false),
+                  ]);
+                  let _pipe$3 = ((_capture) => {
+                    return $data_element_value.new_lookup_table_descriptor_unchecked(
+                      vr,
+                      _capture,
+                    );
+                  })(_pipe$2);
+                  return new Ok(_pipe$3);
+                } else {
+                  let _block$1;
+                  if (vr instanceof $value_representation.SignedShort) {
+                    _block$1 = [-1 * 0x8000, 0x7FFF];
+                  } else {
+                    _block$1 = [0, 0xFFFF];
+                  }
+                  let $4 = _block$1;
+                  let min = $4[0];
+                  let max = $4[1];
+                  let is_valid = $list.all(
+                    ints,
+                    (i) => { return (i >= min) && (i <= max); },
+                  );
+                  return $bool.guard(
+                    !is_valid,
+                    new Error(
+                      new $json_error.JsonInvalid(
+                        "Short value is out of range",
+                        path,
+                      ),
+                    ),
+                    () => {
+                      let _pipe$2 = ints;
+                      let _pipe$3 = $list.map(
+                        _pipe$2,
+                        (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                      );
+                      let _pipe$4 = $bit_array.concat(_pipe$3);
+                      let _pipe$5 = ((_capture) => {
+                        return $data_element_value.new_binary_unchecked(
+                          vr,
+                          _capture,
+                        );
+                      })(_pipe$4);
+                      return new Ok(_pipe$5);
+                    },
+                  );
+                }
+              } else {
+                let _block$1;
+                if (vr instanceof $value_representation.SignedShort) {
+                  _block$1 = [-1 * 0x8000, 0x7FFF];
+                } else {
+                  _block$1 = [0, 0xFFFF];
+                }
+                let $4 = _block$1;
+                let min = $4[0];
+                let max = $4[1];
+                let is_valid = $list.all(
+                  ints,
+                  (i) => { return (i >= min) && (i <= max); },
+                );
+                return $bool.guard(
+                  !is_valid,
+                  new Error(
+                    new $json_error.JsonInvalid(
+                      "Short value is out of range",
+                      path,
+                    ),
+                  ),
+                  () => {
+                    let _pipe$2 = ints;
+                    let _pipe$3 = $list.map(
+                      _pipe$2,
+                      (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                    );
+                    let _pipe$4 = $bit_array.concat(_pipe$3);
+                    let _pipe$5 = ((_capture) => {
+                      return $data_element_value.new_binary_unchecked(
+                        vr,
+                        _capture,
+                      );
+                    })(_pipe$4);
+                    return new Ok(_pipe$5);
+                  },
+                );
+              }
+            }
+          }
+        }
+      },
+    );
+  } else if (vr instanceof $value_representation.SignedVeryLong) {
+    let _block;
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
+    _block = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("Very long value is not a list", path),
+    );
+    let values = _block;
+    return $result.try$(
+      values,
+      (values) => {
+        let _block$1;
+        let _pipe$2 = values;
+        let _pipe$3 = $list.map(
+          _pipe$2,
+          (i) => {
+            let $ = $decode.run(i, $decode.int);
+            if ($ instanceof Ok) {
+              let i$1 = $[0];
+              return new Ok($bigi.from_int(i$1));
+            } else {
+              let $1 = $decode.run(i, $decode.string);
+              if ($1 instanceof Ok) {
+                let i$1 = $1[0];
+                return $bigi.from_string(i$1);
+              } else {
+                return new Error(undefined);
+              }
+            }
+          },
+        );
+        let _pipe$4 = $result.all(_pipe$3);
+        _block$1 = $result.replace_error(
+          _pipe$4,
+          new $json_error.JsonInvalid("Very long value is invalid", path),
+        );
+        let big_ints = _block$1;
+        return $result.try$(
+          big_ints,
+          (big_ints) => {
+            let _block$2;
+            if (vr instanceof $value_representation.SignedVeryLong) {
+              _block$2 = new $bigi.Signed();
+            } else {
+              _block$2 = new $bigi.Unsigned();
+            }
+            let signedness = _block$2;
+            let _pipe$5 = big_ints;
+            let _pipe$6 = $list.map(
+              _pipe$5,
+              (_capture) => {
+                return $bigi.to_bytes(
+                  _capture,
+                  new $bigi.LittleEndian(),
+                  signedness,
+                  8,
+                );
+              },
+            );
+            let _pipe$7 = $result.all(_pipe$6);
+            let _pipe$8 = $result.map_error(
+              _pipe$7,
+              (_) => {
+                return new $json_error.JsonInvalid(
+                  "Very long value is out of range",
+                  path,
+                );
+              },
+            );
+            let _pipe$9 = $result.map(_pipe$8, $bit_array.concat);
+            return $result.map(
+              _pipe$9,
+              (_capture) => {
+                return $data_element_value.new_binary_unchecked(vr, _capture);
+              },
+            );
+          },
+        );
+      },
+    );
   } else if (vr instanceof $value_representation.Time) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(
-      _pipe,
-      $decode.list($decode.optional($decode.string)),
-    );
-    _block = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return new $json_error.JsonInvalid("String value is invalid", path);
-      },
-    );
-    let value$1 = _block;
-    return $result.map(
-      value$1,
-      (value) => {
-        let _pipe$2 = value;
-        let _pipe$3 = $list.map(
-          _pipe$2,
-          (_capture) => { return $option.unwrap(_capture, ""); },
-        );
-        let _pipe$4 = $string.join(_pipe$3, "\\");
-        let _pipe$5 = $bit_array.from_string(_pipe$4);
-        let _pipe$6 = ((_capture) => {
-          return $value_representation.pad_bytes_to_even_length(vr, _capture);
-        })(_pipe$5);
-        return ((_capture) => {
-          return $data_element_value.new_binary_unchecked(vr, _capture);
-        })(_pipe$6);
-      },
-    );
-  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(
-      _pipe,
-      $decode.list($decode.optional($decode.string)),
-    );
-    _block = $result.map_error(
-      _pipe$1,
-      (_) => {
-        return new $json_error.JsonInvalid("String value is invalid", path);
-      },
-    );
-    let value$1 = _block;
-    return $result.map(
-      value$1,
-      (value) => {
-        let _pipe$2 = value;
-        let _pipe$3 = $list.map(
-          _pipe$2,
-          (_capture) => { return $option.unwrap(_capture, ""); },
-        );
-        let _pipe$4 = $string.join(_pipe$3, "\\");
-        let _pipe$5 = $bit_array.from_string(_pipe$4);
-        let _pipe$6 = ((_capture) => {
-          return $value_representation.pad_bytes_to_even_length(vr, _capture);
-        })(_pipe$5);
-        return ((_capture) => {
-          return $data_element_value.new_binary_unchecked(vr, _capture);
-        })(_pipe$6);
-      },
-    );
-  } else if (vr instanceof $value_representation.UnlimitedText) {
     let _block;
     let _pipe = value;
     let _pipe$1 = $decode.run(
@@ -746,402 +1227,68 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
         })(_pipe$6);
       },
     );
-  } else if (vr instanceof $value_representation.DecimalString) {
+  } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+    let _block;
     let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
-    let _pipe$2 = $result.then$(
+    let _pipe$1 = $decode.run(
+      _pipe,
+      $decode.list($decode.optional($decode.string)),
+    );
+    _block = $result.map_error(
       _pipe$1,
-      (lst) => {
-        let _pipe$2 = $list.map(
-          lst,
-          (i) => {
-            let $ = $decode.run(i, $decode.float);
-            if ($.isOk()) {
-              let i$1 = $[0];
-              return new Ok(i$1);
-            } else {
-              let $1 = $decode.run(i, $decode.int);
-              if ($1.isOk()) {
-                let i$1 = $1[0];
-                return new Ok($int.to_float(i$1));
-              } else {
-                let e = $1[0];
-                return new Error(e);
-              }
-            }
-          },
-        );
-        return $result.all(_pipe$2);
+      (_) => {
+        return new $json_error.JsonInvalid("String value is invalid", path);
       },
     );
-    let _pipe$3 = $result.replace_error(
-      _pipe$2,
-      new $json_error.JsonInvalid("DecimalString value is invalid", path),
-    );
-    let _pipe$4 = $result.map(_pipe$3, $decimal_string.to_bytes);
+    let value$1 = _block;
     return $result.map(
-      _pipe$4,
-      (_capture) => {
-        return $data_element_value.new_binary_unchecked(vr, _capture);
-      },
-    );
-  } else if (vr instanceof $value_representation.IntegerString) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
-    _block = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("IntegerString value is invalid", path),
-    );
-    let ints = _block;
-    return $result.try$(
-      ints,
-      (ints) => {
-        let _block$1;
-        let _pipe$2 = ints;
-        let _pipe$3 = $integer_string.to_bytes(_pipe$2);
-        _block$1 = $result.replace_error(
-          _pipe$3,
-          new $json_error.JsonInvalid("IntegerString value is invalid", path),
-        );
-        let bytes = _block$1;
-        return $result.try$(
-          bytes,
-          (bytes) => {
-            return new Ok($data_element_value.new_binary_unchecked(vr, bytes));
-          },
-        );
-      },
-    );
-  } else if (vr instanceof $value_representation.PersonName) {
-    return read_dicom_json_person_name_value(value, path);
-  } else if (vr instanceof $value_representation.SignedLong) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
-    _block = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("SignedLong value is invalid", path),
-    );
-    let ints = _block;
-    return $result.try$(
-      ints,
-      (ints) => {
-        let is_valid = $list.all(
-          ints,
-          (i) => { return (i >= -1 * 0x80000000) && (i <= 0x7FFFFFFF); },
-        );
-        return $bool.guard(
-          !is_valid,
-          new Error(
-            new $json_error.JsonInvalid(
-              "SignedLong value is out of range",
-              path,
-            ),
-          ),
-          () => {
-            let _pipe$2 = ints;
-            let _pipe$3 = $list.map(
-              _pipe$2,
-              (x) => { return toBitArray([sizedInt(x, 32, false)]); },
-            );
-            let _pipe$4 = $bit_array.concat(_pipe$3);
-            let _pipe$5 = ((_capture) => {
-              return $data_element_value.new_binary_unchecked(vr, _capture);
-            })(_pipe$4);
-            return new Ok(_pipe$5);
-          },
-        );
-      },
-    );
-  } else if (vr instanceof $value_representation.SignedShort) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
-    _block = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("Short value is invalid", path),
-    );
-    let ints = _block;
-    return $result.try$(
-      ints,
-      (ints) => {
-        let $ = $dictionary.is_lut_descriptor_tag(tag);
-        if ($ && ints.hasLength(3)) {
-          let entry_count = ints.head;
-          let first_input_value = ints.tail.head;
-          let bits_per_entry = ints.tail.tail.head;
-          let _pipe$2 = toBitArray([
-            sizedInt(entry_count, 16, false),
-            sizedInt(first_input_value, 16, false),
-            sizedInt(bits_per_entry, 16, false),
-          ]);
-          let _pipe$3 = ((_capture) => {
-            return $data_element_value.new_lookup_table_descriptor_unchecked(
-              vr,
-              _capture,
-            );
-          })(_pipe$2);
-          return new Ok(_pipe$3);
-        } else {
-          let _block$1;
-          if (vr instanceof $value_representation.SignedShort) {
-            _block$1 = [-1 * 0x8000, 0x7FFF];
-          } else {
-            _block$1 = [0, 0xFFFF];
-          }
-          let $1 = _block$1;
-          let min = $1[0];
-          let max = $1[1];
-          let is_valid = $list.all(
-            ints,
-            (i) => { return (i >= min) && (i <= max); },
-          );
-          return $bool.guard(
-            !is_valid,
-            new Error(
-              new $json_error.JsonInvalid("Short value is out of range", path),
-            ),
-            () => {
-              let _pipe$2 = ints;
-              let _pipe$3 = $list.map(
-                _pipe$2,
-                (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-              );
-              let _pipe$4 = $bit_array.concat(_pipe$3);
-              let _pipe$5 = ((_capture) => {
-                return $data_element_value.new_binary_unchecked(vr, _capture);
-              })(_pipe$4);
-              return new Ok(_pipe$5);
-            },
-          );
-        }
-      },
-    );
-  } else if (vr instanceof $value_representation.UnsignedShort) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
-    _block = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("Short value is invalid", path),
-    );
-    let ints = _block;
-    return $result.try$(
-      ints,
-      (ints) => {
-        let $ = $dictionary.is_lut_descriptor_tag(tag);
-        if ($ && ints.hasLength(3)) {
-          let entry_count = ints.head;
-          let first_input_value = ints.tail.head;
-          let bits_per_entry = ints.tail.tail.head;
-          let _pipe$2 = toBitArray([
-            sizedInt(entry_count, 16, false),
-            sizedInt(first_input_value, 16, false),
-            sizedInt(bits_per_entry, 16, false),
-          ]);
-          let _pipe$3 = ((_capture) => {
-            return $data_element_value.new_lookup_table_descriptor_unchecked(
-              vr,
-              _capture,
-            );
-          })(_pipe$2);
-          return new Ok(_pipe$3);
-        } else {
-          let _block$1;
-          if (vr instanceof $value_representation.SignedShort) {
-            _block$1 = [-1 * 0x8000, 0x7FFF];
-          } else {
-            _block$1 = [0, 0xFFFF];
-          }
-          let $1 = _block$1;
-          let min = $1[0];
-          let max = $1[1];
-          let is_valid = $list.all(
-            ints,
-            (i) => { return (i >= min) && (i <= max); },
-          );
-          return $bool.guard(
-            !is_valid,
-            new Error(
-              new $json_error.JsonInvalid("Short value is out of range", path),
-            ),
-            () => {
-              let _pipe$2 = ints;
-              let _pipe$3 = $list.map(
-                _pipe$2,
-                (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-              );
-              let _pipe$4 = $bit_array.concat(_pipe$3);
-              let _pipe$5 = ((_capture) => {
-                return $data_element_value.new_binary_unchecked(vr, _capture);
-              })(_pipe$4);
-              return new Ok(_pipe$5);
-            },
-          );
-        }
-      },
-    );
-  } else if (vr instanceof $value_representation.SignedVeryLong) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
-    _block = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("Very long value is not a list", path),
-    );
-    let values = _block;
-    return $result.try$(
-      values,
-      (values) => {
-        let _block$1;
-        let _pipe$2 = values;
+      value$1,
+      (value) => {
+        let _pipe$2 = value;
         let _pipe$3 = $list.map(
           _pipe$2,
-          (i) => {
-            let $ = $decode.run(i, $decode.int);
-            if ($.isOk()) {
-              let i$1 = $[0];
-              return new Ok($bigi.from_int(i$1));
-            } else {
-              let $1 = $decode.run(i, $decode.string);
-              if ($1.isOk()) {
-                let i$1 = $1[0];
-                return $bigi.from_string(i$1);
-              } else {
-                return new Error(undefined);
-              }
-            }
-          },
+          (_capture) => { return $option.unwrap(_capture, ""); },
         );
-        let _pipe$4 = $result.all(_pipe$3);
-        _block$1 = $result.replace_error(
-          _pipe$4,
-          new $json_error.JsonInvalid("Very long value is invalid", path),
-        );
-        let big_ints = _block$1;
-        return $result.try$(
-          big_ints,
-          (big_ints) => {
-            let _block$2;
-            if (vr instanceof $value_representation.SignedVeryLong) {
-              _block$2 = new $bigi.Signed();
-            } else {
-              _block$2 = new $bigi.Unsigned();
-            }
-            let signedness = _block$2;
-            let _pipe$5 = big_ints;
-            let _pipe$6 = $list.map(
-              _pipe$5,
-              (_capture) => {
-                return $bigi.to_bytes(
-                  _capture,
-                  new $bigi.LittleEndian(),
-                  signedness,
-                  8,
-                );
-              },
-            );
-            let _pipe$7 = $result.all(_pipe$6);
-            let _pipe$8 = $result.map_error(
-              _pipe$7,
-              (_) => {
-                return new $json_error.JsonInvalid(
-                  "Very long value is out of range",
-                  path,
-                );
-              },
-            );
-            let _pipe$9 = $result.map(_pipe$8, $bit_array.concat);
-            return $result.map(
-              _pipe$9,
-              (_capture) => {
-                return $data_element_value.new_binary_unchecked(vr, _capture);
-              },
-            );
-          },
-        );
+        let _pipe$4 = $string.join(_pipe$3, "\\");
+        let _pipe$5 = $bit_array.from_string(_pipe$4);
+        let _pipe$6 = ((_capture) => {
+          return $value_representation.pad_bytes_to_even_length(vr, _capture);
+        })(_pipe$5);
+        return ((_capture) => {
+          return $data_element_value.new_binary_unchecked(vr, _capture);
+        })(_pipe$6);
       },
     );
-  } else if (vr instanceof $value_representation.UnsignedVeryLong) {
+  } else if (vr instanceof $value_representation.UnlimitedText) {
     let _block;
     let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
-    _block = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("Very long value is not a list", path),
+    let _pipe$1 = $decode.run(
+      _pipe,
+      $decode.list($decode.optional($decode.string)),
     );
-    let values = _block;
-    return $result.try$(
-      values,
-      (values) => {
-        let _block$1;
-        let _pipe$2 = values;
+    _block = $result.map_error(
+      _pipe$1,
+      (_) => {
+        return new $json_error.JsonInvalid("String value is invalid", path);
+      },
+    );
+    let value$1 = _block;
+    return $result.map(
+      value$1,
+      (value) => {
+        let _pipe$2 = value;
         let _pipe$3 = $list.map(
           _pipe$2,
-          (i) => {
-            let $ = $decode.run(i, $decode.int);
-            if ($.isOk()) {
-              let i$1 = $[0];
-              return new Ok($bigi.from_int(i$1));
-            } else {
-              let $1 = $decode.run(i, $decode.string);
-              if ($1.isOk()) {
-                let i$1 = $1[0];
-                return $bigi.from_string(i$1);
-              } else {
-                return new Error(undefined);
-              }
-            }
-          },
+          (_capture) => { return $option.unwrap(_capture, ""); },
         );
-        let _pipe$4 = $result.all(_pipe$3);
-        _block$1 = $result.replace_error(
-          _pipe$4,
-          new $json_error.JsonInvalid("Very long value is invalid", path),
-        );
-        let big_ints = _block$1;
-        return $result.try$(
-          big_ints,
-          (big_ints) => {
-            let _block$2;
-            if (vr instanceof $value_representation.SignedVeryLong) {
-              _block$2 = new $bigi.Signed();
-            } else {
-              _block$2 = new $bigi.Unsigned();
-            }
-            let signedness = _block$2;
-            let _pipe$5 = big_ints;
-            let _pipe$6 = $list.map(
-              _pipe$5,
-              (_capture) => {
-                return $bigi.to_bytes(
-                  _capture,
-                  new $bigi.LittleEndian(),
-                  signedness,
-                  8,
-                );
-              },
-            );
-            let _pipe$7 = $result.all(_pipe$6);
-            let _pipe$8 = $result.map_error(
-              _pipe$7,
-              (_) => {
-                return new $json_error.JsonInvalid(
-                  "Very long value is out of range",
-                  path,
-                );
-              },
-            );
-            let _pipe$9 = $result.map(_pipe$8, $bit_array.concat);
-            return $result.map(
-              _pipe$9,
-              (_capture) => {
-                return $data_element_value.new_binary_unchecked(vr, _capture);
-              },
-            );
-          },
-        );
+        let _pipe$4 = $string.join(_pipe$3, "\\");
+        let _pipe$5 = $bit_array.from_string(_pipe$4);
+        let _pipe$6 = ((_capture) => {
+          return $value_representation.pad_bytes_to_even_length(vr, _capture);
+        })(_pipe$5);
+        return ((_capture) => {
+          return $data_element_value.new_binary_unchecked(vr, _capture);
+        })(_pipe$6);
       },
     );
   } else if (vr instanceof $value_representation.UnsignedLong) {
@@ -1183,118 +1330,308 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
         );
       },
     );
-  } else if (vr instanceof $value_representation.FloatingPointDouble) {
+  } else if (vr instanceof $value_representation.UnsignedShort) {
     let _block;
     let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list(decode_ieee_float()));
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.int));
     _block = $result.replace_error(
       _pipe$1,
-      new $json_error.JsonInvalid("FloatingPointDouble value is invalid", path),
+      new $json_error.JsonInvalid("Short value is invalid", path),
     );
-    let floats = _block;
+    let ints = _block;
     return $result.try$(
-      floats,
-      (floats) => {
-        let _pipe$2 = floats;
-        let _pipe$3 = $list.map(_pipe$2, $ieee_float.to_bytes_64_le);
-        let _pipe$4 = $bit_array.concat(_pipe$3);
-        let _pipe$5 = ((_capture) => {
-          return $data_element_value.new_binary_unchecked(vr, _capture);
-        })(_pipe$4);
-        return new Ok(_pipe$5);
-      },
-    );
-  } else if (vr instanceof $value_representation.FloatingPointSingle) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list(decode_ieee_float()));
-    _block = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("FloatingPointSingle value is invalid", path),
-    );
-    let floats = _block;
-    return $result.try$(
-      floats,
-      (floats) => {
-        let _pipe$2 = floats;
-        let _pipe$3 = $list.map(_pipe$2, $ieee_float.to_bytes_32_le);
-        let _pipe$4 = $bit_array.concat(_pipe$3);
-        let _pipe$5 = ((_capture) => {
-          return $data_element_value.new_binary_unchecked(vr, _capture);
-        })(_pipe$4);
-        return new Ok(_pipe$5);
-      },
-    );
-  } else if (vr instanceof $value_representation.AttributeTag) {
-    let _block;
-    let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.string));
-    _block = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("AttributeTag value is invalid", path),
-    );
-    let tags = _block;
-    return $result.try$(
-      tags,
-      (tags) => {
-        let _block$1;
-        let _pipe$2 = tags;
-        let _pipe$3 = $list.map(
-          _pipe$2,
-          (tag) => {
-            let _pipe$3 = tag;
-            let _pipe$4 = $data_element_tag.from_hex_string(_pipe$3);
-            return $result.map(
-              _pipe$4,
-              (tag) => {
-                return toBitArray([
-                  sizedInt(tag.group, 16, false),
-                  sizedInt(tag.element, 16, false),
-                ]);
+      ints,
+      (ints) => {
+        let $ = $dictionary.is_lut_descriptor_tag(tag);
+        if (ints instanceof $Empty) {
+          let _block$1;
+          if (vr instanceof $value_representation.SignedShort) {
+            _block$1 = [-1 * 0x8000, 0x7FFF];
+          } else {
+            _block$1 = [0, 0xFFFF];
+          }
+          let $1 = _block$1;
+          let min = $1[0];
+          let max = $1[1];
+          let is_valid = $list.all(
+            ints,
+            (i) => { return (i >= min) && (i <= max); },
+          );
+          return $bool.guard(
+            !is_valid,
+            new Error(
+              new $json_error.JsonInvalid("Short value is out of range", path),
+            ),
+            () => {
+              let _pipe$2 = ints;
+              let _pipe$3 = $list.map(
+                _pipe$2,
+                (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+              );
+              let _pipe$4 = $bit_array.concat(_pipe$3);
+              let _pipe$5 = ((_capture) => {
+                return $data_element_value.new_binary_unchecked(vr, _capture);
+              })(_pipe$4);
+              return new Ok(_pipe$5);
+            },
+          );
+        } else {
+          let $1 = ints.tail;
+          if ($1 instanceof $Empty) {
+            let _block$1;
+            if (vr instanceof $value_representation.SignedShort) {
+              _block$1 = [-1 * 0x8000, 0x7FFF];
+            } else {
+              _block$1 = [0, 0xFFFF];
+            }
+            let $2 = _block$1;
+            let min = $2[0];
+            let max = $2[1];
+            let is_valid = $list.all(
+              ints,
+              (i) => { return (i >= min) && (i <= max); },
+            );
+            return $bool.guard(
+              !is_valid,
+              new Error(
+                new $json_error.JsonInvalid("Short value is out of range", path),
+              ),
+              () => {
+                let _pipe$2 = ints;
+                let _pipe$3 = $list.map(
+                  _pipe$2,
+                  (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                );
+                let _pipe$4 = $bit_array.concat(_pipe$3);
+                let _pipe$5 = ((_capture) => {
+                  return $data_element_value.new_binary_unchecked(vr, _capture);
+                })(_pipe$4);
+                return new Ok(_pipe$5);
               },
             );
+          } else {
+            let $2 = $1.tail;
+            if ($2 instanceof $Empty) {
+              let _block$1;
+              if (vr instanceof $value_representation.SignedShort) {
+                _block$1 = [-1 * 0x8000, 0x7FFF];
+              } else {
+                _block$1 = [0, 0xFFFF];
+              }
+              let $3 = _block$1;
+              let min = $3[0];
+              let max = $3[1];
+              let is_valid = $list.all(
+                ints,
+                (i) => { return (i >= min) && (i <= max); },
+              );
+              return $bool.guard(
+                !is_valid,
+                new Error(
+                  new $json_error.JsonInvalid(
+                    "Short value is out of range",
+                    path,
+                  ),
+                ),
+                () => {
+                  let _pipe$2 = ints;
+                  let _pipe$3 = $list.map(
+                    _pipe$2,
+                    (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                  );
+                  let _pipe$4 = $bit_array.concat(_pipe$3);
+                  let _pipe$5 = ((_capture) => {
+                    return $data_element_value.new_binary_unchecked(
+                      vr,
+                      _capture,
+                    );
+                  })(_pipe$4);
+                  return new Ok(_pipe$5);
+                },
+              );
+            } else {
+              let $3 = $2.tail;
+              if ($3 instanceof $Empty) {
+                if ($) {
+                  let entry_count = ints.head;
+                  let first_input_value = $1.head;
+                  let bits_per_entry = $2.head;
+                  let _pipe$2 = toBitArray([
+                    sizedInt(entry_count, 16, false),
+                    sizedInt(first_input_value, 16, false),
+                    sizedInt(bits_per_entry, 16, false),
+                  ]);
+                  let _pipe$3 = ((_capture) => {
+                    return $data_element_value.new_lookup_table_descriptor_unchecked(
+                      vr,
+                      _capture,
+                    );
+                  })(_pipe$2);
+                  return new Ok(_pipe$3);
+                } else {
+                  let _block$1;
+                  if (vr instanceof $value_representation.SignedShort) {
+                    _block$1 = [-1 * 0x8000, 0x7FFF];
+                  } else {
+                    _block$1 = [0, 0xFFFF];
+                  }
+                  let $4 = _block$1;
+                  let min = $4[0];
+                  let max = $4[1];
+                  let is_valid = $list.all(
+                    ints,
+                    (i) => { return (i >= min) && (i <= max); },
+                  );
+                  return $bool.guard(
+                    !is_valid,
+                    new Error(
+                      new $json_error.JsonInvalid(
+                        "Short value is out of range",
+                        path,
+                      ),
+                    ),
+                    () => {
+                      let _pipe$2 = ints;
+                      let _pipe$3 = $list.map(
+                        _pipe$2,
+                        (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                      );
+                      let _pipe$4 = $bit_array.concat(_pipe$3);
+                      let _pipe$5 = ((_capture) => {
+                        return $data_element_value.new_binary_unchecked(
+                          vr,
+                          _capture,
+                        );
+                      })(_pipe$4);
+                      return new Ok(_pipe$5);
+                    },
+                  );
+                }
+              } else {
+                let _block$1;
+                if (vr instanceof $value_representation.SignedShort) {
+                  _block$1 = [-1 * 0x8000, 0x7FFF];
+                } else {
+                  _block$1 = [0, 0xFFFF];
+                }
+                let $4 = _block$1;
+                let min = $4[0];
+                let max = $4[1];
+                let is_valid = $list.all(
+                  ints,
+                  (i) => { return (i >= min) && (i <= max); },
+                );
+                return $bool.guard(
+                  !is_valid,
+                  new Error(
+                    new $json_error.JsonInvalid(
+                      "Short value is out of range",
+                      path,
+                    ),
+                  ),
+                  () => {
+                    let _pipe$2 = ints;
+                    let _pipe$3 = $list.map(
+                      _pipe$2,
+                      (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                    );
+                    let _pipe$4 = $bit_array.concat(_pipe$3);
+                    let _pipe$5 = ((_capture) => {
+                      return $data_element_value.new_binary_unchecked(
+                        vr,
+                        _capture,
+                      );
+                    })(_pipe$4);
+                    return new Ok(_pipe$5);
+                  },
+                );
+              }
+            }
+          }
+        }
+      },
+    );
+  } else if (vr instanceof $value_representation.UnsignedVeryLong) {
+    let _block;
+    let _pipe = value;
+    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
+    _block = $result.replace_error(
+      _pipe$1,
+      new $json_error.JsonInvalid("Very long value is not a list", path),
+    );
+    let values = _block;
+    return $result.try$(
+      values,
+      (values) => {
+        let _block$1;
+        let _pipe$2 = values;
+        let _pipe$3 = $list.map(
+          _pipe$2,
+          (i) => {
+            let $ = $decode.run(i, $decode.int);
+            if ($ instanceof Ok) {
+              let i$1 = $[0];
+              return new Ok($bigi.from_int(i$1));
+            } else {
+              let $1 = $decode.run(i, $decode.string);
+              if ($1 instanceof Ok) {
+                let i$1 = $1[0];
+                return $bigi.from_string(i$1);
+              } else {
+                return new Error(undefined);
+              }
+            }
           },
         );
         let _pipe$4 = $result.all(_pipe$3);
         _block$1 = $result.replace_error(
           _pipe$4,
-          new $json_error.JsonInvalid("AttributeTag value is invalid", path),
+          new $json_error.JsonInvalid("Very long value is invalid", path),
         );
-        let tags$1 = _block$1;
+        let big_ints = _block$1;
         return $result.try$(
-          tags$1,
-          (tags) => {
-            let _pipe$5 = tags;
-            let _pipe$6 = $bit_array.concat(_pipe$5);
-            let _pipe$7 = ((_capture) => {
-              return $data_element_value.new_binary_unchecked(vr, _capture);
-            })(_pipe$6);
-            return new Ok(_pipe$7);
+          big_ints,
+          (big_ints) => {
+            let _block$2;
+            if (vr instanceof $value_representation.SignedVeryLong) {
+              _block$2 = new $bigi.Signed();
+            } else {
+              _block$2 = new $bigi.Unsigned();
+            }
+            let signedness = _block$2;
+            let _pipe$5 = big_ints;
+            let _pipe$6 = $list.map(
+              _pipe$5,
+              (_capture) => {
+                return $bigi.to_bytes(
+                  _capture,
+                  new $bigi.LittleEndian(),
+                  signedness,
+                  8,
+                );
+              },
+            );
+            let _pipe$7 = $result.all(_pipe$6);
+            let _pipe$8 = $result.map_error(
+              _pipe$7,
+              (_) => {
+                return new $json_error.JsonInvalid(
+                  "Very long value is out of range",
+                  path,
+                );
+              },
+            );
+            let _pipe$9 = $result.map(_pipe$8, $bit_array.concat);
+            return $result.map(
+              _pipe$9,
+              (_capture) => {
+                return $data_element_value.new_binary_unchecked(vr, _capture);
+              },
+            );
           },
         );
       },
     );
-  } else if (vr instanceof $value_representation.Sequence) {
-    let _pipe = value;
-    let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
-    let _pipe$2 = $result.replace_error(
-      _pipe$1,
-      new $json_error.JsonInvalid("Sequence value is invalid", path),
-    );
-    let _pipe$3 = $result.map(
-      _pipe$2,
-      (_capture) => {
-        return $list.map(
-          _capture,
-          (json) => {
-            return convert_json_to_data_set(json, $data_set_path.new$());
-          },
-        );
-      },
-    );
-    let _pipe$4 = $result.map(_pipe$3, $result.all);
-    let _pipe$5 = $result.flatten(_pipe$4);
-    return $result.map(_pipe$5, $data_element_value.new_sequence);
   } else {
     return new Error(
       new $json_error.JsonInvalid(
@@ -1347,14 +1684,21 @@ export function convert_json_to_data_set(in$, path) {
                 tag,
                 (tag) => {
                   let $ = $data_set_path.add_data_element(path, tag);
-                  if (!$.isOk()) {
+                  if (!($ instanceof Ok)) {
                     throw makeError(
                       "let_assert",
+                      FILEPATH,
                       "dcmfx_json/internal/json_to_data_set",
                       57,
-                      "",
+                      "convert_json_to_data_set",
                       "Pattern match failed, no pattern matched the value.",
-                      { value: $ }
+                      {
+                        value: $,
+                        start: 1800,
+                        end: 1863,
+                        pattern_start: 1811,
+                        pattern_end: 1819
+                      }
                     )
                   }
                   let path$1 = $[0];
@@ -1372,7 +1716,7 @@ export function convert_json_to_data_set(in$, path) {
                       let $1 = isEqual(tag, $dictionary.transfer_syntax_uid.tag);
                       if ($1) {
                         let $2 = $data_set.get_transfer_syntax(data_set$1);
-                        if ($2.isOk()) {
+                        if ($2 instanceof Ok) {
                           let ts = $2[0];
                           _block$2 = new Some(ts);
                         } else {
@@ -1415,12 +1759,12 @@ function convert_json_to_data_element(in$, tag, transfer_syntax, path) {
         read_dicom_json_vr(raw_value, path),
         (vr) => {
           let $ = $dict.get(raw_value, "Value");
-          if ($.isOk()) {
+          if ($ instanceof Ok) {
             let value = $[0];
             return read_dicom_json_primitive_value(tag, vr, value, path);
           } else {
             let $1 = $dict.get(raw_value, "InlineBinary");
-            if ($1.isOk()) {
+            if ($1 instanceof Ok) {
               let inline_binary = $1[0];
               return read_dicom_json_inline_binary_value(
                 inline_binary,
@@ -1431,7 +1775,7 @@ function convert_json_to_data_element(in$, tag, transfer_syntax, path) {
               );
             } else {
               let $2 = $dict.get(raw_value, "BulkDataURI");
-              if ($2.isOk()) {
+              if ($2 instanceof Ok) {
                 return new Error(
                   new $json_error.JsonInvalid(
                     "DICOM JSON BulkDataURI values are not supported",

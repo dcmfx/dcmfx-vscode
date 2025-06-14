@@ -1,6 +1,6 @@
 import { Ok, Error, toList, BitArray } from "./gleam.mjs";
 import { Lt, Eq, Gt } from "../gleam_stdlib/gleam/order.mjs";
-import { DecodeError } from "../gleam_stdlib/gleam/dynamic.mjs";
+import { DecodeError } from "../gleam_stdlib/gleam/dynamic/decode.mjs";
 import { BigEndian, Signed } from "./bigi.mjs";
 
 export function from(int) {

@@ -11,6 +11,8 @@ import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
 import { Ok, Error, toList, makeError } from "../../gleam.mjs";
 
+const FILEPATH = "src/dcmfx_core/data_element_value/unique_identifier.gleam";
+
 export function is_valid(uid) {
   let length = $utils.string_fast_length(uid);
   return $bool.guard(
@@ -18,14 +20,21 @@ export function is_valid(uid) {
     false,
     () => {
       let $ = $regexp.from_string("^(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*))*$");
-      if (!$.isOk()) {
+      if (!($ instanceof Ok)) {
         throw makeError(
           "let_assert",
+          FILEPATH,
           "dcmfx_core/data_element_value/unique_identifier",
           42,
-          "",
+          "is_valid",
           "Pattern match failed, no pattern matched the value.",
-          { value: $ }
+          {
+            value: $,
+            start: 1273,
+            end: 1357,
+            pattern_start: 1284,
+            pattern_end: 1290
+          }
         )
       }
       let re = $[0];
@@ -63,14 +72,21 @@ export function to_bytes(uids) {
 
 function random_character(offset, range) {
   let $ = $string.utf_codepoint(offset + $int.random(range));
-  if (!$.isOk()) {
+  if (!($ instanceof Ok)) {
     throw makeError(
       "let_assert",
+      FILEPATH,
       "dcmfx_core/data_element_value/unique_identifier",
       80,
       "random_character",
       "Pattern match failed, no pattern matched the value.",
-      { value: $ }
+      {
+        value: $,
+        start: 2266,
+        end: 2334,
+        pattern_start: 2277,
+        pattern_end: 2283
+      }
     )
   }
   let cp = $[0];

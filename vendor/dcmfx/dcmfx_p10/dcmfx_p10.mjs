@@ -16,25 +16,56 @@ import {
   Ok,
   Error,
   toList,
+  Empty as $Empty,
   prepend as listPrepend,
   makeError,
   toBitArray,
-  bitArraySlice,
 } from "./gleam.mjs";
 
+const FILEPATH = "src/dcmfx_p10.gleam";
+
 export function is_valid_bytes(bytes) {
-  if (bytes.byteAt(128) === 68 &&
-  bytes.byteAt(129) === 73 &&
-  bytes.byteAt(130) === 67 &&
-  bytes.byteAt(131) === 77 &&
-  bytes.byteAt(132) === 2 &&
-  bytes.byteAt(133) === 0 &&
-  bytes.byteAt(134) === 0 &&
-  bytes.byteAt(135) === 0 &&
-  bytes.byteAt(136) === 85 &&
-  bytes.byteAt(137) === 76 &&
-  (bytes.bitSize >= 1104 && (bytes.bitSize - 1104) % 8 === 0)) {
-    return true;
+  if (bytes.bitSize >= 1024) {
+    if (bytes.bitSize >= 1056) {
+      if (bytes.byteAt(128) === 68 &&
+        bytes.byteAt(129) === 73 &&
+        bytes.byteAt(130) === 67 &&
+        bytes.byteAt(131) === 77) {
+        if (bytes.bitSize >= 1072) {
+          if (bytes.byteAt(132) === 2 && bytes.byteAt(133) === 0) {
+            if (bytes.bitSize >= 1088) {
+              if (bytes.byteAt(134) === 0 && bytes.byteAt(135) === 0) {
+                if (bytes.bitSize >= 1104) {
+                  if (bytes.byteAt(136) === 85 && bytes.byteAt(137) === 76) {
+                    if ((bytes.bitSize - 1104) % 8 === 0) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  } else {
+                    return false;
+                  }
+                } else {
+                  return false;
+                }
+              } else {
+                return false;
+              }
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   } else {
     return false;
   }
@@ -49,7 +80,7 @@ export function is_valid_file(filename) {
       let bytes = $file_stream.read_bytes_exact(stream, 138);
       let $ = $file_stream.close(stream);
       
-      if (bytes.isOk()) {
+      if (bytes instanceof Ok) {
         let bytes$1 = bytes[0];
         return is_valid_bytes(bytes$1);
       } else {
@@ -65,46 +96,55 @@ export function read_tokens_from_stream(loop$stream, loop$context) {
     let stream = loop$stream;
     let context = loop$context;
     let $ = $p10_read.read_tokens(context);
-    if ($.isOk() && $[0][0].hasLength(0)) {
-      let context$1 = $[0][1];
-      loop$stream = stream;
-      loop$context = context$1;
-    } else if ($.isOk()) {
-      let tokens = $[0][0];
-      let context$1 = $[0][1];
-      return new Ok([tokens, context$1]);
-    } else if (!$.isOk() && $[0] instanceof $p10_error.DataRequired) {
-      let $1 = $file_stream.read_bytes(stream, 64 * 1024);
-      if ($1.isOk()) {
-        let data = $1[0];
-        let $2 = $p10_read.write_bytes(context, data, false);
-        if ($2.isOk()) {
-          let context$1 = $2[0];
-          loop$stream = stream;
-          loop$context = context$1;
-        } else {
-          let e = $2[0];
-          return new Error(e);
-        }
-      } else if (!$1.isOk() && $1[0] instanceof $file_stream_error.Eof) {
-        let $2 = $p10_read.write_bytes(context, toBitArray([]), true);
-        if ($2.isOk()) {
-          let context$1 = $2[0];
-          loop$stream = stream;
-          loop$context = context$1;
-        } else {
-          let e = $2[0];
-          return new Error(e);
-        }
+    if ($ instanceof Ok) {
+      let $1 = $[0][0];
+      if ($1 instanceof $Empty) {
+        let context$1 = $[0][1];
+        loop$stream = stream;
+        loop$context = context$1;
       } else {
-        let e = $1[0];
-        return new Error(
-          new $p10_error.FileStreamError("Reading from file stream", e),
-        );
+        let tokens = $1;
+        let context$1 = $[0][1];
+        return new Ok([tokens, context$1]);
       }
     } else {
-      let e = $[0];
-      return new Error(e);
+      let $1 = $[0];
+      if ($1 instanceof $p10_error.DataRequired) {
+        let $2 = $file_stream.read_bytes(stream, 64 * 1024);
+        if ($2 instanceof Ok) {
+          let data = $2[0];
+          let $3 = $p10_read.write_bytes(context, data, false);
+          if ($3 instanceof Ok) {
+            let context$1 = $3[0];
+            loop$stream = stream;
+            loop$context = context$1;
+          } else {
+            let e = $3[0];
+            return new Error(e);
+          }
+        } else {
+          let $3 = $2[0];
+          if ($3 instanceof $file_stream_error.Eof) {
+            let $4 = $p10_read.write_bytes(context, toBitArray([]), true);
+            if ($4 instanceof Ok) {
+              let context$1 = $4[0];
+              loop$stream = stream;
+              loop$context = context$1;
+            } else {
+              let e = $4[0];
+              return new Error(e);
+            }
+          } else {
+            let e = $3;
+            return new Error(
+              new $p10_error.FileStreamError("Reading from file stream", e),
+            );
+          }
+        }
+      } else {
+        let e = $1;
+        return new Error(e);
+      }
     }
   }
 }
@@ -118,7 +158,7 @@ function do_read_stream(loop$stream, loop$context, loop$builder) {
     let _pipe = read_tokens_from_stream(stream, context);
     _block = $result.map_error(_pipe, (e) => { return [e, builder]; });
     let tokens_and_context = _block;
-    if (tokens_and_context.isOk()) {
+    if (tokens_and_context instanceof Ok) {
       let tokens = tokens_and_context[0][0];
       let context$1 = tokens_and_context[0][1];
       let _block$1;
@@ -132,10 +172,10 @@ function do_read_stream(loop$stream, loop$context, loop$builder) {
         },
       );
       let builder$1 = _block$1;
-      if (builder$1.isOk()) {
+      if (builder$1 instanceof Ok) {
         let builder$2 = builder$1[0];
         let $ = $data_set_builder.final_data_set(builder$2);
-        if ($.isOk()) {
+        if ($ instanceof Ok) {
           let final_data_set = $[0];
           return new Ok(final_data_set);
         } else {
@@ -186,7 +226,7 @@ function do_read_bytes(loop$context, loop$builder) {
     let context = loop$context;
     let builder = loop$builder;
     let $ = $p10_read.read_tokens(context);
-    if ($.isOk()) {
+    if ($ instanceof Ok) {
       let tokens = $[0][0];
       let context$1 = $[0][1];
       let _block;
@@ -199,10 +239,10 @@ function do_read_bytes(loop$context, loop$builder) {
         },
       );
       let new_builder = _block;
-      if (new_builder.isOk()) {
+      if (new_builder instanceof Ok) {
         let builder$1 = new_builder[0];
         let $1 = $data_set_builder.final_data_set(builder$1);
-        if ($1.isOk()) {
+        if ($1 instanceof Ok) {
           let final_data_set = $1[0];
           return new Ok(final_data_set);
         } else {
@@ -225,14 +265,21 @@ export function read_bytes(bytes) {
   let _pipe = $p10_read.new_read_context();
   _block = $p10_read.write_bytes(_pipe, bytes, true);
   let $ = _block;
-  if (!$.isOk()) {
+  if (!($ instanceof Ok)) {
     throw makeError(
       "let_assert",
+      FILEPATH,
       "dcmfx_p10",
       165,
       "read_bytes",
       "Pattern match failed, no pattern matched the value.",
-      { value: $ }
+      {
+        value: $,
+        start: 5269,
+        end: 5366,
+        pattern_start: 5280,
+        pattern_end: 5291
+      }
     )
   }
   let context = $[0];
@@ -330,15 +377,20 @@ export function write_tokens_to_stream(tokens, stream, context) {
         ),
         (_) => {
           let $1 = $list.last(tokens);
-          if ($1.isOk() && $1[0] instanceof $p10_token.End) {
-            let _pipe = $file_stream.sync(stream);
-            let _pipe$1 = $result.map_error(
-              _pipe,
-              (e) => {
-                return new $p10_error.FileStreamError("Writing to stdout", e);
-              },
-            );
-            return $result.replace(_pipe$1, [true, context$1]);
+          if ($1 instanceof Ok) {
+            let $2 = $1[0];
+            if ($2 instanceof $p10_token.End) {
+              let _pipe = $file_stream.sync(stream);
+              let _pipe$1 = $result.map_error(
+                _pipe,
+                (e) => {
+                  return new $p10_error.FileStreamError("Writing to stdout", e);
+                },
+              );
+              return $result.replace(_pipe$1, [true, context$1]);
+            } else {
+              return new Ok([false, context$1]);
+            }
           } else {
             return new Ok([false, context$1]);
           }

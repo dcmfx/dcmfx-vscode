@@ -8,6 +8,8 @@ import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs";
 import { Ok, Error, makeError, toBitArray, bitArraySliceToInt, sizedInt } from "../../gleam.mjs";
 
+const FILEPATH = "src/dcmfx_core/data_element_value/attribute_tag.gleam";
+
 export function from_bytes(bytes) {
   let _pipe = bytes;
   let _pipe$1 = $bit_array_utils.to_uint32_list(_pipe);
@@ -24,14 +26,21 @@ export function from_bytes(bytes) {
         _capture,
         (tag) => {
           let $ = toBitArray([sizedInt(tag, 32, false)]);
-          if (!($.bitSize == 32)) {
+          if ($.bitSize !== 32) {
             throw makeError(
               "let_assert",
+              FILEPATH,
               "dcmfx_core/data_element_value/attribute_tag",
               20,
-              "",
+              "from_bytes",
               "Pattern match failed, no pattern matched the value.",
-              { value: $ }
+              {
+                value: $,
+                start: 641,
+                end: 745,
+                pattern_start: 652,
+                pattern_end: 708
+              }
             )
           }
           let group = bitArraySliceToInt($, 0, 16, false, false);

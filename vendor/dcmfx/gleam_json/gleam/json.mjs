@@ -8,7 +8,7 @@ import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None, Some } from "../../gleam_stdlib/gleam/option.mjs";
 import * as $result from "../../gleam_stdlib/gleam/result.mjs";
 import * as $string_tree from "../../gleam_stdlib/gleam/string_tree.mjs";
-import { Error, toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
+import { Ok, Error, toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
 import {
   decode as decode_string,
   json_to_string as do_to_string,
@@ -27,48 +27,24 @@ export { to_string_tree };
 export class UnexpectedEndOfInput extends $CustomType {}
 
 export class UnexpectedByte extends $CustomType {
-  constructor(x0) {
+  constructor($0) {
     super();
-    this[0] = x0;
+    this[0] = $0;
   }
 }
 
 export class UnexpectedSequence extends $CustomType {
-  constructor(x0) {
+  constructor($0) {
     super();
-    this[0] = x0;
-  }
-}
-
-export class UnexpectedFormat extends $CustomType {
-  constructor(x0) {
-    super();
-    this[0] = x0;
+    this[0] = $0;
   }
 }
 
 export class UnableToDecode extends $CustomType {
-  constructor(x0) {
+  constructor($0) {
     super();
-    this[0] = x0;
+    this[0] = $0;
   }
-}
-
-function do_decode(json, decoder) {
-  return $result.then$(
-    decode_string(json),
-    (dynamic_value) => {
-      let _pipe = decoder(dynamic_value);
-      return $result.map_error(
-        _pipe,
-        (var0) => { return new UnexpectedFormat(var0); },
-      );
-    },
-  );
-}
-
-export function decode(json, decoder) {
-  return do_decode(json, decoder);
 }
 
 function do_parse(json, decoder) {
@@ -90,25 +66,12 @@ export function parse(json, decoder) {
 
 function decode_to_dynamic(json) {
   let $ = $bit_array.to_string(json);
-  if ($.isOk()) {
+  if ($ instanceof Ok) {
     let string$1 = $[0];
     return decode_string(string$1);
   } else {
     return new Error(new UnexpectedByte(""));
   }
-}
-
-export function decode_bits(json, decoder) {
-  return $result.then$(
-    decode_to_dynamic(json),
-    (dynamic_value) => {
-      let _pipe = decoder(dynamic_value);
-      return $result.map_error(
-        _pipe,
-        (var0) => { return new UnexpectedFormat(var0); },
-      );
-    },
-  );
 }
 
 export function parse_bits(json, decoder) {
@@ -126,10 +89,6 @@ export function parse_bits(json, decoder) {
 
 export function to_string(json) {
   return do_to_string(json);
-}
-
-export function to_string_builder(json) {
-  return to_string_tree(json);
 }
 
 export function string(input) {

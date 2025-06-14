@@ -157,12 +157,12 @@ export function describe(error) {
     return "No buffer space available";
   } else if (error instanceof Enodev) {
     return "No such device";
-  } else if (error instanceof Enoent) {
-    return "No such file or directory";
   } else if (error instanceof Enolck) {
     return "No locks available";
   } else if (error instanceof Enolink) {
     return "Link has been severed";
+  } else if (error instanceof Enoent) {
+    return "No such file or directory";
   } else if (error instanceof Enomem) {
     return "Not enough memory";
   } else if (error instanceof Enospc) {

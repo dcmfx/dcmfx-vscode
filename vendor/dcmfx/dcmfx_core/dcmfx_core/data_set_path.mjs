@@ -12,10 +12,13 @@ import {
   Ok,
   Error,
   toList,
+  Empty as $Empty,
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
 } from "../gleam.mjs";
+
+const FILEPATH = "src/dcmfx_core/data_set_path.gleam";
 
 class DataSetPath extends $CustomType {
   constructor(entries) {
@@ -57,12 +60,20 @@ export function length(path) {
 
 export function is_root(path) {
   let $ = path.entries;
-  if ($.hasLength(0)) {
-    return true;
-  } else if ($.hasLength(1) && $.head instanceof DataElement) {
+  if ($ instanceof $Empty) {
     return true;
   } else {
-    return false;
+    let $1 = $.tail;
+    if ($1 instanceof $Empty) {
+      let $2 = $.head;
+      if ($2 instanceof DataElement) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 }
 
@@ -83,51 +94,66 @@ export function sequence_item_count(path) {
 
 export function final_data_element(path) {
   let $ = path.entries;
-  if ($.atLeastLength(1) && $.head instanceof DataElement) {
-    let tag = $.head.tag;
-    return new Ok(tag);
-  } else {
+  if ($ instanceof $Empty) {
     return new Error(undefined);
+  } else {
+    let $1 = $.head;
+    if ($1 instanceof DataElement) {
+      let tag = $1.tag;
+      return new Ok(tag);
+    } else {
+      return new Error(undefined);
+    }
   }
 }
 
 export function add_data_element(path, tag) {
   let $ = path.entries;
-  if ($.hasLength(0)) {
-    return new Ok(
-      new DataSetPath(listPrepend(new DataElement(tag), path.entries)),
-    );
-  } else if ($.atLeastLength(1) && $.head instanceof SequenceItem) {
+  if ($ instanceof $Empty) {
     return new Ok(
       new DataSetPath(listPrepend(new DataElement(tag), path.entries)),
     );
   } else {
-    return new Error(
-      "Invalid data set path entry: " + $data_element_tag.to_hex_string(tag),
-    );
+    let $1 = $.head;
+    if ($1 instanceof SequenceItem) {
+      return new Ok(
+        new DataSetPath(listPrepend(new DataElement(tag), path.entries)),
+      );
+    } else {
+      return new Error(
+        "Invalid data set path entry: " + $data_element_tag.to_hex_string(tag),
+      );
+    }
   }
 }
 
 export function add_sequence_item(path, index) {
   let $ = path.entries;
-  if ($.atLeastLength(1) && $.head instanceof DataElement) {
-    return new Ok(
-      new DataSetPath(listPrepend(new SequenceItem(index), path.entries)),
-    );
-  } else {
+  if ($ instanceof $Empty) {
     return new Error(
       ("Invalid data set path entry: [" + $int.to_string(index)) + "]",
     );
+  } else {
+    let $1 = $.head;
+    if ($1 instanceof DataElement) {
+      return new Ok(
+        new DataSetPath(listPrepend(new SequenceItem(index), path.entries)),
+      );
+    } else {
+      return new Error(
+        ("Invalid data set path entry: [" + $int.to_string(index)) + "]",
+      );
+    }
   }
 }
 
 export function pop(path) {
   let $ = path.entries;
-  if ($.atLeastLength(1)) {
+  if ($ instanceof $Empty) {
+    return new Error("Data set path is empty");
+  } else {
     let rest = $.tail;
     return new Ok(new DataSetPath(rest));
-  } else {
-    return new Error("Data set path is empty");
   }
 }
 
@@ -144,43 +170,74 @@ export function from_string(s) {
         path,
         (path, entry) => {
           let $ = $data_element_tag.from_hex_string(entry);
-          if ($.isOk()) {
+          if ($ instanceof Ok) {
             let tag = $[0];
             return add_data_element(path, tag);
           } else {
             let $1 = $regexp.from_string("^\\[(\\d+)\\]$");
-            if (!$1.isOk()) {
+            if (!($1 instanceof Ok)) {
               throw makeError(
                 "let_assert",
+                FILEPATH,
                 "dcmfx_core/data_set_path",
                 152,
-                "",
+                "from_string",
                 "Pattern match failed, no pattern matched the value.",
-                { value: $1 }
+                {
+                  value: $1,
+                  start: 4201,
+                  end: 4257,
+                  pattern_start: 4212,
+                  pattern_end: 4218
+                }
               )
             }
             let re = $1[0];
             let $2 = $regexp.scan(re, entry);
-            if ($2.hasLength(1) &&
-            $2.head instanceof $regexp.Match &&
-            $2.head.submatches.hasLength(1) &&
-            $2.head.submatches.head instanceof Some) {
-              let index = $2.head.submatches.head[0];
-              let $3 = $int.parse(index);
-              if (!$3.isOk()) {
-                throw makeError(
-                  "let_assert",
-                  "dcmfx_core/data_set_path",
-                  156,
-                  "",
-                  "Pattern match failed, no pattern matched the value.",
-                  { value: $3 }
-                )
-              }
-              let index$1 = $3[0];
-              return add_sequence_item(path, index$1);
-            } else {
+            if ($2 instanceof $Empty) {
               return new Error("Invalid data set path entry: " + entry);
+            } else {
+              let $3 = $2.tail;
+              if ($3 instanceof $Empty) {
+                let $4 = $2.head.submatches;
+                if ($4 instanceof $Empty) {
+                  return new Error("Invalid data set path entry: " + entry);
+                } else {
+                  let $5 = $4.tail;
+                  if ($5 instanceof $Empty) {
+                    let $6 = $4.head;
+                    if ($6 instanceof Some) {
+                      let index = $6[0];
+                      let $7 = $int.parse(index);
+                      if (!($7 instanceof Ok)) {
+                        throw makeError(
+                          "let_assert",
+                          FILEPATH,
+                          "dcmfx_core/data_set_path",
+                          156,
+                          "from_string",
+                          "Pattern match failed, no pattern matched the value.",
+                          {
+                            value: $7,
+                            start: 4370,
+                            end: 4409,
+                            pattern_start: 4381,
+                            pattern_end: 4390
+                          }
+                        )
+                      }
+                      let index$1 = $7[0];
+                      return add_sequence_item(path, index$1);
+                    } else {
+                      return new Error("Invalid data set path entry: " + entry);
+                    }
+                  } else {
+                    return new Error("Invalid data set path entry: " + entry);
+                  }
+                }
+              } else {
+                return new Error("Invalid data set path entry: " + entry);
+              }
             }
           }
         },

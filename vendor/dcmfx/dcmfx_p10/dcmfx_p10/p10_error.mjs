@@ -182,6 +182,12 @@ export function to_lines(error, task_description) {
         lines$2,
       ]),
     );
+  } else if (error instanceof DataInvalid) {
+    let details$1 = error.details;
+    _block$1 = listPrepend("  Details: " + details$1, lines$2);
+  } else if (error instanceof MaximumExceeded) {
+    let details$1 = error.details;
+    _block$1 = listPrepend("  Details: " + details$1, lines$2);
   } else if (error instanceof TokenStreamInvalid) {
     let details$1 = error.details;
     let token = error.token;
@@ -192,12 +198,6 @@ export function to_lines(error, task_description) {
   } else if (error instanceof FileStreamError) {
     let error$1 = error.error;
     _block$1 = listPrepend("  Details: " + $string.inspect(error$1), lines$2);
-  } else if (error instanceof DataInvalid) {
-    let details$1 = error.details;
-    _block$1 = listPrepend("  Details: " + details$1, lines$2);
-  } else if (error instanceof MaximumExceeded) {
-    let details$1 = error.details;
-    _block$1 = listPrepend("  Details: " + details$1, lines$2);
   } else if (error instanceof OtherError) {
     let details$1 = error.details;
     _block$1 = listPrepend("  Details: " + details$1, lines$2);
