@@ -76,6 +76,10 @@ class PendingDataElement extends $CustomType {
   }
 }
 
+/**
+ * Creates a new data set builder that can be given DICOM P10 tokens to be
+ * materialized into an in-memory DICOM data set.
+ */
 export function new$() {
   return new DataSetBuilder(
     new None(),
@@ -86,15 +90,31 @@ export function new$() {
   );
 }
 
+/**
+ * Returns whether the data set builder is complete, i.e. whether it has
+ * received the final `p10_token.End` token signalling the end of the incoming
+ * DICOM P10 tokens.
+ */
 export function is_complete(builder) {
   return builder.is_complete;
 }
 
+/**
+ * Returns the File Preamble read by a data set builder, or an error if it has
+ * not yet been read. The File Preamble is always 128 bytes in size.
+ *
+ * The content of these bytes are application-defined, and are often unused and
+ * set to zero.
+ */
 export function file_preamble(builder) {
   let _pipe = builder.file_preamble;
   return $option.to_result(_pipe, undefined);
 }
 
+/**
+ * Returns the final data set constructed by a data set builder from the DICOM
+ * P10 tokens it has been fed, or an error if it has not yet been fully read.
+ */
 export function final_data_set(builder) {
   let _block;
   let $ = builder.is_complete;
@@ -105,13 +125,9 @@ export function final_data_set(builder) {
     let $2 = $1.tail;
     if ($2 instanceof $Empty) {
       let $3 = $1.head;
-      if ($3 instanceof RootDataSet) {
-        if ($) {
-          let data_set = $3.data_set;
-          _block = new Ok(data_set);
-        } else {
-          _block = new Error(undefined);
-        }
+      if ($3 instanceof RootDataSet && $) {
+        let data_set = $3.data_set;
+        _block = new Ok(data_set);
       } else {
         _block = new Error(undefined);
       }
@@ -132,6 +148,12 @@ export function final_data_set(builder) {
   );
 }
 
+/**
+ * Inserts a new data element into the head of the given data set builder
+ * location and returns an updated location.
+ * 
+ * @ignore
+ */
 function insert_data_element_at_current_location(location, tag, value) {
   let $ = $data_element_value.bytes(value);
   if (location instanceof $Empty) {
@@ -139,7 +161,7 @@ function insert_data_element_at_current_location(location, tag, value) {
       "panic",
       FILEPATH,
       "dcmfx_p10/data_set_builder",
-      416,
+      412,
       "insert_data_element_at_current_location",
       "Internal error: unable to insert at current location",
       {}
@@ -162,7 +184,7 @@ function insert_data_element_at_current_location(location, tag, value) {
           "panic",
           FILEPATH,
           "dcmfx_p10/data_set_builder",
-          416,
+          412,
           "insert_data_element_at_current_location",
           "Internal error: unable to insert at current location",
           {}
@@ -179,33 +201,21 @@ function insert_data_element_at_current_location(location, tag, value) {
         })(),
         rest,
       );
-    } else if ($1 instanceof EncapsulatedPixelDataSequence) {
-      if ($ instanceof Ok) {
-        let rest = location.tail;
-        let vr = $1.vr;
-        let items = $1.items;
-        let bytes = $[0];
-        return listPrepend(
-          new EncapsulatedPixelDataSequence(vr, listPrepend(bytes, items)),
-          rest,
-        );
-      } else {
-        throw makeError(
-          "panic",
-          FILEPATH,
-          "dcmfx_p10/data_set_builder",
-          416,
-          "insert_data_element_at_current_location",
-          "Internal error: unable to insert at current location",
-          {}
-        )
-      }
+    } else if ($1 instanceof EncapsulatedPixelDataSequence && $ instanceof Ok) {
+      let rest = location.tail;
+      let vr = $1.vr;
+      let items = $1.items;
+      let bytes = $[0];
+      return listPrepend(
+        new EncapsulatedPixelDataSequence(vr, listPrepend(bytes, items)),
+        rest,
+      );
     } else {
       throw makeError(
         "panic",
         FILEPATH,
         "dcmfx_p10/data_set_builder",
-        416,
+        412,
         "insert_data_element_at_current_location",
         "Internal error: unable to insert at current location",
         {}
@@ -214,6 +224,12 @@ function insert_data_element_at_current_location(location, tag, value) {
   }
 }
 
+/**
+ * Takes the tag, VR, and final bytes for a new data element and returns the
+ * `DataElementValue` for it to insert into the active data set.
+ * 
+ * @ignore
+ */
 function build_final_data_element_value(tag, vr, value_bytes) {
   let _block;
   let _pipe = value_bytes;
@@ -231,6 +247,12 @@ function build_final_data_element_value(tag, vr, value_bytes) {
   }
 }
 
+/**
+ * Converts a data set location to a human-readable string for error reporting
+ * and debugging purposes.
+ * 
+ * @ignore
+ */
 function location_to_string(loop$location, loop$acc) {
   while (true) {
     let location = loop$location;
@@ -258,6 +280,11 @@ function location_to_string(loop$location, loop$acc) {
   }
 }
 
+/**
+ * The error returned when an unexpected DICOM P10 token is received.
+ * 
+ * @ignore
+ */
 function unexpected_token_error(token, builder) {
   return new Error(
     new $p10_error.TokenStreamInvalid(
@@ -271,6 +298,12 @@ function unexpected_token_error(token, builder) {
   );
 }
 
+/**
+ * Ingests the next token when the data set builder's current location
+ * specifies a sequence.
+ * 
+ * @ignore
+ */
 function add_token_to_sequence(builder, token) {
   let $ = builder.location;
   if ($ instanceof $Empty) {
@@ -280,27 +313,16 @@ function add_token_to_sequence(builder, token) {
     let $1 = $.head;
     if ($1 instanceof RootDataSet) {
       let $2 = $.tail;
-      if ($2 instanceof $Empty) {
-        if (token instanceof $p10_token.SequenceItemStart) {
-          return new Ok(
-            (() => {
-              let _record = builder;
-              return new DataSetBuilder(
-                _record.file_preamble,
-                _record.file_meta_information,
-                listPrepend(
-                  new SequenceItem($data_set.new$()),
-                  builder.location,
-                ),
-                _record.pending_data_element,
-                _record.is_complete,
-              );
-            })(),
-          );
-        } else {
-          let token$1 = token;
-          return unexpected_token_error(token$1, builder);
-        }
+      if ($2 instanceof $Empty && token instanceof $p10_token.SequenceItemStart) {
+        return new Ok(
+          new DataSetBuilder(
+            builder.file_preamble,
+            builder.file_meta_information,
+            listPrepend(new SequenceItem($data_set.new$()), builder.location),
+            builder.pending_data_element,
+            builder.is_complete,
+          ),
+        );
       } else {
         let token$1 = token;
         return unexpected_token_error(token$1, builder);
@@ -321,29 +343,23 @@ function add_token_to_sequence(builder, token) {
           sequence,
         );
         return new Ok(
-          (() => {
-            let _record = builder;
-            return new DataSetBuilder(
-              _record.file_preamble,
-              _record.file_meta_information,
-              new_location,
-              _record.pending_data_element,
-              _record.is_complete,
-            );
-          })(),
+          new DataSetBuilder(
+            builder.file_preamble,
+            builder.file_meta_information,
+            new_location,
+            builder.pending_data_element,
+            builder.is_complete,
+          ),
         );
       } else if (token instanceof $p10_token.SequenceItemStart) {
         return new Ok(
-          (() => {
-            let _record = builder;
-            return new DataSetBuilder(
-              _record.file_preamble,
-              _record.file_meta_information,
-              listPrepend(new SequenceItem($data_set.new$()), builder.location),
-              _record.pending_data_element,
-              _record.is_complete,
-            );
-          })(),
+          new DataSetBuilder(
+            builder.file_preamble,
+            builder.file_meta_information,
+            listPrepend(new SequenceItem($data_set.new$()), builder.location),
+            builder.pending_data_element,
+            builder.is_complete,
+          ),
         );
       } else {
         let token$1 = token;
@@ -356,6 +372,12 @@ function add_token_to_sequence(builder, token) {
   }
 }
 
+/**
+ * Ingests the next token when the data set builder's current location
+ * specifies an encapsulated pixel data sequence.
+ * 
+ * @ignore
+ */
 function add_token_to_encapsulated_pixel_data_sequence(builder, token) {
   let $ = builder.location;
   if (token instanceof $p10_token.SequenceDelimiter) {
@@ -374,7 +396,10 @@ function add_token_to_encapsulated_pixel_data_sequence(builder, token) {
           return $data_element_value.new_encapsulated_pixel_data(vr, _capture);
         })(_pipe$1);
         let $2 = _block;
-        if (!($2 instanceof Ok)) {
+        let value;
+        if ($2 instanceof Ok) {
+          value = $2[0];
+        } else {
           throw makeError(
             "let_assert",
             FILEPATH,
@@ -391,35 +416,29 @@ function add_token_to_encapsulated_pixel_data_sequence(builder, token) {
             }
           )
         }
-        let value = $2[0];
         let new_location = insert_data_element_at_current_location(
           sequence_location,
           $dictionary.pixel_data.tag,
           value,
         );
         return new Ok(
-          (() => {
-            let _record = builder;
-            return new DataSetBuilder(
-              _record.file_preamble,
-              _record.file_meta_information,
-              new_location,
-              _record.pending_data_element,
-              _record.is_complete,
-            );
-          })(),
+          new DataSetBuilder(
+            builder.file_preamble,
+            builder.file_meta_information,
+            new_location,
+            builder.pending_data_element,
+            builder.is_complete,
+          ),
         );
       } else {
         return unexpected_token_error(token, builder);
       }
     }
   } else if (token instanceof $p10_token.PixelDataItem) {
-    let _block;
-    let _record = builder;
-    _block = new DataSetBuilder(
-      _record.file_preamble,
-      _record.file_meta_information,
-      _record.location,
+    let _pipe = new DataSetBuilder(
+      builder.file_preamble,
+      builder.file_meta_information,
+      builder.location,
       new Some(
         new PendingDataElement(
           $dictionary.item.tag,
@@ -427,29 +446,31 @@ function add_token_to_encapsulated_pixel_data_sequence(builder, token) {
           toList([]),
         ),
       ),
-      _record.is_complete,
+      builder.is_complete,
     );
-    let _pipe = _block;
     return new Ok(_pipe);
   } else {
     return unexpected_token_error(token, builder);
   }
 }
 
+/**
+ * Ingests the next token when the data set builder's current location is in
+ * either the root data set or in an item that's part of a sequence.
+ * 
+ * @ignore
+ */
 function add_token_to_data_set(builder, token) {
   if (token instanceof $p10_token.DataElementHeader) {
     let tag = token.tag;
     let vr = token.vr;
-    let _block;
-    let _record = builder;
-    _block = new DataSetBuilder(
-      _record.file_preamble,
-      _record.file_meta_information,
-      _record.location,
+    let _pipe = new DataSetBuilder(
+      builder.file_preamble,
+      builder.file_meta_information,
+      builder.location,
       new Some(new PendingDataElement(tag, vr, toList([]))),
-      _record.is_complete,
+      builder.is_complete,
     );
-    let _pipe = _block;
     return new Ok(_pipe);
   } else if (token instanceof $p10_token.SequenceStart) {
     let tag = token.tag;
@@ -463,16 +484,13 @@ function add_token_to_data_set(builder, token) {
       _block = new Sequence(tag, toList([]));
     }
     let new_location = _block;
-    let _block$1;
-    let _record = builder;
-    _block$1 = new DataSetBuilder(
-      _record.file_preamble,
-      _record.file_meta_information,
+    let _pipe = new DataSetBuilder(
+      builder.file_preamble,
+      builder.file_meta_information,
       listPrepend(new_location, builder.location),
-      _record.pending_data_element,
-      _record.is_complete,
+      builder.pending_data_element,
+      builder.is_complete,
     );
-    let _pipe = _block$1;
     return new Ok(_pipe);
   } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let $ = builder.location;
@@ -508,16 +526,13 @@ function add_token_to_data_set(builder, token) {
               rest,
             );
             return new Ok(
-              (() => {
-                let _record = builder;
-                return new DataSetBuilder(
-                  _record.file_preamble,
-                  _record.file_meta_information,
-                  new_location,
-                  _record.pending_data_element,
-                  _record.is_complete,
-                );
-              })(),
+              new DataSetBuilder(
+                builder.file_preamble,
+                builder.file_meta_information,
+                new_location,
+                builder.pending_data_element,
+                builder.is_complete,
+              ),
             );
           } else {
             return new Error(
@@ -555,16 +570,13 @@ function add_token_to_data_set(builder, token) {
         let $2 = $.head;
         if ($2 instanceof RootDataSet) {
           return new Ok(
-            (() => {
-              let _record = builder;
-              return new DataSetBuilder(
-                _record.file_preamble,
-                _record.file_meta_information,
-                _record.location,
-                _record.pending_data_element,
-                true,
-              );
-            })(),
+            new DataSetBuilder(
+              builder.file_preamble,
+              builder.file_meta_information,
+              builder.location,
+              builder.pending_data_element,
+              true,
+            ),
           );
         } else {
           return new Error(
@@ -591,50 +603,45 @@ function add_token_to_data_set(builder, token) {
   }
 }
 
+/**
+ * Ingests the next token when the data set builder has a pending data element
+ * that is expecting value bytes tokens containing its data.
+ * 
+ * @ignore
+ */
 function add_token_to_pending_data_element(builder, token) {
   let $ = builder.pending_data_element;
-  if ($ instanceof Some) {
-    if (token instanceof $p10_token.DataElementValueBytes) {
-      let pending_data_element = $[0];
-      let data = token.data;
-      let bytes_remaining = token.bytes_remaining;
-      let tag = pending_data_element.tag;
-      let vr = pending_data_element.vr;
-      let data$1 = listPrepend(data, pending_data_element.data);
-      if (bytes_remaining === 0) {
-        let value = build_final_data_element_value(tag, vr, data$1);
-        let new_location = insert_data_element_at_current_location(
-          builder.location,
-          tag,
-          value,
-        );
-        let _block;
-        let _record = builder;
-        _block = new DataSetBuilder(
-          _record.file_preamble,
-          _record.file_meta_information,
-          new_location,
-          new None(),
-          _record.is_complete,
-        );
-        let _pipe = _block;
-        return new Ok(_pipe);
-      } else {
-        let _block;
-        let _record = builder;
-        _block = new DataSetBuilder(
-          _record.file_preamble,
-          _record.file_meta_information,
-          _record.location,
-          new Some(new PendingDataElement(tag, vr, data$1)),
-          _record.is_complete,
-        );
-        let _pipe = _block;
-        return new Ok(_pipe);
-      }
+  if ($ instanceof Some && token instanceof $p10_token.DataElementValueBytes) {
+    let pending_data_element = $[0];
+    let data = token.data;
+    let bytes_remaining = token.bytes_remaining;
+    let tag = pending_data_element.tag;
+    let vr = pending_data_element.vr;
+    let data$1 = listPrepend(data, pending_data_element.data);
+    if (bytes_remaining === 0) {
+      let value = build_final_data_element_value(tag, vr, data$1);
+      let new_location = insert_data_element_at_current_location(
+        builder.location,
+        tag,
+        value,
+      );
+      let _pipe = new DataSetBuilder(
+        builder.file_preamble,
+        builder.file_meta_information,
+        new_location,
+        new None(),
+        builder.is_complete,
+      );
+      return new Ok(_pipe);
     } else {
-      let token$1 = token;
-      return unexpected_token_error(token$1, builder);
+      let _pipe = new DataSetBuilder(
+        builder.file_preamble,
+        builder.file_meta_information,
+        builder.location,
+        new Some(new PendingDataElement(tag, vr, data$1)),
+        builder.is_complete,
+      );
+      return new Ok(_pipe);
     }
   } else {
     let token$1 = token;
@@ -642,6 +649,11 @@ function add_token_to_pending_data_element(builder, token) {
   }
 }
 
+/**
+ * Adds new DICOM P10 token to a data set builder. This function is responsible
+ * for progressively constructing a data set from the tokens received, and also
+ * checks that the tokens being received are in a valid order.
+ */
 export function add_token(builder, token) {
   return $bool.guard(
     builder.is_complete,
@@ -661,30 +673,24 @@ export function add_token(builder, token) {
           if (token instanceof $p10_token.FilePreambleAndDICMPrefix) {
             let preamble = token.preamble;
             return new Ok(
-              (() => {
-                let _record = builder;
-                return new DataSetBuilder(
-                  new Some(preamble),
-                  _record.file_meta_information,
-                  _record.location,
-                  _record.pending_data_element,
-                  _record.is_complete,
-                );
-              })(),
+              new DataSetBuilder(
+                new Some(preamble),
+                builder.file_meta_information,
+                builder.location,
+                builder.pending_data_element,
+                builder.is_complete,
+              ),
             );
           } else if (token instanceof $p10_token.FileMetaInformation) {
             let data_set = token.data_set;
             return new Ok(
-              (() => {
-                let _record = builder;
-                return new DataSetBuilder(
-                  _record.file_preamble,
-                  new Some(data_set),
-                  _record.location,
-                  _record.pending_data_element,
-                  _record.is_complete,
-                );
-              })(),
+              new DataSetBuilder(
+                builder.file_preamble,
+                new Some(data_set),
+                builder.location,
+                builder.pending_data_element,
+                builder.is_complete,
+              ),
             );
           } else if ($ instanceof $Empty) {
             return add_token_to_data_set(builder, token);
@@ -707,46 +713,54 @@ export function add_token(builder, token) {
   );
 }
 
+/**
+ * Takes a data set builder that isn't yet complete, e.g. because an error was
+ * encountered reading the source of the P10 tokens it was being built from,
+ * and adds the necessary delimiter and end tokens so that it is considered
+ * complete and can have its final data set read out.
+ *
+ * This allows a partially built data set to be retrieved in its current state.
+ * This should never be needed when reading or constructing valid and complete
+ * DICOM P10 data.
+ */
 export function force_end(builder) {
   return $bool.guard(
     builder.is_complete,
     builder,
     () => {
-      let _block;
-      let _record = builder;
-      _block = new DataSetBuilder(
-        _record.file_preamble,
-        _record.file_meta_information,
-        _record.location,
+      let builder$1 = new DataSetBuilder(
+        builder.file_preamble,
+        builder.file_meta_information,
+        builder.location,
         new None(),
-        _record.is_complete,
+        builder.is_complete,
       );
-      let builder$1 = _block;
-      let _block$1;
+      let _block;
       let $ = builder$1.location;
       if ($ instanceof $Empty) {
-        _block$1 = new $p10_token.End();
+        _block = new $p10_token.End();
       } else {
         let $1 = $.head;
         if ($1 instanceof Sequence) {
           let tag = $1.tag;
-          _block$1 = new $p10_token.SequenceDelimiter(tag);
+          _block = new $p10_token.SequenceDelimiter(tag);
         } else if ($1 instanceof SequenceItem) {
-          _block$1 = new $p10_token.SequenceItemDelimiter();
+          _block = new $p10_token.SequenceItemDelimiter();
         } else if ($1 instanceof EncapsulatedPixelDataSequence) {
-          _block$1 = new $p10_token.SequenceDelimiter(
-            $dictionary.pixel_data.tag,
-          );
+          _block = new $p10_token.SequenceDelimiter($dictionary.pixel_data.tag);
         } else {
-          _block$1 = new $p10_token.End();
+          _block = new $p10_token.End();
         }
       }
-      let token = _block$1;
-      let _block$2;
+      let token = _block;
+      let _block$1;
       let _pipe = builder$1;
-      _block$2 = add_token(_pipe, token);
-      let $1 = _block$2;
-      if (!($1 instanceof Ok)) {
+      _block$1 = add_token(_pipe, token);
+      let $1 = _block$1;
+      let builder$2;
+      if ($1 instanceof Ok) {
+        builder$2 = $1[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -763,7 +777,6 @@ export function force_end(builder) {
           }
         )
       }
-      let builder$2 = $1[0];
       return force_end(builder$2);
     },
   );

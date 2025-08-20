@@ -54,13 +54,13 @@ export const jpeg_ls_lossless: TransferSyntax$;
 
 export const jpeg_ls_lossy_near_lossless: TransferSyntax$;
 
-export const jpeg_2k_lossless_only: TransferSyntax$;
+export const jpeg_2000_lossless_only: TransferSyntax$;
 
-export const jpeg_2k: TransferSyntax$;
+export const jpeg_2000: TransferSyntax$;
 
-export const jpeg_2k_multi_component_lossless_only: TransferSyntax$;
+export const jpeg_2000_multi_component_lossless_only: TransferSyntax$;
 
-export const jpeg_2k_multi_component: TransferSyntax$;
+export const jpeg_2000_multi_component: TransferSyntax$;
 
 export const jpip_referenced: TransferSyntax$;
 
@@ -104,17 +104,17 @@ export const jpeg_xl_jpeg_recompression: TransferSyntax$;
 
 export const jpeg_xl: TransferSyntax$;
 
-export const high_throughput_jpeg_2k_lossless_only: TransferSyntax$;
+export const high_throughput_jpeg_2000_lossless_only: TransferSyntax$;
 
-export const high_throughput_jpeg_2k_with_rpcl_options_lossless_only: TransferSyntax$;
+export const high_throughput_jpeg_2000_with_rpcl_options_lossless_only: TransferSyntax$;
 
-export const high_throughput_jpeg_2k: TransferSyntax$;
+export const high_throughput_jpeg_2000: TransferSyntax$;
 
-export function is_jpeg_2k(transfer_syntax: TransferSyntax$): boolean;
+export function is_jpeg_2000(transfer_syntax: TransferSyntax$): boolean;
 
-export const jpip_high_throughput_jpeg_2k_referenced: TransferSyntax$;
+export const jpip_high_throughput_jpeg_2000_referenced: TransferSyntax$;
 
-export const jpip_high_throughput_jpeg_2k_referenced_deflate: TransferSyntax$;
+export const jpip_high_throughput_jpeg_2000_referenced_deflate: TransferSyntax$;
 
 export const rle_lossless: TransferSyntax$;
 

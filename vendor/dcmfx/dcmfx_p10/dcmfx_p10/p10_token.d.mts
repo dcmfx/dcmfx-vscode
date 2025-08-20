@@ -94,20 +94,20 @@ export function to_string(token: P10Token$): string;
 
 export function is_header_token(token: P10Token$): boolean;
 
-export function data_element_to_tokens<BXKR, BXKS>(
+export function data_element_to_tokens<BXKN, BXKO>(
   tag: $data_element_tag.DataElementTag$,
   value: $data_element_value.DataElementValue$,
   path: $data_set_path.DataSetPath$,
-  context: BXKR,
-  token_callback: (x0: BXKR, x1: P10Token$) => _.Result<BXKR, BXKS>
-): _.Result<BXKR, BXKS>;
+  context: BXKN,
+  token_callback: (x0: BXKN, x1: P10Token$) => _.Result<BXKN, BXKO>
+): _.Result<BXKN, BXKO>;
 
-export function data_elements_to_tokens<BXKL, BXKM>(
+export function data_elements_to_tokens<BXKH, BXKI>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   path: $data_set_path.DataSetPath$,
-  context: BXKL,
-  token_callback: (x0: BXKL, x1: P10Token$) => _.Result<BXKL, BXKM>
-): _.Result<BXKL, BXKM>;
+  context: BXKH,
+  token_callback: (x0: BXKH, x1: P10Token$) => _.Result<BXKH, BXKI>
+): _.Result<BXKH, BXKI>;

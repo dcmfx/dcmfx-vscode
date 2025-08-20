@@ -8,6 +8,10 @@ import * as $string from "../../gleam_stdlib/gleam/string.mjs";
 import * as $p10_token from "../dcmfx_p10/p10_token.mjs";
 import { toList, prepend as listPrepend, CustomType as $CustomType } from "../gleam.mjs";
 
+/**
+ * This error occurs when a DICOM P10 read or write context is supplied data
+ * that specifies a DICOM transfer syntax that isn't supported.
+ */
 export class TransferSyntaxNotSupported extends $CustomType {
   constructor(transfer_syntax_uid) {
     super();
@@ -15,6 +19,14 @@ export class TransferSyntaxNotSupported extends $CustomType {
   }
 }
 
+/**
+ * This error occurs when a DICOM P10 read context is supplied data that
+ * contains a *'(0008,0005) SpecificCharacterSet'* data element that is
+ * invalid and unable to be decoded.
+ *
+ * This error will never occur on valid DICOM P10 data because all character
+ * sets defined by the DICOM standard are supported.
+ */
 export class SpecificCharacterSetInvalid extends $CustomType {
   constructor(specific_character_set, details) {
     super();
@@ -23,6 +35,10 @@ export class SpecificCharacterSetInvalid extends $CustomType {
   }
 }
 
+/**
+ * This error occurs when a DICOM P10 read context requires more data to be
+ * added to it before the next token can be read.
+ */
 export class DataRequired extends $CustomType {
   constructor(when) {
     super();
@@ -30,6 +46,11 @@ export class DataRequired extends $CustomType {
   }
 }
 
+/**
+ * This error occurs when a DICOM P10 read context reaches the end of its
+ * data while reading the next token, and no more data is able to be added.
+ * This means the provided data is malformed or truncated.
+ */
 export class DataEndedUnexpectedly extends $CustomType {
   constructor(when, path, offset) {
     super();
@@ -39,6 +60,13 @@ export class DataEndedUnexpectedly extends $CustomType {
   }
 }
 
+export class DicmPrefixNotPresent extends $CustomType {}
+
+/**
+ * This error occurs when a DICOM P10 read context is unable to read the next
+ * DICOM P10 token because the supplied data is invalid, and also when a
+ * DICOM P10 write context is unable to serialize a token written to it.
+ */
 export class DataInvalid extends $CustomType {
   constructor(when, details, path, offset) {
     super();
@@ -49,6 +77,11 @@ export class DataInvalid extends $CustomType {
   }
 }
 
+/**
+ * This error occurs when one of the configured maximums for a DICOM P10 read
+ * context is exceeded during reading of the supplied data. These maximums
+ * are used to control memory usage when reading.
+ */
 export class MaximumExceeded extends $CustomType {
   constructor(details, path, offset) {
     super();
@@ -58,6 +91,12 @@ export class MaximumExceeded extends $CustomType {
   }
 }
 
+/**
+ * This error occurs when a stream of `P10Token`s is being ingested and a
+ * token is received that is invalid at the current location in the token
+ * stream. E.g. a `DataElementValueBytes` token that does not follow a
+ * `DataElementHeader`.
+ */
 export class TokenStreamInvalid extends $CustomType {
   constructor(when, details, token) {
     super();
@@ -69,6 +108,9 @@ export class TokenStreamInvalid extends $CustomType {
 
 export class WriteAfterCompletion extends $CustomType {}
 
+/**
+ * This error occurs when there is an error with an underlying file stream.
+ */
 export class FileStreamError extends $CustomType {
   constructor(when, error) {
     super();
@@ -77,6 +119,10 @@ export class FileStreamError extends $CustomType {
   }
 }
 
+/**
+ * A fallback/general-purpose error for cases not covered by the other error
+ * variants.
+ */
 export class OtherError extends $CustomType {
   constructor(error_type, details) {
     super();
@@ -85,6 +131,9 @@ export class OtherError extends $CustomType {
   }
 }
 
+/**
+ * Returns the name of the error as a human-readable string.
+ */
 export function name(error) {
   if (error instanceof TransferSyntaxNotSupported) {
     return "Transfer syntax not supported";
@@ -94,6 +143,8 @@ export function name(error) {
     return "Data required";
   } else if (error instanceof DataEndedUnexpectedly) {
     return "Unexpected end of data";
+  } else if (error instanceof DicmPrefixNotPresent) {
+    return "'DICM' prefix is not present";
   } else if (error instanceof DataInvalid) {
     return "Invalid data";
   } else if (error instanceof MaximumExceeded) {
@@ -110,6 +161,9 @@ export function name(error) {
   }
 }
 
+/**
+ * Returns the `details` field of the error, if one exists.
+ */
 export function details(error) {
   if (error instanceof TransferSyntaxNotSupported) {
     return "";
@@ -119,6 +173,8 @@ export function details(error) {
   } else if (error instanceof DataRequired) {
     return "";
   } else if (error instanceof DataEndedUnexpectedly) {
+    return "";
+  } else if (error instanceof DicmPrefixNotPresent) {
     return "";
   } else if (error instanceof DataInvalid) {
     let details$1 = error.details;
@@ -139,6 +195,10 @@ export function details(error) {
   }
 }
 
+/**
+ * Returns lines of text that describe a DICOM P10 error in a human-readable
+ * format.
+ */
 export function to_lines(error, task_description) {
   let lines = toList(["", "DICOM P10 error " + task_description]);
   let lines$1 = listPrepend("  Error: " + name(error), lines);
@@ -235,6 +295,10 @@ export function to_lines(error, task_description) {
   return $list.reverse(_pipe);
 }
 
+/**
+ * Returns lines of text that describe a DICOM P10 error in a human-readable
+ * format.
+ */
 export function print(error, task_description) {
   $io.println_error("");
   $io.println_error("-----");

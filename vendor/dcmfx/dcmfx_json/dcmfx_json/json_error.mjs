@@ -10,6 +10,10 @@ import * as $option from "../../gleam_stdlib/gleam/option.mjs";
 import { None } from "../../gleam_stdlib/gleam/option.mjs";
 import { Ok, toList, CustomType as $CustomType } from "../gleam.mjs";
 
+/**
+ * The data to be serialized to the DICOM JSON model is invalid. Details of
+ * the issue are contained in the contained `DataError`.
+ */
 export class DataError extends $CustomType {
   constructor(data_error) {
     super();
@@ -17,6 +21,11 @@ export class DataError extends $CustomType {
   }
 }
 
+/**
+ * A P10 error that occurred during JSON serialization. The most common error
+ * is `TokenStreamInvalid`, indicating that the stream of tokens was not
+ * well-formed.
+ */
 export class P10Error extends $CustomType {
   constructor(p10_error) {
     super();
@@ -24,6 +33,9 @@ export class P10Error extends $CustomType {
   }
 }
 
+/**
+ * The DICOM JSON data to be deserialized is invalid.
+ */
 export class JsonInvalid extends $CustomType {
   constructor(details, path) {
     super();
@@ -32,6 +44,10 @@ export class JsonInvalid extends $CustomType {
   }
 }
 
+/**
+ * Returns lines of output that describe a DICOM JSON serialize error in a
+ * human-readable format.
+ */
 export function serialize_error_to_lines(error, task_description) {
   if (error instanceof DataError) {
     let error$1 = error.data_error;
@@ -42,6 +58,10 @@ export function serialize_error_to_lines(error, task_description) {
   }
 }
 
+/**
+ * Returns lines of output that describe a DICOM JSON deserialize error in a
+ * human-readable format.
+ */
 export function deserialize_error_to_lines(error, task_description) {
   let details = error.details;
   let path = error.path;
@@ -76,11 +96,17 @@ export function deserialize_error_to_lines(error, task_description) {
   );
 }
 
+/**
+ * Prints a DICOM JSON serialize error to stderr in a human-readable format.
+ */
 export function print_serialize_error(error, task_description) {
   let _pipe = serialize_error_to_lines(error, task_description);
   return $list.each(_pipe, $io.println);
 }
 
+/**
+ * Prints a DICOM JSON deserialize error to stderr in a human-readable format.
+ */
 export function print_deserialize_error(error, task_description) {
   let _pipe = deserialize_error_to_lines(error, task_description);
   return $list.each(_pipe, $io.println);

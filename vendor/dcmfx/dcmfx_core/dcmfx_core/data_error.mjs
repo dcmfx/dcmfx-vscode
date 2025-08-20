@@ -10,6 +10,10 @@ import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import * as $value_representation from "../dcmfx_core/value_representation.mjs";
 import { Ok, toList, CustomType as $CustomType } from "../gleam.mjs";
 
+/**
+ * When retrieving a value, the requested tag was not present in the data
+ * set.
+ */
 export class TagNotPresent extends $CustomType {
   constructor(path) {
     super();
@@ -17,6 +21,10 @@ export class TagNotPresent extends $CustomType {
   }
 }
 
+/**
+ * When retrieving a value, the requested type is not present. E.g. tried to
+ * retrieve an integer value when the data element value contains a string.
+ */
 export class ValueNotPresent extends $CustomType {
   constructor(path) {
     super();
@@ -24,6 +32,11 @@ export class ValueNotPresent extends $CustomType {
   }
 }
 
+/**
+ * When retrieving a value, it did not have the required multiplicity. E.g.
+ * tried to retrieve a single string value when the data element contained
+ * multiple string values.
+ */
 export class MultiplicityMismatch extends $CustomType {
   constructor(path) {
     super();
@@ -31,6 +44,14 @@ export class MultiplicityMismatch extends $CustomType {
   }
 }
 
+/**
+ * When retrieving a value, there was an error decoding its bytes. E.g. a
+ * string value that had bytes that are not valid UTF-8, or a `PersonName`
+ * value that had an invalid structure.
+ *
+ * When creating a value, the supplied input was not valid for the type of
+ * data element being created.
+ */
 export class ValueInvalid extends $CustomType {
   constructor(details, path) {
     super();
@@ -39,6 +60,11 @@ export class ValueInvalid extends $CustomType {
   }
 }
 
+/**
+ * When creating a value, the supplied data did not meet a required length
+ * constraint, e.g. the minimum or maximum length for the value
+ * representation wasn't respected.
+ */
 export class ValueLengthInvalid extends $CustomType {
   constructor(vr, length, details, path) {
     super();
@@ -49,14 +75,9 @@ export class ValueLengthInvalid extends $CustomType {
   }
 }
 
-export class ValueUnsupported extends $CustomType {
-  constructor(details, path) {
-    super();
-    this.details = details;
-    this.path = path;
-  }
-}
-
+/**
+ * Converts a data error a human-readable string.
+ */
 export function to_string(error) {
   let optional_path_to_string = (path) => {
     let _pipe = path;
@@ -77,41 +98,52 @@ export function to_string(error) {
       let details$1 = error.details;
       let path$1 = error.path;
       return (("Invalid value at " + optional_path_to_string(path$1)) + ", details: ") + details$1;
-    } else if (error instanceof ValueLengthInvalid) {
+    } else {
       let details$1 = error.details;
       let path$1 = error.path;
       return (("Invalid value length at " + optional_path_to_string(path$1)) + ", details: ") + details$1;
-    } else {
-      let details$1 = error.details;
-      return "Value unsupported, details: " + details$1;
     }
   })();
 }
 
+/**
+ * Constructs a new 'Tag not present' data error.
+ */
 export function new_tag_not_present() {
   return new TagNotPresent($data_set_path.new$());
 }
 
+/**
+ * Constructs a new 'Value not present' data error.
+ */
 export function new_value_not_present() {
   return new ValueNotPresent(new None());
 }
 
+/**
+ * Constructs a new 'Multiplicity mismatch' data error.
+ */
 export function new_multiplicity_mismatch() {
   return new MultiplicityMismatch(new None());
 }
 
+/**
+ * Constructs a new 'Value invalid' data error.
+ */
 export function new_value_invalid(details) {
   return new ValueInvalid(details, new None());
 }
 
+/**
+ * Constructs a new 'Value length invalid' data error.
+ */
 export function new_value_length_invalid(vr, length, details) {
   return new ValueLengthInvalid(vr, length, details, new None());
 }
 
-export function new_value_unsupported(details) {
-  return new ValueUnsupported(details, new None());
-}
-
+/**
+ * Returns the data set path for a data error.
+ */
 export function path(error) {
   if (error instanceof TagNotPresent) {
     let path$1 = error.path;
@@ -125,15 +157,17 @@ export function path(error) {
   } else if (error instanceof ValueInvalid) {
     let path$1 = error.path;
     return path$1;
-  } else if (error instanceof ValueLengthInvalid) {
-    let path$1 = error.path;
-    return path$1;
   } else {
     let path$1 = error.path;
     return path$1;
   }
 }
 
+/**
+ * Adds a data set path to a data error. This indicates the exact location
+ * that a data error occurred in a data set, and should be included wherever
+ * possible to make troubleshooting easier.
+ */
 export function with_path(error, path) {
   if (error instanceof TagNotPresent) {
     return new TagNotPresent(path);
@@ -144,17 +178,17 @@ export function with_path(error, path) {
   } else if (error instanceof ValueInvalid) {
     let details$1 = error.details;
     return new ValueInvalid(details$1, new Some(path));
-  } else if (error instanceof ValueLengthInvalid) {
+  } else {
     let vr = error.vr;
     let length = error.length;
     let details$1 = error.details;
     return new ValueLengthInvalid(vr, length, details$1, new Some(path));
-  } else {
-    let details$1 = error.details;
-    return new ValueUnsupported(details$1, new Some(path));
   }
 }
 
+/**
+ * Returns the name of a data error as a human-readable string.
+ */
 export function name(error) {
   if (error instanceof TagNotPresent) {
     return "Tag not present";
@@ -164,13 +198,14 @@ export function name(error) {
     return "Multiplicity mismatch";
   } else if (error instanceof ValueInvalid) {
     return "Invalid value";
-  } else if (error instanceof ValueLengthInvalid) {
-    return "Invalid value length";
   } else {
-    return "Unsupported value";
+    return "Invalid value length";
   }
 }
 
+/**
+ * Returns the `details` field of the error, if one exists.
+ */
 export function details(error) {
   if (error instanceof TagNotPresent) {
     return "";
@@ -181,15 +216,16 @@ export function details(error) {
   } else if (error instanceof ValueInvalid) {
     let details$1 = error.details;
     return details$1;
-  } else if (error instanceof ValueLengthInvalid) {
-    let details$1 = error.details;
-    return details$1;
   } else {
     let details$1 = error.details;
     return details$1;
   }
 }
 
+/**
+ * Returns lines of output that describe a DICOM data error in a human-readable
+ * format.
+ */
 export function to_lines(error, task_description) {
   let initial_lines = toList([
     "DICOM data error " + task_description,
@@ -268,7 +304,7 @@ export function to_lines(error, task_description) {
     } else {
       _block = toList([]);
     }
-  } else if (error instanceof ValueLengthInvalid) {
+  } else {
     let $ = error.path;
     if ($ instanceof Some) {
       let path$1 = $[0];
@@ -287,8 +323,6 @@ export function to_lines(error, task_description) {
     } else {
       _block = toList([]);
     }
-  } else {
-    _block = toList([]);
   }
   let path_lines = _block;
   let _block$1;
@@ -304,9 +338,6 @@ export function to_lines(error, task_description) {
       ("  Length: " + $int.to_string(length)) + " bytes",
       "  Details: " + details$1,
     ]);
-  } else if (error instanceof ValueUnsupported) {
-    let details$1 = error.details;
-    _block$1 = toList(["  Details: " + details$1]);
   } else {
     _block$1 = toList([]);
   }
@@ -314,6 +345,9 @@ export function to_lines(error, task_description) {
   return $list.flatten(toList([initial_lines, path_lines, details_lines]));
 }
 
+/**
+ * Prints a DICOM data error to stderr in a human-readable format.
+ */
 export function print(error, task_description) {
   $io.println_error("");
   $io.println_error("-----");

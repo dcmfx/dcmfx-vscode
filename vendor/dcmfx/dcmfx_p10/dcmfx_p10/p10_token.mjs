@@ -18,6 +18,14 @@ import { Ok, CustomType as $CustomType, makeError } from "../gleam.mjs";
 
 const FILEPATH = "src/dcmfx_p10/p10_token.gleam";
 
+/**
+ * The 128-byte File Preamble and the "DICM" prefix, which are present at the
+ * start of DICOM P10 data. The content of the File Preamble's bytes are
+ * application-defined, and in many cases are unused and set to zero.
+ *
+ * When reading DICOM P10 data that doesn't contain a File Preamble and
+ * "DICM" prefix this token is emitted with all bytes set to zero.
+ */
 export class FilePreambleAndDICMPrefix extends $CustomType {
   constructor(preamble) {
     super();
@@ -25,6 +33,12 @@ export class FilePreambleAndDICMPrefix extends $CustomType {
   }
 }
 
+/**
+ * The File Meta Information dataset for the DICOM P10.
+ *
+ * When reading DICOM P10 data that doesn't contain File Meta Information
+ * this token is emitted with an empty data set.
+ */
 export class FileMetaInformation extends $CustomType {
   constructor(data_set) {
     super();
@@ -32,6 +46,11 @@ export class FileMetaInformation extends $CustomType {
   }
 }
 
+/**
+ * The start of the next data element. This token will always be followed by
+ * one or more `DataElementValueBytes` tokens containing the value bytes for
+ * the data element.
+ */
 export class DataElementHeader extends $CustomType {
   constructor(tag, vr, length, path) {
     super();
@@ -42,6 +61,11 @@ export class DataElementHeader extends $CustomType {
   }
 }
 
+/**
+ * Raw data for the value of the current data element. Data element values
+ * are split across multiple of these tokens when their length exceeds the
+ * maximum token size.
+ */
 export class DataElementValueBytes extends $CustomType {
   constructor(tag, vr, data, bytes_remaining) {
     super();
@@ -52,6 +76,12 @@ export class DataElementValueBytes extends $CustomType {
   }
 }
 
+/**
+ * The start of a new sequence. If this is the start of a sequence of
+ * encapsulated pixel data then the VR of that data, either `OtherByteString`
+ * or `OtherWordString`, will be specified. If not, the VR will be
+ * `Sequence`.
+ */
 export class SequenceStart extends $CustomType {
   constructor(tag, vr, path) {
     super();
@@ -61,6 +91,9 @@ export class SequenceStart extends $CustomType {
   }
 }
 
+/**
+ * The end of the current sequence.
+ */
 export class SequenceDelimiter extends $CustomType {
   constructor(tag) {
     super();
@@ -68,6 +101,9 @@ export class SequenceDelimiter extends $CustomType {
   }
 }
 
+/**
+ * The start of a new item in the current sequence.
+ */
 export class SequenceItemStart extends $CustomType {
   constructor(index) {
     super();
@@ -77,6 +113,11 @@ export class SequenceItemStart extends $CustomType {
 
 export class SequenceItemDelimiter extends $CustomType {}
 
+/**
+ * The start of a new item in the current encapsulated pixel data sequence.
+ * The data for the item follows in one or more `DataElementValueBytes`
+ * tokens.
+ */
 export class PixelDataItem extends $CustomType {
   constructor(index, length) {
     super();
@@ -87,6 +128,9 @@ export class PixelDataItem extends $CustomType {
 
 export class End extends $CustomType {}
 
+/**
+ * Converts a DICOM P10 token to a human-readable string.
+ */
 export function to_string(token) {
   if (token instanceof FilePreambleAndDICMPrefix) {
     return "FilePreambleAndDICMPrefix";
@@ -149,6 +193,11 @@ export function to_string(token) {
   }
 }
 
+/**
+ * Returns whether this DICOM P10 token is token of the file header or File
+ * Meta Information prior to the main data set, i.e. is it a
+ * `FilePreambleAndDICMPrefix` or `FileMetaInformation` token.
+ */
 export function is_header_token(token) {
   if (token instanceof FilePreambleAndDICMPrefix) {
     return true;
@@ -159,6 +208,10 @@ export function is_header_token(token) {
   }
 }
 
+/**
+ * Converts a DICOM data element to DICOM P10 tokens. Each token is returned
+ * via a callback.
+ */
 export function data_element_to_tokens(
   tag,
   value,
@@ -199,8 +252,10 @@ export function data_element_to_tokens(
             _pipe,
             [context, 0],
             (acc, item) => {
-              let context$1 = acc[0];
-              let index = acc[1];
+              let context$1;
+              let index;
+              context$1 = acc[0];
+              index = acc[1];
               let length = $bit_array.byte_size(item);
               let item_header_token = new PixelDataItem(index, length);
               let context$2 = token_callback(context$1, item_header_token);
@@ -233,7 +288,10 @@ export function data_element_to_tokens(
       );
     } else {
       let $2 = $data_element_value.sequence_items(value);
-      if (!($2 instanceof Ok)) {
+      let items;
+      if ($2 instanceof Ok) {
+        items = $2[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -250,7 +308,6 @@ export function data_element_to_tokens(
           }
         )
       }
-      let items = $2[0];
       let header_token = new SequenceStart(tag, vr, path);
       return $result.try$(
         token_callback(context, header_token),
@@ -261,15 +318,20 @@ export function data_element_to_tokens(
             _pipe,
             [context, 0],
             (acc, item) => {
-              let context$1 = acc[0];
-              let index = acc[1];
+              let context$1;
+              let index;
+              context$1 = acc[0];
+              index = acc[1];
               let item_start_token = new SequenceItemStart(index);
               let context$2 = token_callback(context$1, item_start_token);
               return $result.try$(
                 context$2,
                 (context) => {
                   let $3 = $data_set_path.add_sequence_item(path, index);
-                  if (!($3 instanceof Ok)) {
+                  let path$1;
+                  if ($3 instanceof Ok) {
+                    path$1 = $3[0];
+                  } else {
                     throw makeError(
                       "let_assert",
                       FILEPATH,
@@ -286,7 +348,6 @@ export function data_element_to_tokens(
                       }
                     )
                   }
-                  let path$1 = $3[0];
                   return $result.try$(
                     data_elements_to_tokens(
                       item,
@@ -320,6 +381,10 @@ export function data_element_to_tokens(
   }
 }
 
+/**
+ * Converts all the data elements in a data set directly to DICOM P10 tokens.
+ * Each token is returned via a callback.
+ */
 export function data_elements_to_tokens(data_set, path, context, token_callback) {
   let _pipe = data_set;
   return $data_set.try_fold(
@@ -327,7 +392,10 @@ export function data_elements_to_tokens(data_set, path, context, token_callback)
     context,
     (context, tag, value) => {
       let $ = $data_set_path.add_data_element(path, tag);
-      if (!($ instanceof Ok)) {
+      let path$1;
+      if ($ instanceof Ok) {
+        path$1 = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -344,7 +412,6 @@ export function data_elements_to_tokens(data_set, path, context, token_callback)
           }
         )
       }
-      let path$1 = $[0];
       return data_element_to_tokens(tag, value, path$1, context, token_callback);
     },
   );

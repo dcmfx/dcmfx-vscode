@@ -3,6 +3,13 @@ import * as $data_element_tag from "../dcmfx_core/data_element_tag.mjs";
 import * as $dictionary from "../dcmfx_core/dictionary.mjs";
 import { Ok, Error, isEqual } from "../gleam.mjs";
 
+/**
+ * Converts a `CodeString` value to a descriptive string if one is available.
+ *
+ * This conversion does not attempt to handle all known code strings, but
+ * rather aims to describe commonly seen code strings that don't have a clear
+ * and obvious meaning.
+ */
 export function describe(value, tag) {
   let tag$1 = tag;
   if (isEqual(tag$1, $dictionary.modality.tag)) {
@@ -265,10 +272,12 @@ export function describe(value, tag) {
               }
             } else {
               let tag$7 = tag;
-              if (isEqual(
-                tag$7,
-                $dictionary.acquisition_termination_condition.tag
-              )) {
+              if (
+                isEqual(
+                  tag$7,
+                  $dictionary.acquisition_termination_condition.tag
+                )
+              ) {
                 if (value === "CNTS") {
                   return new Ok("Preset counts was reached");
                 } else if (value === "DENS") {
@@ -416,10 +425,9 @@ export function describe(value, tag) {
                             }
                           } else {
                             let tag$14 = tag;
-                            if (isEqual(
-                              tag$14,
-                              $dictionary.image_laterality.tag
-                            )) {
+                            if (
+                              isEqual(tag$14, $dictionary.image_laterality.tag)
+                            ) {
                               if (value === "R") {
                                 return new Ok("Right");
                               } else if (value === "L") {
@@ -433,10 +441,12 @@ export function describe(value, tag) {
                               }
                             } else {
                               let tag$15 = tag;
-                              if (isEqual(
-                                tag$15,
-                                $dictionary.multienergy_detector_type.tag
-                              )) {
+                              if (
+                                isEqual(
+                                  tag$15,
+                                  $dictionary.multienergy_detector_type.tag
+                                )
+                              ) {
                                 if (value === "INTEGRATING") {
                                   return new Ok(
                                     "Physical detector integrates the full X-Ray spectrum",
@@ -452,10 +462,12 @@ export function describe(value, tag) {
                                 }
                               } else {
                                 let tag$16 = tag;
-                                if (isEqual(
-                                  tag$16,
-                                  $dictionary.corrected_image.tag
-                                )) {
+                                if (
+                                  isEqual(
+                                    tag$16,
+                                    $dictionary.corrected_image.tag
+                                  )
+                                ) {
                                   if (value === "UNIF") {
                                     return new Ok("Flood corrected");
                                   } else if (value === "COR") {
@@ -487,10 +499,12 @@ export function describe(value, tag) {
                                   }
                                 } else {
                                   let tag$17 = tag;
-                                  if (isEqual(
-                                    tag$17,
-                                    $dictionary.pixel_intensity_relationship.tag
-                                  )) {
+                                  if (
+                                    isEqual(
+                                      tag$17,
+                                      $dictionary.pixel_intensity_relationship.tag
+                                    )
+                                  ) {
                                     if (value === "LIN") {
                                       return new Ok(
                                         "Approximately proportional to X-Ray beam intensity",
@@ -508,10 +522,12 @@ export function describe(value, tag) {
                                     }
                                   } else {
                                     let tag$18 = tag;
-                                    if (isEqual(
-                                      tag$18,
-                                      $dictionary.lossy_image_compression.tag
-                                    )) {
+                                    if (
+                                      isEqual(
+                                        tag$18,
+                                        $dictionary.lossy_image_compression.tag
+                                      )
+                                    ) {
                                       if (value === "00") {
                                         return new Ok(
                                           "Image has not been subjected to lossy compression",
@@ -525,10 +541,12 @@ export function describe(value, tag) {
                                       }
                                     } else {
                                       let tag$19 = tag;
-                                      if (isEqual(
-                                        tag$19,
-                                        $dictionary.lossy_image_compression_method.tag
-                                      )) {
+                                      if (
+                                        isEqual(
+                                          tag$19,
+                                          $dictionary.lossy_image_compression_method.tag
+                                        )
+                                      ) {
                                         if (value === "ISO_10918_1") {
                                           return new Ok(
                                             "JPEG Lossy Compression [ISO/IEC 10918-1]",
@@ -561,10 +579,12 @@ export function describe(value, tag) {
                                         }
                                       } else {
                                         let tag$20 = tag;
-                                        if (isEqual(
-                                          tag$20,
-                                          $dictionary.universal_entity_id_type.tag
-                                        )) {
+                                        if (
+                                          isEqual(
+                                            tag$20,
+                                            $dictionary.universal_entity_id_type.tag
+                                          )
+                                        ) {
                                           if (value === "DNS") {
                                             return new Ok(
                                               "An Internet dotted name. Either in ASCII or as integers",
@@ -598,10 +618,12 @@ export function describe(value, tag) {
                                           }
                                         } else {
                                           let tag$21 = tag;
-                                          if (isEqual(
-                                            tag$21,
-                                            $dictionary.slice_progression_direction.tag
-                                          )) {
+                                          if (
+                                            isEqual(
+                                              tag$21,
+                                              $dictionary.slice_progression_direction.tag
+                                            )
+                                          ) {
                                             if (value === "APEX_TO_BASE") {
                                               return new Ok("Apex to base");
                                             } else if (value === "BASE_TO_APEX") {
@@ -614,11 +636,15 @@ export function describe(value, tag) {
                                               return new Ok(
                                                 "Inferior to anterior",
                                               );
-                                            } else if (value === "SEPTUM_TO_WALL") {
+                                            } else if (
+                                              value === "SEPTUM_TO_WALL"
+                                            ) {
                                               return new Ok(
                                                 "Septum to lateral wall",
                                               );
-                                            } else if (value === "WALL_TO_SEPTUM") {
+                                            } else if (
+                                              value === "WALL_TO_SEPTUM"
+                                            ) {
                                               return new Ok(
                                                 "Lateral wall to septum",
                                               );
@@ -627,7 +653,9 @@ export function describe(value, tag) {
                                             }
                                           } else {
                                             let tag$22 = tag;
-                                            if (((tag$22.group >= $dictionary.overlay_type.tag.group) && (tag$22.group <= ($dictionary.overlay_type.tag.group + 0xFF))) && (tag$22.element === $dictionary.overlay_type.tag.element)) {
+                                            if (
+                                              ((tag$22.group >= $dictionary.overlay_type.tag.group) && (tag$22.group <= ($dictionary.overlay_type.tag.group + 0xFF))) && (tag$22.element === $dictionary.overlay_type.tag.element)
+                                            ) {
                                               if (value === "G") {
                                                 return new Ok("Graphics");
                                               } else if (value === "R") {

@@ -41,23 +41,41 @@ export class SequenceItem extends $CustomType {
   }
 }
 
+/**
+ * Constructs a new data set path with no entries. An empty path is a path to
+ * the root data set.
+ */
 export function new$() {
   return new DataSetPath(toList([]));
 }
 
+/**
+ * Constructs a new data set path with an initial entry for the specified data
+ * element.
+ */
 export function new_with_data_element(tag) {
   return new DataSetPath(toList([new DataElement(tag)]));
 }
 
+/**
+ * Returns the entries for a data set path.
+ */
 export function entries(path) {
   return path.entries;
 }
 
+/**
+ * Returns the number of entries in a data set path.
+ */
 export function length(path) {
   let _pipe = path.entries;
   return $list.length(_pipe);
 }
 
+/**
+ * Returns whether a data set path is currently empty or pointing to a
+ * root-level data element.
+ */
 export function is_root(path) {
   let $ = path.entries;
   if ($ instanceof $Empty) {
@@ -77,6 +95,9 @@ export function is_root(path) {
   }
 }
 
+/**
+ * Returns the number of sequence items present in a data set path.
+ */
 export function sequence_item_count(path) {
   let _pipe = path.entries;
   return $list.fold(
@@ -92,6 +113,10 @@ export function sequence_item_count(path) {
   );
 }
 
+/**
+ * Returns the final data element entry in a data set path. Returns an error if
+ * the last entry in the data set path is not a data element.
+ */
 export function final_data_element(path) {
   let $ = path.entries;
   if ($ instanceof $Empty) {
@@ -107,6 +132,11 @@ export function final_data_element(path) {
   }
 }
 
+/**
+ * Adds a new entry onto a data set path that specifies the given data
+ * element tag. This is only valid when the current path is empty or a
+ * sequence item.
+ */
 export function add_data_element(path, tag) {
   let $ = path.entries;
   if ($ instanceof $Empty) {
@@ -127,6 +157,10 @@ export function add_data_element(path, tag) {
   }
 }
 
+/**
+ * Adds a new entry onto a data set path that specifies a sequence item
+ * index. This is only valid when the current path is a data element tag.
+ */
 export function add_sequence_item(path, index) {
   let $ = path.entries;
   if ($ instanceof $Empty) {
@@ -147,6 +181,9 @@ export function add_sequence_item(path, index) {
   }
 }
 
+/**
+ * Removes the last entry in a data set path.
+ */
 export function pop(path) {
   let $ = path.entries;
   if ($ instanceof $Empty) {
@@ -157,6 +194,9 @@ export function pop(path) {
   }
 }
 
+/**
+ * Parses a data set path from a string.
+ */
 export function from_string(s) {
   let path = new$();
   return $bool.guard(
@@ -175,7 +215,10 @@ export function from_string(s) {
             return add_data_element(path, tag);
           } else {
             let $1 = $regexp.from_string("^\\[(\\d+)\\]$");
-            if (!($1 instanceof Ok)) {
+            let re;
+            if ($1 instanceof Ok) {
+              re = $1[0];
+            } else {
               throw makeError(
                 "let_assert",
                 FILEPATH,
@@ -192,7 +235,6 @@ export function from_string(s) {
                 }
               )
             }
-            let re = $1[0];
             let $2 = $regexp.scan(re, entry);
             if ($2 instanceof $Empty) {
               return new Error("Invalid data set path entry: " + entry);
@@ -209,7 +251,10 @@ export function from_string(s) {
                     if ($6 instanceof Some) {
                       let index = $6[0];
                       let $7 = $int.parse(index);
-                      if (!($7 instanceof Ok)) {
+                      let index$1;
+                      if ($7 instanceof Ok) {
+                        index$1 = $7[0];
+                      } else {
                         throw makeError(
                           "let_assert",
                           FILEPATH,
@@ -226,7 +271,6 @@ export function from_string(s) {
                           }
                         )
                       }
-                      let index$1 = $7[0];
                       return add_sequence_item(path, index$1);
                     } else {
                       return new Error("Invalid data set path entry: " + entry);
@@ -246,6 +290,11 @@ export function from_string(s) {
   );
 }
 
+/**
+ * Formats a data set path with its entries separated by forward slashes,
+ * with full details on each of its data element tags that also includes the
+ * tag's name.
+ */
 export function to_detailed_string(path) {
   let _pipe = path.entries;
   let _pipe$1 = $list.map(
@@ -264,6 +313,9 @@ export function to_detailed_string(path) {
   return $string.join(_pipe$2, " / ");
 }
 
+/**
+ * Formats a data set path with its entries separated by forward slashes.
+ */
 export function to_string(path) {
   let _pipe = path.entries;
   let _pipe$1 = $list.map(

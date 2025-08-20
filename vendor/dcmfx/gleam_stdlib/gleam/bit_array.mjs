@@ -1,5 +1,5 @@
 /// <reference types="./bit_array.d.mts" />
-import { Ok, toList, remainderInt, bitArraySlice } from "../gleam.mjs";
+import { Ok, toList, bitArraySlice } from "../gleam.mjs";
 import * as $int from "../gleam/int.mjs";
 import * as $order from "../gleam/order.mjs";
 import * as $string from "../gleam/string.mjs";
@@ -34,13 +34,26 @@ export {
   to_string,
 };
 
+/**
+ * Creates a new bit array by joining two bit arrays.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * append(to: from_string("butter"), suffix: from_string("fly"))
+ * // -> from_string("butterfly")
+ * ```
+ */
 export function append(first, second) {
   return concat(toList([first, second]));
 }
 
+/**
+ * Decodes a base 64 encoded string into a `BitArray`.
+ */
 export function base64_decode(encoded) {
   let _block;
-  let $ = remainderInt(byte_size(from_string(encoded)), 4);
+  let $ = byte_size(from_string(encoded)) % 4;
   if ($ === 0) {
     _block = encoded;
   } else {
@@ -51,12 +64,23 @@ export function base64_decode(encoded) {
   return decode64(padded);
 }
 
+/**
+ * Encodes a `BitArray` into a base 64 encoded string with URL and filename
+ * safe alphabet.
+ *
+ * If the bit array does not contain a whole number of bytes then it is padded
+ * with zero bits prior to being encoded.
+ */
 export function base64_url_encode(input, padding) {
   let _pipe = base64_encode(input, padding);
   let _pipe$1 = $string.replace(_pipe, "+", "-");
   return $string.replace(_pipe$1, "/", "_");
 }
 
+/**
+ * Decodes a base 64 encoded string with URL and filename safe alphabet into a
+ * `BitArray`.
+ */
 export function base64_url_decode(encoded) {
   let _pipe = encoded;
   let _pipe$1 = $string.replace(_pipe, "-", "+");
@@ -64,10 +88,39 @@ export function base64_url_decode(encoded) {
   return base64_decode(_pipe$2);
 }
 
+/**
+ * Converts a bit array to a string containing the decimal value of each byte.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * inspect(<<0, 20, 0x20, 255>>)
+ * // -> "<<0, 20, 32, 255>>"
+ *
+ * inspect(<<100, 5:3>>)
+ * // -> "<<100, 5:size(3)>>"
+ * ```
+ */
 export function inspect(input) {
   return inspect_loop(input, "<<") + ">>";
 }
 
+/**
+ * Compare two bit arrays as sequences of bytes.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * compare(<<1>>, <<2>>)
+ * // -> Lt
+ *
+ * compare(<<"AB":utf8>>, <<"AA":utf8>>)
+ * // -> Gt
+ *
+ * compare(<<1, 2:size(2)>>, with: <<1, 2:size(2)>>)
+ * // -> Eq
+ * ```
+ */
 export function compare(loop$a, loop$b) {
   while (true) {
     let a = loop$a;
@@ -167,6 +220,9 @@ export function compare(loop$a, loop$b) {
   }
 }
 
+/**
+ * Tests to see whether a bit array is valid UTF-8.
+ */
 export function is_utf8(bits) {
   return is_utf8_loop(bits);
 }

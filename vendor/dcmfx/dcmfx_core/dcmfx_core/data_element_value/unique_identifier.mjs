@@ -13,6 +13,12 @@ import { Ok, Error, toList, makeError } from "../../gleam.mjs";
 
 const FILEPATH = "src/dcmfx_core/data_element_value/unique_identifier.gleam";
 
+/**
+ * Returns whether the given string is a valid `UniqueIdentifier`. Valid UIDs
+ * are 1-64 characters in length, and are made up of sequences of digits
+ * separated by the period character. Leading zeros are not permitted in a
+ * digit sequence unless the zero is the only digit in the sequence.
+ */
 export function is_valid(uid) {
   let length = $utils.string_fast_length(uid);
   return $bool.guard(
@@ -20,7 +26,10 @@ export function is_valid(uid) {
     false,
     () => {
       let $ = $regexp.from_string("^(0|[1-9][0-9]*)(\\.(0|[1-9][0-9]*))*$");
-      if (!($ instanceof Ok)) {
+      let re;
+      if ($ instanceof Ok) {
+        re = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -37,12 +46,14 @@ export function is_valid(uid) {
           }
         )
       }
-      let re = $[0];
       return $regexp.check(re, uid);
     },
   );
 }
 
+/**
+ * Converts a list of UIDs into a `UniqueIdentifier` value.
+ */
 export function to_bytes(uids) {
   let _pipe = uids;
   let _pipe$1 = $list.map(
@@ -72,7 +83,10 @@ export function to_bytes(uids) {
 
 function random_character(offset, range) {
   let $ = $string.utf_codepoint(offset + $int.random(range));
-  if (!($ instanceof Ok)) {
+  let cp;
+  if ($ instanceof Ok) {
+    cp = $[0];
+  } else {
     throw makeError(
       "let_assert",
       FILEPATH,
@@ -89,7 +103,6 @@ function random_character(offset, range) {
       }
     )
   }
-  let cp = $[0];
   return $string.from_utf_codepoints(toList([cp]));
 }
 
@@ -106,6 +119,11 @@ function do_new(loop$uid, loop$remaining_digits) {
   }
 }
 
+/**
+ * Generates a new random UID with the given prefix. The new UID will have a
+ * length of 64 characters. The maximum prefix length is 60, and if specified
+ * it must end with a '.' character.
+ */
 export function new$(prefix) {
   let prefix_length = $utils.string_fast_length(prefix);
   return $bool.guard(

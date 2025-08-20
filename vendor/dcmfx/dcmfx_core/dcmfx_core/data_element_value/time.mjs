@@ -23,6 +23,9 @@ export class StructuredTime extends $CustomType {
   }
 }
 
+/**
+ * Converts a `Time` value into a structured time.
+ */
 export function from_bytes(bytes) {
   let _block;
   let _pipe = bytes;
@@ -43,7 +46,10 @@ export function from_bytes(bytes) {
       let $ = $regexp.from_string(
         "^(\\d\\d)((\\d\\d)((\\d\\d)(\\.\\d{1,6})?)?)?$",
       );
-      if (!($ instanceof Ok)) {
+      let re;
+      if ($ instanceof Ok) {
+        re = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -60,7 +66,6 @@ export function from_bytes(bytes) {
           }
         )
       }
-      let re = $[0];
       let $1 = $regexp.scan(re, time_string$1);
       if ($1 instanceof $Empty) {
         return new Error(
@@ -113,11 +118,17 @@ export function from_bytes(bytes) {
             }
           }
           let $3 = _block$2;
-          let hour = $3[0];
-          let minute = $3[1];
-          let second = $3[2];
+          let hour;
+          let minute;
+          let second;
+          hour = $3[0];
+          minute = $3[1];
+          second = $3[2];
           let $5 = $int.parse(hour);
-          if (!($5 instanceof Ok)) {
+          let hour$1;
+          if ($5 instanceof Ok) {
+            hour$1 = $5[0];
+          } else {
             throw makeError(
               "let_assert",
               FILEPATH,
@@ -134,13 +145,12 @@ export function from_bytes(bytes) {
               }
             )
           }
-          let hour$1 = $5[0];
           let _block$3;
           if (minute instanceof Some) {
             let minute$1 = minute[0];
             _block$3 = $option.from_result($int.parse(minute$1));
           } else {
-            _block$3 = new None();
+            _block$3 = minute;
           }
           let minute$1 = _block$3;
           let _block$4;
@@ -148,7 +158,7 @@ export function from_bytes(bytes) {
             let second$1 = second[0];
             _block$4 = $option.from_result($utils.smart_parse_float(second$1));
           } else {
-            _block$4 = new None();
+            _block$4 = second;
           }
           let second$1 = _block$4;
           return new Ok(new StructuredTime(hour$1, minute$1, second$1));
@@ -164,6 +174,14 @@ export function from_bytes(bytes) {
   );
 }
 
+/**
+ * Takes a number of seconds and formats it as `SS[.FFFFFF]` with two digits
+ * for the whole number of seconds, and up to 6 digits for the fractional
+ * seconds. The fractional seconds are only included if the number of seconds
+ * is not an exact whole number.
+ * 
+ * @ignore
+ */
 function format_second(seconds) {
   let _block;
   let _pipe = seconds;
@@ -188,6 +206,9 @@ function format_second(seconds) {
   }
 }
 
+/**
+ * Returns the string value of a structured time.
+ */
 export function to_string(value) {
   let has_second_without_minute = $option.is_some(value.second) && !$option.is_some(
     value.minute,
@@ -274,12 +295,19 @@ export function to_string(value) {
   );
 }
 
+/**
+ * Converts a structured time to a `Time` value.
+ */
 export function to_bytes(time) {
   let _pipe = time;
   let _pipe$1 = to_string(_pipe);
   return $result.map(_pipe$1, $bit_array.from_string);
 }
 
+/**
+ * Formats a structured time as an ISO 8601 time. Components that aren't
+ * specified are omitted.
+ */
 export function to_iso8601(time) {
   let _block;
   let _pipe = time.hour;

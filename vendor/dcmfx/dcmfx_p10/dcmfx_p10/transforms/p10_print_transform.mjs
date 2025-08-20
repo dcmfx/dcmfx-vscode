@@ -37,6 +37,9 @@ class P10PrintTransform extends $CustomType {
   }
 }
 
+/**
+ * Constructs a new DICOM P10 print transform with the specified print options.
+ */
 export function new$(print_options) {
   return new P10PrintTransform(
     print_options,
@@ -49,6 +52,10 @@ export function new$(print_options) {
   );
 }
 
+/**
+ * Adds the next DICOM P10 token to be printed and returns the next piece of
+ * text output to be displayed.
+ */
 export function add_token(transform, token) {
   if (token instanceof $p10_token.FileMetaInformation) {
     let data_set = token.data_set;
@@ -66,7 +73,10 @@ export function add_token(transform, token) {
     let vr = token.vr;
     let length = token.length;
     let $ = $list.first(transform.private_creators);
-    if (!($ instanceof Ok)) {
+    let private_creators;
+    if ($ instanceof Ok) {
+      private_creators = $[0];
+    } else {
       throw makeError(
         "let_assert",
         FILEPATH,
@@ -83,7 +93,6 @@ export function add_token(transform, token) {
         }
       )
     }
-    let private_creators = $[0];
     let $1 = $data_set_print.format_data_element_prefix(
       tag,
       $data_set.tag_name(private_creators, tag),
@@ -92,8 +101,10 @@ export function add_token(transform, token) {
       transform.indent,
       transform.print_options,
     );
-    let s = $1[0];
-    let width = $1[1];
+    let s;
+    let width;
+    s = $1[0];
+    width = $1[1];
     let value_max_width = $int.max(
       transform.print_options.max_width - width,
       10,
@@ -109,75 +120,71 @@ export function add_token(transform, token) {
       _block = new None();
     }
     let last_data_element_private_creator_tag = _block;
-    let _block$1;
-    let _record = transform;
-    _block$1 = new P10PrintTransform(
-      _record.print_options,
-      _record.indent,
+    let new_transform = new P10PrintTransform(
+      transform.print_options,
+      transform.indent,
       tag,
       ignore_data_element_value_bytes,
       value_max_width,
-      _record.private_creators,
+      transform.private_creators,
       last_data_element_private_creator_tag,
     );
-    let new_transform = _block$1;
     return [s, new_transform];
-  } else if (token instanceof $p10_token.DataElementValueBytes) {
-    if (!transform.ignore_data_element_value_bytes) {
-      let vr = token.vr;
-      let data = token.data;
-      let value = $data_element_value.new_binary_unchecked(vr, data);
-      let ignore_data_element_value_bytes = true;
-      let _block;
-      let $ = transform.last_data_element_private_creator_tag;
-      let $1 = transform.private_creators;
-      if ($1 instanceof $Empty) {
-        _block = transform.private_creators;
-      } else if ($ instanceof Some) {
-        let private_creators = $1.head;
-        let rest = $1.tail;
-        let tag = $[0];
-        _block = listPrepend(
-          $data_set.insert(
-            private_creators,
-            tag,
-            $data_element_value.new_binary_unchecked(
-              new $value_representation.LongString(),
-              data,
-            ),
+  } else if (
+    token instanceof $p10_token.DataElementValueBytes &&
+    !transform.ignore_data_element_value_bytes
+  ) {
+    let vr = token.vr;
+    let data = token.data;
+    let value = $data_element_value.new_binary_unchecked(vr, data);
+    let ignore_data_element_value_bytes = true;
+    let _block;
+    let $ = transform.last_data_element_private_creator_tag;
+    let $1 = transform.private_creators;
+    if ($1 instanceof $Empty) {
+      _block = transform.private_creators;
+    } else if ($ instanceof Some) {
+      let private_creators = $1.head;
+      let rest = $1.tail;
+      let tag = $[0];
+      _block = listPrepend(
+        $data_set.insert(
+          private_creators,
+          tag,
+          $data_element_value.new_binary_unchecked(
+            new $value_representation.LongString(),
+            data,
           ),
-          rest,
-        );
-      } else {
-        _block = transform.private_creators;
-      }
-      let private_creators = _block;
-      let s = $data_element_value.to_string(
-        value,
-        transform.current_data_element,
-        transform.value_max_width,
-      ) + "\n";
-      let _block$1;
-      let _record = transform;
-      _block$1 = new P10PrintTransform(
-        _record.print_options,
-        _record.indent,
-        _record.current_data_element,
-        ignore_data_element_value_bytes,
-        _record.value_max_width,
-        private_creators,
-        _record.last_data_element_private_creator_tag,
+        ),
+        rest,
       );
-      let new_transform = _block$1;
-      return [s, new_transform];
     } else {
-      return ["", transform];
+      _block = transform.private_creators;
     }
+    let private_creators = _block;
+    let s = $data_element_value.to_string(
+      value,
+      transform.current_data_element,
+      transform.value_max_width,
+    ) + "\n";
+    let new_transform = new P10PrintTransform(
+      transform.print_options,
+      transform.indent,
+      transform.current_data_element,
+      ignore_data_element_value_bytes,
+      transform.value_max_width,
+      private_creators,
+      transform.last_data_element_private_creator_tag,
+    );
+    return [s, new_transform];
   } else if (token instanceof $p10_token.SequenceStart) {
     let tag = token.tag;
     let vr = token.vr;
     let $ = $list.first(transform.private_creators);
-    if (!($ instanceof Ok)) {
+    let private_creators;
+    if ($ instanceof Ok) {
+      private_creators = $[0];
+    } else {
       throw makeError(
         "let_assert",
         FILEPATH,
@@ -194,7 +201,6 @@ export function add_token(transform, token) {
         }
       )
     }
-    let private_creators = $[0];
     let s = $data_set_print.format_data_element_prefix(
       tag,
       $data_set.tag_name(private_creators, tag),
@@ -203,18 +209,15 @@ export function add_token(transform, token) {
       transform.indent,
       transform.print_options,
     )[0];
-    let _block;
-    let _record = transform;
-    _block = new P10PrintTransform(
-      _record.print_options,
+    let new_transform = new P10PrintTransform(
+      transform.print_options,
       transform.indent + 1,
-      _record.current_data_element,
-      _record.ignore_data_element_value_bytes,
-      _record.value_max_width,
-      _record.private_creators,
-      _record.last_data_element_private_creator_tag,
+      transform.current_data_element,
+      transform.ignore_data_element_value_bytes,
+      transform.value_max_width,
+      transform.private_creators,
+      transform.last_data_element_private_creator_tag,
     );
-    let new_transform = _block;
     return [s + "\n", new_transform];
   } else if (token instanceof $p10_token.SequenceDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
@@ -225,18 +228,15 @@ export function add_token(transform, token) {
       transform.indent - 1,
       transform.print_options,
     )[0];
-    let _block;
-    let _record = transform;
-    _block = new P10PrintTransform(
-      _record.print_options,
+    let new_transform = new P10PrintTransform(
+      transform.print_options,
       transform.indent - 1,
-      _record.current_data_element,
-      _record.ignore_data_element_value_bytes,
-      _record.value_max_width,
-      _record.private_creators,
-      _record.last_data_element_private_creator_tag,
+      transform.current_data_element,
+      transform.ignore_data_element_value_bytes,
+      transform.value_max_width,
+      transform.private_creators,
+      transform.last_data_element_private_creator_tag,
     );
-    let new_transform = _block;
     return [s + "\n", new_transform];
   } else if (token instanceof $p10_token.SequenceItemStart) {
     let s = $data_set_print.format_data_element_prefix(
@@ -247,18 +247,15 @@ export function add_token(transform, token) {
       transform.indent,
       transform.print_options,
     )[0];
-    let _block;
-    let _record = transform;
-    _block = new P10PrintTransform(
-      _record.print_options,
+    let new_transform = new P10PrintTransform(
+      transform.print_options,
       transform.indent + 1,
-      _record.current_data_element,
-      _record.ignore_data_element_value_bytes,
-      _record.value_max_width,
+      transform.current_data_element,
+      transform.ignore_data_element_value_bytes,
+      transform.value_max_width,
       listPrepend($data_set.new$(), transform.private_creators),
-      _record.last_data_element_private_creator_tag,
+      transform.last_data_element_private_creator_tag,
     );
-    let new_transform = _block;
     return [s + "\n", new_transform];
   } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let s = $data_set_print.format_data_element_prefix(
@@ -269,21 +266,18 @@ export function add_token(transform, token) {
       transform.indent - 1,
       transform.print_options,
     )[0];
-    let _block;
-    let _record = transform;
-    _block = new P10PrintTransform(
-      _record.print_options,
+    let new_transform = new P10PrintTransform(
+      transform.print_options,
       transform.indent - 1,
-      _record.current_data_element,
-      _record.ignore_data_element_value_bytes,
-      _record.value_max_width,
+      transform.current_data_element,
+      transform.ignore_data_element_value_bytes,
+      transform.value_max_width,
       (() => {
         let _pipe = $list.rest(transform.private_creators);
         return $result.unwrap(_pipe, transform.private_creators);
       })(),
-      _record.last_data_element_private_creator_tag,
+      transform.last_data_element_private_creator_tag,
     );
-    let new_transform = _block;
     return [s + "\n", new_transform];
   } else if (token instanceof $p10_token.PixelDataItem) {
     let length = token.length;
@@ -295,25 +289,24 @@ export function add_token(transform, token) {
       transform.indent,
       transform.print_options,
     );
-    let s = $[0];
-    let width = $[1];
+    let s;
+    let width;
+    s = $[0];
+    width = $[1];
     let value_max_width = $int.max(
       transform.print_options.max_width - width,
       10,
     );
     let ignore_data_element_value_bytes = false;
-    let _block;
-    let _record = transform;
-    _block = new P10PrintTransform(
-      _record.print_options,
-      _record.indent,
-      _record.current_data_element,
+    let new_transform = new P10PrintTransform(
+      transform.print_options,
+      transform.indent,
+      transform.current_data_element,
       ignore_data_element_value_bytes,
       value_max_width,
-      _record.private_creators,
-      _record.last_data_element_private_creator_tag,
+      transform.private_creators,
+      transform.last_data_element_private_creator_tag,
     );
-    let new_transform = _block;
     return [s, new_transform];
   } else {
     return ["", transform];

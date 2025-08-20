@@ -9,7 +9,7 @@ import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filter_transform.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
-declare class P10CustomTypeTransform<CAEU> extends _.CustomType {
+declare class P10CustomTypeTransform<CAJI> extends _.CustomType {
   constructor(
     filter: $option.Option$<
       [
@@ -43,7 +43,7 @@ declare class P10CustomTypeTransform<CAEU> extends _.CustomType {
   target: $option.Option$<any>;
 }
 
-export type P10CustomTypeTransform$<CAEU> = P10CustomTypeTransform<CAEU>;
+export type P10CustomTypeTransform$<CAJI> = P10CustomTypeTransform<CAJI>;
 
 export class P10Error extends _.CustomType {
   constructor(argument$0: $p10_error.P10Error$);
@@ -59,21 +59,21 @@ export class DataError extends _.CustomType {
 
 export type P10CustomTypeTransformError$ = P10Error | DataError;
 
-export function new$<CAEW>(
+export function new$<CAJK>(
   tags: _.List<$data_element_tag.DataElementTag$>,
   target_from_data_set: (
     x0: $dict.Dict$<
       $data_element_tag.DataElementTag$,
       $data_element_value.DataElementValue$
     >
-  ) => _.Result<CAEW, $data_error.DataError$>
-): P10CustomTypeTransform$<CAEW>;
+  ) => _.Result<CAJK, $data_error.DataError$>
+): P10CustomTypeTransform$<CAJK>;
 
-export function add_token<CAFA>(
-  transform: P10CustomTypeTransform$<CAFA>,
+export function add_token<CAJO>(
+  transform: P10CustomTypeTransform$<CAJO>,
   token: $p10_token.P10Token$
-): _.Result<P10CustomTypeTransform$<CAFA>, P10CustomTypeTransformError$>;
+): _.Result<P10CustomTypeTransform$<CAJO>, P10CustomTypeTransformError$>;
 
-export function get_output<CAFF>(transform: P10CustomTypeTransform$<CAFF>): $option.Option$<
-  CAFF
+export function get_output<CAJT>(transform: P10CustomTypeTransform$<CAJT>): $option.Option$<
+  CAJT
 >;

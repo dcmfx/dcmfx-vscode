@@ -104,6 +104,9 @@ class Positive extends $CustomType {}
 
 class Negative extends $CustomType {}
 
+/**
+ * Restricts an `IEEEFloat` between a lower and upper bound.
+ */
 export function clamp(f, min_bound, max_bound) {
   let _pipe = f;
   let _pipe$1 = min(_pipe, max_bound);

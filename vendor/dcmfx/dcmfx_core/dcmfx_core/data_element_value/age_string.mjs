@@ -30,6 +30,9 @@ export class StructuredAge extends $CustomType {
   }
 }
 
+/**
+ * Formats a structured age as a human-readable string.
+ */
 export function to_string(age) {
   let _block;
   let $ = age.unit;
@@ -54,6 +57,9 @@ export function to_string(age) {
   return (($int.to_string(age.number) + " ") + unit) + plural;
 }
 
+/**
+ * Converts an `AgeString` value into a structured age.
+ */
 export function from_bytes(bytes) {
   let _block;
   let _pipe = bytes;
@@ -72,7 +78,10 @@ export function from_bytes(bytes) {
       _block$1 = $string.trim(_pipe$3);
       let age_string$1 = _block$1;
       let $ = $regexp.from_string("^(\\d\\d\\d)([DWMY])$");
-      if (!($ instanceof Ok)) {
+      let re;
+      if ($ instanceof Ok) {
+        re = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -89,7 +98,6 @@ export function from_bytes(bytes) {
           }
         )
       }
-      let re = $[0];
       let $1 = $regexp.scan(re, age_string$1);
       if ($1 instanceof $Empty) {
         return new Error(
@@ -125,7 +133,10 @@ export function from_bytes(bytes) {
                     let unit = $6[0];
                     let number = $7[0];
                     let $8 = $int.parse(number);
-                    if (!($8 instanceof Ok)) {
+                    let number$1;
+                    if ($8 instanceof Ok) {
+                      number$1 = $8[0];
+                    } else {
                       throw makeError(
                         "let_assert",
                         FILEPATH,
@@ -142,7 +153,6 @@ export function from_bytes(bytes) {
                         }
                       )
                     }
-                    let number$1 = $8[0];
                     let _block$2;
                     if (unit === "D") {
                       _block$2 = new Days();
@@ -190,6 +200,9 @@ export function from_bytes(bytes) {
   );
 }
 
+/**
+ * Converts a structured age into an `AgeString` value.
+ */
 export function to_bytes(age) {
   return $bool.guard(
     (age.number < 0) || (age.number > 999),

@@ -1,44 +1,44 @@
 import type * as _ from "../gleam.d.mts";
 
-declare class Deque<BXFH> extends _.CustomType {
+declare class Deque<BXFD> extends _.CustomType {
   constructor(in$: _.List<any>, out: _.List<any>);
   
   in$: _.List<any>;
   out: _.List<any>;
 }
 
-export type Deque$<BXFH> = Deque<BXFH>;
+export type Deque$<BXFD> = Deque<BXFD>;
 
 export function new$(): Deque$<any>;
 
-export function from_list<BXFK>(list: _.List<BXFK>): Deque$<BXFK>;
+export function from_list<BXFG>(list: _.List<BXFG>): Deque$<BXFG>;
 
-export function to_list<BXFN>(deque: Deque$<BXFN>): _.List<BXFN>;
+export function to_list<BXFJ>(deque: Deque$<BXFJ>): _.List<BXFJ>;
 
 export function is_empty(deque: Deque$<any>): boolean;
 
 export function length(deque: Deque$<any>): number;
 
-export function push_back<BXFU>(deque: Deque$<BXFU>, item: BXFU): Deque$<BXFU>;
+export function push_back<BXFQ>(deque: Deque$<BXFQ>, item: BXFQ): Deque$<BXFQ>;
 
-export function push_front<BXFX>(deque: Deque$<BXFX>, item: BXFX): Deque$<BXFX>;
+export function push_front<BXFT>(deque: Deque$<BXFT>, item: BXFT): Deque$<BXFT>;
 
-export function pop_back<BXGA>(deque: Deque$<BXGA>): _.Result<
-  [BXGA, Deque$<BXGA>],
+export function pop_back<BXFW>(deque: Deque$<BXFW>): _.Result<
+  [BXFW, Deque$<BXFW>],
   undefined
 >;
 
-export function pop_front<BXGF>(deque: Deque$<BXGF>): _.Result<
-  [BXGF, Deque$<BXGF>],
+export function pop_front<BXGB>(deque: Deque$<BXGB>): _.Result<
+  [BXGB, Deque$<BXGB>],
   undefined
 >;
 
-export function reverse<BXGK>(deque: Deque$<BXGK>): Deque$<BXGK>;
+export function reverse<BXGG>(deque: Deque$<BXGG>): Deque$<BXGG>;
 
-export function is_logically_equal<BXGN>(
-  a: Deque$<BXGN>,
-  b: Deque$<BXGN>,
-  element_is_equal: (x0: BXGN, x1: BXGN) => boolean
+export function is_logically_equal<BXGJ>(
+  a: Deque$<BXGJ>,
+  b: Deque$<BXGJ>,
+  element_is_equal: (x0: BXGJ, x1: BXGJ) => boolean
 ): boolean;
 
-export function is_equal<BXGV>(a: Deque$<BXGV>, b: Deque$<BXGV>): boolean;
+export function is_equal<BXGR>(a: Deque$<BXGR>, b: Deque$<BXGR>): boolean;

@@ -261,6 +261,10 @@ const lookup_table = /* @__PURE__ */ toBitArray([
   255, 253,
 ]);
 
+/**
+ * Decodes the next codepoint from the given ISO IR 6 bytes. This is the DICOM
+ * default character set.
+ */
 export function decode_next_codepoint(bytes) {
   return $lookup_table_8bit.decode_next_codepoint(bytes, lookup_table);
 }

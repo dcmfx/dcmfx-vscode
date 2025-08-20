@@ -5,6 +5,9 @@ export class Unicode extends $CustomType {}
 
 export class Latin1 extends $CustomType {}
 
+/**
+ * The Unicode UTF-16 text encoding, with the specified byte ordering.
+ */
 export class Utf16 extends $CustomType {
   constructor(endianness) {
     super();
@@ -12,6 +15,9 @@ export class Utf16 extends $CustomType {
   }
 }
 
+/**
+ * The Unicode UTF-32 text encoding, with the specified byte ordering.
+ */
 export class Utf32 extends $CustomType {
   constructor(endianness) {
     super();

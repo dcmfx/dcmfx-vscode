@@ -261,6 +261,9 @@ const lookup_table = /* @__PURE__ */ toBitArray([
   255, 253,
 ]);
 
+/**
+ * Decodes the next codepoint from the given JIS X 0201 bytes.
+ */
 export function decode_next_codepoint(bytes) {
   return $lookup_table_8bit.decode_next_codepoint(bytes, lookup_table);
 }
@@ -524,6 +527,16 @@ const lookup_table_with_backslash = /* @__PURE__ */ toBitArray([
   255, 253,
 ]);
 
+/**
+ * Decodes the next codepoint from the given JIS X 0201 bytes. This decoder
+ * maps 0x5C to the backslash character which is divergent from JIS X 0201 but
+ * is necessary when decoding multi-valued DICOM strings that use it as a
+ * separator.
+ *
+ * This variation is only needed when ISO 2022 Code Extension techniques
+ * aren't in use, because when they are the string can use an escape sequence
+ * to designate a character set that does provide the backslash character.
+ */
 export function decode_next_codepoint_allowing_backslash(bytes) {
   return $lookup_table_8bit.decode_next_codepoint(
     bytes,

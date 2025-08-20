@@ -22,6 +22,9 @@ export class StructuredDate extends $CustomType {
   }
 }
 
+/**
+ * Converts a `Date` value into a structured date.
+ */
 export function from_bytes(bytes) {
   let _block;
   let _pipe = bytes;
@@ -40,7 +43,10 @@ export function from_bytes(bytes) {
       _block$1 = $string.trim(_pipe$3);
       let date_string$1 = _block$1;
       let $ = $regexp.from_string("^(\\d{4})(\\d\\d)(\\d\\d)$");
-      if (!($ instanceof Ok)) {
+      let re;
+      if ($ instanceof Ok) {
+        re = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -57,7 +63,6 @@ export function from_bytes(bytes) {
           }
         )
       }
-      let re = $[0];
       let $1 = $regexp.scan(re, date_string$1);
       if ($1 instanceof $Empty) {
         return new Error(
@@ -104,7 +109,10 @@ export function from_bytes(bytes) {
                         let month = $8[0];
                         let year = $9[0];
                         let $10 = $int.parse(year);
-                        if (!($10 instanceof Ok)) {
+                        let year$1;
+                        if ($10 instanceof Ok) {
+                          year$1 = $10[0];
+                        } else {
                           throw makeError(
                             "let_assert",
                             FILEPATH,
@@ -121,9 +129,11 @@ export function from_bytes(bytes) {
                             }
                           )
                         }
-                        let year$1 = $10[0];
                         let $11 = $int.parse(month);
-                        if (!($11 instanceof Ok)) {
+                        let month$1;
+                        if ($11 instanceof Ok) {
+                          month$1 = $11[0];
+                        } else {
                           throw makeError(
                             "let_assert",
                             FILEPATH,
@@ -140,9 +150,11 @@ export function from_bytes(bytes) {
                             }
                           )
                         }
-                        let month$1 = $11[0];
                         let $12 = $int.parse(day);
-                        if (!($12 instanceof Ok)) {
+                        let day$1;
+                        if ($12 instanceof Ok) {
+                          day$1 = $12[0];
+                        } else {
                           throw makeError(
                             "let_assert",
                             FILEPATH,
@@ -159,7 +171,6 @@ export function from_bytes(bytes) {
                             }
                           )
                         }
-                        let day$1 = $12[0];
                         return new Ok(
                           new StructuredDate(year$1, month$1, day$1),
                         );
@@ -206,6 +217,12 @@ export function from_bytes(bytes) {
   );
 }
 
+/**
+ * Builds the content of a `Date` data element value where both the month and
+ * day are optional. The month value is required if there is a day specified.
+ * 
+ * @ignore
+ */
 export function components_to_string(year, month, day) {
   let has_day_without_month = $option.is_some(day) && !$option.is_some(month);
   return $bool.guard(
@@ -289,6 +306,9 @@ export function components_to_string(year, month, day) {
   );
 }
 
+/**
+ * Converts a structured date to a `Date` value.
+ */
 export function to_bytes(value) {
   let _pipe = components_to_string(
     value.year,
@@ -298,6 +318,9 @@ export function to_bytes(value) {
   return $result.map(_pipe, $bit_array.from_string);
 }
 
+/**
+ * Formats a structured date as an ISO 8601 date.
+ */
 export function to_iso8601(date) {
   let _block;
   let _pipe = date.year;

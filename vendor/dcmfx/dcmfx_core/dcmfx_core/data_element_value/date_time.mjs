@@ -14,14 +14,7 @@ import { StructuredTime } from "../../dcmfx_core/data_element_value/time.mjs";
 import * as $data_error from "../../dcmfx_core/data_error.mjs";
 import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs";
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
-import {
-  Ok,
-  Error,
-  Empty as $Empty,
-  CustomType as $CustomType,
-  makeError,
-  remainderInt,
-} from "../../gleam.mjs";
+import { Ok, Error, Empty as $Empty, CustomType as $CustomType, makeError } from "../../gleam.mjs";
 
 const FILEPATH = "src/dcmfx_core/data_element_value/date_time.gleam";
 
@@ -38,6 +31,9 @@ export class StructuredDateTime extends $CustomType {
   }
 }
 
+/**
+ * Converts a `DateTime` value into a structured date/time.
+ */
 export function from_bytes(bytes) {
   let _block;
   let _pipe = bytes;
@@ -58,7 +54,10 @@ export function from_bytes(bytes) {
       let $ = $regexp.from_string(
         "^(\\d{4})((\\d{2})((\\d{2})((\\d{2})((\\d{2})((\\d{2})(\\.\\d{1,6})?)?)?)?)?)?([\\+\\-]\\d{4})?$",
       );
-      if (!($ instanceof Ok)) {
+      let re;
+      if ($ instanceof Ok) {
+        re = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -75,7 +74,6 @@ export function from_bytes(bytes) {
           }
         )
       }
-      let re = $[0];
       let $1 = $regexp.scan(re, date_time_string$1);
       if ($1 instanceof $Empty) {
         return new Error(
@@ -301,15 +299,25 @@ export function from_bytes(bytes) {
           }
         }
         let $2 = _block$2;
-        let year = $2[0];
-        let month = $2[1];
-        let day = $2[2];
-        let hour = $2[3];
-        let minute = $2[4];
-        let second = $2[5];
-        let offset = $2[6];
+        let year;
+        let month;
+        let day;
+        let hour;
+        let minute;
+        let second;
+        let offset;
+        year = $2[0];
+        month = $2[1];
+        day = $2[2];
+        hour = $2[3];
+        minute = $2[4];
+        second = $2[5];
+        offset = $2[6];
         let $3 = $int.parse(year);
-        if (!($3 instanceof Ok)) {
+        let year$1;
+        if ($3 instanceof Ok) {
+          year$1 = $3[0];
+        } else {
           throw makeError(
             "let_assert",
             FILEPATH,
@@ -326,13 +334,12 @@ export function from_bytes(bytes) {
             }
           )
         }
-        let year$1 = $3[0];
         let parse_int = (value) => {
           if (value instanceof Some) {
             let value$1 = value[0];
             return $option.from_result($int.parse(value$1));
           } else {
-            return new None();
+            return value;
           }
         };
         let month$1 = parse_int(month);
@@ -345,7 +352,7 @@ export function from_bytes(bytes) {
           let second$1 = second[0];
           _block$3 = $option.from_result($utils.smart_parse_float(second$1));
         } else {
-          _block$3 = new None();
+          _block$3 = second;
         }
         let second$1 = _block$3;
         return new Ok(
@@ -364,6 +371,9 @@ export function from_bytes(bytes) {
   );
 }
 
+/**
+ * Converts a structured date/time to a `DateTime` value.
+ */
 export function to_bytes(value) {
   let has_hour_without_day = $option.is_some(value.hour) && !$option.is_some(
     value.day,
@@ -398,10 +408,7 @@ export function to_bytes(value) {
               let $1 = value.time_zone_offset;
               if ($1 instanceof Some) {
                 let offset = $1[0];
-                let is_offset_valid = ((offset >= -1200) && (offset <= 1400)) && ((remainderInt(
-                  offset,
-                  100
-                )) < 60);
+                let is_offset_valid = ((offset >= -1200) && (offset <= 1400)) && ((offset % 100) < 60);
                 if (is_offset_valid) {
                   let _block$2;
                   let $2 = offset < 0;
@@ -452,6 +459,10 @@ export function to_bytes(value) {
   );
 }
 
+/**
+ * Formats a structured date/time as an ISO 8601 string. Components that
+ * aren't specified are omitted.
+ */
 export function to_iso8601(date_time) {
   let _block;
   let _pipe = date_time.year;

@@ -9,6 +9,9 @@ import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
 import { float_to_shortest_string } from "./decimal_string_ffi.mjs";
 
+/**
+ * Converts a `DecimalString` value to a list of floats.
+ */
 export function from_bytes(bytes) {
   let _block;
   let _pipe = bytes;
@@ -43,6 +46,9 @@ export function from_bytes(bytes) {
   );
 }
 
+/**
+ * Converts a list of floats to a `DecimalString` value.
+ */
 export function to_bytes(values) {
   let values$1 = $list.map(
     values,

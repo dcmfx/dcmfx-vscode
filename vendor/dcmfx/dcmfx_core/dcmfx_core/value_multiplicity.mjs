@@ -12,6 +12,10 @@ export class ValueMultiplicity extends $CustomType {
   }
 }
 
+/**
+ * Returns whether the given value lies in the range specified by this value
+ * multiplicity.
+ */
 export function contains(multiplicity, n) {
   return (n >= multiplicity.min) && (n <= $option.unwrap(
     multiplicity.max,
@@ -19,6 +23,10 @@ export function contains(multiplicity, n) {
   ));
 }
 
+/**
+ * Returns a value multiplicity as a human-readable string, e.g. "1-3", or
+ * "2-n".
+ */
 export function to_string(multiplicity) {
   let $ = (multiplicity.min === 1) && (isEqual(multiplicity.max, new Some(1)));
   if ($) {

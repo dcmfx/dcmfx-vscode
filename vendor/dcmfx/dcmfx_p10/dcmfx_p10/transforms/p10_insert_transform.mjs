@@ -29,6 +29,10 @@ class P10InsertTransform extends $CustomType {
   }
 }
 
+/**
+ * Creates a new transform for inserting data elements into the root data set
+ * of a stream of DICOM P10 tokens.
+ */
 export function new$(data_elements_to_insert) {
   let tags_to_insert = $data_set.tags(data_elements_to_insert);
   let filter_transform = $p10_filter_transform.new$(
@@ -46,8 +50,10 @@ export function new$(data_elements_to_insert) {
 }
 
 function prepend_data_element_tokens(data_element, path, acc) {
-  let tag = data_element[0];
-  let value = data_element[1];
+  let tag;
+  let value;
+  tag = data_element[0];
+  value = data_element[1];
   let $ = $p10_token.data_element_to_tokens(
     tag,
     value,
@@ -55,7 +61,10 @@ function prepend_data_element_tokens(data_element, path, acc) {
     acc,
     (acc, token) => { return new Ok(listPrepend(token, acc)); },
   );
-  if (!($ instanceof Ok)) {
+  let tokens;
+  if ($ instanceof Ok) {
+    tokens = $[0];
+  } else {
     throw makeError(
       "let_assert",
       FILEPATH,
@@ -72,10 +81,16 @@ function prepend_data_element_tokens(data_element, path, acc) {
       }
     )
   }
-  let tokens = $[0];
   return tokens;
 }
 
+/**
+ * If there are any remaining data elements for this transform to insert,
+ * returns their P10 tokens.
+ *
+ * These tokens are returned automatically when an end token is received, but
+ * in some circumstances may need to be requested manually.
+ */
 export function flush(transform) {
   let _block;
   let _pipe = transform.data_elements_to_insert;
@@ -93,13 +108,17 @@ export function flush(transform) {
   let tokens = _block;
   return [
     tokens,
-    (() => {
-      let _record = transform;
-      return new P10InsertTransform(toList([]), _record.filter_transform);
-    })(),
+    new P10InsertTransform(toList([]), transform.filter_transform),
   ];
 }
 
+/**
+ * Removes all data elements to insert off the list that have a tag value lower
+ * than the specified tag, converts them to P10 tokens, and prepends the tokens
+ * to the accumulator
+ * 
+ * @ignore
+ */
 function tokens_to_insert_before_tag(
   tag,
   path,
@@ -152,6 +171,10 @@ function tokens_to_insert_before_tag(
   }
 }
 
+/**
+ * Adds the next available token to a P10 insert transform and returns the
+ * resulting tokens.
+ */
 export function add_token(transform, token) {
   return $bool.guard(
     isEqual(transform.data_elements_to_insert, toList([])),
@@ -167,15 +190,14 @@ export function add_token(transform, token) {
       return $result.try$(
         add_token_result,
         (_use0) => {
-          let filter_result = _use0[0];
-          let filter_transform = _use0[1];
-          let _block;
-          let _record = transform;
-          _block = new P10InsertTransform(
-            _record.data_elements_to_insert,
+          let filter_result;
+          let filter_transform;
+          filter_result = _use0[0];
+          filter_transform = _use0[1];
+          let transform$1 = new P10InsertTransform(
+            transform.data_elements_to_insert,
             filter_transform,
           );
-          let transform$1 = _block;
           return $bool.guard(
             !filter_result,
             new Ok([toList([]), transform$1]),
@@ -196,19 +218,18 @@ export function add_token(transform, token) {
                         toList([]),
                       ),
                       (_use0) => {
-                        let tokens_to_insert = _use0[0];
-                        let data_elements_to_insert = _use0[1];
-                        let _block$1;
-                        let _record$1 = transform$1;
-                        _block$1 = new P10InsertTransform(
+                        let tokens_to_insert;
+                        let data_elements_to_insert;
+                        tokens_to_insert = _use0[0];
+                        data_elements_to_insert = _use0[1];
+                        let transform$2 = new P10InsertTransform(
                           data_elements_to_insert,
-                          _record$1.filter_transform,
+                          transform$1.filter_transform,
                         );
-                        let transform$2 = _block$1;
-                        let _block$2;
+                        let _block;
                         let _pipe = listPrepend(token, tokens_to_insert);
-                        _block$2 = $list.reverse(_pipe);
-                        let tokens = _block$2;
+                        _block = $list.reverse(_pipe);
+                        let tokens = _block;
                         return [tokens, transform$2];
                       },
                     );
@@ -224,30 +245,31 @@ export function add_token(transform, token) {
                         toList([]),
                       ),
                       (_use0) => {
-                        let tokens_to_insert = _use0[0];
-                        let data_elements_to_insert = _use0[1];
-                        let _block$1;
-                        let _record$1 = transform$1;
-                        _block$1 = new P10InsertTransform(
+                        let tokens_to_insert;
+                        let data_elements_to_insert;
+                        tokens_to_insert = _use0[0];
+                        data_elements_to_insert = _use0[1];
+                        let transform$2 = new P10InsertTransform(
                           data_elements_to_insert,
-                          _record$1.filter_transform,
+                          transform$1.filter_transform,
                         );
-                        let transform$2 = _block$1;
-                        let _block$2;
+                        let _block;
                         let _pipe = listPrepend(token, tokens_to_insert);
-                        _block$2 = $list.reverse(_pipe);
-                        let tokens = _block$2;
+                        _block = $list.reverse(_pipe);
+                        let tokens = _block;
                         return [tokens, transform$2];
                       },
                     );
                   } else if (token instanceof $p10_token.End) {
                     let $ = flush(transform$1);
-                    let tokens = $[0];
-                    let transform$2 = $[1];
-                    let _block$1;
+                    let tokens;
+                    let transform$2;
+                    tokens = $[0];
+                    transform$2 = $[1];
+                    let _block;
                     let _pipe = listPrepend(new $p10_token.End(), tokens);
-                    _block$1 = $list.reverse(_pipe);
-                    let tokens$1 = _block$1;
+                    _block = $list.reverse(_pipe);
+                    let tokens$1 = _block;
                     return new Ok([tokens$1, transform$2]);
                   } else {
                     return new Ok([toList([token]), transform$1]);

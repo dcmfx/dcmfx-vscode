@@ -14,6 +14,8 @@ import * as p10_json_transform from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/tr
 import * as p10_token from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_token.mjs";
 import * as p10_print_transform from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/transforms/p10_print_transform.mjs";
 import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
+import * as p10_read_config from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read_config.mjs";
+import * as transfer_syntax from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/transfer_syntax.mjs";
 import * as value_representation from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/value_representation.mjs";
 import * as value_multiplicity from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/value_multiplicity.mjs";
 import {
@@ -136,12 +138,16 @@ function* printDicom(
 ) {
   // Construct DICOM P10 read context with a max token size of 1 MiB to keep
   // the read context's memory usage low while printing the DICOM
-  let readContext = p10_read.new_read_context();
   const maxTokenSize = 1024 * 1024;
-  readContext = p10_read.with_config(
-    readContext,
-    new p10_read.P10ReadConfig(maxTokenSize, 0xfffffffe, 10_000, false),
+  const readConfig = new p10_read_config.P10ReadConfig(
+    maxTokenSize,
+    0xfffffffe,
+    10_000,
+    false,
+    false,
+    transfer_syntax.implicit_vr_little_endian,
   );
+  let readContext = p10_read.new_read_context(readConfig);
 
   // Construct print transform to convert the stream of DICOM P10 tokens into a
   // human-readable DICOM data set

@@ -30,6 +30,8 @@ export class DataEndedUnexpectedly extends _.CustomType {
   offset: number;
 }
 
+export class DicmPrefixNotPresent extends _.CustomType {}
+
 export class DataInvalid extends _.CustomType {
   constructor(
     when: string,
@@ -80,7 +82,7 @@ export class OtherError extends _.CustomType {
   details: string;
 }
 
-export type P10Error$ = TransferSyntaxNotSupported | SpecificCharacterSetInvalid | DataRequired | DataEndedUnexpectedly | DataInvalid | MaximumExceeded | TokenStreamInvalid | WriteAfterCompletion | FileStreamError | OtherError;
+export type P10Error$ = TransferSyntaxNotSupported | SpecificCharacterSetInvalid | DataRequired | DataEndedUnexpectedly | DicmPrefixNotPresent | DataInvalid | MaximumExceeded | TokenStreamInvalid | WriteAfterCompletion | FileStreamError | OtherError;
 
 export function name(error: P10Error$): string;
 

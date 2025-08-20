@@ -58,10 +58,38 @@ class Leading extends $CustomType {}
 
 class Trailing extends $CustomType {}
 
+/**
+ * Determines if a `String` is empty.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * is_empty("")
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * is_empty("the world")
+ * // -> False
+ * ```
+ */
 export function is_empty(str) {
   return str === "";
 }
 
+/**
+ * Reverses a `String`.
+ *
+ * This function has to iterate across the whole `String` so it runs in linear
+ * time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * reverse("stressed")
+ * // -> "desserts"
+ * ```
+ */
 export function reverse(string) {
   let _pipe = string;
   let _pipe$1 = $string_tree.from_string(_pipe);
@@ -69,6 +97,21 @@ export function reverse(string) {
   return $string_tree.to_string(_pipe$2);
 }
 
+/**
+ * Creates a new `String` by replacing all occurrences of a given substring.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * replace("www.example.com", each: ".", with: "-")
+ * // -> "www-example-com"
+ * ```
+ *
+ * ```gleam
+ * replace("a,b,c,d,e", each: ",", with: "/")
+ * // -> "a/b/c/d/e"
+ * ```
+ */
 export function replace(string, pattern, substitute) {
   let _pipe = string;
   let _pipe$1 = $string_tree.from_string(_pipe);
@@ -76,6 +119,23 @@ export function replace(string, pattern, substitute) {
   return $string_tree.to_string(_pipe$2);
 }
 
+/**
+ * Compares two `String`s to see which is "larger" by comparing their graphemes.
+ *
+ * This does not compare the size or length of the given `String`s.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * compare("Anthony", "Anthony")
+ * // -> order.Eq
+ * ```
+ *
+ * ```gleam
+ * compare("A", "B")
+ * // -> order.Lt
+ * ```
+ */
 export function compare(a, b) {
   let $ = a === b;
   if ($) {
@@ -90,6 +150,37 @@ export function compare(a, b) {
   }
 }
 
+/**
+ * Takes a substring given a start grapheme index and a length. Negative indexes
+ * are taken starting from the *end* of the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * slice(from: "gleam", at_index: 1, length: 2)
+ * // -> "le"
+ * ```
+ *
+ * ```gleam
+ * slice(from: "gleam", at_index: 1, length: 10)
+ * // -> "leam"
+ * ```
+ *
+ * ```gleam
+ * slice(from: "gleam", at_index: 10, length: 3)
+ * // -> ""
+ * ```
+ *
+ * ```gleam
+ * slice(from: "gleam", at_index: -2, length: 2)
+ * // -> "am"
+ * ```
+ *
+ * ```gleam
+ * slice(from: "gleam", at_index: -12, length: 2)
+ * // -> ""
+ * ```
+ */
 export function slice(string, idx, len) {
   let $ = len < 0;
   if ($) {
@@ -110,6 +201,16 @@ export function slice(string, idx, len) {
   }
 }
 
+/**
+ * Drops *n* graphemes from the end of a `String`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * drop_end(from: "Cigarette Smoking Man", up_to: 2)
+ * // -> "Cigarette Smoking M"
+ * ```
+ */
 export function drop_end(string, num_graphemes) {
   let $ = num_graphemes < 0;
   if ($) {
@@ -119,6 +220,20 @@ export function drop_end(string, num_graphemes) {
   }
 }
 
+/**
+ * Creates a new `String` by joining two `String`s together.
+ *
+ * This function copies both `String`s and runs in linear time. If you find
+ * yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
+ * module as it can append `String`s much faster!
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * append(to: "butter", suffix: "fly")
+ * // -> "butterfly"
+ * ```
+ */
 export function append(first, second) {
   return first + second;
 }
@@ -138,6 +253,20 @@ function concat_loop(loop$strings, loop$accumulator) {
   }
 }
 
+/**
+ * Creates a new `String` by joining many `String`s together.
+ *
+ * This function copies both `String`s and runs in linear time. If you find
+ * yourself joining `String`s frequently consider using the [`string_tree`](../gleam/string_tree.html)
+ * module as it can append `String`s much faster!
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * concat(["never", "the", "less"])
+ * // -> "nevertheless"
+ * ```
+ */
 export function concat(strings) {
   return concat_loop(strings, "");
 }
@@ -158,6 +287,18 @@ function repeat_loop(loop$string, loop$times, loop$acc) {
   }
 }
 
+/**
+ * Creates a new `String` by repeating a `String` a given number of times.
+ *
+ * This function runs in linear time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * repeat("ha", times: 3)
+ * // -> "hahaha"
+ * ```
+ */
 export function repeat(string, times) {
   return repeat_loop(string, times, "");
 }
@@ -179,6 +320,18 @@ function join_loop(loop$strings, loop$separator, loop$accumulator) {
   }
 }
 
+/**
+ * Joins many `String`s together with a given separator.
+ *
+ * This function runs in linear time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * join(["home","evan","Desktop"], with: "/")
+ * // -> "home/evan/Desktop"
+ * ```
+ */
 export function join(strings, separator) {
   if (strings instanceof $Empty) {
     return "";
@@ -196,6 +349,26 @@ function padding(size, pad_string) {
   return repeat(pad_string, num_pads) + slice(pad_string, 0, extra);
 }
 
+/**
+ * Pads the start of a `String` until it has a given length.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * pad_start("121", to: 5, with: ".")
+ * // -> "..121"
+ * ```
+ *
+ * ```gleam
+ * pad_start("121", to: 3, with: ".")
+ * // -> "121"
+ * ```
+ *
+ * ```gleam
+ * pad_start("121", to: 2, with: ".")
+ * // -> "121"
+ * ```
+ */
 export function pad_start(string, desired_length, pad_string) {
   let current_length = length(string);
   let to_pad_length = desired_length - current_length;
@@ -207,6 +380,26 @@ export function pad_start(string, desired_length, pad_string) {
   }
 }
 
+/**
+ * Pads the end of a `String` until it has a given length.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * pad_end("123", to: 5, with: ".")
+ * // -> "123.."
+ * ```
+ *
+ * ```gleam
+ * pad_end("123", to: 3, with: ".")
+ * // -> "123"
+ * ```
+ *
+ * ```gleam
+ * pad_end("123", to: 2, with: ".")
+ * // -> "123"
+ * ```
+ */
 export function pad_end(string, desired_length, pad_string) {
   let current_length = length(string);
   let to_pad_length = desired_length - current_length;
@@ -218,12 +411,37 @@ export function pad_end(string, desired_length, pad_string) {
   }
 }
 
+/**
+ * Removes whitespace on both sides of a `String`.
+ *
+ * Whitespace in this function is the set of nonbreakable whitespace
+ * codepoints, defined as Pattern_White_Space in [Unicode Standard Annex #31][1].
+ *
+ * [1]: https://unicode.org/reports/tr31/
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * trim("  hats  \n")
+ * // -> "hats"
+ * ```
+ */
 export function trim(string) {
   let _pipe = string;
   let _pipe$1 = trim_start(_pipe);
   return trim_end(_pipe$1);
 }
 
+/**
+ * Drops *n* graphemes from the start of a `String`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * drop_start(from: "The Lone Gunmen", up_to: 2)
+ * // -> "e Lone Gunmen"
+ * ```
+ */
 export function drop_start(loop$string, loop$num_graphemes) {
   while (true) {
     let string = loop$string;
@@ -260,6 +478,16 @@ function to_graphemes_loop(loop$string, loop$acc) {
   }
 }
 
+/**
+ * Creates a list of `String`s by splitting a given string on a given substring.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * split("home/gleam/desktop/", on: "/")
+ * // -> ["home", "gleam", "desktop", ""]
+ * ```
+ */
 export function split(x, substring) {
   if (substring === "") {
     return to_graphemes(x);
@@ -277,10 +505,42 @@ function do_to_utf_codepoints(string) {
   return $list.map(_pipe$1, unsafe_int_to_utf_codepoint);
 }
 
+/**
+ * Converts a `String` to a `List` of `UtfCodepoint`.
+ *
+ * See <https://en.wikipedia.org/wiki/Code_point> and
+ * <https://en.wikipedia.org/wiki/Unicode#Codespace_and_Code_Points> for an
+ * explanation on code points.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * "a" |> to_utf_codepoints
+ * // -> [UtfCodepoint(97)]
+ * ```
+ *
+ * ```gleam
+ * // Semantically the same as:
+ * // ["🏳", "️", "‍", "🌈"] or:
+ * // [waving_white_flag, variant_selector_16, zero_width_joiner, rainbow]
+ * "🏳️‍🌈" |> to_utf_codepoints
+ * // -> [
+ * //   UtfCodepoint(127987),
+ * //   UtfCodepoint(65039),
+ * //   UtfCodepoint(8205),
+ * //   UtfCodepoint(127752),
+ * // ]
+ * ```
+ */
 export function to_utf_codepoints(string) {
   return do_to_utf_codepoints(string);
 }
 
+/**
+ * Converts an integer to a `UtfCodepoint`.
+ *
+ * Returns an `Error` if the integer does not represent a valid UTF codepoint.
+ */
 export function utf_codepoint(value) {
   let i = value;
   if (i > 1_114_111) {
@@ -301,6 +561,22 @@ export function utf_codepoint(value) {
   }
 }
 
+/**
+ * Converts a `String` into `Option(String)` where an empty `String` becomes
+ * `None`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * to_option("")
+ * // -> None
+ * ```
+ *
+ * ```gleam
+ * to_option("hats")
+ * // -> Some("hats")
+ * ```
+ */
 export function to_option(string) {
   if (string === "") {
     return new None();
@@ -309,17 +585,50 @@ export function to_option(string) {
   }
 }
 
+/**
+ * Returns the first grapheme cluster in a given `String` and wraps it in a
+ * `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
+ * Otherwise, it returns `Ok(String)`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * first("")
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * first("icecream")
+ * // -> Ok("i")
+ * ```
+ */
 export function first(string) {
   let $ = pop_grapheme(string);
   if ($ instanceof Ok) {
     let first$1 = $[0][0];
     return new Ok(first$1);
   } else {
-    let e = $[0];
-    return new Error(e);
+    return $;
   }
 }
 
+/**
+ * Returns the last grapheme cluster in a given `String` and wraps it in a
+ * `Result(String, Nil)`. If the `String` is empty, it returns `Error(Nil)`.
+ * Otherwise, it returns `Ok(String)`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * last("")
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * last("icecream")
+ * // -> Ok("m")
+ * ```
+ */
 export function last(string) {
   let $ = pop_grapheme(string);
   if ($ instanceof Ok) {
@@ -332,11 +641,21 @@ export function last(string) {
       return new Ok(slice(rest, -1, 1));
     }
   } else {
-    let e = $[0];
-    return new Error(e);
+    return $;
   }
 }
 
+/**
+ * Creates a new `String` with the first grapheme in the input `String`
+ * converted to uppercase and the remaining graphemes to lowercase.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * capitalise("mamouna")
+ * // -> "Mamouna"
+ * ```
+ */
 export function capitalise(string) {
   let $ = pop_grapheme(string);
   if ($ instanceof Ok) {
@@ -348,6 +667,9 @@ export function capitalise(string) {
   }
 }
 
+/**
+ * Returns a `String` representation of a term in Gleam syntax.
+ */
 export function inspect(term) {
   let _pipe = do_inspect(term);
   return $string_tree.to_string(_pipe);

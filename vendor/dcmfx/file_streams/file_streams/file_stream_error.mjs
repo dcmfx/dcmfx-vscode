@@ -98,6 +98,11 @@ export class Exdev extends $CustomType {}
 
 export class Eof extends $CustomType {}
 
+/**
+ * Text data was encountered that can't be converted from/to the relevant
+ * text encoding. E.g. trying to write Chinese characters to a file stream
+ * opened with the `Latin1` encoding.
+ */
 export class NoTranslation extends $CustomType {
   constructor(from, to) {
     super();
@@ -108,6 +113,9 @@ export class NoTranslation extends $CustomType {
 
 export class InvalidUnicode extends $CustomType {}
 
+/**
+ * Returns a human-readable description of a file stream error.
+ */
 export function describe(error) {
   if (error instanceof Eacces) {
     return "Permission denied";

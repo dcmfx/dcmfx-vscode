@@ -29,15 +29,15 @@ export class UnableToDecode extends _.CustomType {
 
 export type DecodeError$ = UnexpectedEndOfInput | UnexpectedByte | UnexpectedSequence | UnableToDecode;
 
-export function parse<CAKA>(json: string, decoder: $decode.Decoder$<CAKA>): _.Result<
-  CAKA,
+export function parse<CAOO>(json: string, decoder: $decode.Decoder$<CAOO>): _.Result<
+  CAOO,
   DecodeError$
 >;
 
-export function parse_bits<CAKK>(
+export function parse_bits<CAOY>(
   json: _.BitArray,
-  decoder: $decode.Decoder$<CAKK>
-): _.Result<CAKK, DecodeError$>;
+  decoder: $decode.Decoder$<CAOY>
+): _.Result<CAOY, DecodeError$>;
 
 export function to_string(json: Json$): string;
 
@@ -53,22 +53,22 @@ export function float(input: number): Json$;
 
 export function null$(): Json$;
 
-export function nullable<CAKQ>(
-  input: $option.Option$<CAKQ>,
-  inner_type: (x0: CAKQ) => Json$
+export function nullable<CAPE>(
+  input: $option.Option$<CAPE>,
+  inner_type: (x0: CAPE) => Json$
 ): Json$;
 
 export function object(entries: _.List<[string, Json$]>): Json$;
 
 export function preprocessed_array(from: _.List<Json$>): Json$;
 
-export function array<CAKU>(
-  entries: _.List<CAKU>,
-  inner_type: (x0: CAKU) => Json$
+export function array<CAPI>(
+  entries: _.List<CAPI>,
+  inner_type: (x0: CAPI) => Json$
 ): Json$;
 
-export function dict<CAKY, CAKZ>(
-  dict: $dict.Dict$<CAKY, CAKZ>,
-  keys: (x0: CAKY) => string,
-  values: (x0: CAKZ) => Json$
+export function dict<CAPM, CAPN>(
+  dict: $dict.Dict$<CAPM, CAPN>,
+  keys: (x0: CAPM) => string,
+  values: (x0: CAPN) => Json$
 ): Json$;

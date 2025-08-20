@@ -43,18 +43,15 @@ function is_valid_host_within_brackets_char(char) {
 
 function parse_fragment(rest, pieces) {
   return new Ok(
-    (() => {
-      let _record = pieces;
-      return new Uri(
-        _record.scheme,
-        _record.userinfo,
-        _record.host,
-        _record.port,
-        _record.path,
-        _record.query,
-        new Some(rest),
-      );
-    })(),
+    new Uri(
+      pieces.scheme,
+      pieces.userinfo,
+      pieces.host,
+      pieces.port,
+      pieces.path,
+      pieces.query,
+      new Some(rest),
+    ),
   );
 }
 
@@ -76,38 +73,33 @@ function parse_query_with_question_mark_loop(
       } else {
         let rest = uri_string.slice(1);
         let query = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
-          _record.scheme,
-          _record.userinfo,
-          _record.host,
-          _record.port,
-          _record.path,
+        let pieces$1 = new Uri(
+          pieces.scheme,
+          pieces.userinfo,
+          pieces.host,
+          pieces.port,
+          pieces.path,
           new Some(query),
-          _record.fragment,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_fragment(rest, pieces$1);
       }
     } else if (uri_string === "") {
       return new Ok(
-        (() => {
-          let _record = pieces;
-          return new Uri(
-            _record.scheme,
-            _record.userinfo,
-            _record.host,
-            _record.port,
-            _record.path,
-            new Some(original),
-            _record.fragment,
-          );
-        })(),
+        new Uri(
+          pieces.scheme,
+          pieces.userinfo,
+          pieces.host,
+          pieces.port,
+          pieces.path,
+          new Some(original),
+          pieces.fragment,
+        ),
       );
     } else {
       let $ = pop_codeunit(uri_string);
-      let rest = $[1];
+      let rest;
+      rest = $[1];
       loop$original = original;
       loop$uri_string = rest;
       loop$pieces = pieces;
@@ -129,53 +121,45 @@ function parse_path_loop(loop$original, loop$uri_string, loop$pieces, loop$size)
     if (uri_string.startsWith("?")) {
       let rest = uri_string.slice(1);
       let path = codeunit_slice(original, 0, size);
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
-        _record.host,
-        _record.port,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
+        pieces.host,
+        pieces.port,
         path,
-        _record.query,
-        _record.fragment,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_query_with_question_mark(rest, pieces$1);
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
       let path = codeunit_slice(original, 0, size);
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
-        _record.host,
-        _record.port,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
+        pieces.host,
+        pieces.port,
         path,
-        _record.query,
-        _record.fragment,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_fragment(rest, pieces$1);
     } else if (uri_string === "") {
       return new Ok(
-        (() => {
-          let _record = pieces;
-          return new Uri(
-            _record.scheme,
-            _record.userinfo,
-            _record.host,
-            _record.port,
-            original,
-            _record.query,
-            _record.fragment,
-          );
-        })(),
+        new Uri(
+          pieces.scheme,
+          pieces.userinfo,
+          pieces.host,
+          pieces.port,
+          original,
+          pieces.query,
+          pieces.fragment,
+        ),
       );
     } else {
       let $ = pop_codeunit(uri_string);
-      let rest = $[1];
+      let rest;
+      rest = $[1];
       loop$original = original;
       loop$uri_string = rest;
       loop$pieces = pieces;
@@ -245,62 +229,50 @@ function parse_port_loop(loop$uri_string, loop$pieces, loop$port) {
       loop$port = port * 10 + 9;
     } else if (uri_string.startsWith("?")) {
       let rest = uri_string.slice(1);
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
-        _record.host,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
+        pieces.host,
         new Some(port),
-        _record.path,
-        _record.query,
-        _record.fragment,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_query_with_question_mark(rest, pieces$1);
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
-        _record.host,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
+        pieces.host,
         new Some(port),
-        _record.path,
-        _record.query,
-        _record.fragment,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_fragment(rest, pieces$1);
     } else if (uri_string.startsWith("/")) {
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
-        _record.host,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
+        pieces.host,
         new Some(port),
-        _record.path,
-        _record.query,
-        _record.fragment,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_path(uri_string, pieces$1);
     } else if (uri_string === "") {
       return new Ok(
-        (() => {
-          let _record = pieces;
-          return new Uri(
-            _record.scheme,
-            _record.userinfo,
-            _record.host,
-            new Some(port),
-            _record.path,
-            _record.query,
-            _record.fragment,
-          );
-        })(),
+        new Uri(
+          pieces.scheme,
+          pieces.userinfo,
+          pieces.host,
+          new Some(port),
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
+        ),
       );
     } else {
       return new Error(undefined);
@@ -369,84 +341,70 @@ function parse_host_outside_of_brackets_loop(
     let size = loop$size;
     if (uri_string === "") {
       return new Ok(
-        (() => {
-          let _record = pieces;
-          return new Uri(
-            _record.scheme,
-            _record.userinfo,
-            new Some(original),
-            _record.port,
-            _record.path,
-            _record.query,
-            _record.fragment,
-          );
-        })(),
+        new Uri(
+          pieces.scheme,
+          pieces.userinfo,
+          new Some(original),
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
+        ),
       );
     } else if (uri_string.startsWith(":")) {
       let host = codeunit_slice(original, 0, size);
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
         new Some(host),
-        _record.port,
-        _record.path,
-        _record.query,
-        _record.fragment,
+        pieces.port,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_port(uri_string, pieces$1);
     } else if (uri_string.startsWith("/")) {
       let host = codeunit_slice(original, 0, size);
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
         new Some(host),
-        _record.port,
-        _record.path,
-        _record.query,
-        _record.fragment,
+        pieces.port,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_path(uri_string, pieces$1);
     } else if (uri_string.startsWith("?")) {
       let rest = uri_string.slice(1);
       let host = codeunit_slice(original, 0, size);
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
         new Some(host),
-        _record.port,
-        _record.path,
-        _record.query,
-        _record.fragment,
+        pieces.port,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_query_with_question_mark(rest, pieces$1);
     } else if (uri_string.startsWith("#")) {
       let rest = uri_string.slice(1);
       let host = codeunit_slice(original, 0, size);
-      let _block;
-      let _record = pieces;
-      _block = new Uri(
-        _record.scheme,
-        _record.userinfo,
+      let pieces$1 = new Uri(
+        pieces.scheme,
+        pieces.userinfo,
         new Some(host),
-        _record.port,
-        _record.path,
-        _record.query,
-        _record.fragment,
+        pieces.port,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
       );
-      let pieces$1 = _block;
       return parse_fragment(rest, pieces$1);
     } else {
       let $ = pop_codeunit(uri_string);
-      let rest = $[1];
+      let rest;
+      rest = $[1];
       loop$original = original;
       loop$uri_string = rest;
       loop$pieces = pieces;
@@ -468,18 +426,15 @@ function parse_host_within_brackets_loop(
     let size = loop$size;
     if (uri_string === "") {
       return new Ok(
-        (() => {
-          let _record = pieces;
-          return new Uri(
-            _record.scheme,
-            _record.userinfo,
-            new Some(uri_string),
-            _record.port,
-            _record.path,
-            _record.query,
-            _record.fragment,
-          );
-        })(),
+        new Uri(
+          pieces.scheme,
+          pieces.userinfo,
+          new Some(uri_string),
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
+        ),
       );
     } else if (uri_string.startsWith("]")) {
       if (size === 0) {
@@ -488,18 +443,15 @@ function parse_host_within_brackets_loop(
       } else {
         let rest = uri_string.slice(1);
         let host = codeunit_slice(original, 0, size + 1);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
-          _record.scheme,
-          _record.userinfo,
+        let pieces$1 = new Uri(
+          pieces.scheme,
+          pieces.userinfo,
           new Some(host),
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_port(rest, pieces$1);
       }
     } else if (uri_string.startsWith("/")) {
@@ -507,18 +459,15 @@ function parse_host_within_brackets_loop(
         return parse_path(uri_string, pieces);
       } else {
         let host = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
-          _record.scheme,
-          _record.userinfo,
+        let pieces$1 = new Uri(
+          pieces.scheme,
+          pieces.userinfo,
           new Some(host),
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_path(uri_string, pieces$1);
       }
     } else if (uri_string.startsWith("?")) {
@@ -528,18 +477,15 @@ function parse_host_within_brackets_loop(
       } else {
         let rest = uri_string.slice(1);
         let host = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
-          _record.scheme,
-          _record.userinfo,
+        let pieces$1 = new Uri(
+          pieces.scheme,
+          pieces.userinfo,
           new Some(host),
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_query_with_question_mark(rest, pieces$1);
       }
     } else if (uri_string.startsWith("#")) {
@@ -549,24 +495,23 @@ function parse_host_within_brackets_loop(
       } else {
         let rest = uri_string.slice(1);
         let host = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
-          _record.scheme,
-          _record.userinfo,
+        let pieces$1 = new Uri(
+          pieces.scheme,
+          pieces.userinfo,
           new Some(host),
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_fragment(rest, pieces$1);
       }
     } else {
       let $ = pop_codeunit(uri_string);
-      let char = $[0];
-      let rest = $[1];
+      let char;
+      let rest;
+      char = $[0];
+      rest = $[1];
       let $1 = is_valid_host_within_brackets_char(char);
       if ($1) {
         loop$original = original;
@@ -597,33 +542,27 @@ function parse_host(uri_string, pieces) {
   if (uri_string.startsWith("[")) {
     return parse_host_within_brackets(uri_string, pieces);
   } else if (uri_string.startsWith(":")) {
-    let _block;
-    let _record = pieces;
-    _block = new Uri(
-      _record.scheme,
-      _record.userinfo,
+    let pieces$1 = new Uri(
+      pieces.scheme,
+      pieces.userinfo,
       new Some(""),
-      _record.port,
-      _record.path,
-      _record.query,
-      _record.fragment,
+      pieces.port,
+      pieces.path,
+      pieces.query,
+      pieces.fragment,
     );
-    let pieces$1 = _block;
     return parse_port(uri_string, pieces$1);
   } else if (uri_string === "") {
     return new Ok(
-      (() => {
-        let _record = pieces;
-        return new Uri(
-          _record.scheme,
-          _record.userinfo,
-          new Some(""),
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
-        );
-      })(),
+      new Uri(
+        pieces.scheme,
+        pieces.userinfo,
+        new Some(""),
+        pieces.port,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
+      ),
     );
   } else {
     return parse_host_outside_of_brackets(uri_string, pieces);
@@ -648,18 +587,15 @@ function parse_userinfo_loop(
       } else {
         let rest = uri_string.slice(1);
         let userinfo = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
-          _record.scheme,
+        let pieces$1 = new Uri(
+          pieces.scheme,
           new Some(userinfo),
-          _record.host,
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.host,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_host(rest, pieces$1);
       }
     } else if (uri_string === "") {
@@ -672,7 +608,8 @@ function parse_userinfo_loop(
       return parse_host(original, pieces);
     } else {
       let $ = pop_codeunit(uri_string);
-      let rest = $[1];
+      let rest;
+      rest = $[1];
       loop$original = original;
       loop$uri_string = rest;
       loop$pieces = pieces;
@@ -688,18 +625,15 @@ function parse_authority_pieces(string, pieces) {
 function parse_authority_with_slashes(uri_string, pieces) {
   if (uri_string === "//") {
     return new Ok(
-      (() => {
-        let _record = pieces;
-        return new Uri(
-          _record.scheme,
-          _record.userinfo,
-          new Some(""),
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
-        );
-      })(),
+      new Uri(
+        pieces.scheme,
+        pieces.userinfo,
+        new Some(""),
+        pieces.port,
+        pieces.path,
+        pieces.query,
+        pieces.fragment,
+      ),
     );
   } else if (uri_string.startsWith("//")) {
     let rest = uri_string.slice(2);
@@ -725,18 +659,15 @@ function parse_scheme_loop(
         return parse_authority_with_slashes(uri_string, pieces);
       } else {
         let scheme = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
+        let pieces$1 = new Uri(
           new Some($string.lowercase(scheme)),
-          _record.userinfo,
-          _record.host,
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.userinfo,
+          pieces.host,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_authority_with_slashes(uri_string, pieces$1);
       }
     } else if (uri_string.startsWith("?")) {
@@ -746,18 +677,15 @@ function parse_scheme_loop(
       } else {
         let rest = uri_string.slice(1);
         let scheme = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
+        let pieces$1 = new Uri(
           new Some($string.lowercase(scheme)),
-          _record.userinfo,
-          _record.host,
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.userinfo,
+          pieces.host,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_query_with_question_mark(rest, pieces$1);
       }
     } else if (uri_string.startsWith("#")) {
@@ -767,18 +695,15 @@ function parse_scheme_loop(
       } else {
         let rest = uri_string.slice(1);
         let scheme = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
+        let pieces$1 = new Uri(
           new Some($string.lowercase(scheme)),
-          _record.userinfo,
-          _record.host,
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.userinfo,
+          pieces.host,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_fragment(rest, pieces$1);
       }
     } else if (uri_string.startsWith(":")) {
@@ -787,38 +712,33 @@ function parse_scheme_loop(
       } else {
         let rest = uri_string.slice(1);
         let scheme = codeunit_slice(original, 0, size);
-        let _block;
-        let _record = pieces;
-        _block = new Uri(
+        let pieces$1 = new Uri(
           new Some($string.lowercase(scheme)),
-          _record.userinfo,
-          _record.host,
-          _record.port,
-          _record.path,
-          _record.query,
-          _record.fragment,
+          pieces.userinfo,
+          pieces.host,
+          pieces.port,
+          pieces.path,
+          pieces.query,
+          pieces.fragment,
         );
-        let pieces$1 = _block;
         return parse_authority_with_slashes(rest, pieces$1);
       }
     } else if (uri_string === "") {
       return new Ok(
-        (() => {
-          let _record = pieces;
-          return new Uri(
-            _record.scheme,
-            _record.userinfo,
-            _record.host,
-            _record.port,
-            original,
-            _record.query,
-            _record.fragment,
-          );
-        })(),
+        new Uri(
+          pieces.scheme,
+          pieces.userinfo,
+          pieces.host,
+          pieces.port,
+          original,
+          pieces.query,
+          pieces.fragment,
+        ),
       );
     } else {
       let $ = pop_codeunit(uri_string);
-      let rest = $[1];
+      let rest;
+      rest = $[1];
       loop$original = original;
       loop$uri_string = rest;
       loop$pieces = pieces;
@@ -833,6 +753,18 @@ function query_pair(pair) {
   );
 }
 
+/**
+ * Encodes a list of key value pairs as a URI query string.
+ *
+ * The opposite operation is `uri.parse_query`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * query_to_string([#("a", "1"), #("b", "2")])
+ * // -> "a=1&b=2"
+ * ```
+ */
 export function query_to_string(query) {
   let _pipe = query;
   let _pipe$1 = $list.map(_pipe, query_pair);
@@ -852,14 +784,12 @@ function remove_dot_segments_loop(loop$input, loop$accumulator) {
       let rest = input.tail;
       let _block;
       if (segment === "") {
-        let accumulator$1 = accumulator;
-        _block = accumulator$1;
+        _block = accumulator;
       } else if (segment === ".") {
-        let accumulator$1 = accumulator;
-        _block = accumulator$1;
+        _block = accumulator;
       } else if (segment === "..") {
         if (accumulator instanceof $Empty) {
-          _block = toList([]);
+          _block = accumulator;
         } else {
           let accumulator$1 = accumulator.tail;
           _block = accumulator$1;
@@ -880,10 +810,36 @@ function remove_dot_segments(input) {
   return remove_dot_segments_loop(input, toList([]));
 }
 
+/**
+ * Splits the path section of a URI into it's constituent segments.
+ *
+ * Removes empty segments and resolves dot-segments as specified in
+ * [section 5.2](https://www.ietf.org/rfc/rfc3986.html#section-5.2) of the RFC.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * path_segments("/users/1")
+ * // -> ["users" ,"1"]
+ * ```
+ */
 export function path_segments(path) {
   return remove_dot_segments($string.split(path, "/"));
 }
 
+/**
+ * Encodes a `Uri` value as a URI string.
+ *
+ * The opposite operation is `uri.parse`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * let uri = Uri(..empty, scheme: Some("https"), host: Some("example.com"))
+ * to_string(uri)
+ * // -> "https://example.com"
+ * ```
+ */
 export function to_string(uri) {
   let _block;
   let $ = uri.fragment;
@@ -907,14 +863,10 @@ export function to_string(uri) {
   let _block$2;
   let $2 = uri.host;
   let $3 = $string.starts_with(uri.path, "/");
-  if (!$3) {
-    if ($2 instanceof Some) {
-      let host = $2[0];
-      if (host !== "") {
-        _block$2 = listPrepend("/", parts$2);
-      } else {
-        _block$2 = parts$2;
-      }
+  if (!$3 && $2 instanceof Some) {
+    let host = $2[0];
+    if (host !== "") {
+      _block$2 = listPrepend("/", parts$2);
     } else {
       _block$2 = parts$2;
     }
@@ -925,13 +877,9 @@ export function to_string(uri) {
   let _block$3;
   let $4 = uri.host;
   let $5 = uri.port;
-  if ($5 instanceof Some) {
-    if ($4 instanceof Some) {
-      let port = $5[0];
-      _block$3 = listPrepend(":", listPrepend($int.to_string(port), parts$3));
-    } else {
-      _block$3 = parts$3;
-    }
+  if ($5 instanceof Some && $4 instanceof Some) {
+    let port = $5[0];
+    _block$3 = listPrepend(":", listPrepend($int.to_string(port), parts$3));
   } else {
     _block$3 = parts$3;
   }
@@ -981,71 +929,53 @@ export function to_string(uri) {
   return $string.concat(parts$5);
 }
 
+/**
+ * Fetches the origin of a URI.
+ *
+ * Returns the origin of a uri as defined in
+ * [RFC 6454](https://tools.ietf.org/html/rfc6454)
+ *
+ * The supported URI schemes are `http` and `https`.
+ * URLs without a scheme will return `Error`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * let assert Ok(uri) = parse("https://example.com/path?foo#bar")
+ * origin(uri)
+ * // -> Ok("https://example.com")
+ * ```
+ */
 export function origin(uri) {
-  let scheme = uri.scheme;
-  let host = uri.host;
-  let port = uri.port;
-  if (scheme instanceof Some) {
-    if (host instanceof Some) {
-      let $ = scheme[0];
-      if ($ === "https") {
-        if (isEqual(port, new Some(443))) {
-          let h = host[0];
-          return new Ok($string.concat(toList(["https://", h])));
+  let scheme;
+  let host;
+  let port;
+  scheme = uri.scheme;
+  host = uri.host;
+  port = uri.port;
+  if (scheme instanceof Some && host instanceof Some) {
+    let $ = scheme[0];
+    if ($ === "https" && isEqual(port, new Some(443))) {
+      let h = host[0];
+      return new Ok($string.concat(toList(["https://", h])));
+    } else if ($ === "http" && isEqual(port, new Some(80))) {
+      let h = host[0];
+      return new Ok($string.concat(toList(["http://", h])));
+    } else {
+      let s = $;
+      if ((s === "http") || (s === "https")) {
+        let h = host[0];
+        if (port instanceof Some) {
+          let p = port[0];
+          return new Ok(
+            $string.concat(toList([s, "://", h, ":", $int.to_string(p)])),
+          );
         } else {
-          let s = $;
-          if ((s === "http") || (s === "https")) {
-            let h = host[0];
-            if (port instanceof Some) {
-              let p = port[0];
-              return new Ok(
-                $string.concat(toList([s, "://", h, ":", $int.to_string(p)])),
-              );
-            } else {
-              return new Ok($string.concat(toList([s, "://", h])));
-            }
-          } else {
-            return new Error(undefined);
-          }
-        }
-      } else if ($ === "http") {
-        if (isEqual(port, new Some(80))) {
-          let h = host[0];
-          return new Ok($string.concat(toList(["http://", h])));
-        } else {
-          let s = $;
-          if ((s === "http") || (s === "https")) {
-            let h = host[0];
-            if (port instanceof Some) {
-              let p = port[0];
-              return new Ok(
-                $string.concat(toList([s, "://", h, ":", $int.to_string(p)])),
-              );
-            } else {
-              return new Ok($string.concat(toList([s, "://", h])));
-            }
-          } else {
-            return new Error(undefined);
-          }
+          return new Ok($string.concat(toList([s, "://", h])));
         }
       } else {
-        let s = $;
-        if ((s === "http") || (s === "https")) {
-          let h = host[0];
-          if (port instanceof Some) {
-            let p = port[0];
-            return new Ok(
-              $string.concat(toList([s, "://", h, ":", $int.to_string(p)])),
-            );
-          } else {
-            return new Ok($string.concat(toList([s, "://", h])));
-          }
-        } else {
-          return new Error(undefined);
-        }
+        return new Error(undefined);
       }
-    } else {
-      return new Error(undefined);
     }
   } else {
     return new Error(undefined);
@@ -1060,6 +990,13 @@ function join_segments(segments) {
   return $string.join(listPrepend("", segments), "/");
 }
 
+/**
+ * Resolves a URI with respect to the given base URI.
+ *
+ * The base URI must be an absolute URI or this function will return an error.
+ * The algorithm for merging uris is described in
+ * [RFC 3986](https://tools.ietf.org/html/rfc3986#section-5.2).
+ */
 export function merge(base, relative) {
   let $ = base.host;
   if ($ instanceof Some) {
@@ -1106,8 +1043,10 @@ export function merge(base, relative) {
           _block = [path, relative.query];
         }
         let $3 = _block;
-        let new_path = $3[0];
-        let new_query = $3[1];
+        let new_path;
+        let new_query;
+        new_path = $3[0];
+        new_query = $3[1];
         let resolved = new Uri(
           base.scheme,
           new None(),
@@ -1127,6 +1066,24 @@ export function merge(base, relative) {
   }
 }
 
+/**
+ * Constant representing an empty URI, equivalent to "".
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * let uri = Uri(..empty, scheme: Some("https"), host: Some("example.com"))
+ * // -> Uri(
+ * //   scheme: Some("https"),
+ * //   userinfo: None,
+ * //   host: Some("example.com"),
+ * //   port: None,
+ * //   path: "",
+ * //   query: None,
+ * //   fragment: None,
+ * // )
+ * ```
+ */
 export const empty = /* @__PURE__ */ new Uri(
   /* @__PURE__ */ new None(),
   /* @__PURE__ */ new None(),
@@ -1137,6 +1094,29 @@ export const empty = /* @__PURE__ */ new Uri(
   /* @__PURE__ */ new None(),
 );
 
+/**
+ * Parses a compliant URI string into the `Uri` Type.
+ * If the string is not a valid URI string then an error is returned.
+ *
+ * The opposite operation is `uri.to_string`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * parse("https://example.com:1234/a/b?query=true#fragment")
+ * // -> Ok(
+ * //   Uri(
+ * //     scheme: Some("https"),
+ * //     userinfo: None,
+ * //     host: Some("example.com"),
+ * //     port: Some(1234),
+ * //     path: "/a/b",
+ * //     query: Some("query=true"),
+ * //     fragment: Some("fragment")
+ * //   )
+ * // )
+ * ```
+ */
 export function parse(uri_string) {
   return parse_scheme_loop(uri_string, uri_string, empty, 0);
 }

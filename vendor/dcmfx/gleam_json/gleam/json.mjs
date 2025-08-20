@@ -60,6 +60,27 @@ function do_parse(json, decoder) {
   );
 }
 
+/**
+ * Decode a JSON string into dynamically typed data which can be decoded into
+ * typed data with the `gleam/dynamic` module.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > parse("[1,2,3]", decode.list(of: decode.int))
+ * Ok([1, 2, 3])
+ * ```
+ *
+ * ```gleam
+ * > parse("[", decode.list(of: decode.int))
+ * Error(UnexpectedEndOfInput)
+ * ```
+ *
+ * ```gleam
+ * > parse("1", decode.string)
+ * Error(UnableToDecode([decode.DecodeError("String", "Int", [])]))
+ * ```
+ */
 export function parse(json, decoder) {
   return do_parse(json, decoder);
 }
@@ -74,6 +95,27 @@ function decode_to_dynamic(json) {
   }
 }
 
+/**
+ * Decode a JSON bit string into dynamically typed data which can be decoded
+ * into typed data with the `gleam/dynamic` module.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > parse_bits(<<"[1,2,3]">>, decode.list(of: decode.int))
+ * Ok([1, 2, 3])
+ * ```
+ *
+ * ```gleam
+ * > parse_bits(<<"[">>, decode.list(of: decode.int))
+ * Error(UnexpectedEndOfInput)
+ * ```
+ *
+ * ```gleam
+ * > parse_bits(<<"1">>, decode.string)
+ * Error(UnableToDecode([decode.DecodeError("String", "Int", [])])),
+ * ```
+ */
 export function parse_bits(json, decoder) {
   return $result.then$(
     decode_to_dynamic(json),
@@ -87,30 +129,108 @@ export function parse_bits(json, decoder) {
   );
 }
 
+/**
+ * Convert a JSON value into a string.
+ *
+ * Where possible prefer the `to_string_tree` function as it is faster than
+ * this function, and BEAM VM IO is optimised for sending `StringTree` data.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(array([1, 2, 3], of: int))
+ * "[1,2,3]"
+ * ```
+ */
 export function to_string(json) {
   return do_to_string(json);
 }
 
+/**
+ * Encode a string into JSON, using normal JSON escaping.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(string("Hello!"))
+ * "\"Hello!\""
+ * ```
+ */
 export function string(input) {
   return do_string(input);
 }
 
+/**
+ * Encode a bool into JSON.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(bool(False))
+ * "false"
+ * ```
+ */
 export function bool(input) {
   return do_bool(input);
 }
 
+/**
+ * Encode an int into JSON.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(int(50))
+ * "50"
+ * ```
+ */
 export function int(input) {
   return do_int(input);
 }
 
+/**
+ * Encode a float into JSON.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(float(4.7))
+ * "4.7"
+ * ```
+ */
 export function float(input) {
   return do_float(input);
 }
 
+/**
+ * The JSON value null.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(null())
+ * "null"
+ * ```
+ */
 export function null$() {
   return do_null();
 }
 
+/**
+ * Encode an optional value into JSON, using null if it is the `None` variant.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(nullable(Some(50), of: int))
+ * "50"
+ * ```
+ *
+ * ```gleam
+ * > to_string(nullable(None, of: int))
+ * "null"
+ * ```
+ */
 export function nullable(input, inner_type) {
   if (input instanceof Some) {
     let value = input[0];
@@ -120,20 +240,64 @@ export function nullable(input, inner_type) {
   }
 }
 
+/**
+ * Encode a list of key-value pairs into a JSON object.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(object([
+ *   #("game", string("Pac-Man")),
+ *   #("score", int(3333360)),
+ * ]))
+ * "{\"game\":\"Pac-Mac\",\"score\":3333360}"
+ * ```
+ */
 export function object(entries) {
   return do_object(entries);
 }
 
+/**
+ * Encode a list of JSON values into a JSON array.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(preprocessed_array([int(1), float(2.0), string("3")]))
+ * "[1, 2.0, \"3\"]"
+ * ```
+ */
 export function preprocessed_array(from) {
   return do_preprocessed_array(from);
 }
 
+/**
+ * Encode a list into a JSON array.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(array([1, 2, 3], of: int))
+ * "[1, 2, 3]"
+ * ```
+ */
 export function array(entries, inner_type) {
   let _pipe = entries;
   let _pipe$1 = $list.map(_pipe, inner_type);
   return preprocessed_array(_pipe$1);
 }
 
+/**
+ * Encode a Dict into a JSON object using the supplied functions to encode
+ * the keys and the values respectively.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * > to_string(dict(dict.from_list([ #(3, 3.0), #(4, 4.0)]), int.to_string, float)
+ * "{\"3\": 3.0, \"4\": 4.0}"
+ * ```
+ */
 export function dict(dict, keys, values) {
   return object(
     $dict.fold(

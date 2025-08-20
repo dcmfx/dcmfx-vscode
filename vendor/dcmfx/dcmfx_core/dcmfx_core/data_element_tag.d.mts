@@ -10,6 +10,8 @@ export class DataElementTag extends _.CustomType {
 
 export type DataElementTag$ = DataElementTag;
 
+export function is_file_meta_information(tag: DataElementTag$): boolean;
+
 export function is_private(tag: DataElementTag$): boolean;
 
 export function is_private_creator(tag: DataElementTag$): boolean;

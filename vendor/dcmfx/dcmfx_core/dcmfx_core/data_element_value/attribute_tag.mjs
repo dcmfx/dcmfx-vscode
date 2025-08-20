@@ -10,6 +10,9 @@ import { Ok, Error, makeError, toBitArray, bitArraySliceToInt, sizedInt } from "
 
 const FILEPATH = "src/dcmfx_core/data_element_value/attribute_tag.gleam";
 
+/**
+ * Converts an `AttributeTag` value into data element tags.
+ */
 export function from_bytes(bytes) {
   let _pipe = bytes;
   let _pipe$1 = $bit_array_utils.to_uint32_list(_pipe);
@@ -26,7 +29,12 @@ export function from_bytes(bytes) {
         _capture,
         (tag) => {
           let $ = toBitArray([sizedInt(tag, 32, false)]);
-          if ($.bitSize !== 32) {
+          let group;
+          let element;
+          if ($.bitSize >= 16 && $.bitSize === 32) {
+            group = bitArraySliceToInt($, 0, 16, false, false);
+            element = bitArraySliceToInt($, 16, 32, false, false);
+          } else {
             throw makeError(
               "let_assert",
               FILEPATH,
@@ -43,8 +51,6 @@ export function from_bytes(bytes) {
               }
             )
           }
-          let group = bitArraySliceToInt($, 0, 16, false, false);
-          let element = bitArraySliceToInt($, 16, 32, false, false);
           return new DataElementTag(group, element);
         },
       );
@@ -52,6 +58,9 @@ export function from_bytes(bytes) {
   );
 }
 
+/**
+ * Converts data element tags into an `AttributeTag` value.
+ */
 export function to_bytes(values) {
   let _pipe = values;
   let _pipe$1 = $list.map(

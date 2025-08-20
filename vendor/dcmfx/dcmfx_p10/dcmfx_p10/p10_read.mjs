@@ -22,35 +22,27 @@ import { DataElementHeader } from "../dcmfx_p10/internal/data_element_header.mjs
 import * as $p10_location from "../dcmfx_p10/internal/p10_location.mjs";
 import * as $value_length from "../dcmfx_p10/internal/value_length.mjs";
 import * as $p10_error from "../dcmfx_p10/p10_error.mjs";
+import * as $p10_read_config from "../dcmfx_p10/p10_read_config.mjs";
 import * as $p10_token from "../dcmfx_p10/p10_token.mjs";
 import {
   Ok,
   Error,
   toList,
+  prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
-  divideInt,
   isEqual,
   toBitArray,
   bitArraySlice,
   bitArraySliceToInt,
   sizedInt,
+  stringBits,
 } from "../gleam.mjs";
 
 const FILEPATH = "src/dcmfx_p10/p10_read.gleam";
 
-export class P10ReadConfig extends $CustomType {
-  constructor(max_token_size, max_string_size, max_sequence_depth, require_ordered_data_elements) {
-    super();
-    this.max_token_size = max_token_size;
-    this.max_string_size = max_string_size;
-    this.max_sequence_depth = max_sequence_depth;
-    this.require_ordered_data_elements = require_ordered_data_elements;
-  }
-}
-
 class P10ReadContext extends $CustomType {
-  constructor(config, stream, next_action, transfer_syntax, path, location) {
+  constructor(config, stream, next_action, transfer_syntax, path, location, has_emitted_specific_character_set_data_element) {
     super();
     this.config = config;
     this.stream = stream;
@@ -58,6 +50,7 @@ class P10ReadContext extends $CustomType {
     this.transfer_syntax = transfer_syntax;
     this.path = path;
     this.location = location;
+    this.has_emitted_specific_character_set_data_element = has_emitted_specific_character_set_data_element;
   }
 }
 
@@ -90,62 +83,41 @@ class ReadPixelDataItem extends $CustomType {
   }
 }
 
-export function default_config() {
-  return new P10ReadConfig(0xFFFFFFFE, 0xFFFFFFFE, 10_000, true);
-}
-
-export function with_config(context, config) {
-  let max_token_size = (divideInt(config.max_token_size, 8)) * 8;
-  let max_string_size = $int.max(config.max_string_size, max_token_size);
-  let max_sequence_depth = $int.max(0, config.max_sequence_depth);
-  let max_read_size = $int.max(config.max_string_size, config.max_token_size);
-  let _block;
-  let _record = config;
-  _block = new P10ReadConfig(
-    max_token_size,
-    max_string_size,
-    max_sequence_depth,
-    _record.require_ordered_data_elements,
+/**
+ * Creates a new read context for reading DICOM P10 data.
+ */
+export function new_read_context(config) {
+  let config$1 = $option.unwrap(config, $p10_read_config.new$());
+  let max_read_size = $int.max(
+    config$1.max_string_size,
+    config$1.max_token_size,
   );
-  let config$1 = _block;
-  let _record$1 = context;
   return new P10ReadContext(
     config$1,
     $byte_stream.new$(max_read_size),
-    _record$1.next_action,
-    _record$1.transfer_syntax,
-    _record$1.path,
-    _record$1.location,
+    new ReadFilePreambleAndDICMPrefix(),
+    config$1.default_transfer_syntax,
+    $data_set_path.new$(),
+    $p10_location.new$(),
+    false,
   );
 }
 
-export function set_fallback_transfer_syntax(context, transfer_syntax) {
-  let _record = context;
-  return new P10ReadContext(
-    _record.config,
-    _record.stream,
-    _record.next_action,
-    transfer_syntax,
-    _record.path,
-    _record.location,
-  );
-}
-
+/**
+ * Returns the transfer syntax for a P10 read context. The default transfer
+ * syntax is specified in the context's `P10ReadConfig`, and is updated when a
+ * transfer syntax is read from the File Meta Information.
+ */
 export function transfer_syntax(context) {
   return context.transfer_syntax;
 }
 
-export function new_read_context() {
-  return new P10ReadContext(
-    default_config(),
-    $byte_stream.new$(0xFFFFFFFE),
-    new ReadFilePreambleAndDICMPrefix(),
-    $transfer_syntax.implicit_vr_little_endian,
-    $data_set_path.new$(),
-    $p10_location.new$(),
-  );
-}
-
+/**
+ * Checks whether there is a delimiter token that needs to be emitted, and if
+ * so then returns it.
+ * 
+ * @ignore
+ */
 function next_delimiter_token(context) {
   let bytes_read = $byte_stream.bytes_read(context.stream);
   let $ = $p10_location.next_delimiter_token(context.location, bytes_read);
@@ -155,67 +127,96 @@ function next_delimiter_token(context) {
     let _block;
     if (token instanceof $p10_token.SequenceDelimiter) {
       let $1 = $data_set_path.pop(context.path);
-      if (!($1 instanceof Ok)) {
+      let path;
+      if ($1 instanceof Ok) {
+        path = $1[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
           "dcmfx_p10/p10_read",
-          341,
+          248,
           "next_delimiter_token",
           "Pattern match failed, no pattern matched the value.",
           {
             value: $1,
-            start: 12167,
-            end: 12220,
-            pattern_start: 12178,
-            pattern_end: 12186
+            start: 8724,
+            end: 8777,
+            pattern_start: 8735,
+            pattern_end: 8743
           }
         )
       }
-      let path = $1[0];
       _block = path;
     } else if (token instanceof $p10_token.SequenceItemDelimiter) {
       let $1 = $data_set_path.pop(context.path);
-      if (!($1 instanceof Ok)) {
+      let path;
+      if ($1 instanceof Ok) {
+        path = $1[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
           "dcmfx_p10/p10_read",
-          341,
+          248,
           "next_delimiter_token",
           "Pattern match failed, no pattern matched the value.",
           {
             value: $1,
-            start: 12167,
-            end: 12220,
-            pattern_start: 12178,
-            pattern_end: 12186
+            start: 8724,
+            end: 8777,
+            pattern_start: 8735,
+            pattern_end: 8743
           }
         )
       }
-      let path = $1[0];
       _block = path;
     } else {
       _block = context.path;
     }
     let new_path = _block;
-    let _block$1;
-    let _record = context;
-    _block$1 = new P10ReadContext(
-      _record.config,
-      _record.stream,
-      _record.next_action,
-      _record.transfer_syntax,
+    let new_context = new P10ReadContext(
+      context.config,
+      context.stream,
+      context.next_action,
+      context.transfer_syntax,
       new_path,
       new_location,
+      context.has_emitted_specific_character_set_data_element,
     );
-    let new_context = _block$1;
     return [toList([token]), new_context];
   } else {
     return [toList([]), context];
   }
 }
 
+/**
+ * Returns the two tokens for the '(0008,0005) Specific Character Set' data
+ * element that specifies UTF-8 (ISO_IR 192).
+ * 
+ * @ignore
+ */
+function specific_character_set_utf8_tokens() {
+  let tag = $dictionary.specific_character_set.tag;
+  let vr = new $value_representation.CodeString();
+  let data = toBitArray([stringBits("ISO_IR 192")]);
+  return [
+    new $p10_token.DataElementHeader(
+      tag,
+      vr,
+      $bit_array.byte_size(data),
+      $data_set_path.new$(),
+    ),
+    new $p10_token.DataElementValueBytes(tag, vr, data, 0),
+  ];
+}
+
+/**
+ * Checks that the specified data element tag is greater than the previous one
+ * at the current P10 location.
+ * 
+ * @ignore
+ */
 function check_data_element_ordering(context, header) {
   let _block;
   let $ = context.config.require_ordered_data_elements;
@@ -242,19 +243,29 @@ function check_data_element_ordering(context, header) {
   return $result.map(
     new_location,
     (new_location) => {
-      let _record = context;
       return new P10ReadContext(
-        _record.config,
-        _record.stream,
-        _record.next_action,
-        _record.transfer_syntax,
-        _record.path,
+        context.config,
+        context.stream,
+        context.next_action,
+        context.transfer_syntax,
+        context.path,
         new_location,
+        context.has_emitted_specific_character_set_data_element,
       );
     },
   );
 }
 
+/**
+ * Returns the transfer syntax that should be used to decode the current data.
+ * This will always be the transfer syntax specified in the File Meta
+ * Information, except in the case of 'Implicit VR Little Endian' being forced
+ * by an explicit VR of `UN` (Unknown) that has an undefined length.
+ *
+ * Ref: DICOM Correction Proposal CP-246.
+ * 
+ * @ignore
+ */
 function active_transfer_syntax(context) {
   let $ = $p10_location.is_implicit_vr_forced(context.location);
   if ($) {
@@ -314,6 +325,12 @@ function process_materialized_data_element(context, tag, vr, value_bytes) {
   );
 }
 
+/**
+ * Takes an error from the byte stream and maps it through to a P10 error for
+ * the passed context.
+ * 
+ * @ignore
+ */
 function map_byte_stream_error(context, error, when) {
   let offset = $byte_stream.bytes_read(context.stream);
   if (error instanceof $byte_stream.ReadOversized) {
@@ -337,22 +354,26 @@ function map_byte_stream_error(context, error, when) {
   }
 }
 
+/**
+ * Writes raw DICOM P10 bytes to a read context that will be parsed into
+ * DICOM P10 tokens by subsequent calls to `read_tokens()`. If `done` is true
+ * this indicates the end of the incoming DICOM P10 data to be parsed, after
+ * which any further calls to this function will error.
+ */
 export function write_bytes(context, bytes, done) {
   let $ = $byte_stream.write(context.stream, bytes, done);
   if ($ instanceof Ok) {
     let stream = $[0];
     return new Ok(
-      (() => {
-        let _record = context;
-        return new P10ReadContext(
-          _record.config,
-          stream,
-          _record.next_action,
-          _record.transfer_syntax,
-          _record.path,
-          _record.location,
-        );
-      })(),
+      new P10ReadContext(
+        context.config,
+        stream,
+        context.next_action,
+        context.transfer_syntax,
+        context.path,
+        context.location,
+        context.has_emitted_specific_character_set_data_element,
+      ),
     );
   } else {
     let e = $[0];
@@ -366,53 +387,65 @@ export function write_bytes(context, bytes, done) {
   }
 }
 
+/**
+ * Reads the 128-byte File Preamble and the 4-byte `DICM` prefix following it.
+ * If the `DICM` bytes aren't present at the expected offset then it is
+ * assumed that the File Preamble is not present in the input, and a File
+ * Preamble containing all zero bytes is returned.
+ * 
+ * @ignore
+ */
 function read_file_preamble_and_dicm_prefix_token(context) {
   let _block;
   let $ = $byte_stream.peek(context.stream, 132);
   if ($ instanceof Ok) {
     let data = $[0];
-    if (data.bitSize >= 1024) {
-      if (data.bitSize === 1056) {
-        if (data.byteAt(128) === 68 &&
-          data.byteAt(129) === 73 &&
-          data.byteAt(130) === 67 &&
-          data.byteAt(131) === 77) {
-          let preamble = bitArraySlice(data, 0, 1024);
-          let $1 = $byte_stream.read(context.stream, 132);
-          if (!($1 instanceof Ok)) {
-            throw makeError(
-              "let_assert",
-              FILEPATH,
-              "dcmfx_p10/p10_read",
-              369,
-              "read_file_preamble_and_dicm_prefix_token",
-              "Pattern match failed, no pattern matched the value.",
-              {
-                value: $1,
-                start: 13039,
-                end: 13104,
-                pattern_start: 13050,
-                pattern_end: 13064
-              }
-            )
-          }
-          let new_stream = $1[0];
-          _block = new Ok([preamble, new_stream[1]]);
-        } else {
-          _block = new Ok(
-            [toBitArray([sizedInt(0, 1024, true)]), context.stream],
-          );
-        }
+    let $1 = context.config.require_dicm_prefix;
+    if (
+      data.bitSize >= 1024 &&
+      data.bitSize === 1056 &&
+      data.byteAt(128) === 68 &&
+        data.byteAt(129) === 73 &&
+        data.byteAt(130) === 67 &&
+        data.byteAt(131) === 77
+    ) {
+      let preamble = bitArraySlice(data, 0, 1024);
+      let $2 = $byte_stream.read(context.stream, 132);
+      let new_stream;
+      if ($2 instanceof Ok) {
+        new_stream = $2[0];
       } else {
-        _block = new Ok([toBitArray([sizedInt(0, 1024, true)]), context.stream]);
+        throw makeError(
+          "let_assert",
+          FILEPATH,
+          "dcmfx_p10/p10_read",
+          276,
+          "read_file_preamble_and_dicm_prefix_token",
+          "Pattern match failed, no pattern matched the value.",
+          {
+            value: $2,
+            start: 9635,
+            end: 9700,
+            pattern_start: 9646,
+            pattern_end: 9660
+          }
+        )
       }
+      _block = new Ok([preamble, new_stream[1]]);
+    } else if ($1) {
+      _block = new Error(new $p10_error.DicmPrefixNotPresent());
     } else {
       _block = new Ok([toBitArray([sizedInt(0, 1024, true)]), context.stream]);
     }
   } else {
     let $1 = $[0];
     if ($1 instanceof $byte_stream.DataEnd) {
-      _block = new Ok([toBitArray([sizedInt(0, 1024, true)]), context.stream]);
+      let $2 = context.config.require_dicm_prefix;
+      if ($2) {
+        _block = new Error(new $p10_error.DicmPrefixNotPresent());
+      } else {
+        _block = new Ok([toBitArray([sizedInt(0, 1024, true)]), context.stream]);
+      }
     } else {
       let e = $1;
       _block = new Error(
@@ -424,20 +457,20 @@ function read_file_preamble_and_dicm_prefix_token(context) {
   return $result.try$(
     preamble_and_stream,
     (_use0) => {
-      let preamble = _use0[0];
-      let new_stream = _use0[1];
+      let preamble;
+      let new_stream;
+      preamble = _use0[0];
+      new_stream = _use0[1];
       let token = new $p10_token.FilePreambleAndDICMPrefix(preamble);
-      let _block$1;
-      let _record = context;
-      _block$1 = new P10ReadContext(
-        _record.config,
+      let new_context = new P10ReadContext(
+        context.config,
         new_stream,
         new ReadFileMetaInformation($byte_stream.bytes_read(new_stream)),
-        _record.transfer_syntax,
-        _record.path,
-        _record.location,
+        context.transfer_syntax,
+        context.path,
+        context.location,
+        context.has_emitted_specific_character_set_data_element,
       );
-      let new_context = _block$1;
       return new Ok([toList([token]), new_context]);
     },
   );
@@ -477,39 +510,56 @@ function read_file_meta_information_data_set(
       return $result.try$(
         data,
         (data) => {
-          if (data.bitSize < 48 || (data.bitSize - 48) % 8 !== 0) {
+          let group;
+          let element;
+          let vr_byte_0;
+          let vr_byte_1;
+          if (
+            data.bitSize >= 16 &&
+            data.bitSize >= 32 &&
+            data.bitSize >= 40 &&
+            data.bitSize >= 48 &&
+            (data.bitSize - 48) % 8 === 0
+          ) {
+            group = bitArraySliceToInt(data, 0, 16, false, false);
+            element = bitArraySliceToInt(data, 16, 32, false, false);
+            vr_byte_0 = data.byteAt(4);
+            vr_byte_1 = data.byteAt(5);
+          } else {
             throw makeError(
               "let_assert",
               FILEPATH,
               "dcmfx_p10/p10_read",
-              484,
+              399,
               "read_file_meta_information_data_set",
               "Pattern match failed, no pattern matched the value.",
               {
                 value: data,
-                start: 16703,
-                end: 16833,
-                pattern_start: 16714,
-                pattern_end: 16826
+                start: 13601,
+                end: 13731,
+                pattern_start: 13612,
+                pattern_end: 13724
               }
             )
           }
-          let group = bitArraySliceToInt(data, 0, 16, false, false);
-          let element = bitArraySliceToInt(data, 16, 32, false, false);
-          let vr_byte_0 = data.byteAt(4);
-          let vr_byte_1 = data.byteAt(5);
           let tag = new DataElementTag(group, element);
           return $bool.guard(
-            (tag.group !== 0x2) && (isEqual(ends_at, new None())),
+            !$data_element_tag.is_file_meta_information(tag) && (isEqual(
+              ends_at,
+              new None()
+            )),
             new Ok([fmi_data_set, context]),
             () => {
               return $bool.lazy_guard(
-                (tag.group !== 0x2) && (!isEqual(ends_at, new None())),
+                !$data_element_tag.is_file_meta_information(tag) && (!isEqual(
+                  ends_at,
+                  new None()
+                )),
                 () => {
                   return new Error(
                     new $p10_error.DataInvalid(
                       "Reading File Meta Information",
-                      "Data element in File Meta Information does not have the group " + "0x0002",
+                      "Data element in File Meta Information does not have the " + "group 0x0002",
                       $data_set_path.new_with_data_element(tag),
                       $byte_stream.bytes_read(context.stream),
                     ),
@@ -550,47 +600,51 @@ function read_file_meta_information_data_set(
                           let _block$3;
                           let $ = $data_element_header.value_length_size(vr);
                           if ($ instanceof $data_element_header.ValueLengthU16) {
-                            if (data.bitSize !== 64) {
+                            let length;
+                            if (data.bitSize >= 48 && data.bitSize === 64) {
+                              length = bitArraySliceToInt(data, 48, 64, false, false);
+                            } else {
                               throw makeError(
                                 "let_assert",
                                 FILEPATH,
                                 "dcmfx_p10/p10_read",
-                                542,
+                                461,
                                 "read_file_meta_information_data_set",
                                 "Pattern match failed, no pattern matched the value.",
                                 {
                                   value: data,
-                                  start: 18771,
-                                  end: 18824,
-                                  pattern_start: 18782,
-                                  pattern_end: 18817
+                                  start: 15806,
+                                  end: 15859,
+                                  pattern_start: 15817,
+                                  pattern_end: 15852
                                 }
                               )
                             }
-                            let length = bitArraySliceToInt(data, 48, 64, false, false);
                             _block$3 = new Ok([8, length]);
                           } else {
                             let $1 = $byte_stream.peek(context.stream, 12);
                             if ($1 instanceof Ok) {
                               let data$1 = $1[0];
-                              if (data$1.bitSize !== 96) {
+                              let length;
+                              if (data$1.bitSize >= 64 && data$1.bitSize === 96) {
+                                length = bitArraySliceToInt(data$1, 64, 96, false, false);
+                              } else {
                                 throw makeError(
                                   "let_assert",
                                   FILEPATH,
                                   "dcmfx_p10/p10_read",
-                                  550,
+                                  469,
                                   "read_file_meta_information_data_set",
                                   "Pattern match failed, no pattern matched the value.",
                                   {
                                     value: data$1,
-                                    start: 19036,
-                                    end: 19089,
-                                    pattern_start: 19047,
-                                    pattern_end: 19082
+                                    start: 16071,
+                                    end: 16124,
+                                    pattern_start: 16082,
+                                    pattern_end: 16117
                                   }
                                 )
                               }
-                              let length = bitArraySliceToInt(data$1, 64, 96, false, false);
                               _block$3 = new Ok([12, length]);
                             } else {
                               let e = $1[0];
@@ -607,8 +661,10 @@ function read_file_meta_information_data_set(
                           return $result.try$(
                             value_result,
                             (_use0) => {
-                              let value_offset = _use0[0];
-                              let value_length = _use0[1];
+                              let value_offset;
+                              let value_length;
+                              value_offset = _use0[0];
+                              value_length = _use0[1];
                               let data_element_size = value_offset + value_length;
                               return $bool.lazy_guard(
                                 ($data_set.total_byte_size(fmi_data_set) + data_element_size) > context.config.max_token_size,
@@ -644,31 +700,35 @@ function read_file_meta_information_data_set(
                                   return $result.try$(
                                     read_result,
                                     (_use0) => {
-                                      let data$1 = _use0[0];
-                                      let new_stream = _use0[1];
+                                      let data$1;
+                                      let new_stream;
+                                      data$1 = _use0[0];
+                                      new_stream = _use0[1];
                                       let $1 = $bit_array.slice(
                                         data$1,
                                         value_offset,
                                         value_length,
                                       );
-                                      if (!($1 instanceof Ok)) {
+                                      let value_bytes;
+                                      if ($1 instanceof Ok) {
+                                        value_bytes = $1[0];
+                                      } else {
                                         throw makeError(
                                           "let_assert",
                                           FILEPATH,
                                           "dcmfx_p10/p10_read",
-                                          594,
+                                          513,
                                           "read_file_meta_information_data_set",
                                           "Pattern match failed, no pattern matched the value.",
                                           {
                                             value: $1,
-                                            start: 20339,
-                                            end: 20417,
-                                            pattern_start: 20350,
-                                            pattern_end: 20365
+                                            start: 17374,
+                                            end: 17452,
+                                            pattern_start: 17385,
+                                            pattern_end: 17400
                                           }
                                         )
                                       }
-                                      let value_bytes = $1[0];
                                       let value = $data_element_value.new_binary_unchecked(
                                         vr,
                                         value_bytes,
@@ -682,41 +742,23 @@ function read_file_meta_information_data_set(
                                         let $3 = $data_set.is_empty(
                                           fmi_data_set,
                                         );
-                                        if ($3) {
-                                          if (ends_at instanceof None) {
-                                            let $4 = $data_element_value.get_int(
-                                              value,
-                                            );
-                                            if ($4 instanceof Ok) {
-                                              let i = $4[0];
-                                              if (i >= 0) {
-                                                _block$5 = new Ok(
-                                                  new Some((starts_at + 12) + i),
-                                                );
-                                              } else {
-                                                let i$1 = $4[0];
-                                                _block$5 = new Error(
-                                                  new $p10_error.DataInvalid(
-                                                    "Reading File Meta Information",
-                                                    "Group length is invalid: " + $int.to_string(
-                                                      i$1,
-                                                    ),
-                                                    $data_set_path.new_with_data_element(
-                                                      tag,
-                                                    ),
-                                                    $byte_stream.bytes_read(
-                                                      context.stream,
-                                                    ),
-                                                  ),
-                                                );
-                                              }
+                                        if ($3 && ends_at instanceof None) {
+                                          let $4 = $data_element_value.get_int(
+                                            value,
+                                          );
+                                          if ($4 instanceof Ok) {
+                                            let i = $4[0];
+                                            if (i >= 0) {
+                                              _block$5 = new Ok(
+                                                new Some((starts_at + 12) + i),
+                                              );
                                             } else {
-                                              let e = $4[0];
+                                              let i$1 = $4[0];
                                               _block$5 = new Error(
                                                 new $p10_error.DataInvalid(
                                                   "Reading File Meta Information",
-                                                  "Group length is invalid: " + $data_error.to_string(
-                                                    e,
+                                                  "Group length is invalid: " + $int.to_string(
+                                                    i$1,
                                                   ),
                                                   $data_set_path.new_with_data_element(
                                                     tag,
@@ -728,7 +770,21 @@ function read_file_meta_information_data_set(
                                               );
                                             }
                                           } else {
-                                            _block$5 = new Ok(ends_at);
+                                            let e = $4[0];
+                                            _block$5 = new Error(
+                                              new $p10_error.DataInvalid(
+                                                "Reading File Meta Information",
+                                                "Group length is invalid: " + $data_error.to_string(
+                                                  e,
+                                                ),
+                                                $data_set_path.new_with_data_element(
+                                                  tag,
+                                                ),
+                                                $byte_stream.bytes_read(
+                                                  context.stream,
+                                                ),
+                                              ),
+                                            );
                                           }
                                         } else {
                                           _block$5 = new Ok(ends_at);
@@ -765,7 +821,9 @@ function read_file_meta_information_data_set(
                                               );
                                             } else {
                                               let e = $4[0];
-                                              if (e instanceof $data_error.TagNotPresent) {
+                                              if (
+                                                e instanceof $data_error.TagNotPresent
+                                              ) {
                                                 _block$6 = new Ok(
                                                   context.transfer_syntax,
                                                 );
@@ -808,17 +866,15 @@ function read_file_meta_information_data_set(
                                                 );
                                               }
                                               let fmi_data_set$1 = _block$7;
-                                              let _block$8;
-                                              let _record = context;
-                                              _block$8 = new P10ReadContext(
-                                                _record.config,
+                                              let new_context = new P10ReadContext(
+                                                context.config,
                                                 new_stream,
-                                                _record.next_action,
+                                                context.next_action,
                                                 transfer_syntax,
-                                                _record.path,
-                                                _record.location,
+                                                context.path,
+                                                context.location,
+                                                context.has_emitted_specific_character_set_data_element,
                                               );
-                                              let new_context = _block$8;
                                               return read_file_meta_information_data_set(
                                                 new_context,
                                                 starts_at,
@@ -849,6 +905,15 @@ function read_file_meta_information_data_set(
   );
 }
 
+/**
+ * Reads the File Meta Information into a data set and returns the relevant
+ * P10 token once complete. If there is a *'(0002,0000) File Meta Information
+ * Group Length'* data element present then it is used to specify where the
+ * File Meta Information ends. If it is not present then data elements are
+ * read until one with a group other than 0x0002 is encountered.
+ * 
+ * @ignore
+ */
 function read_file_meta_information_token(context, starts_at) {
   return $result.try$(
     read_file_meta_information_data_set(
@@ -858,15 +923,16 @@ function read_file_meta_information_token(context, starts_at) {
       $data_set.new$(),
     ),
     (_use0) => {
-      let fmi_data_set = _use0[0];
-      let new_context = _use0[1];
+      let fmi_data_set;
+      let new_context;
+      fmi_data_set = _use0[0];
+      new_context = _use0[1];
       let _block;
       let $ = new_context.transfer_syntax.is_deflated;
       if ($) {
         let $1 = $byte_stream.start_zlib_inflate(new_context.stream);
         if ($1 instanceof Ok) {
-          let stream = $1[0];
-          _block = new Ok(stream);
+          _block = $1;
         } else {
           _block = new Error(
             new $p10_error.DataInvalid(
@@ -897,38 +963,38 @@ function read_file_meta_information_token(context, starts_at) {
               $dictionary.transfer_syntax_uid,
               toList([new_context.transfer_syntax.uid]),
             );
-            if (!($2 instanceof Ok)) {
+            let fmi_data_set$1;
+            if ($2 instanceof Ok) {
+              fmi_data_set$1 = $2[0];
+            } else {
               throw makeError(
                 "let_assert",
                 FILEPATH,
                 "dcmfx_p10/p10_read",
-                441,
+                356,
                 "read_file_meta_information_token",
                 "Pattern match failed, no pattern matched the value.",
                 {
                   value: $2,
-                  start: 15525,
-                  end: 15713,
-                  pattern_start: 15536,
-                  pattern_end: 15552
+                  start: 12423,
+                  end: 12611,
+                  pattern_start: 12434,
+                  pattern_end: 12450
                 }
               )
             }
-            let fmi_data_set$1 = $2[0];
             _block$1 = fmi_data_set$1;
           }
           let fmi_data_set$1 = _block$1;
-          let _block$2;
-          let _record = new_context;
-          _block$2 = new P10ReadContext(
-            _record.config,
+          let new_context$1 = new P10ReadContext(
+            new_context.config,
             new_stream,
             new ReadDataElementHeader(),
-            _record.transfer_syntax,
-            _record.path,
-            _record.location,
+            new_context.transfer_syntax,
+            new_context.path,
+            new_context.location,
+            new_context.has_emitted_specific_character_set_data_element,
           );
-          let new_context$1 = _block$2;
           return [fmi_data_set$1, new_context$1];
         },
       );
@@ -936,6 +1002,12 @@ function read_file_meta_information_token(context, starts_at) {
   );
 }
 
+/**
+ * Reads the (implicit) VR and value length following a data element tag when
+ * the transfer syntax is 'Implicit VR Little Endian'.
+ * 
+ * @ignore
+ */
 function read_implicit_vr_and_length(context, tag) {
   let $ = $byte_stream.read(context.stream, 8);
   if ($ instanceof Ok) {
@@ -944,44 +1016,48 @@ function read_implicit_vr_and_length(context, tag) {
     let _block;
     let $1 = active_transfer_syntax(context).endianness;
     if ($1 instanceof $transfer_syntax.LittleEndian) {
-      if (data.bitSize !== 64) {
+      let value_length;
+      if (data.bitSize >= 32 && data.bitSize === 64) {
+        value_length = bitArraySliceToInt(data, 32, 64, false, false);
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
           "dcmfx_p10/p10_read",
-          1126,
+          1064,
           "read_implicit_vr_and_length",
           "Pattern match failed, no pattern matched the value.",
           {
             value: data,
-            start: 38288,
-            end: 38352,
-            pattern_start: 38299,
-            pattern_end: 38345
+            start: 35937,
+            end: 36001,
+            pattern_start: 35948,
+            pattern_end: 35994
           }
         )
       }
-      let value_length = bitArraySliceToInt(data, 32, 64, false, false);
       _block = value_length;
     } else {
-      if (data.bitSize !== 64) {
+      let value_length;
+      if (data.bitSize >= 32 && data.bitSize === 64) {
+        value_length = bitArraySliceToInt(data, 32, 64, true, false);
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
           "dcmfx_p10/p10_read",
-          1130,
+          1068,
           "read_implicit_vr_and_length",
           "Pattern match failed, no pattern matched the value.",
           {
             value: data,
-            start: 38435,
-            end: 38496,
-            pattern_start: 38446,
-            pattern_end: 38489
+            start: 36084,
+            end: 36145,
+            pattern_start: 36095,
+            pattern_end: 36138
           }
         )
       }
-      let value_length = bitArraySliceToInt(data, 32, 64, true, false);
       _block = value_length;
     }
     let value_length = _block;
@@ -1010,38 +1086,47 @@ function read_implicit_vr_and_length(context, tag) {
   }
 }
 
+/**
+ * Reads the explicit VR and value length following a data element tag when
+ * the transfer syntax is not 'Implicit VR Little Endian'.
+ * 
+ * @ignore
+ */
 function read_explicit_vr_and_length(context, tag) {
   let _block;
   let $ = $byte_stream.peek(context.stream, 6);
   if ($ instanceof Ok) {
     let data = $[0];
-    if (data.bitSize !== 48) {
+    let vr_bytes;
+    if (data.bitSize >= 32 && data.bitSize === 48) {
+      vr_bytes = bitArraySlice(data, 32, 48);
+    } else {
       throw makeError(
         "let_assert",
         FILEPATH,
         "dcmfx_p10/p10_read",
-        1167,
+        1105,
         "read_explicit_vr_and_length",
         "Pattern match failed, no pattern matched the value.",
         {
           value: data,
-          start: 39598,
-          end: 39647,
-          pattern_start: 39609,
-          pattern_end: 39640
+          start: 37247,
+          end: 37296,
+          pattern_start: 37258,
+          pattern_end: 37289
         }
       )
     }
-    let vr_bytes = bitArraySlice(data, 32, 48);
     let $1 = $value_representation.from_bytes(vr_bytes);
     if ($1 instanceof Ok) {
-      let vr = $1[0];
-      _block = new Ok(vr);
+      _block = $1;
     } else {
       if (vr_bytes.bitSize >= 8) {
-        if (vr_bytes.byteAt(0) === 32) {
+        if (vr_bytes.byteAt(0) === 0) {
           if (vr_bytes.bitSize === 16) {
-            if (vr_bytes.byteAt(1) === 32) {
+            if (vr_bytes.byteAt(1) === 0) {
+              _block = new Ok(new $value_representation.Unknown());
+            } else if (vr_bytes.byteAt(0) === 32 && vr_bytes.byteAt(1) === 32) {
               _block = new Ok(new $value_representation.Unknown());
             } else {
               _block = new Error(
@@ -1069,6 +1154,12 @@ function read_explicit_vr_and_length(context, tag) {
               ),
             );
           }
+        } else if (
+          vr_bytes.byteAt(0) === 32 &&
+          vr_bytes.bitSize === 16 &&
+          vr_bytes.byteAt(1) === 32
+        ) {
+          _block = new Ok(new $value_representation.Unknown());
         } else {
           _block = new Error(
             new $p10_error.DataInvalid(
@@ -1126,87 +1217,95 @@ function read_explicit_vr_and_length(context, tag) {
         if (header_size === 12) {
           let $3 = active_transfer_syntax(context).endianness;
           if ($3 instanceof $transfer_syntax.LittleEndian) {
-            if (data.bitSize !== 96) {
+            let length;
+            if (data.bitSize >= 64 && data.bitSize === 96) {
+              length = bitArraySliceToInt(data, 64, 96, false, false);
+            } else {
               throw makeError(
                 "let_assert",
                 FILEPATH,
                 "dcmfx_p10/p10_read",
-                1218,
+                1157,
                 "read_explicit_vr_and_length",
                 "Pattern match failed, no pattern matched the value.",
                 {
                   value: data,
-                  start: 41325,
-                  end: 41383,
-                  pattern_start: 41336,
-                  pattern_end: 41376
+                  start: 39021,
+                  end: 39079,
+                  pattern_start: 39032,
+                  pattern_end: 39072
                 }
               )
             }
-            let length = bitArraySliceToInt(data, 64, 96, false, false);
             _block$2 = length;
           } else {
-            if (data.bitSize !== 96) {
+            let length;
+            if (data.bitSize >= 64 && data.bitSize === 96) {
+              length = bitArraySliceToInt(data, 64, 96, true, false);
+            } else {
               throw makeError(
                 "let_assert",
                 FILEPATH,
                 "dcmfx_p10/p10_read",
-                1222,
+                1161,
                 "read_explicit_vr_and_length",
                 "Pattern match failed, no pattern matched the value.",
                 {
                   value: data,
-                  start: 41476,
-                  end: 41531,
-                  pattern_start: 41487,
-                  pattern_end: 41524
+                  start: 39172,
+                  end: 39227,
+                  pattern_start: 39183,
+                  pattern_end: 39220
                 }
               )
             }
-            let length = bitArraySliceToInt(data, 64, 96, true, false);
             _block$2 = length;
           }
         } else {
           let $3 = active_transfer_syntax(context).endianness;
           if ($3 instanceof $transfer_syntax.LittleEndian) {
-            if (data.bitSize !== 64) {
+            let length;
+            if (data.bitSize >= 48 && data.bitSize === 64) {
+              length = bitArraySliceToInt(data, 48, 64, false, false);
+            } else {
               throw makeError(
                 "let_assert",
                 FILEPATH,
                 "dcmfx_p10/p10_read",
-                1229,
+                1168,
                 "read_explicit_vr_and_length",
                 "Pattern match failed, no pattern matched the value.",
                 {
                   value: data,
-                  start: 41712,
-                  end: 41770,
-                  pattern_start: 41723,
-                  pattern_end: 41763
+                  start: 39408,
+                  end: 39466,
+                  pattern_start: 39419,
+                  pattern_end: 39459
                 }
               )
             }
-            let length = bitArraySliceToInt(data, 48, 64, false, false);
             _block$2 = length;
           } else {
-            if (data.bitSize !== 64) {
+            let length;
+            if (data.bitSize >= 48 && data.bitSize === 64) {
+              length = bitArraySliceToInt(data, 48, 64, true, false);
+            } else {
               throw makeError(
                 "let_assert",
                 FILEPATH,
                 "dcmfx_p10/p10_read",
-                1233,
+                1172,
                 "read_explicit_vr_and_length",
                 "Pattern match failed, no pattern matched the value.",
                 {
                   value: data,
-                  start: 41863,
-                  end: 41918,
-                  pattern_start: 41874,
-                  pattern_end: 41911
+                  start: 39559,
+                  end: 39614,
+                  pattern_start: 39570,
+                  pattern_end: 39607
                 }
               )
             }
-            let length = bitArraySliceToInt(data, 48, 64, true, false);
             _block$2 = length;
           }
         }
@@ -1231,6 +1330,13 @@ function read_explicit_vr_and_length(context, tag) {
   );
 }
 
+/**
+ * Reads a data element header. Depending on the transfer syntax and the
+ * specific VR (for explicit VR transfer syntaxes), this reads either 8 or 12
+ * bytes in total.
+ * 
+ * @ignore
+ */
 function read_data_element_header(context) {
   let transfer_syntax$1 = active_transfer_syntax(context);
   let _block;
@@ -1240,51 +1346,59 @@ function read_data_element_header(context) {
     let _block$1;
     let $2 = transfer_syntax$1.endianness;
     if ($2 instanceof $transfer_syntax.LittleEndian) {
-      if (data.bitSize !== 32) {
+      let group;
+      let element;
+      if (data.bitSize >= 16 && data.bitSize === 32) {
+        group = bitArraySliceToInt(data, 0, 16, false, false);
+        element = bitArraySliceToInt(data, 16, 32, false, false);
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
           "dcmfx_p10/p10_read",
-          1015,
+          953,
           "read_data_element_header",
           "Pattern match failed, no pattern matched the value.",
           {
             value: data,
-            start: 34481,
-            end: 34567,
-            pattern_start: 34492,
-            pattern_end: 34548
+            start: 32100,
+            end: 32186,
+            pattern_start: 32111,
+            pattern_end: 32167
           }
         )
       }
-      let group = bitArraySliceToInt(data, 0, 16, false, false);
-      let element = bitArraySliceToInt(data, 16, 32, false, false);
       _block$1 = [group, element];
     } else {
-      if (data.bitSize !== 32) {
+      let group;
+      let element;
+      if (data.bitSize >= 16 && data.bitSize === 32) {
+        group = bitArraySliceToInt(data, 0, 16, true, false);
+        element = bitArraySliceToInt(data, 16, 32, true, false);
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
           "dcmfx_p10/p10_read",
-          1020,
+          958,
           "read_data_element_header",
           "Pattern match failed, no pattern matched the value.",
           {
             value: data,
-            start: 34655,
-            end: 34723,
-            pattern_start: 34666,
-            pattern_end: 34716
+            start: 32274,
+            end: 32342,
+            pattern_start: 32285,
+            pattern_end: 32335
           }
         )
       }
-      let group = bitArraySliceToInt(data, 0, 16, true, false);
-      let element = bitArraySliceToInt(data, 16, 32, true, false);
       _block$1 = [group, element];
     }
     let $1 = _block$1;
-    let group = $1[0];
-    let element = $1[1];
+    let group;
+    let element;
+    group = $1[0];
+    element = $1[1];
     _block = new Ok(new DataElementTag(group, element));
   } else {
     let e = $[0];
@@ -1308,17 +1422,13 @@ function read_data_element_header(context) {
       }
       let vr_serialization = _block$1;
       let _block$2;
-      let $2 = tag.group;
+      let $2 = $data_element_tag.is_file_meta_information(tag);
       let $3 = $data_set_path.is_root(context.path);
       let $4 = context.next_action;
-      if ($2 === 0x2) {
-        if ($4 instanceof ReadFileMetaInformation) {
-          _block$2 = false;
-        } else if ($3) {
-          _block$2 = true;
-        } else {
-          _block$2 = false;
-        }
+      if ($4 instanceof ReadFileMetaInformation) {
+        _block$2 = false;
+      } else if ($3 && $2) {
+        _block$2 = $2;
       } else {
         _block$2 = false;
       }
@@ -1351,8 +1461,10 @@ function read_data_element_header_token(context) {
   return $result.try$(
     read_data_element_header(context),
     (_use0) => {
-      let header = _use0[0];
-      let new_stream = _use0[1];
+      let header;
+      let new_stream;
+      header = _use0[0];
+      new_stream = _use0[1];
       let _block;
       let $ = header.vr;
       if ($ instanceof Some) {
@@ -1481,18 +1593,16 @@ function read_data_element_header_token(context) {
                               length,
                               emit_tokens,
                             );
-                            let _block$4;
-                            let _record = context;
-                            _block$4 = new P10ReadContext(
-                              _record.config,
+                            let new_context = new P10ReadContext(
+                              context.config,
                               new_stream,
                               next_action,
-                              _record.transfer_syntax,
+                              context.transfer_syntax,
                               new_path,
-                              _record.location,
+                              context.location,
+                              context.has_emitted_specific_character_set_data_element,
                             );
-                            let new_context = _block$4;
-                            return new Ok([tokens, new_context]);
+                            return new Ok([tokens, tag, new_context]);
                           },
                         );
                       },
@@ -1505,7 +1615,8 @@ function read_data_element_header_token(context) {
                   return $result.try$(
                     check_data_element_ordering(context, header),
                     (context) => {
-                      let vr$1 = vr[0];
+                      let vr$1;
+                      vr$1 = vr[0];
                       let _block$1;
                       let _pipe = $p10_location.add_sequence(
                         context.location,
@@ -1532,41 +1643,41 @@ function read_data_element_header_token(context) {
                             context.path,
                             tag,
                           );
-                          if (!($4 instanceof Ok)) {
+                          let new_path;
+                          if ($4 instanceof Ok) {
+                            new_path = $4[0];
+                          } else {
                             throw makeError(
                               "let_assert",
                               FILEPATH,
                               "dcmfx_p10/p10_read",
-                              830,
+                              749,
                               "read_data_element_header_token",
                               "Pattern match failed, no pattern matched the value.",
                               {
                                 value: $4,
-                                start: 28276,
-                                end: 28359,
-                                pattern_start: 28287,
-                                pattern_end: 28299
+                                start: 25337,
+                                end: 25420,
+                                pattern_start: 25348,
+                                pattern_end: 25360
                               }
                             )
                           }
-                          let new_path = $4[0];
                           let token = new $p10_token.SequenceStart(
                             tag,
                             vr$1,
                             new_path,
                           );
-                          let _block$2;
-                          let _record = context;
-                          _block$2 = new P10ReadContext(
-                            _record.config,
+                          let new_context = new P10ReadContext(
+                            context.config,
                             new_stream,
                             new ReadPixelDataItem(vr$1),
-                            _record.transfer_syntax,
+                            context.transfer_syntax,
                             new_path,
                             new_location,
+                            context.has_emitted_specific_character_set_data_element,
                           );
-                          let new_context = _block$2;
-                          return new Ok([toList([token]), new_context]);
+                          return new Ok([toList([token]), tag, new_context]);
                         },
                       );
                     },
@@ -1669,18 +1780,16 @@ function read_data_element_header_token(context) {
                               length,
                               emit_tokens,
                             );
-                            let _block$4;
-                            let _record = context;
-                            _block$4 = new P10ReadContext(
-                              _record.config,
+                            let new_context = new P10ReadContext(
+                              context.config,
                               new_stream,
                               next_action,
-                              _record.transfer_syntax,
+                              context.transfer_syntax,
                               new_path,
-                              _record.location,
+                              context.location,
+                              context.has_emitted_specific_character_set_data_element,
                             );
-                            let new_context = _block$4;
-                            return new Ok([tokens, new_context]);
+                            return new Ok([tokens, tag, new_context]);
                           },
                         );
                       },
@@ -1693,7 +1802,8 @@ function read_data_element_header_token(context) {
                   return $result.try$(
                     check_data_element_ordering(context, header),
                     (context) => {
-                      let vr$1 = vr[0];
+                      let vr$1;
+                      vr$1 = vr[0];
                       let _block$1;
                       let _pipe = $p10_location.add_sequence(
                         context.location,
@@ -1720,41 +1830,41 @@ function read_data_element_header_token(context) {
                             context.path,
                             tag,
                           );
-                          if (!($4 instanceof Ok)) {
+                          let new_path;
+                          if ($4 instanceof Ok) {
+                            new_path = $4[0];
+                          } else {
                             throw makeError(
                               "let_assert",
                               FILEPATH,
                               "dcmfx_p10/p10_read",
-                              830,
+                              749,
                               "read_data_element_header_token",
                               "Pattern match failed, no pattern matched the value.",
                               {
                                 value: $4,
-                                start: 28276,
-                                end: 28359,
-                                pattern_start: 28287,
-                                pattern_end: 28299
+                                start: 25337,
+                                end: 25420,
+                                pattern_start: 25348,
+                                pattern_end: 25360
                               }
                             )
                           }
-                          let new_path = $4[0];
                           let token = new $p10_token.SequenceStart(
                             tag,
                             vr$1,
                             new_path,
                           );
-                          let _block$2;
-                          let _record = context;
-                          _block$2 = new P10ReadContext(
-                            _record.config,
+                          let new_context = new P10ReadContext(
+                            context.config,
                             new_stream,
                             new ReadPixelDataItem(vr$1),
-                            _record.transfer_syntax,
+                            context.transfer_syntax,
                             new_path,
                             new_location,
+                            context.has_emitted_specific_character_set_data_element,
                           );
-                          let new_context = _block$2;
-                          return new Ok([toList([token]), new_context]);
+                          return new Ok([toList([token]), tag, new_context]);
                         },
                       );
                     },
@@ -1815,9 +1925,8 @@ function read_data_element_header_token(context) {
                     new_location,
                     (new_location) => {
                       let _block$3;
-                      let $5 = (divideInt(
-                        $data_set_path.length(context.path),
-                        2
+                      let $5 = (globalThis.Math.trunc(
+                        $data_set_path.length(context.path) / 2
                       )) < context.config.max_sequence_depth;
                       if ($5) {
                         _block$3 = new Ok(undefined);
@@ -1838,41 +1947,41 @@ function read_data_element_header_token(context) {
                             context.path,
                             tag,
                           );
-                          if (!($6 instanceof Ok)) {
+                          let new_path;
+                          if ($6 instanceof Ok) {
+                            new_path = $6[0];
+                          } else {
                             throw makeError(
                               "let_assert",
                               FILEPATH,
                               "dcmfx_p10/p10_read",
-                              754,
+                              673,
                               "read_data_element_header_token",
                               "Pattern match failed, no pattern matched the value.",
                               {
                                 value: $6,
-                                start: 25930,
-                                end: 26013,
-                                pattern_start: 25941,
-                                pattern_end: 25953
+                                start: 22981,
+                                end: 23064,
+                                pattern_start: 22992,
+                                pattern_end: 23004
                               }
                             )
                           }
-                          let new_path = $6[0];
                           let token = new $p10_token.SequenceStart(
                             tag,
                             new $value_representation.Sequence(),
                             new_path,
                           );
-                          let _block$4;
-                          let _record = context;
-                          _block$4 = new P10ReadContext(
-                            _record.config,
+                          let new_context = new P10ReadContext(
+                            context.config,
                             new_stream,
-                            _record.next_action,
-                            _record.transfer_syntax,
+                            context.next_action,
+                            context.transfer_syntax,
                             new_path,
                             new_location,
+                            context.has_emitted_specific_character_set_data_element,
                           );
-                          let new_context = _block$4;
-                          return new Ok([toList([token]), new_context]);
+                          return new Ok([toList([token]), tag, new_context]);
                         },
                       );
                     },
@@ -1964,18 +2073,16 @@ function read_data_element_header_token(context) {
                               length,
                               emit_tokens,
                             );
-                            let _block$4;
-                            let _record = context;
-                            _block$4 = new P10ReadContext(
-                              _record.config,
+                            let new_context = new P10ReadContext(
+                              context.config,
                               new_stream,
                               next_action,
-                              _record.transfer_syntax,
+                              context.transfer_syntax,
                               new_path,
-                              _record.location,
+                              context.location,
+                              context.has_emitted_specific_character_set_data_element,
                             );
-                            let new_context = _block$4;
-                            return new Ok([tokens, new_context]);
+                            return new Ok([tokens, tag, new_context]);
                           },
                         );
                       },
@@ -2025,9 +2132,8 @@ function read_data_element_header_token(context) {
                       new_location,
                       (new_location) => {
                         let _block$3;
-                        let $5 = (divideInt(
-                          $data_set_path.length(context.path),
-                          2
+                        let $5 = (globalThis.Math.trunc(
+                          $data_set_path.length(context.path) / 2
                         )) < context.config.max_sequence_depth;
                         if ($5) {
                           _block$3 = new Ok(undefined);
@@ -2048,41 +2154,41 @@ function read_data_element_header_token(context) {
                               context.path,
                               tag,
                             );
-                            if (!($6 instanceof Ok)) {
+                            let new_path;
+                            if ($6 instanceof Ok) {
+                              new_path = $6[0];
+                            } else {
                               throw makeError(
                                 "let_assert",
                                 FILEPATH,
                                 "dcmfx_p10/p10_read",
-                                754,
+                                673,
                                 "read_data_element_header_token",
                                 "Pattern match failed, no pattern matched the value.",
                                 {
                                   value: $6,
-                                  start: 25930,
-                                  end: 26013,
-                                  pattern_start: 25941,
-                                  pattern_end: 25953
+                                  start: 22981,
+                                  end: 23064,
+                                  pattern_start: 22992,
+                                  pattern_end: 23004
                                 }
                               )
                             }
-                            let new_path = $6[0];
                             let token = new $p10_token.SequenceStart(
                               tag,
                               new $value_representation.Sequence(),
                               new_path,
                             );
-                            let _block$4;
-                            let _record = context;
-                            _block$4 = new P10ReadContext(
-                              _record.config,
+                            let new_context = new P10ReadContext(
+                              context.config,
                               new_stream,
-                              _record.next_action,
-                              _record.transfer_syntax,
+                              context.next_action,
+                              context.transfer_syntax,
                               new_path,
                               new_location,
+                              context.has_emitted_specific_character_set_data_element,
                             );
-                            let new_context = _block$4;
-                            return new Ok([toList([token]), new_context]);
+                            return new Ok([toList([token]), tag, new_context]);
                           },
                         );
                       },
@@ -2174,18 +2280,16 @@ function read_data_element_header_token(context) {
                             length,
                             emit_tokens,
                           );
-                          let _block$4;
-                          let _record = context;
-                          _block$4 = new P10ReadContext(
-                            _record.config,
+                          let new_context = new P10ReadContext(
+                            context.config,
                             new_stream,
                             next_action,
-                            _record.transfer_syntax,
+                            context.transfer_syntax,
                             new_path,
-                            _record.location,
+                            context.location,
+                            context.has_emitted_specific_character_set_data_element,
                           );
-                          let new_context = _block$4;
-                          return new Ok([tokens, new_context]);
+                          return new Ok([tokens, tag, new_context]);
                         },
                       );
                     },
@@ -2239,174 +2343,166 @@ function read_data_element_header_token(context) {
               return $result.try$(
                 new_location,
                 (_use0) => {
-                  let index = _use0[0];
-                  let new_location$1 = _use0[1];
+                  let index;
+                  let new_location$1;
+                  index = _use0[0];
+                  new_location$1 = _use0[1];
                   let $4 = $data_set_path.add_sequence_item(context.path, index);
-                  if (!($4 instanceof Ok)) {
+                  let new_path;
+                  if ($4 instanceof Ok) {
+                    new_path = $4[0];
+                  } else {
                     throw makeError(
                       "let_assert",
                       FILEPATH,
                       "dcmfx_p10/p10_read",
-                      792,
+                      711,
                       "read_data_element_header_token",
                       "Pattern match failed, no pattern matched the value.",
                       {
                         value: $4,
-                        start: 27078,
-                        end: 27164,
-                        pattern_start: 27089,
-                        pattern_end: 27101
+                        start: 24134,
+                        end: 24220,
+                        pattern_start: 24145,
+                        pattern_end: 24157
                       }
                     )
                   }
-                  let new_path = $4[0];
-                  let _block$3;
-                  let _record = context;
-                  _block$3 = new P10ReadContext(
-                    _record.config,
+                  let new_context = new P10ReadContext(
+                    context.config,
                     new_stream,
-                    _record.next_action,
-                    _record.transfer_syntax,
+                    context.next_action,
+                    context.transfer_syntax,
                     new_path,
                     new_location$1,
+                    context.has_emitted_specific_character_set_data_element,
                   );
-                  let new_context = _block$3;
                   let token = new $p10_token.SequenceItemStart(index);
-                  return new Ok([toList([token]), new_context]);
+                  return new Ok([toList([token]), tag, new_context]);
                 },
               );
-            } else {
-              if ($2 instanceof $value_length.Defined) {
-                let $3 = $2.length;
-                if ($3 === 0) {
-                  let tag$1 = $1;
-                  if (isEqual(tag$1, $dictionary.sequence_delimitation_item.tag)) {
-                    let _block$1;
-                    let $5 = $p10_location.end_sequence(context.location);
-                    if ($5 instanceof Ok) {
-                      let tag$2 = $5[0][0];
-                      let new_location = $5[0][1];
-                      let $6 = $data_set_path.pop(context.path);
-                      if (!($6 instanceof Ok)) {
-                        throw makeError(
-                          "let_assert",
-                          FILEPATH,
-                          "dcmfx_p10/p10_read",
-                          856,
-                          "read_data_element_header_token",
-                          "Pattern match failed, no pattern matched the value.",
-                          {
-                            value: $6,
-                            start: 29058,
-                            end: 29115,
-                            pattern_start: 29069,
-                            pattern_end: 29081
-                          }
-                        )
-                      }
-                      let new_path = $6[0];
-                      _block$1 = [
-                        toList([new $p10_token.SequenceDelimiter(tag$2)]),
-                        new_path,
-                        new_location,
-                      ];
+            } else if ($2 instanceof $value_length.Defined) {
+              let $3 = $2.length;
+              if ($3 === 0) {
+                let tag$1 = $1;
+                if (isEqual(tag$1, $dictionary.sequence_delimitation_item.tag)) {
+                  let _block$1;
+                  let $5 = $p10_location.end_sequence(context.location);
+                  if ($5 instanceof Ok) {
+                    let tag$2 = $5[0][0];
+                    let new_location = $5[0][1];
+                    let $6 = $data_set_path.pop(context.path);
+                    let new_path;
+                    if ($6 instanceof Ok) {
+                      new_path = $6[0];
                     } else {
-                      _block$1 = [toList([]), context.path, context.location];
+                      throw makeError(
+                        "let_assert",
+                        FILEPATH,
+                        "dcmfx_p10/p10_read",
+                        775,
+                        "read_data_element_header_token",
+                        "Pattern match failed, no pattern matched the value.",
+                        {
+                          value: $6,
+                          start: 26124,
+                          end: 26181,
+                          pattern_start: 26135,
+                          pattern_end: 26147
+                        }
+                      )
                     }
-                    let $4 = _block$1;
-                    let tokens = $4[0];
-                    let new_path = $4[1];
-                    let new_location = $4[2];
-                    let _block$2;
-                    let _record = context;
-                    _block$2 = new P10ReadContext(
-                      _record.config,
-                      new_stream,
-                      _record.next_action,
-                      _record.transfer_syntax,
+                    _block$1 = [
+                      toList([new $p10_token.SequenceDelimiter(tag$2)]),
                       new_path,
                       new_location,
-                    );
-                    let new_context = _block$2;
-                    return new Ok([tokens, new_context]);
+                    ];
                   } else {
-                    let tag$2 = $1;
-                    if (isEqual(tag$2, $dictionary.item_delimitation_item.tag)) {
-                      let token = new $p10_token.SequenceItemDelimiter();
-                      let _block$1;
-                      let _pipe = $p10_location.end_item(context.location);
-                      _block$1 = $result.map_error(
-                        _pipe,
-                        (details) => {
-                          return new $p10_error.DataInvalid(
-                            "Reading data element header",
-                            details,
-                            context.path,
-                            $byte_stream.bytes_read(context.stream),
-                          );
-                        },
-                      );
-                      let new_location = _block$1;
-                      return $result.try$(
-                        new_location,
-                        (new_location) => {
-                          let $4 = $data_set_path.pop(context.path);
-                          if (!($4 instanceof Ok)) {
-                            throw makeError(
-                              "let_assert",
-                              FILEPATH,
-                              "dcmfx_p10/p10_read",
-                              899,
-                              "read_data_element_header_token",
-                              "Pattern match failed, no pattern matched the value.",
-                              {
-                                value: $4,
-                                start: 30443,
-                                end: 30500,
-                                pattern_start: 30454,
-                                pattern_end: 30466
-                              }
-                            )
-                          }
-                          let new_path = $4[0];
-                          let _block$2;
-                          let _record = context;
-                          _block$2 = new P10ReadContext(
-                            _record.config,
-                            new_stream,
-                            _record.next_action,
-                            _record.transfer_syntax,
-                            new_path,
-                            new_location,
-                          );
-                          let new_context = _block$2;
-                          return new Ok([toList([token]), new_context]);
-                        },
-                      );
-                    } else {
-                      return new Error(
-                        new $p10_error.DataInvalid(
+                    _block$1 = [toList([]), context.path, context.location];
+                  }
+                  let $4 = _block$1;
+                  let tokens;
+                  let new_path;
+                  let new_location;
+                  tokens = $4[0];
+                  new_path = $4[1];
+                  new_location = $4[2];
+                  let new_context = new P10ReadContext(
+                    context.config,
+                    new_stream,
+                    context.next_action,
+                    context.transfer_syntax,
+                    new_path,
+                    new_location,
+                    context.has_emitted_specific_character_set_data_element,
+                  );
+                  return new Ok([tokens, tag$1, new_context]);
+                } else {
+                  let tag$2 = $1;
+                  if (isEqual(tag$2, $dictionary.item_delimitation_item.tag)) {
+                    let token = new $p10_token.SequenceItemDelimiter();
+                    let _block$1;
+                    let _pipe = $p10_location.end_item(context.location);
+                    _block$1 = $result.map_error(
+                      _pipe,
+                      (details) => {
+                        return new $p10_error.DataInvalid(
                           "Reading data element header",
-                          ("Invalid data element '" + $data_element_header.to_string(
-                            header,
-                          )) + "'",
+                          details,
                           context.path,
                           $byte_stream.bytes_read(context.stream),
-                        ),
-                      );
-                    }
+                        );
+                      },
+                    );
+                    let new_location = _block$1;
+                    return $result.try$(
+                      new_location,
+                      (new_location) => {
+                        let $4 = $data_set_path.pop(context.path);
+                        let new_path;
+                        if ($4 instanceof Ok) {
+                          new_path = $4[0];
+                        } else {
+                          throw makeError(
+                            "let_assert",
+                            FILEPATH,
+                            "dcmfx_p10/p10_read",
+                            818,
+                            "read_data_element_header_token",
+                            "Pattern match failed, no pattern matched the value.",
+                            {
+                              value: $4,
+                              start: 27514,
+                              end: 27571,
+                              pattern_start: 27525,
+                              pattern_end: 27537
+                            }
+                          )
+                        }
+                        let new_context = new P10ReadContext(
+                          context.config,
+                          new_stream,
+                          context.next_action,
+                          context.transfer_syntax,
+                          new_path,
+                          new_location,
+                          context.has_emitted_specific_character_set_data_element,
+                        );
+                        return new Ok([toList([token]), tag$2, new_context]);
+                      },
+                    );
+                  } else {
+                    return new Error(
+                      new $p10_error.DataInvalid(
+                        "Reading data element header",
+                        ("Invalid data element '" + $data_element_header.to_string(
+                          header,
+                        )) + "'",
+                        context.path,
+                        $byte_stream.bytes_read(context.stream),
+                      ),
+                    );
                   }
-                } else {
-                  return new Error(
-                    new $p10_error.DataInvalid(
-                      "Reading data element header",
-                      ("Invalid data element '" + $data_element_header.to_string(
-                        header,
-                      )) + "'",
-                      context.path,
-                      $byte_stream.bytes_read(context.stream),
-                    ),
-                  );
                 }
               } else {
                 return new Error(
@@ -2420,6 +2516,17 @@ function read_data_element_header_token(context) {
                   ),
                 );
               }
+            } else {
+              return new Error(
+                new $p10_error.DataInvalid(
+                  "Reading data element header",
+                  ("Invalid data element '" + $data_element_header.to_string(
+                    header,
+                  )) + "'",
+                  context.path,
+                  $byte_stream.bytes_read(context.stream),
+                ),
+              );
             }
           }
         },
@@ -2471,8 +2578,10 @@ function read_data_element_value_bytes_token(
     return $result.try$(
       materialized_value_result,
       (_use0) => {
-        let data$2 = _use0[0];
-        let new_location = _use0[1];
+        let data$2;
+        let new_location;
+        data$2 = _use0[0];
+        new_location = _use0[1];
         let _block$3;
         if (emit_tokens) {
           let value_bytes_token = new $p10_token.DataElementValueBytes(
@@ -2546,40 +2655,40 @@ function read_data_element_value_bytes_token(
             let _block$5;
             if (bytes_remaining$1 === 0) {
               let $2 = $data_set_path.pop(context.path);
-              if (!($2 instanceof Ok)) {
+              let path;
+              if ($2 instanceof Ok) {
+                path = $2[0];
+              } else {
                 throw makeError(
                   "let_assert",
                   FILEPATH,
                   "dcmfx_p10/p10_read",
-                  1354,
+                  1293,
                   "read_data_element_value_bytes_token",
                   "Pattern match failed, no pattern matched the value.",
                   {
                     value: $2,
-                    start: 45937,
-                    end: 45990,
-                    pattern_start: 45948,
-                    pattern_end: 45956
+                    start: 43633,
+                    end: 43686,
+                    pattern_start: 43644,
+                    pattern_end: 43652
                   }
                 )
               }
-              let path = $2[0];
               _block$5 = path;
             } else {
               _block$5 = context.path;
             }
             let new_path = _block$5;
-            let _block$6;
-            let _record = context;
-            _block$6 = new P10ReadContext(
-              _record.config,
+            let new_context = new P10ReadContext(
+              context.config,
               new_stream,
               next_action,
-              _record.transfer_syntax,
+              context.transfer_syntax,
               new_path,
               new_location,
+              context.has_emitted_specific_character_set_data_element,
             );
-            let new_context = _block$6;
             return new Ok([tokens, new_context]);
           },
         );
@@ -2619,35 +2728,35 @@ function read_pixel_data_item_token(context, vr) {
           let item_count = _block;
           let index = item_count - 1;
           let $3 = $data_set_path.add_sequence_item(context.path, index);
-          if (!($3 instanceof Ok)) {
+          let new_path;
+          if ($3 instanceof Ok) {
+            new_path = $3[0];
+          } else {
             throw makeError(
               "let_assert",
               FILEPATH,
               "dcmfx_p10/p10_read",
-              1469,
+              1408,
               "read_pixel_data_item_token",
               "Pattern match failed, no pattern matched the value.",
               {
                 value: $3,
-                start: 49493,
-                end: 49583,
-                pattern_start: 49504,
-                pattern_end: 49516
+                start: 47189,
+                end: 47279,
+                pattern_start: 47200,
+                pattern_end: 47212
               }
             )
           }
-          let new_path = $3[0];
-          let _block$1;
-          let _record = context;
-          _block$1 = new P10ReadContext(
-            _record.config,
+          let new_context = new P10ReadContext(
+            context.config,
             new_stream,
             next_action,
-            _record.transfer_syntax,
+            context.transfer_syntax,
             new_path,
-            _record.location,
+            context.location,
+            context.has_emitted_specific_character_set_data_element,
           );
-          let new_context = _block$1;
           let token = new $p10_token.PixelDataItem(index, length);
           return new Ok([toList([token]), new_context]);
         } else {
@@ -2675,38 +2784,39 @@ function read_pixel_data_item_token(context, vr) {
               return $result.try$(
                 new_location,
                 (_use0) => {
-                  let new_location$1 = _use0[1];
+                  let new_location$1;
+                  new_location$1 = _use0[1];
                   let $4 = $data_set_path.pop(context.path);
-                  if (!($4 instanceof Ok)) {
+                  let new_path;
+                  if ($4 instanceof Ok) {
+                    new_path = $4[0];
+                  } else {
                     throw makeError(
                       "let_assert",
                       FILEPATH,
                       "dcmfx_p10/p10_read",
-                      1503,
+                      1442,
                       "read_pixel_data_item_token",
                       "Pattern match failed, no pattern matched the value.",
                       {
                         value: $4,
-                        start: 50568,
-                        end: 50625,
-                        pattern_start: 50579,
-                        pattern_end: 50591
+                        start: 48264,
+                        end: 48321,
+                        pattern_start: 48275,
+                        pattern_end: 48287
                       }
                     )
                   }
-                  let new_path = $4[0];
                   let next_action = new ReadDataElementHeader();
-                  let _block$1;
-                  let _record = context;
-                  _block$1 = new P10ReadContext(
-                    _record.config,
+                  let new_context = new P10ReadContext(
+                    context.config,
                     new_stream,
                     next_action,
-                    _record.transfer_syntax,
+                    context.transfer_syntax,
                     new_path,
                     new_location$1,
+                    context.has_emitted_specific_character_set_data_element,
                   );
-                  let new_context = _block$1;
                   return new Ok([toList([token]), new_context]);
                 },
               );
@@ -2756,11 +2866,19 @@ function read_pixel_data_item_token(context, vr) {
       );
     }
   } else {
-    let e = $[0];
-    return new Error(e);
+    return $;
   }
 }
 
+/**
+ * Reads the next DICOM P10 tokens from a read context. On success, zero or
+ * more tokens are returned and the function can be called again to read
+ * further tokens.
+ *
+ * On error, a value of `DataRequired` means the read context does not have
+ * enough data to return the next token, i.e. further calls to `write_bytes`
+ * are required before the next token is able to be read.
+ */
 export function read_tokens(context) {
   let $ = context.next_action;
   if ($ instanceof ReadFilePreambleAndDICMPrefix) {
@@ -2770,8 +2888,10 @@ export function read_tokens(context) {
     return $result.map(
       read_file_meta_information_token(context, starts_at),
       (_use0) => {
-        let fmi_data_set = _use0[0];
-        let new_context = _use0[1];
+        let fmi_data_set;
+        let new_context;
+        fmi_data_set = _use0[0];
+        new_context = _use0[1];
         return [
           toList([new $p10_token.FileMetaInformation(fmi_data_set)]),
           new_context,
@@ -2789,7 +2909,53 @@ export function read_tokens(context) {
           let tokens = $p10_location.pending_delimiter_tokens(context.location);
           return new Ok([tokens, context]);
         } else {
-          return read_data_element_header_token(context);
+          let is_at_root = isEqual(
+            $data_set_path.entries(context.path),
+            toList([])
+          );
+          return $result.map(
+            read_data_element_header_token(context),
+            (_use0) => {
+              let tokens;
+              let tag;
+              let context$1;
+              tokens = _use0[0];
+              tag = _use0[1];
+              context$1 = _use0[2];
+              let tag$1 = $data_element_tag.to_int(tag);
+              let specific_character_set_tag = $data_element_tag.to_int(
+                $dictionary.specific_character_set.tag,
+              );
+              let $2 = (!context$1.has_emitted_specific_character_set_data_element && is_at_root) && (tag$1 >= specific_character_set_tag);
+              if ($2) {
+                let _block;
+                let $3 = tag$1 > specific_character_set_tag;
+                if ($3) {
+                  let $4 = specific_character_set_utf8_tokens();
+                  let token_0;
+                  let token_1;
+                  token_0 = $4[0];
+                  token_1 = $4[1];
+                  _block = listPrepend(token_0, listPrepend(token_1, tokens));
+                } else {
+                  _block = tokens;
+                }
+                let tokens$1 = _block;
+                let context$2 = new P10ReadContext(
+                  context$1.config,
+                  context$1.stream,
+                  context$1.next_action,
+                  context$1.transfer_syntax,
+                  context$1.path,
+                  context$1.location,
+                  true,
+                );
+                return [tokens$1, context$2];
+              } else {
+                return [tokens, context$1];
+              }
+            },
+          );
         }
       },
     );

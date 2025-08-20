@@ -7,6 +7,7 @@ import {
   writeDataToReadContext,
 } from "./utils.mjs";
 import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
+import * as p10_read_config from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read_config.mjs";
 import * as p10_pixel_data_frame_transform from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform.mjs";
 import * as dcmfx_pixel_data from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data.mjs";
 import * as pixel_data_frame from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/pixel_data_frame.mjs";
@@ -70,12 +71,16 @@ function* doExtractDicomPixelData(
 
   // Construct DICOM P10 read context with a max token size of 1 MiB to keep
   // the read context's memory usage low while extracting pixel data frames
-  let readContext = p10_read.new_read_context();
   const maxTokenSize = 1024 * 1024;
-  readContext = p10_read.with_config(
-    readContext,
-    new p10_read.P10ReadConfig(maxTokenSize, 0xfffffffe, 10_000, false),
+  const readConfig = new p10_read_config.P10ReadConfig(
+    maxTokenSize,
+    0xfffffffe,
+    10_000,
+    false,
+    false,
+    transfer_syntax.implicit_vr_little_endian,
   );
+  let readContext = p10_read.new_read_context(readConfig);
 
   let pixelDataFrameTransform = p10_pixel_data_frame_transform.new$();
 

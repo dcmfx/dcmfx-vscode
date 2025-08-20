@@ -10,6 +10,9 @@ import * as $bit_array_utils from "../../dcmfx_core/internal/bit_array_utils.mjs
 import * as $utils from "../../dcmfx_core/internal/utils.mjs";
 import { Ok, Error } from "../../gleam.mjs";
 
+/**
+ * Converts a `IntegerString` value to a list of ints.
+ */
 export function from_bytes(bytes) {
   let _block;
   let _pipe = bytes;
@@ -44,6 +47,9 @@ export function from_bytes(bytes) {
   );
 }
 
+/**
+ * Converts a list of ints to an `IntegerString` value.
+ */
 export function to_bytes(values) {
   let is_valid = $list.all(
     values,

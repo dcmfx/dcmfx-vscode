@@ -8844,17 +8844,26 @@ const lookup_table = /* @__PURE__ */ toBitArray([
   255, 253,
 ]);
 
+/**
+ * Decodes the next codepoint from the given KS X 1001 bytes.
+ */
 export function decode_next_codepoint(bytes) {
   if (bytes.bitSize >= 8) {
-    if (bytes.bitSize >= 16) {
-      if ((bytes.bitSize - 16) % 8 === 0) {
-        let byte_0 = bytes.byteAt(0);
-        let byte_1 = bytes.byteAt(1);
-        if ((((byte_0 >= 0xA1) && (byte_0 <= 0xFE)) && (byte_1 >= 0xA1)) && (byte_1 <= 0xFE)) {
-          let rest = bitArraySlice(bytes, 16);
-          let index = (byte_0 - 0xA1) * 0x5E + (byte_1 - 0xA1);
-          let $ = $bit_array.slice(lookup_table, index * 2, 2);
-          if (!($ instanceof Ok) || $[0].bitSize !== 16) {
+    if (bytes.bitSize >= 16 && (bytes.bitSize - 16) % 8 === 0) {
+      let byte_0 = bytes.byteAt(0);
+      let byte_1 = bytes.byteAt(1);
+      if (
+        (((byte_0 >= 0xA1) && (byte_0 <= 0xFE)) && (byte_1 >= 0xA1)) && (byte_1 <= 0xFE)
+      ) {
+        let rest = bitArraySlice(bytes, 16);
+        let index = (byte_0 - 0xA1) * 0x5E + (byte_1 - 0xA1);
+        let $ = $bit_array.slice(lookup_table, index * 2, 2);
+        let codepoint_value;
+        if ($ instanceof Ok) {
+          let $1 = $[0];
+          if ($1.bitSize === 16) {
+            codepoint_value = bitArraySliceToInt($1, 0, 16, true, false);
+          } else {
             throw makeError(
               "let_assert",
               FILEPATH,
@@ -8871,16 +8880,24 @@ export function decode_next_codepoint(bytes) {
               }
             )
           }
-          let codepoint_value = bitArraySliceToInt($[0], 0, 16, true, false);
-          return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
         } else {
-          if ((bytes.bitSize - 8) % 8 === 0) {
-            let rest = bitArraySlice(bytes, 8);
-            return new Ok([$utils.replacement_character(), rest]);
-          } else {
-            return new Error(undefined);
-          }
+          throw makeError(
+            "let_assert",
+            FILEPATH,
+            "dcmfx_character_set/internal/ks_x_1001",
+            16,
+            "decode_next_codepoint",
+            "Pattern match failed, no pattern matched the value.",
+            {
+              value: $,
+              start: 473,
+              end: 564,
+              pattern_start: 484,
+              pattern_end: 510
+            }
+          )
         }
+        return new Ok([$utils.int_to_codepoint(codepoint_value), rest]);
       } else if ((bytes.bitSize - 8) % 8 === 0) {
         let rest = bitArraySlice(bytes, 8);
         return new Ok([$utils.replacement_character(), rest]);

@@ -30,28 +30,53 @@ export {
 
 class All extends $CustomType {}
 
+/**
+ * Prepends some `StringTree` onto the start of another.
+ *
+ * Runs in constant time.
+ */
 export function prepend_tree(tree, prefix) {
   return append_tree(prefix, tree);
 }
 
+/**
+ * Create an empty `StringTree`. Useful as the start of a pipe chaining many
+ * trees together.
+ */
 export function new$() {
   return from_strings(toList([]));
 }
 
+/**
+ * Prepends a `String` onto the start of some `StringTree`.
+ *
+ * Runs in constant time.
+ */
 export function prepend(tree, prefix) {
   return append_tree(from_string(prefix), tree);
 }
 
+/**
+ * Appends a `String` onto the end of some `StringTree`.
+ *
+ * Runs in constant time.
+ */
 export function append(tree, second) {
   return append_tree(tree, from_string(second));
 }
 
+/**
+ * Joins the given trees into a new tree separated with the given string.
+ */
 export function join(trees, sep) {
   let _pipe = trees;
   let _pipe$1 = $list.intersperse(_pipe, from_string(sep));
   return concat(_pipe$1);
 }
 
+/**
+ * Converts a `StringTree` to a new one with the contents reversed.
+ */
 export function reverse(tree) {
   let _pipe = tree;
   let _pipe$1 = to_string(_pipe);
@@ -60,10 +85,50 @@ export function reverse(tree) {
   return from_strings(_pipe$3);
 }
 
+/**
+ * Compares two string trees to determine if they have the same textual
+ * content.
+ *
+ * Comparing two string trees using the `==` operator may return `False` even
+ * if they have the same content as they may have been build in different ways,
+ * so using this function is often preferred.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_strings(["a", "b"]) == from_string("ab")
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * is_equal(from_strings(["a", "b"]), from_string("ab"))
+ * // -> True
+ * ```
+ */
 export function is_equal(a, b) {
   return isEqual(a, b);
 }
 
+/**
+ * Inspects a `StringTree` to determine if it is equivalent to an empty string.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_string("ok") |> is_empty
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * from_string("") |> is_empty
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * from_strings([]) |> is_empty
+ * // -> True
+ * ```
+ */
 export function is_empty(tree) {
   return isEqual(from_string(""), tree);
 }

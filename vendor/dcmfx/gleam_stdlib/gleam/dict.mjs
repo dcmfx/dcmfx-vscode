@@ -12,6 +12,21 @@ import {
 
 export { get, new$, size, to_list };
 
+/**
+ * Determines whether or not the dict is empty.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * new() |> is_empty
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * new() |> insert("b", 1) |> is_empty
+ * // -> False
+ * ```
+ */
 export function is_empty(dict) {
   return size(dict) === 0;
 }
@@ -20,10 +35,43 @@ function do_has_key(key, dict) {
   return !isEqual(get(dict, key), new Error(undefined));
 }
 
+/**
+ * Determines whether or not a value present in the dict for a given key.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * new() |> insert("a", 0) |> has_key("a")
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * new() |> insert("a", 0) |> has_key("b")
+ * // -> False
+ * ```
+ */
 export function has_key(dict, key) {
   return do_has_key(key, dict);
 }
 
+/**
+ * Inserts a value into the dict with the given key.
+ *
+ * If the dict already has a value for the given key then the value is
+ * replaced with the new value.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * new() |> insert("a", 0)
+ * // -> from_list([#("a", 0)])
+ * ```
+ *
+ * ```gleam
+ * new() |> insert("a", 0) |> insert("a", 5)
+ * // -> from_list([#("a", 5)])
+ * ```
+ */
 export function insert(dict, key, value) {
   return do_insert(key, value, dict);
 }
@@ -44,6 +92,12 @@ function from_list_loop(loop$list, loop$initial) {
   }
 }
 
+/**
+ * Converts a list of 2-element tuples `#(key, value)` to a dict.
+ *
+ * If two tuples have the same key the last one in the list will be the one
+ * that is present in the dict.
+ */
 export function from_list(list) {
   return from_list_loop(list, new$());
 }
@@ -78,6 +132,20 @@ function do_keys_loop(loop$list, loop$acc) {
   }
 }
 
+/**
+ * Gets a list of all keys in a given dict.
+ *
+ * Dicts are not ordered so the keys are not returned in any specific order. Do
+ * not write code that relies on the order keys are returned by this function
+ * as it may change in later versions of Gleam or Erlang.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)]) |> keys
+ * // -> ["a", "b"]
+ * ```
+ */
 export function keys(dict) {
   return do_keys_loop(to_list(dict), toList([]));
 }
@@ -97,6 +165,20 @@ function do_values_loop(loop$list, loop$acc) {
   }
 }
 
+/**
+ * Gets a list of all values in a given dict.
+ *
+ * Dicts are not ordered so the values are not returned in any specific order. Do
+ * not write code that relies on the order values are returned by this function
+ * as it may change in later versions of Gleam or Erlang.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)]) |> values
+ * // -> [0, 1]
+ * ```
+ */
 export function values(dict) {
   let list_of_pairs = to_list(dict);
   return do_values_loop(list_of_pairs, toList([]));
@@ -132,6 +214,24 @@ function do_take(desired_keys, dict) {
   return do_take_loop(dict, desired_keys, new$());
 }
 
+/**
+ * Creates a new dict from a given dict, only including any entries for which the
+ * keys are in a given list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)])
+ * |> take(["b"])
+ * // -> from_list([#("b", 1)])
+ * ```
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)])
+ * |> take(["a", "b", "c"])
+ * // -> from_list([#("a", 0), #("b", 1)])
+ * ```
+ */
 export function take(dict, desired_keys) {
   return do_take(desired_keys, dict);
 }
@@ -155,16 +255,68 @@ function fold_inserts(loop$new_entries, loop$dict) {
   }
 }
 
+/**
+ * Creates a new dict from a pair of given dicts by combining their entries.
+ *
+ * If there are entries with the same keys in both dicts the entry from the
+ * second dict takes precedence.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * let a = from_list([#("a", 0), #("b", 1)])
+ * let b = from_list([#("b", 2), #("c", 3)])
+ * merge(a, b)
+ * // -> from_list([#("a", 0), #("b", 2), #("c", 3)])
+ * ```
+ */
 export function merge(dict, new_entries) {
   let _pipe = new_entries;
   let _pipe$1 = to_list(_pipe);
   return fold_inserts(_pipe$1, dict);
 }
 
+/**
+ * Creates a new dict from a given dict with all the same entries except for the
+ * one with a given key, if it exists.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)]) |> delete("a")
+ * // -> from_list([#("b", 1)])
+ * ```
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)]) |> delete("c")
+ * // -> from_list([#("a", 0), #("b", 1)])
+ * ```
+ */
 export function delete$(dict, key) {
   return do_delete(key, dict);
 }
 
+/**
+ * Creates a new dict from a given dict with all the same entries except any with
+ * keys found in a given list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)]) |> drop(["a"])
+ * // -> from_list([#("b", 1)])
+ * ```
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)]) |> drop(["c"])
+ * // -> from_list([#("a", 0), #("b", 1)])
+ * ```
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)]) |> drop(["a", "b", "c"])
+ * // -> from_list([])
+ * ```
+ */
 export function drop(loop$dict, loop$disallowed_keys) {
   while (true) {
     let dict = loop$dict;
@@ -180,6 +332,30 @@ export function drop(loop$dict, loop$disallowed_keys) {
   }
 }
 
+/**
+ * Creates a new dict with one entry inserted or updated using a given function.
+ *
+ * If there was not an entry in the dict for the given key then the function
+ * gets `None` as its argument, otherwise it gets `Some(value)`.
+ *
+ * ## Example
+ *
+ * ```gleam
+ * let dict = from_list([#("a", 0)])
+ * let increment = fn(x) {
+ *   case x {
+ *     Some(i) -> i + 1
+ *     None -> 0
+ *   }
+ * }
+ *
+ * upsert(dict, "a", increment)
+ * // -> from_list([#("a", 1)])
+ *
+ * upsert(dict, "b", increment)
+ * // -> from_list([#("a", 0), #("b", 0)])
+ * ```
+ */
 export function upsert(dict, key, fun) {
   let $ = get(dict, key);
   if ($ instanceof Ok) {
@@ -208,6 +384,32 @@ function fold_loop(loop$list, loop$initial, loop$fun) {
   }
 }
 
+/**
+ * Combines all entries into a single value by calling a given function on each
+ * one.
+ *
+ * Dicts are not ordered so the values are not returned in any specific order. Do
+ * not write code that relies on the order entries are used by this function
+ * as it may change in later versions of Gleam or Erlang.
+ *
+ * # Examples
+ *
+ * ```gleam
+ * let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
+ * fold(dict, 0, fn(accumulator, key, value) { accumulator + value })
+ * // -> 13
+ * ```
+ *
+ * ```gleam
+ * import gleam/string
+ *
+ * let dict = from_list([#("a", 1), #("b", 3), #("c", 9)])
+ * fold(dict, "", fn(accumulator, key, value) {
+ *   string.append(accumulator, key)
+ * })
+ * // -> "abc"
+ * ```
+ */
 export function fold(dict, initial, fun) {
   return fold_loop(to_list(dict), initial, fun);
 }
@@ -217,6 +419,18 @@ function do_map_values(f, dict) {
   return fold(dict, new$(), f$1);
 }
 
+/**
+ * Updates all values in a given dict by calling a given function on each key
+ * and value.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_list([#(3, 3), #(2, 4)])
+ * |> map_values(fn(key, value) { key * value })
+ * // -> from_list([#(3, 9), #(2, 8)])
+ * ```
+ */
 export function map_values(dict, fun) {
   return do_map_values(fun, dict);
 }
@@ -233,10 +447,51 @@ function do_filter(f, dict) {
   return fold(dict, new$(), insert$1);
 }
 
+/**
+ * Creates a new dict from a given dict, minus any entries that a given function
+ * returns `False` for.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)])
+ * |> filter(fn(key, value) { value != 0 })
+ * // -> from_list([#("b", 1)])
+ * ```
+ *
+ * ```gleam
+ * from_list([#("a", 0), #("b", 1)])
+ * |> filter(fn(key, value) { True })
+ * // -> from_list([#("a", 0), #("b", 1)])
+ * ```
+ */
 export function filter(dict, predicate) {
   return do_filter(predicate, dict);
 }
 
+/**
+ * Calls a function for each key and value in a dict, discarding the return
+ * value.
+ *
+ * Useful for producing a side effect for every item of a dict.
+ *
+ * ```gleam
+ * import gleam/io
+ *
+ * let dict = from_list([#("a", "apple"), #("b", "banana"), #("c", "cherry")])
+ *
+ * each(dict, fn(k, v) {
+ *   io.println(key <> " => " <> value)
+ * })
+ * // -> Nil
+ * // a => apple
+ * // b => banana
+ * // c => cherry
+ * ```
+ *
+ * The order of elements in the iteration is an implementation detail that
+ * should not be relied upon.
+ */
 export function each(dict, fun) {
   return fold(
     dict,
@@ -248,6 +503,21 @@ export function each(dict, fun) {
   );
 }
 
+/**
+ * Creates a new dict from a pair of given dicts by combining their entries.
+ *
+ * If there are entries with the same keys in both dicts the given function is
+ * used to determine the new value to use in the resulting dict.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * let a = from_list([#("a", 0), #("b", 1)])
+ * let b = from_list([#("a", 2), #("c", 3)])
+ * combine(a, b, fn(one, other) { one + other })
+ * // -> from_list([#("a", 2), #("b", 1), #("c", 3)])
+ * ```
+ */
 export function combine(dict, other, fun) {
   return fold(
     dict,

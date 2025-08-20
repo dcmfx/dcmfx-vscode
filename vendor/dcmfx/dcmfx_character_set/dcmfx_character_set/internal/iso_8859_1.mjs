@@ -261,6 +261,9 @@ const lookup_table = /* @__PURE__ */ toBitArray([
   0, 255,
 ]);
 
+/**
+ * Decodes the next codepoint from the given ISO 8859 Part 1 bytes.
+ */
 export function decode_next_codepoint(bytes) {
   return $lookup_table_8bit.decode_next_codepoint(bytes, lookup_table);
 }

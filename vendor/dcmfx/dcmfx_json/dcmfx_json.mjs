@@ -11,6 +11,9 @@ import * as $json_config from "./dcmfx_json/json_config.mjs";
 import * as $json_error from "./dcmfx_json/json_error.mjs";
 import * as $p10_json_transform from "./dcmfx_json/transforms/p10_json_transform.mjs";
 
+/**
+ * Converts a data set to DICOM JSON.
+ */
 export function data_set_to_json(data_set, config) {
   let transform = $p10_json_transform.new$(config);
   let context = ["", transform];
@@ -19,13 +22,17 @@ export function data_set_to_json(data_set, config) {
     $data_set_path.new$(),
     context,
     (context, token) => {
-      let json = context[0];
-      let transform$1 = context[1];
+      let json;
+      let transform$1;
+      json = context[0];
+      transform$1 = context[1];
       return $result.map(
         $p10_json_transform.add_token(transform$1, token),
         (_use0) => {
-          let new_json = _use0[0];
-          let transform$2 = _use0[1];
+          let new_json;
+          let transform$2;
+          new_json = _use0[0];
+          transform$2 = _use0[1];
           return [json + new_json, transform$2];
         },
       );
@@ -34,6 +41,9 @@ export function data_set_to_json(data_set, config) {
   return $result.map(_pipe, $pair.first);
 }
 
+/**
+ * Converts DICOM JSON data into a data set.
+ */
 export function json_to_data_set(data_set_json) {
   let _block;
   let _pipe = $json.parse(data_set_json, $decode.dynamic);

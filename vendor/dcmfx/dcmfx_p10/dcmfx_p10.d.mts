@@ -6,8 +6,11 @@ import type * as $option from "../gleam_stdlib/gleam/option.d.mts";
 import type * as $data_set_builder from "./dcmfx_p10/data_set_builder.d.mts";
 import type * as $p10_error from "./dcmfx_p10/p10_error.d.mts";
 import type * as $p10_read from "./dcmfx_p10/p10_read.d.mts";
+import type * as $p10_read_config from "./dcmfx_p10/p10_read_config.d.mts";
 import type * as $p10_token from "./dcmfx_p10/p10_token.d.mts";
 import type * as $p10_write from "./dcmfx_p10/p10_write.d.mts";
+import type * as $p10_write_config from "./dcmfx_p10/p10_write_config.d.mts";
+import type * as $p10_filter_transform from "./dcmfx_p10/transforms/p10_filter_transform.d.mts";
 import type * as _ from "./gleam.d.mts";
 
 export function is_valid_bytes(bytes: _.BitArray): boolean;
@@ -16,7 +19,8 @@ export function is_valid_file(filename: string): boolean;
 
 export function read_tokens_from_stream(
   stream: $file_stream.FileStream$,
-  context: $p10_read.P10ReadContext$
+  context: $p10_read.P10ReadContext$,
+  chunk_size: $option.Option$<number>
 ): _.Result<
   [_.List<$p10_token.P10Token$>, $p10_read.P10ReadContext$],
   $p10_error.P10Error$
@@ -54,13 +58,37 @@ export function read_bytes(bytes: _.BitArray): _.Result<
   [$p10_error.P10Error$, $data_set_builder.DataSetBuilder$]
 >;
 
+export function read_stream_partial(
+  stream: $file_stream.FileStream$,
+  tags: _.List<$data_element_tag.DataElementTag$>,
+  config: $option.Option$<$p10_read_config.P10ReadConfig$>
+): _.Result<
+  $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+  $p10_error.P10Error$
+>;
+
+export function read_file_partial(
+  filename: string,
+  tags: _.List<$data_element_tag.DataElementTag$>,
+  config: $option.Option$<$p10_read_config.P10ReadConfig$>
+): _.Result<
+  $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+  $p10_error.P10Error$
+>;
+
 export function write_stream(
   stream: $file_stream.FileStream$,
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  config: $option.Option$<$p10_write.P10WriteConfig$>
+  config: $option.Option$<$p10_write_config.P10WriteConfig$>
 ): _.Result<undefined, $p10_error.P10Error$>;
 
 export function write_file(
@@ -69,7 +97,7 @@ export function write_file(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  config: $option.Option$<$p10_write.P10WriteConfig$>
+  config: $option.Option$<$p10_write_config.P10WriteConfig$>
 ): _.Result<undefined, $p10_error.P10Error$>;
 
 export function write_bytes(
@@ -77,7 +105,7 @@ export function write_bytes(
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  config: $option.Option$<$p10_write.P10WriteConfig$>
+  config: $option.Option$<$p10_write_config.P10WriteConfig$>
 ): _.Result<_.BitArray, $p10_error.P10Error$>;
 
 export function write_tokens_to_stream(

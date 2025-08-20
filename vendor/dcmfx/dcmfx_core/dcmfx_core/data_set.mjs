@@ -35,7 +35,6 @@ import {
   Empty as $Empty,
   CustomType as $CustomType,
   makeError,
-  divideInt,
   isEqual,
 } from "../gleam.mjs";
 
@@ -55,29 +54,49 @@ export class LookupResultDataSet extends $CustomType {
   }
 }
 
+/**
+ * Returns a new empty data set.
+ */
 export function new$() {
   return $dict.new$();
 }
 
+/**
+ * Returns the number of data elements in a data set.
+ */
 export function size(data_set) {
   let _pipe = data_set;
   return $dict.size(_pipe);
 }
 
+/**
+ * Returns whether a data set is empty and contains no data elements.
+ */
 export function is_empty(data_set) {
   let _pipe = data_set;
   return $dict.is_empty(_pipe);
 }
 
+/**
+ * Returns whether a data element with the specified tag exists in a data set.
+ */
 export function has(data_set, tag) {
   let _pipe = data_set;
   return $dict.has_key(_pipe, tag);
 }
 
+/**
+ * Inserts a data element tag and value into a data set. If there is already a
+ * value for the tag then it is replaced with the new value.
+ */
 export function insert(data_set, tag, value) {
   return $dict.insert(data_set, tag, value);
 }
 
+/**
+ * Inserts a new binary value into a data set. If there is already a value for
+ * the tag it is replaced with the new value.
+ */
 export function insert_binary_value(data_set, tag, vr, bytes) {
   let _block;
   let _pipe = $data_element_value.new_binary(vr, bytes);
@@ -91,23 +110,37 @@ export function insert_binary_value(data_set, tag, vr, bytes) {
   return $result.map(value, (value) => { return insert(data_set, tag, value); });
 }
 
+/**
+ * Merges two data sets together to form a new data set. Data elements from the
+ * second data set take precedence.
+ */
 export function merge(a, b) {
   return $dict.merge(a, b);
 }
 
+/**
+ * Creates a data set from a list of data element tags and values.
+ */
 export function from_list(data_elements) {
   let _pipe = data_elements;
   return $list.fold(
     _pipe,
     new$(),
     (data_set, element) => {
-      let tag = element[0];
-      let value = element[1];
+      let tag;
+      let value;
+      tag = element[0];
+      value = element[1];
       return insert(data_set, tag, value);
     },
   );
 }
 
+/**
+ * Creates a new data set with all the data elements in the given data set
+ * except for the specified tag. Also returns the deleted data element value,
+ * if any.
+ */
 export function delete$(data_set, tag) {
   let _block;
   let _pipe = $dict.get(data_set, tag);
@@ -117,6 +150,9 @@ export function delete$(data_set, tag) {
   return [deleted_value, data_set$1];
 }
 
+/**
+ * Returns the tags in a data set, sorted by group and element.
+ */
 export function tags(data_set) {
   let _pipe = data_set;
   let _pipe$1 = $dict.keys(_pipe);
@@ -127,13 +163,15 @@ export function tags(data_set) {
       if ($ instanceof $order.Eq) {
         return $int.compare(a.element, b.element);
       } else {
-        let o = $;
-        return o;
+        return $;
       }
     },
   );
 }
 
+/**
+ * Converts a data set to a list of data element tags and values.
+ */
 export function to_list(data_set) {
   let _pipe = data_set;
   let _pipe$1 = tags(_pipe);
@@ -141,7 +179,10 @@ export function to_list(data_set) {
     _pipe$1,
     (tag) => {
       let $ = $dict.get(data_set, tag);
-      if (!($ instanceof Ok)) {
+      let value;
+      if ($ instanceof Ok) {
+        value = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -151,19 +192,22 @@ export function to_list(data_set) {
           "Pattern match failed, no pattern matched the value.",
           {
             value: $,
-            start: 15898,
-            end: 15944,
-            pattern_start: 15909,
-            pattern_end: 15918
+            start: 15897,
+            end: 15943,
+            pattern_start: 15908,
+            pattern_end: 15917
           }
         )
       }
-      let value = $[0];
       return [tag, value];
     },
   );
 }
 
+/**
+ * Maps the tags and values in a data set to a new list, in order of increasing
+ * tag value.
+ */
 export function map(data_set, callback) {
   let _pipe = data_set;
   let _pipe$1 = tags(_pipe);
@@ -171,7 +215,10 @@ export function map(data_set, callback) {
     _pipe$1,
     (tag) => {
       let $ = $dict.get(data_set, tag);
-      if (!($ instanceof Ok)) {
+      let value;
+      if ($ instanceof Ok) {
+        value = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -181,28 +228,38 @@ export function map(data_set, callback) {
           "Pattern match failed, no pattern matched the value.",
           {
             value: $,
-            start: 17250,
-            end: 17296,
-            pattern_start: 17261,
-            pattern_end: 17270
+            start: 17249,
+            end: 17295,
+            pattern_start: 17260,
+            pattern_end: 17269
           }
         )
       }
-      let value = $[0];
       return callback(tag, value);
     },
   );
 }
 
+/**
+ * Maps the values in a data set to a new data set.
+ */
 export function map_values(data_set, callback) {
   return $dict.map_values(data_set, callback);
 }
 
+/**
+ * Creates a new data set containing only those data elements for which the
+ * given function returns `True`.
+ */
 export function filter(data_set, predicate) {
   let _pipe = data_set;
   return $dict.filter(_pipe, predicate);
 }
 
+/**
+ * Folds the tags and values in a data set, in order of increasing tag value,
+ * into a single value.
+ */
 export function fold(data_set, initial, callback) {
   let _pipe = data_set;
   let _pipe$1 = tags(_pipe);
@@ -211,7 +268,10 @@ export function fold(data_set, initial, callback) {
     initial,
     (current, tag) => {
       let $ = $dict.get(data_set, tag);
-      if (!($ instanceof Ok)) {
+      let value;
+      if ($ instanceof Ok) {
+        value = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -221,19 +281,24 @@ export function fold(data_set, initial, callback) {
           "Pattern match failed, no pattern matched the value.",
           {
             value: $,
-            start: 18113,
-            end: 18159,
-            pattern_start: 18124,
-            pattern_end: 18133
+            start: 18112,
+            end: 18158,
+            pattern_start: 18123,
+            pattern_end: 18132
           }
         )
       }
-      let value = $[0];
       return callback(current, tag, value);
     },
   );
 }
 
+/**
+ * Folds the tags and values in a data set, in order of increasing tag value,
+ * into a single value. If the folding function returns `Ok(..)` then folding
+ * continues, and if it returns `Error(..)` then folding stops and the error is
+ * returned.
+ */
 export function try_fold(data_set, initial, callback) {
   let _pipe = data_set;
   let _pipe$1 = tags(_pipe);
@@ -242,7 +307,10 @@ export function try_fold(data_set, initial, callback) {
     initial,
     (current, tag) => {
       let $ = $dict.get(data_set, tag);
-      if (!($ instanceof Ok)) {
+      let value;
+      if ($ instanceof Ok) {
+        value = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -252,19 +320,25 @@ export function try_fold(data_set, initial, callback) {
           "Pattern match failed, no pattern matched the value.",
           {
             value: $,
-            start: 18673,
-            end: 18719,
-            pattern_start: 18684,
-            pattern_end: 18693
+            start: 18672,
+            end: 18718,
+            pattern_start: 18683,
+            pattern_end: 18692
           }
         )
       }
-      let value = $[0];
       return callback(current, tag, value);
     },
   );
 }
 
+/**
+ * Folds the tags and values in a data set, in order of increasing tag value,
+ * into a single value.
+ *
+ * This variant of `fold()` allows for folding to be ended early by returning
+ * `Stop` from the callback.
+ */
 export function fold_until(data_set, initial, callback) {
   let _pipe = data_set;
   let _pipe$1 = tags(_pipe);
@@ -273,7 +347,10 @@ export function fold_until(data_set, initial, callback) {
     initial,
     (current, tag) => {
       let $ = $dict.get(data_set, tag);
-      if (!($ instanceof Ok)) {
+      let value;
+      if ($ instanceof Ok) {
+        value = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -283,19 +360,22 @@ export function fold_until(data_set, initial, callback) {
           "Pattern match failed, no pattern matched the value.",
           {
             value: $,
-            start: 19200,
-            end: 19246,
-            pattern_start: 19211,
-            pattern_end: 19220
+            start: 19199,
+            end: 19245,
+            pattern_start: 19210,
+            pattern_end: 19219
           }
         )
       }
-      let value = $[0];
       return callback(current, tag, value);
     },
   );
 }
 
+/**
+ * Partitions a data set into a pair of data sets by a given categorization
+ * function.
+ */
 export function partition(data_set, predicate) {
   let _pipe = data_set;
   return $dict.fold(
@@ -312,6 +392,13 @@ export function partition(data_set, predicate) {
   );
 }
 
+/**
+ * Looks up a data set path in a data set and returns the data element or
+ * data set that it specifies. If the path is invalid for the data set then
+ * an error is returned.
+ * 
+ * @ignore
+ */
 function lookup(data_set, path) {
   let create_error = () => {
     return new Error(
@@ -367,6 +454,9 @@ function lookup(data_set, path) {
   );
 }
 
+/**
+ * Returns the data element value for the specified tag in a data set.
+ */
 export function get_value(data_set, tag) {
   let _pipe = $dict.get(data_set, tag);
   return $result.map_error(
@@ -381,6 +471,10 @@ export function get_value(data_set, tag) {
   );
 }
 
+/**
+ * Returns the data element value at the specified path in a data set. The
+ * path must end with a data element tag.
+ */
 export function get_value_at_path(data_set, path) {
   let $ = lookup(data_set, path);
   if ($ instanceof Ok) {
@@ -400,6 +494,10 @@ export function get_value_at_path(data_set, path) {
   }
 }
 
+/**
+ * Returns the data set at the specified path in a data set. The path must
+ * be empty or end with a sequence item index.
+ */
 export function get_data_set_at_path(data_set, path) {
   let $ = lookup(data_set, path);
   if ($ instanceof Ok) {
@@ -419,10 +517,15 @@ export function get_data_set_at_path(data_set, path) {
   }
 }
 
+/**
+ * Returns the raw value bytes for the specified tag in a data set.
+ *
+ * See `data_element_value.bytes()`.
+ */
 export function get_value_bytes(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.bytes);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.bytes);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -434,10 +537,16 @@ export function get_value_bytes(data_set, tag) {
   );
 }
 
+/**
+ * Returns the raw value bytes for the specified tag in a data set and also
+ * checks that its value representation is one of the specified allowed VRs.
+ *
+ * See `data_element_value.vr_bytes()`.
+ */
 export function get_value_vr_bytes(data_set, tag, allowed_vrs) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(
+  let _pipe$2 = $result.try$(
     _pipe$1,
     (_capture) => { return $data_element_value.vr_bytes(_capture, allowed_vrs); },
   );
@@ -452,10 +561,15 @@ export function get_value_vr_bytes(data_set, tag, allowed_vrs) {
   );
 }
 
+/**
+ * Returns the singular string value for a data element in a data set. If the
+ * data element with the specified tag does not hold exactly one string value
+ * then an error is returned.
+ */
 export function get_string(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_string);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_string);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -467,6 +581,15 @@ export function get_string(data_set, tag) {
   );
 }
 
+/**
+ * Returns a new data set containing the File Meta Information data elements
+ * in this data set, i.e. those where the data element tag group equals 2.
+ *
+ * This function also sets the *'(0002,0002) Media Storage SOP Class UID'* and
+ * *'(0002,0003) Media Storage SOP Instance UID'* data elements to match the
+ * *'(0008,0016) SOP Class UID'* and *'(0008,0018) SOP Instance UID'* data
+ * elements in this data set.
+ */
 export function file_meta_information(data_set) {
   let _block;
   let _pipe = data_set;
@@ -475,17 +598,13 @@ export function file_meta_information(data_set) {
   let _block$1;
   let $ = get_value(data_set, $dictionary.sop_class_uid.tag);
   let $1 = get_string(data_set, $dictionary.sop_class_uid.tag);
-  if ($1 instanceof Ok) {
-    if ($ instanceof Ok) {
-      let value = $[0];
-      _block$1 = $dict.insert(
-        file_meta_information$1,
-        $dictionary.media_storage_sop_class_uid.tag,
-        value,
-      );
-    } else {
-      _block$1 = file_meta_information$1;
-    }
+  if ($1 instanceof Ok && $ instanceof Ok) {
+    let value = $[0];
+    _block$1 = $dict.insert(
+      file_meta_information$1,
+      $dictionary.media_storage_sop_class_uid.tag,
+      value,
+    );
   } else {
     _block$1 = file_meta_information$1;
   }
@@ -493,17 +612,13 @@ export function file_meta_information(data_set) {
   let _block$2;
   let $2 = get_value(data_set, $dictionary.sop_instance_uid.tag);
   let $3 = get_string(data_set, $dictionary.sop_instance_uid.tag);
-  if ($3 instanceof Ok) {
-    if ($2 instanceof Ok) {
-      let value = $2[0];
-      _block$2 = $dict.insert(
-        file_meta_information$2,
-        $dictionary.media_storage_sop_instance_uid.tag,
-        value,
-      );
-    } else {
-      _block$2 = file_meta_information$2;
-    }
+  if ($3 instanceof Ok && $2 instanceof Ok) {
+    let value = $2[0];
+    _block$2 = $dict.insert(
+      file_meta_information$2,
+      $dictionary.media_storage_sop_instance_uid.tag,
+      value,
+    );
   } else {
     _block$2 = file_meta_information$2;
   }
@@ -515,10 +630,15 @@ export function file_meta_information(data_set) {
   );
 }
 
+/**
+ * Returns all of the string values for a data element in a data set. If the
+ * data element with the specified tag is not of a type that supports multiple
+ * string values then an error is returned.
+ */
 export function get_strings(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_strings);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_strings);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -530,10 +650,15 @@ export function get_strings(data_set, tag) {
   );
 }
 
+/**
+ * Returns the singular integer value for a data element in a data set. If the
+ * data element with the specified tag does not hold exactly one integer value
+ * then an error is returned.
+ */
 export function get_int(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_int);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_int);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -545,6 +670,14 @@ export function get_int(data_set, tag) {
   );
 }
 
+/**
+ * Returns the singular integer value for a data element in a data set. If the
+ * data element with the specified tag does not hold exactly one integer value
+ * then an error is returned.
+ *
+ * If the data element is not in the data set then the specified default value
+ * is returned.
+ */
 export function get_int_with_default(data_set, tag, default$) {
   let $ = has(data_set, tag);
   if ($) {
@@ -554,10 +687,15 @@ export function get_int_with_default(data_set, tag, default$) {
   }
 }
 
+/**
+ * Returns all of the integer values for a data element in a data set. If the
+ * data element with the specified tag is not of a type that supports multiple
+ * integer values then an error is returned.
+ */
 export function get_ints(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_ints);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_ints);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -569,10 +707,15 @@ export function get_ints(data_set, tag) {
   );
 }
 
+/**
+ * Returns the lookup table descriptor value for a data element in a data set.
+ * If the data element with the specified tab does not hold a lookup table
+ * descriptor then an error is returned.
+ */
 export function get_lookup_table_descriptor(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(
+  let _pipe$2 = $result.try$(
     _pipe$1,
     $data_element_value.get_lookup_table_descriptor,
   );
@@ -587,10 +730,15 @@ export function get_lookup_table_descriptor(data_set, tag) {
   );
 }
 
+/**
+ * Returns the singular big integer value for a data element in a data set. If
+ * the data element with the specified tag does not hold exactly one big
+ * integer value then an error is returned.
+ */
 export function get_big_int(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_big_int);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_big_int);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -602,10 +750,15 @@ export function get_big_int(data_set, tag) {
   );
 }
 
+/**
+ * Returns all of the big integer values for a data element in a data set. If
+ * the data element with the specified tag is not of a type that supports
+ * multiple big integer values then an error is returned.
+ */
 export function get_big_ints(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_big_ints);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_big_ints);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -617,10 +770,15 @@ export function get_big_ints(data_set, tag) {
   );
 }
 
+/**
+ * Returns the singular floating point value for a data element in a data set.
+ * If the data element with the specified tag does not hold exactly one
+ * floating point value then an error is returned.
+ */
 export function get_float(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_float);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_float);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -632,6 +790,14 @@ export function get_float(data_set, tag) {
   );
 }
 
+/**
+ * Returns the singular floating point value for a data element in a data set.
+ * If the data element with the specified tag does not hold exactly one
+ * floating point value then an error is returned.
+ *
+ * If the data element is not in the data set then the specified default value
+ * is returned.
+ */
 export function get_float_with_default(data_set, tag, default$) {
   let $ = has(data_set, tag);
   if ($) {
@@ -641,10 +807,15 @@ export function get_float_with_default(data_set, tag, default$) {
   }
 }
 
+/**
+ * Returns all of the floating point values for a data element in a data set.
+ * If the data element with the specified tag is not of a type that supports
+ * multiple floating point values then an error is returned.
+ */
 export function get_floats(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_floats);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_floats);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -656,10 +827,14 @@ export function get_floats(data_set, tag) {
   );
 }
 
+/**
+ * Returns the age value for a data element in a data set. If the data element
+ * does not hold an `AgeString` value then an error is returned.
+ */
 export function get_age(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_age);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_age);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -671,10 +846,15 @@ export function get_age(data_set, tag) {
   );
 }
 
+/**
+ * Returns the attribute tags value for a data element in a data set. If the
+ * data element does not hold an `AttributeTag` value then an error is
+ * returned.
+ */
 export function get_attribute_tags(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_attribute_tags);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_attribute_tags);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -686,10 +866,14 @@ export function get_attribute_tags(data_set, tag) {
   );
 }
 
+/**
+ * Returns the date value for a data element in a data set. If the data element
+ * does not hold a `Date` value then an error is returned.
+ */
 export function get_date(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_date);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_date);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -701,10 +885,14 @@ export function get_date(data_set, tag) {
   );
 }
 
+/**
+ * Returns the structured date/time value for a data element in a data set. If
+ * the data element does not hold a `DateTime` value then an error is returned.
+ */
 export function get_date_time(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_date_time);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_date_time);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -716,10 +904,14 @@ export function get_date_time(data_set, tag) {
   );
 }
 
+/**
+ * Returns the time value for a data element in a data set. If the data element
+ * does not hold a `Time` value then an error is returned.
+ */
 export function get_time(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_time);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_time);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -731,10 +923,15 @@ export function get_time(data_set, tag) {
   );
 }
 
+/**
+ * Returns the singular person name value for a data element in a data set.
+ * If the data element with the specified tag does not hold exactly one
+ * person name value then an error is returned.
+ */
 export function get_person_name(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_person_name);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_person_name);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -746,10 +943,15 @@ export function get_person_name(data_set, tag) {
   );
 }
 
+/**
+ * Returns all of the person name values for a data element in a data set. If
+ * the data element with the specified tag is not of a type that supports
+ * multiple person name values then an error is returned.
+ */
 export function get_person_names(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.get_person_names);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.get_person_names);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -761,10 +963,15 @@ export function get_person_names(data_set, tag) {
   );
 }
 
+/**
+ * Returns the sequence items for a data element in a data set. If the data
+ * element with the specified tag is not a sequence then an error is
+ * returned.
+ */
 export function get_sequence_items(data_set, tag) {
   let _pipe = data_set;
   let _pipe$1 = get_value(_pipe, tag);
-  let _pipe$2 = $result.then$(_pipe$1, $data_element_value.sequence_items);
+  let _pipe$2 = $result.try$(_pipe$1, $data_element_value.sequence_items);
   return $result.map_error(
     _pipe$2,
     (_capture) => {
@@ -776,6 +983,11 @@ export function get_sequence_items(data_set, tag) {
   );
 }
 
+/**
+ * Looks up the *'(0002,0010) Transfer Syntax UID'* data element in a data set,
+ * and if present, attempts to convert it to a known transfer syntax
+ * definition.
+ */
 export function get_transfer_syntax(data_set) {
   let transfer_syntax_uid = get_string(
     data_set,
@@ -797,6 +1009,11 @@ export function get_transfer_syntax(data_set) {
   );
 }
 
+/**
+ * Returns the size in bytes of all data elements in a data set.
+ *
+ * See `data_element_value.total_byte_size()`.
+ */
 export function total_byte_size(data_set) {
   let _pipe = data_set;
   return $dict.fold(
@@ -808,6 +1025,10 @@ export function total_byte_size(data_set) {
   );
 }
 
+/**
+ * Returns the value of the `(gggg,00xx) Private Creator` data element in this
+ * data set for the specified private tag.
+ */
 export function private_creator_for_tag(data_set, tag) {
   return $bool.guard(
     !$data_element_tag.is_private(tag),
@@ -823,8 +1044,7 @@ export function private_creator_for_tag(data_set, tag) {
         () => {
           let $ = get_string(data_set, private_creator_tag);
           if ($ instanceof Ok) {
-            let s = $[0];
-            return new Ok(s);
+            return $;
           } else {
             return new Error(undefined);
           }
@@ -834,6 +1054,11 @@ export function private_creator_for_tag(data_set, tag) {
   );
 }
 
+/**
+ * Returns the human-readable name for a data element tag in a data set,
+ * using its data elements to determine the private creator if the tag is
+ * private.
+ */
 export function tag_name(data_set, tag) {
   let _block;
   let _pipe = data_set;
@@ -851,7 +1076,10 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
     context,
     (context, tag) => {
       let $ = get_value(data_set, tag);
-      if (!($ instanceof Ok)) {
+      let value;
+      if ($ instanceof Ok) {
+        value = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -861,14 +1089,13 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
           "Pattern match failed, no pattern matched the value.",
           {
             value: $,
-            start: 20701,
-            end: 20748,
-            pattern_start: 20712,
-            pattern_end: 20721
+            start: 20700,
+            end: 20747,
+            pattern_start: 20711,
+            pattern_end: 20720
           }
         )
       }
-      let value = $[0];
       let $1 = $data_set_print.format_data_element_prefix(
         tag,
         tag_name(data_set, tag),
@@ -881,8 +1108,10 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
         indent,
         print_options,
       );
-      let header = $1[0];
-      let header_width = $1[1];
+      let header;
+      let header_width;
+      header = $1[0];
+      header_width = $1[1];
       let $2 = $data_element_value.sequence_items(value);
       let $3 = $data_element_value.encapsulated_pixel_data(value);
       if ($2 instanceof Ok) {
@@ -954,8 +1183,10 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
               indent + 1,
               print_options,
             );
-            let item_header = $4[0];
-            let item_header_width = $4[1];
+            let item_header;
+            let item_header_width;
+            item_header = $4[0];
+            item_header_width = $4[1];
             let value_max_width = $int.max(
               print_options.max_width - item_header_width,
               10,
@@ -964,7 +1195,7 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
               context,
               item_header + $utils.inspect_bit_array(
                 item,
-                (divideInt(value_max_width, 3)) - 1,
+                (globalThis.Math.trunc(value_max_width / 3)) - 1,
               ),
             );
           },
@@ -995,10 +1226,18 @@ function do_to_lines(data_set, print_options, context, callback, indent) {
   );
 }
 
+/**
+ * Converts a data set to a list of printable lines using the specified print
+ * options. The lines are returned via a callback.
+ */
 export function to_lines(data_set, print_options, context, callback) {
   return do_to_lines(data_set, print_options, context, callback, 0);
 }
 
+/**
+ * Prints a data set to stdout formatted for readability using the given print
+ * options.
+ */
 export function print_with_options(data_set, print_options) {
   return to_lines(
     data_set,
@@ -1008,10 +1247,18 @@ export function print_with_options(data_set, print_options) {
   );
 }
 
+/**
+ * Prints a data set to stdout formatted for readability.
+ */
 export function print(data_set) {
   return print_with_options(data_set, $data_set_print.new_print_options());
 }
 
+/**
+ * Formats a data element tag in a data set as `"(GROUP,ELEMENT) TAG_NAME"`,
+ * e.g. "(0008,0020) StudyDate"`. The other data elements in the data set
+ * are used to determine the private creator if the tag is private.
+ */
 export function tag_with_name(data_set, tag) {
   let _block;
   let _pipe = data_set;
@@ -1021,6 +1268,10 @@ export function tag_with_name(data_set, tag) {
   return $dictionary.tag_with_name(tag, private_creator);
 }
 
+/**
+ * Removes all private range tags from a data set, including recursively
+ * into any sequences that are present.
+ */
 export function delete_private_elements(data_set) {
   let _pipe = data_set;
   return fold(
@@ -1049,6 +1300,14 @@ export function delete_private_elements(data_set) {
   );
 }
 
+/**
+ * Returns a new data set containing just the private tags for the given group
+ * and private creator name in a data set. The group number must always be odd
+ * for private data elements, and the private creator name must match exactly.
+ *
+ * If the group number is even or there is no `(gggg,00XX) Private Creator`
+ * data element with the specified name then an error is returned.
+ */
 export function private_block(data_set, group, private_creator) {
   return $bool.guard(
     $int.is_even(group),
@@ -1106,6 +1365,12 @@ export function private_block(data_set, group, private_creator) {
   );
 }
 
+/**
+ * Helper function that returns an error message when one of the
+ * `insert_*_element` functions is called with invalid arguments.
+ * 
+ * @ignore
+ */
 function invalid_insert_error(item) {
   let $ = item.vrs;
   if ($ instanceof $Empty) {
@@ -1147,6 +1412,10 @@ function invalid_insert_error(item) {
   }
 }
 
+/**
+ * Inserts a data element with an age string value into a data set. The data
+ * element being inserted must be referenced through its dictionary entry.
+ */
 export function insert_age_string(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, 1),
@@ -1189,6 +1458,10 @@ export function insert_age_string(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with an attribute tag value into a data set. The data
+ * element being inserted must be referenced through its dictionary entry.
+ */
 export function insert_attribute_tag_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
@@ -1231,6 +1504,10 @@ export function insert_attribute_tag_value(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with a date value into a data set. The data element
+ * being inserted must be referenced through its dictionary entry.
+ */
 export function insert_date_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, 1),
@@ -1273,6 +1550,10 @@ export function insert_date_value(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with a date time value into a data set. The data
+ * element being inserted must be referenced through its dictionary entry.
+ */
 export function insert_date_time_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, 1),
@@ -1315,6 +1596,11 @@ export function insert_date_time_value(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with float values into a data set. The data element
+ * being inserted must be referenced through its dictionary entry. This method
+ * automatically determines the correct VR to use for the new data element.
+ */
 export function insert_float_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
@@ -1339,7 +1625,7 @@ export function insert_float_value(data_set, item, value) {
                 "DecimalString float value was not finite",
               ),
             );
-            _block$1 = $result.then$(
+            _block$1 = $result.try$(
               _pipe$3,
               $data_element_value.new_decimal_string,
             );
@@ -1377,6 +1663,12 @@ export function insert_float_value(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with integer values into a data set. The data
+ * element being inserted must be referenced through its dictionary entry. This
+ * method automatically determines the correct VR to use for the new data
+ * element.
+ */
 export function insert_int_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
@@ -1427,6 +1719,12 @@ export function insert_int_value(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with big integer values into a data set. The data
+ * element being inserted must be referenced through its dictionary entry. This
+ * method automatically determines the correct VR to use for the new data
+ * element.
+ */
 export function insert_big_int_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
@@ -1471,6 +1769,10 @@ export function insert_big_int_value(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with a person name value into a data set. The data
+ * element being inserted must be referenced through its dictionary entry.
+ */
 export function insert_person_name_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
@@ -1513,6 +1815,10 @@ export function insert_person_name_value(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with a sequence value into a data set. The data
+ * element being inserted must be referenced through its dictionary entry.
+ */
 export function insert_sequence(data_set, item, value) {
   let _block;
   let _block$1;
@@ -1549,6 +1855,12 @@ export function insert_sequence(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with a string value into a data set. The data
+ * element being inserted must be referenced through its dictionary entry. This
+ * method automatically determines the correct VR to use for the new data
+ * element.
+ */
 export function insert_string_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, $list.length(value)),
@@ -1607,7 +1919,9 @@ export function insert_string_value(data_set, item, value) {
             }
           } else if ($2 instanceof $value_representation.UniqueIdentifier) {
             _block$1 = $data_element_value.new_unique_identifier(value);
-          } else if ($2 instanceof $value_representation.UniversalResourceIdentifier) {
+          } else if (
+            $2 instanceof $value_representation.UniversalResourceIdentifier
+          ) {
             if (value instanceof $Empty) {
               _block$1 = invalid_insert_error(item);
             } else {
@@ -1661,6 +1975,10 @@ export function insert_string_value(data_set, item, value) {
   );
 }
 
+/**
+ * Inserts a data element with a time value into a data set. The data element
+ * being inserted must be referenced through its dictionary entry.
+ */
 export function insert_time_value(data_set, item, value) {
   return $bool.lazy_guard(
     !$value_multiplicity.contains(item.multiplicity, 1),

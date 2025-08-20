@@ -8841,6 +8841,9 @@ const lookup_table = /* @__PURE__ */ toBitArray([
   255, 253,
 ]);
 
+/**
+ * Decodes the next codepoint from the given JIS X 0208 bytes.
+ */
 export function decode_next_codepoint(bytes) {
   return $lookup_table_16bit.decode_next_codepoint(bytes, lookup_table);
 }

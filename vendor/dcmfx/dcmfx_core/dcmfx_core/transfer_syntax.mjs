@@ -21,6 +21,9 @@ export class TransferSyntax extends $CustomType {
   }
 }
 
+/**
+ * The 'Implicit VR Little Endian' transfer syntax.
+ */
 export const implicit_vr_little_endian = /* @__PURE__ */ new TransferSyntax(
   "Implicit VR Little Endian",
   "1.2.840.10008.1.2",
@@ -30,6 +33,9 @@ export const implicit_vr_little_endian = /* @__PURE__ */ new TransferSyntax(
   false,
 );
 
+/**
+ * The 'Explicit VR Little Endian' transfer syntax.
+ */
 export const explicit_vr_little_endian = /* @__PURE__ */ new TransferSyntax(
   "Explicit VR Little Endian",
   "1.2.840.10008.1.2.1",
@@ -39,6 +45,9 @@ export const explicit_vr_little_endian = /* @__PURE__ */ new TransferSyntax(
   false,
 );
 
+/**
+ * The 'Encapsulated Uncompressed Explicit VR Little Endian' transfer syntax.
+ */
 export const encapsulated_uncompressed_explicit_vr_little_endian = /* @__PURE__ */ new TransferSyntax(
   "Encapsulated Uncompressed Explicit VR Little Endian",
   "1.2.840.10008.1.2.1.98",
@@ -48,6 +57,9 @@ export const encapsulated_uncompressed_explicit_vr_little_endian = /* @__PURE__ 
   true,
 );
 
+/**
+ * The 'Deflated Explicit VR Little Endian' transfer syntax.
+ */
 export const deflated_explicit_vr_little_endian = /* @__PURE__ */ new TransferSyntax(
   "Deflated Explicit VR Little Endian",
   "1.2.840.10008.1.2.1.99",
@@ -57,6 +69,9 @@ export const deflated_explicit_vr_little_endian = /* @__PURE__ */ new TransferSy
   false,
 );
 
+/**
+ * The 'Explicit VR Big Endian' transfer syntax.
+ */
 export const explicit_vr_big_endian = /* @__PURE__ */ new TransferSyntax(
   "Explicit VR Big Endian",
   "1.2.840.10008.1.2.2",
@@ -66,6 +81,9 @@ export const explicit_vr_big_endian = /* @__PURE__ */ new TransferSyntax(
   false,
 );
 
+/**
+ * The 'JPEG Baseline (Process 1)' transfer syntax.
+ */
 export const jpeg_baseline_8bit = /* @__PURE__ */ new TransferSyntax(
   "JPEG Baseline (Process 1)",
   "1.2.840.10008.1.2.4.50",
@@ -75,6 +93,9 @@ export const jpeg_baseline_8bit = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'JPEG Extended (Process 2 & 4)' transfer syntax.
+ */
 export const jpeg_extended_12bit = /* @__PURE__ */ new TransferSyntax(
   "JPEG Extended (Process 2 & 4)",
   "1.2.840.10008.1.2.4.51",
@@ -84,6 +105,9 @@ export const jpeg_extended_12bit = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'JPEG Lossless, Non-Hierarchical (Process 14)' transfer syntax.
+ */
 export const jpeg_lossless_non_hierarchical = /* @__PURE__ */ new TransferSyntax(
   "JPEG Lossless, Non-Hierarchical (Process 14)",
   "1.2.840.10008.1.2.4.57",
@@ -93,6 +117,10 @@ export const jpeg_lossless_non_hierarchical = /* @__PURE__ */ new TransferSyntax
   true,
 );
 
+/**
+ * The 'JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14
+ * [Selection Value 1])' transfer syntax.
+ */
 export const jpeg_lossless_non_hierarchical_sv1 = /* @__PURE__ */ new TransferSyntax(
   "JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])",
   "1.2.840.10008.1.2.4.70",
@@ -102,6 +130,9 @@ export const jpeg_lossless_non_hierarchical_sv1 = /* @__PURE__ */ new TransferSy
   true,
 );
 
+/**
+ * The 'JPEG-LS Lossless Image Compression' transfer syntax.
+ */
 export const jpeg_ls_lossless = /* @__PURE__ */ new TransferSyntax(
   "JPEG-LS Lossless Image Compression",
   "1.2.840.10008.1.2.4.80",
@@ -111,6 +142,9 @@ export const jpeg_ls_lossless = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'JPEG-LS Lossy (Near-Lossless) Image Compression' transfer syntax.
+ */
 export const jpeg_ls_lossy_near_lossless = /* @__PURE__ */ new TransferSyntax(
   "JPEG-LS Lossy (Near-Lossless) Image Compression",
   "1.2.840.10008.1.2.4.81",
@@ -120,7 +154,10 @@ export const jpeg_ls_lossy_near_lossless = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
-export const jpeg_2k_lossless_only = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'JPEG 2000 Image Compression (Lossless Only)' transfer syntax.
+ */
+export const jpeg_2000_lossless_only = /* @__PURE__ */ new TransferSyntax(
   "JPEG 2000 Image Compression (Lossless Only)",
   "1.2.840.10008.1.2.4.90",
   /* @__PURE__ */ new VrExplicit(),
@@ -129,7 +166,10 @@ export const jpeg_2k_lossless_only = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
-export const jpeg_2k = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'JPEG 2000 Image Compression' transfer syntax.
+ */
+export const jpeg_2000 = /* @__PURE__ */ new TransferSyntax(
   "JPEG 2000 Image Compression",
   "1.2.840.10008.1.2.4.91",
   /* @__PURE__ */ new VrExplicit(),
@@ -138,7 +178,11 @@ export const jpeg_2k = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
-export const jpeg_2k_multi_component_lossless_only = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'JPEG 2000 Part 2 Multi-component Image Compression (Lossless Only)'
+ * transfer syntax.
+ */
+export const jpeg_2000_multi_component_lossless_only = /* @__PURE__ */ new TransferSyntax(
   "JPEG 2000 Part 2 Multi-component Image Compression (Lossless Only)",
   "1.2.840.10008.1.2.4.92",
   /* @__PURE__ */ new VrExplicit(),
@@ -147,7 +191,10 @@ export const jpeg_2k_multi_component_lossless_only = /* @__PURE__ */ new Transfe
   true,
 );
 
-export const jpeg_2k_multi_component = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'JPEG 2000 Part 2 Multi-component Image Compression' transfer syntax.
+ */
+export const jpeg_2000_multi_component = /* @__PURE__ */ new TransferSyntax(
   "JPEG 2000 Part 2 Multi-component Image Compression",
   "1.2.840.10008.1.2.4.93",
   /* @__PURE__ */ new VrExplicit(),
@@ -156,6 +203,9 @@ export const jpeg_2k_multi_component = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'JPIP Referenced' transfer syntax.
+ */
 export const jpip_referenced = /* @__PURE__ */ new TransferSyntax(
   "JPIP Referenced",
   "1.2.840.10008.1.2.4.94",
@@ -165,6 +215,9 @@ export const jpip_referenced = /* @__PURE__ */ new TransferSyntax(
   false,
 );
 
+/**
+ * The 'JPIP Referenced Deflate' transfer syntax.
+ */
 export const jpip_referenced_deflate = /* @__PURE__ */ new TransferSyntax(
   "JPIP Referenced Deflate",
   "1.2.840.10008.1.2.4.95",
@@ -174,6 +227,9 @@ export const jpip_referenced_deflate = /* @__PURE__ */ new TransferSyntax(
   false,
 );
 
+/**
+ * The 'MPEG2 Main Profile @ Main Level' transfer syntax.
+ */
 export const mpeg2_main_profile_main_level = /* @__PURE__ */ new TransferSyntax(
   "MPEG2 Main Profile @ Main Level",
   "1.2.840.10008.1.2.4.100",
@@ -183,6 +239,9 @@ export const mpeg2_main_profile_main_level = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'Fragmentable MPEG2 Main Profile @ Main Level' transfer syntax.
+ */
 export const fragmentable_mpeg2_main_profile_main_level = /* @__PURE__ */ new TransferSyntax(
   "Fragmentable MPEG2 Main Profile @ Main Level",
   "1.2.840.10008.1.2.4.100.1",
@@ -192,6 +251,9 @@ export const fragmentable_mpeg2_main_profile_main_level = /* @__PURE__ */ new Tr
   true,
 );
 
+/**
+ * The 'MPEG2 Main Profile @ High Level' transfer syntax.
+ */
 export const mpeg2_main_profile_high_level = /* @__PURE__ */ new TransferSyntax(
   "MPEG2 Main Profile @ High Level",
   "1.2.840.10008.1.2.4.101",
@@ -201,6 +263,9 @@ export const mpeg2_main_profile_high_level = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'Fragmentable MPEG2 Main Profile @ High Level' transfer syntax.
+ */
 export const fragmentable_mpeg2_main_profile_high_level = /* @__PURE__ */ new TransferSyntax(
   "Fragmentable MPEG2 Main Profile @ High Level",
   "1.2.840.10008.1.2.4.101.1",
@@ -210,6 +275,9 @@ export const fragmentable_mpeg2_main_profile_high_level = /* @__PURE__ */ new Tr
   true,
 );
 
+/**
+ * The 'MPEG-4 AVC/H.264 High Profile / Level 4.1' transfer syntax.
+ */
 export const mpeg4_avc_h264_high_profile = /* @__PURE__ */ new TransferSyntax(
   "MPEG-4 AVC/H.264 High Profile / Level 4.1",
   "1.2.840.10008.1.2.4.102",
@@ -219,6 +287,10 @@ export const mpeg4_avc_h264_high_profile = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'Fragmentable MPEG-4 AVC/H.264 High Profile / Level 4.1' transfer
+ * syntax.
+ */
 export const fragmentable_mpeg4_avc_h264_high_profile = /* @__PURE__ */ new TransferSyntax(
   "Fragmentable MPEG-4 AVC/H.264 High Profile / Level 4.1",
   "1.2.840.10008.1.2.4.102.1",
@@ -228,6 +300,10 @@ export const fragmentable_mpeg4_avc_h264_high_profile = /* @__PURE__ */ new Tran
   true,
 );
 
+/**
+ * The 'MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1' transfer
+ * syntax.
+ */
 export const mpeg4_avc_h264_bd_compatible_high_profile = /* @__PURE__ */ new TransferSyntax(
   "MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1",
   "1.2.840.10008.1.2.4.103",
@@ -237,6 +313,10 @@ export const mpeg4_avc_h264_bd_compatible_high_profile = /* @__PURE__ */ new Tra
   true,
 );
 
+/**
+ * The 'Fragmentable MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1'
+ * transfer syntax.
+ */
 export const fragmentable_mpeg4_avc_h264_bd_compatible_high_profile = /* @__PURE__ */ new TransferSyntax(
   "Fragmentable MPEG-4 AVC/H.264 BD-compatible High Profile / Level 4.1",
   "1.2.840.10008.1.2.4.103.1",
@@ -246,6 +326,10 @@ export const fragmentable_mpeg4_avc_h264_bd_compatible_high_profile = /* @__PURE
   true,
 );
 
+/**
+ * The 'MPEG-4 AVC/H.264 High Profile / Level 4.2 For 2D Video' transfer
+ * syntax.
+ */
 export const mpeg4_avc_h264_high_profile_for_2d_video = /* @__PURE__ */ new TransferSyntax(
   "MPEG-4 AVC/H.264 High Profile / Level 4.2 For 2D Video",
   "1.2.840.10008.1.2.4.104",
@@ -255,6 +339,10 @@ export const mpeg4_avc_h264_high_profile_for_2d_video = /* @__PURE__ */ new Tran
   true,
 );
 
+/**
+ * The 'Fragmentable MPEG-4 AVC/H.264 High Profile / Level 4.2 For 2D Video'
+ * transfer syntax.
+ */
 export const fragmentable_mpeg4_avc_h264_high_profile_for_2d_video = /* @__PURE__ */ new TransferSyntax(
   "Fragmentable MPEG-4 AVC/H.264 High Profile / Level 4.2 For 2D Video",
   "1.2.840.10008.1.2.4.104.1",
@@ -264,6 +352,10 @@ export const fragmentable_mpeg4_avc_h264_high_profile_for_2d_video = /* @__PURE_
   true,
 );
 
+/**
+ * The 'MPEG-4 AVC/H.264 High Profile / Level 4.2 For 3D Video' transfer
+ * syntax.
+ */
 export const mpeg4_avc_h264_high_profile_for_3d_video = /* @__PURE__ */ new TransferSyntax(
   "MPEG-4 AVC/H.264 High Profile / Level 4.2 For 3D Video",
   "1.2.840.10008.1.2.4.105",
@@ -273,6 +365,10 @@ export const mpeg4_avc_h264_high_profile_for_3d_video = /* @__PURE__ */ new Tran
   true,
 );
 
+/**
+ * The 'Fragmentable MPEG-4 AVC/H.264 High Profile / Level 4.2 For 3D Video'
+ * transfer syntax.
+ */
 export const fragmentable_mpeg4_avc_h264_high_profile_for_3d_video = /* @__PURE__ */ new TransferSyntax(
   "Fragmentable MPEG-4 AVC/H.264 High Profile / Level 4.2 For 3D Video",
   "1.2.840.10008.1.2.4.105.1",
@@ -282,6 +378,9 @@ export const fragmentable_mpeg4_avc_h264_high_profile_for_3d_video = /* @__PURE_
   true,
 );
 
+/**
+ * The 'MPEG-4 AVC/H.264 Stereo High Profile / Level 4.2' transfer syntax.
+ */
 export const mpeg4_avc_h264_stereo_high_profile = /* @__PURE__ */ new TransferSyntax(
   "MPEG-4 AVC/H.264 Stereo High Profile / Level 4.2",
   "1.2.840.10008.1.2.4.106",
@@ -291,6 +390,10 @@ export const mpeg4_avc_h264_stereo_high_profile = /* @__PURE__ */ new TransferSy
   true,
 );
 
+/**
+ * The 'Fragmentable MPEG-4 AVC/H.264 Stereo High Profile / Level 4.2' transfer
+ * syntax.
+ */
 export const fragmentable_mpeg4_avc_h264_stereo_high_profile = /* @__PURE__ */ new TransferSyntax(
   "Fragmentable MPEG-4 AVC/H.264 Stereo High Profile / Level 4.2",
   "1.2.840.10008.1.2.4.106.1",
@@ -300,6 +403,9 @@ export const fragmentable_mpeg4_avc_h264_stereo_high_profile = /* @__PURE__ */ n
   true,
 );
 
+/**
+ * The 'HEVC/H.265 Main Profile / Level 5.1' transfer syntax.
+ */
 export const hevc_h265_main_profile = /* @__PURE__ */ new TransferSyntax(
   "HEVC/H.265 Main Profile / Level 5.1",
   "1.2.840.10008.1.2.4.107",
@@ -309,6 +415,9 @@ export const hevc_h265_main_profile = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'HEVC/H.265 Main 10 Profile / Level 5.1' transfer syntax.
+ */
 export const hevc_h265_main_10_profile = /* @__PURE__ */ new TransferSyntax(
   "HEVC/H.265 Main 10 Profile / Level 5.1",
   "1.2.840.10008.1.2.4.108",
@@ -318,6 +427,9 @@ export const hevc_h265_main_10_profile = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'JPEG XL Lossless' transfer syntax.
+ */
 export const jpeg_xl_lossless = /* @__PURE__ */ new TransferSyntax(
   "JPEG XL Lossless",
   "1.2.840.10008.1.2.4.110",
@@ -327,6 +439,9 @@ export const jpeg_xl_lossless = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'JPEG XL JPEG Recompression' transfer syntax.
+ */
 export const jpeg_xl_jpeg_recompression = /* @__PURE__ */ new TransferSyntax(
   "JPEG XL JPEG Recompression",
   "1.2.840.10008.1.2.4.111",
@@ -336,6 +451,9 @@ export const jpeg_xl_jpeg_recompression = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'JPEG XL' transfer syntax.
+ */
 export const jpeg_xl = /* @__PURE__ */ new TransferSyntax(
   "JPEG XL",
   "1.2.840.10008.1.2.4.112",
@@ -345,7 +463,10 @@ export const jpeg_xl = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
-export const high_throughput_jpeg_2k_lossless_only = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'High-Throughput JPEG 2000 (Lossless Only)' transfer syntax.
+ */
+export const high_throughput_jpeg_2000_lossless_only = /* @__PURE__ */ new TransferSyntax(
   "High-Throughput JPEG 2000 (Lossless Only)",
   "1.2.840.10008.1.2.4.201",
   /* @__PURE__ */ new VrExplicit(),
@@ -354,7 +475,11 @@ export const high_throughput_jpeg_2k_lossless_only = /* @__PURE__ */ new Transfe
   true,
 );
 
-export const high_throughput_jpeg_2k_with_rpcl_options_lossless_only = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'High-Throughput JPEG 2000 with RPCL Options (Lossless Only)' transfer
+ * syntax.
+ */
+export const high_throughput_jpeg_2000_with_rpcl_options_lossless_only = /* @__PURE__ */ new TransferSyntax(
   "High-Throughput JPEG 2000 with RPCL Options (Lossless Only)",
   "1.2.840.10008.1.2.4.202",
   /* @__PURE__ */ new VrExplicit(),
@@ -363,7 +488,10 @@ export const high_throughput_jpeg_2k_with_rpcl_options_lossless_only = /* @__PUR
   true,
 );
 
-export const high_throughput_jpeg_2k = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'High-Throughput JPEG 2000' transfer syntax.
+ */
+export const high_throughput_jpeg_2000 = /* @__PURE__ */ new TransferSyntax(
   "High-Throughput JPEG 2000",
   "1.2.840.10008.1.2.4.203",
   /* @__PURE__ */ new VrExplicit(),
@@ -372,20 +500,27 @@ export const high_throughput_jpeg_2k = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
-export function is_jpeg_2k(transfer_syntax) {
-  return ((((((isEqual(transfer_syntax, jpeg_2k_lossless_only)) || (isEqual(
+/**
+ * Returns whether this transfer syntax is one of the seven JPEG 2000 or
+ * High-Throughput JPEG 2000 transfer syntaxes.
+ */
+export function is_jpeg_2000(transfer_syntax) {
+  return ((((((isEqual(transfer_syntax, jpeg_2000_lossless_only)) || (isEqual(
     transfer_syntax,
-    jpeg_2k
-  ))) || (isEqual(transfer_syntax, jpeg_2k_multi_component_lossless_only))) || (isEqual(
+    jpeg_2000
+  ))) || (isEqual(transfer_syntax, jpeg_2000_multi_component_lossless_only))) || (isEqual(
     transfer_syntax,
-    jpeg_2k_multi_component
-  ))) || (isEqual(transfer_syntax, high_throughput_jpeg_2k_lossless_only))) || (isEqual(
+    jpeg_2000_multi_component
+  ))) || (isEqual(transfer_syntax, high_throughput_jpeg_2000_lossless_only))) || (isEqual(
     transfer_syntax,
-    high_throughput_jpeg_2k_with_rpcl_options_lossless_only
-  ))) || (isEqual(transfer_syntax, high_throughput_jpeg_2k));
+    high_throughput_jpeg_2000_with_rpcl_options_lossless_only
+  ))) || (isEqual(transfer_syntax, high_throughput_jpeg_2000));
 }
 
-export const jpip_high_throughput_jpeg_2k_referenced = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'JPIP HTJ2K Referenced' transfer syntax.
+ */
+export const jpip_high_throughput_jpeg_2000_referenced = /* @__PURE__ */ new TransferSyntax(
   "JPIP HTJ2K Referenced",
   "1.2.840.10008.1.2.4.204",
   /* @__PURE__ */ new VrExplicit(),
@@ -394,7 +529,10 @@ export const jpip_high_throughput_jpeg_2k_referenced = /* @__PURE__ */ new Trans
   false,
 );
 
-export const jpip_high_throughput_jpeg_2k_referenced_deflate = /* @__PURE__ */ new TransferSyntax(
+/**
+ * The 'JPIP HTJ2K Referenced Deflate' transfer syntax.
+ */
+export const jpip_high_throughput_jpeg_2000_referenced_deflate = /* @__PURE__ */ new TransferSyntax(
   "JPIP HTJ2K Referenced Deflate",
   "1.2.840.10008.1.2.4.205",
   /* @__PURE__ */ new VrExplicit(),
@@ -403,6 +541,9 @@ export const jpip_high_throughput_jpeg_2k_referenced_deflate = /* @__PURE__ */ n
   false,
 );
 
+/**
+ * The 'RLE Lossless' transfer syntax.
+ */
 export const rle_lossless = /* @__PURE__ */ new TransferSyntax(
   "RLE Lossless",
   "1.2.840.10008.1.2.5",
@@ -412,6 +553,10 @@ export const rle_lossless = /* @__PURE__ */ new TransferSyntax(
   true,
 );
 
+/**
+ * The 'SMPTE ST 2110-20 Uncompressed Progressive Active Video' transfer
+ * syntax.
+ */
 export const smpte_st_2110_20_uncompressed_progressive_active_video = /* @__PURE__ */ new TransferSyntax(
   "SMPTE ST 2110-20 Uncompressed Progressive Active Video",
   "1.2.840.10008.1.2.7.1",
@@ -421,6 +566,9 @@ export const smpte_st_2110_20_uncompressed_progressive_active_video = /* @__PURE
   false,
 );
 
+/**
+ * The 'SMPTE ST 2110-20 Uncompressed Interlaced Active Video' transfer syntax.
+ */
 export const smpte_st_2110_20_uncompressed_interlaced_active_video = /* @__PURE__ */ new TransferSyntax(
   "SMPTE ST 2110-20 Uncompressed Interlaced Active Video",
   "1.2.840.10008.1.2.7.2",
@@ -430,6 +578,9 @@ export const smpte_st_2110_20_uncompressed_interlaced_active_video = /* @__PURE_
   false,
 );
 
+/**
+ * The 'SMPTE ST 2110-30 PCM Audio' transfer syntax.
+ */
 export const smpte_st_2110_30_pcm_audio = /* @__PURE__ */ new TransferSyntax(
   "SMPTE ST 2110-30 PCM Audio",
   "1.2.840.10008.1.2.7.3",
@@ -439,6 +590,9 @@ export const smpte_st_2110_30_pcm_audio = /* @__PURE__ */ new TransferSyntax(
   false,
 );
 
+/**
+ * The 'Deflated Image Frame Compression' transfer syntax.
+ */
 export const deflated_image_frame_compression = /* @__PURE__ */ new TransferSyntax(
   "Deflated Image Frame Compression",
   "1.2.840.10008.1.2.8.1",
@@ -448,6 +602,10 @@ export const deflated_image_frame_compression = /* @__PURE__ */ new TransferSynt
   true,
 );
 
+/**
+ * Returns the transfer syntax with the given UID. If the UID isn't recognized
+ * then an error is returned.
+ */
 export function from_uid(uid) {
   if (uid === "1.2.840.10008.1.2") {
     return new Ok(implicit_vr_little_endian);
@@ -472,13 +630,13 @@ export function from_uid(uid) {
   } else if (uid === "1.2.840.10008.1.2.4.81") {
     return new Ok(jpeg_ls_lossy_near_lossless);
   } else if (uid === "1.2.840.10008.1.2.4.90") {
-    return new Ok(jpeg_2k_lossless_only);
+    return new Ok(jpeg_2000_lossless_only);
   } else if (uid === "1.2.840.10008.1.2.4.91") {
-    return new Ok(jpeg_2k);
+    return new Ok(jpeg_2000);
   } else if (uid === "1.2.840.10008.1.2.4.92") {
-    return new Ok(jpeg_2k_multi_component_lossless_only);
+    return new Ok(jpeg_2000_multi_component_lossless_only);
   } else if (uid === "1.2.840.10008.1.2.4.93") {
-    return new Ok(jpeg_2k_multi_component);
+    return new Ok(jpeg_2000_multi_component);
   } else if (uid === "1.2.840.10008.1.2.4.94") {
     return new Ok(jpip_referenced);
   } else if (uid === "1.2.840.10008.1.2.4.95") {
@@ -522,15 +680,15 @@ export function from_uid(uid) {
   } else if (uid === "1.2.840.10008.1.2.4.112") {
     return new Ok(jpeg_xl);
   } else if (uid === "1.2.840.10008.1.2.4.201") {
-    return new Ok(high_throughput_jpeg_2k_lossless_only);
+    return new Ok(high_throughput_jpeg_2000_lossless_only);
   } else if (uid === "1.2.840.10008.1.2.4.202") {
-    return new Ok(high_throughput_jpeg_2k_with_rpcl_options_lossless_only);
+    return new Ok(high_throughput_jpeg_2000_with_rpcl_options_lossless_only);
   } else if (uid === "1.2.840.10008.1.2.4.203") {
-    return new Ok(high_throughput_jpeg_2k);
+    return new Ok(high_throughput_jpeg_2000);
   } else if (uid === "1.2.840.10008.1.2.4.204") {
-    return new Ok(jpip_high_throughput_jpeg_2k_referenced);
+    return new Ok(jpip_high_throughput_jpeg_2000_referenced);
   } else if (uid === "1.2.840.10008.1.2.4.205") {
-    return new Ok(jpip_high_throughput_jpeg_2k_referenced_deflate);
+    return new Ok(jpip_high_throughput_jpeg_2000_referenced_deflate);
   } else if (uid === "1.2.840.10008.1.2.5") {
     return new Ok(rle_lossless);
   } else if (uid === "1.2.840.10008.1.2.7.1") {
@@ -546,6 +704,9 @@ export function from_uid(uid) {
   }
 }
 
+/**
+ * Returns a list of the supported transfer syntaxes.
+ */
 export const all = /* @__PURE__ */ toList([
   implicit_vr_little_endian,
   explicit_vr_little_endian,
@@ -558,10 +719,10 @@ export const all = /* @__PURE__ */ toList([
   jpeg_lossless_non_hierarchical_sv1,
   jpeg_ls_lossless,
   jpeg_ls_lossy_near_lossless,
-  jpeg_2k_lossless_only,
-  jpeg_2k,
-  jpeg_2k_multi_component_lossless_only,
-  jpeg_2k_multi_component,
+  jpeg_2000_lossless_only,
+  jpeg_2000,
+  jpeg_2000_multi_component_lossless_only,
+  jpeg_2000_multi_component,
   jpip_referenced,
   jpip_referenced_deflate,
   mpeg2_main_profile_main_level,
@@ -583,11 +744,11 @@ export const all = /* @__PURE__ */ toList([
   jpeg_xl_lossless,
   jpeg_xl_jpeg_recompression,
   jpeg_xl,
-  high_throughput_jpeg_2k_lossless_only,
-  high_throughput_jpeg_2k_with_rpcl_options_lossless_only,
-  high_throughput_jpeg_2k,
-  jpip_high_throughput_jpeg_2k_referenced,
-  jpip_high_throughput_jpeg_2k_referenced_deflate,
+  high_throughput_jpeg_2000_lossless_only,
+  high_throughput_jpeg_2000_with_rpcl_options_lossless_only,
+  high_throughput_jpeg_2000,
+  jpip_high_throughput_jpeg_2000_referenced,
+  jpip_high_throughput_jpeg_2000_referenced_deflate,
   rle_lossless,
   smpte_st_2110_20_uncompressed_progressive_active_video,
   smpte_st_2110_20_uncompressed_interlaced_active_video,

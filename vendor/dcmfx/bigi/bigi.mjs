@@ -82,6 +82,15 @@ export class Signed extends $CustomType {}
 
 export class Unsigned extends $CustomType {}
 
+/**
+ * Performs a *floored* integer division, which means that the result will
+ * always be rounded towards negative infinity.
+ *
+ * If you want to perform truncated integer division (rounding towards zero),
+ * use `divide` or `divide_no_zero` instead.
+ *
+ * Returns an error if the divisor is 0.
+ */
 export function floor_divide(dividend, divisor) {
   let z = zero();
   let $ = isEqual(divisor, z);
@@ -102,10 +111,16 @@ export function floor_divide(dividend, divisor) {
   }
 }
 
+/**
+ * Returns whether the big integer provided is odd.
+ */
 export function is_odd(bigint) {
   return !isEqual(remainder(bigint, from_int(2)), zero());
 }
 
+/**
+ * Compares two big integers, returning the larger of the two.
+ */
 export function max(a, b) {
   let $ = compare(a, b);
   if ($ instanceof $order.Lt) {
@@ -115,6 +130,9 @@ export function max(a, b) {
   }
 }
 
+/**
+ * Compares two big integers, returning the smaller of the two.
+ */
 export function min(a, b) {
   let $ = compare(a, b);
   if ($ instanceof $order.Lt) {
@@ -124,20 +142,38 @@ export function min(a, b) {
   }
 }
 
+/**
+ * Restricts a big integer between a lower and upper bound.
+ */
 export function clamp(bigint, min_bound, max_bound) {
   let _pipe = bigint;
   let _pipe$1 = min(_pipe, max_bound);
   return max(_pipe$1, min_bound);
 }
 
+/**
+ * Sums a list of big integers.
+ *
+ * Returns 0 if the list was empty.
+ */
 export function sum(bigints) {
   return $list.fold(bigints, zero(), add);
 }
 
+/**
+ * Multiplies a list of big integers.
+ *
+ * Returns 1 if the list was empty.
+ */
 export function product(bigints) {
   return $list.fold(bigints, from_int(1), multiply);
 }
 
+/**
+ * Joins a list of digits into a single value. Returns an error if the base is
+ * less than 2 or if the list contains a digit greater than or equal to the
+ * specified base.
+ */
 export function undigits(digits, base) {
   let $ = base < 2;
   if ($) {
@@ -170,7 +206,10 @@ function get_digit(loop$bigint, loop$digits, loop$divisor) {
     let $ = compare(bigint, divisor);
     if ($ instanceof $order.Lt) {
       let $1 = to_int(bigint);
-      if (!($1 instanceof Ok)) {
+      let digit;
+      if ($1 instanceof Ok) {
+        digit = $1[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -187,14 +226,16 @@ function get_digit(loop$bigint, loop$digits, loop$divisor) {
           }
         )
       }
-      let digit = $1[0];
       return listPrepend(digit, digits);
     } else {
       let _block;
       let _pipe = remainder(bigint, divisor);
       _block = to_int(_pipe);
       let $1 = _block;
-      if (!($1 instanceof Ok)) {
+      let digit;
+      if ($1 instanceof Ok) {
+        digit = $1[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -211,7 +252,6 @@ function get_digit(loop$bigint, loop$digits, loop$divisor) {
           }
         )
       }
-      let digit = $1[0];
       let digits$1 = listPrepend(digit, digits);
       loop$bigint = divide(bigint, divisor);
       loop$digits = digits$1;
@@ -220,6 +260,11 @@ function get_digit(loop$bigint, loop$digits, loop$divisor) {
   }
 }
 
+/**
+ * Get the digits in a given bigint as a list of integers in base 10.
+ *
+ * The list is ordered starting from the most significant digit.
+ */
 export function digits(bigint) {
   let divisor = from_int(10);
   return get_digit(bigint, toList([]), divisor);

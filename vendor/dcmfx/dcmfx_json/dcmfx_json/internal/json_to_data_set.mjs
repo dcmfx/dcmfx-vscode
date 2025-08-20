@@ -49,6 +49,11 @@ class PersonNameVariants extends $CustomType {
   }
 }
 
+/**
+ * Reads a native value representation from a DICOM JSON "vr" property.
+ * 
+ * @ignore
+ */
 function read_dicom_json_vr(raw_value, path) {
   let _block;
   let _pipe = raw_value;
@@ -85,6 +90,13 @@ function read_dicom_json_vr(raw_value, path) {
   );
 }
 
+/**
+ * Decodes JSON to an `IEEEFloat`. Because gleam_json on Erlang doesn't
+ * natively support Infinity and NaN values, these are instead handled as
+ * strings.
+ * 
+ * @ignore
+ */
 function decode_ieee_float() {
   return $decode.one_of(
     (() => {
@@ -115,6 +127,11 @@ function decode_ieee_float() {
   );
 }
 
+/**
+ * Reads a data element value from a DICOM JSON person name.
+ * 
+ * @ignore
+ */
 function read_dicom_json_person_name_value(value, path) {
   let _block;
   let _pipe = value;
@@ -186,46 +203,37 @@ function read_dicom_json_person_name_value(value, path) {
   );
 }
 
+/**
+ * Reads an encapsulated pixel data value from raw bytes.
+ * 
+ * @ignore
+ */
 function read_encapsulated_pixel_data_items(bytes, vr, items) {
   if (bytes.bitSize >= 16) {
-    if (bytes.byteAt(0) === 254 && bytes.byteAt(1) === 255) {
-      if (bytes.bitSize >= 32) {
-        if (bytes.byteAt(2) === 0 && bytes.byteAt(3) === 224) {
-          if (bytes.bitSize >= 64) {
-            if ((bytes.bitSize - 64) % 8 === 0) {
-              let length = bitArraySliceToInt(bytes, 32, 64, false, false);
-              let rest = bitArraySlice(bytes, 64);
-              return $result.try$(
-                $bit_array.slice(rest, 0, length),
-                (item) => {
-                  return $result.try$(
-                    $bit_array.slice(
-                      rest,
-                      length,
-                      $bit_array.byte_size(rest) - length,
-                    ),
-                    (rest) => {
-                      return read_encapsulated_pixel_data_items(
-                        rest,
-                        vr,
-                        listPrepend(item, items),
-                      );
-                    },
-                  );
-                },
+    if (
+      bytes.byteAt(0) === 254 && bytes.byteAt(1) === 255 &&
+      bytes.bitSize >= 32 &&
+      bytes.byteAt(2) === 0 && bytes.byteAt(3) === 224 &&
+      bytes.bitSize >= 64 &&
+      (bytes.bitSize - 64) % 8 === 0
+    ) {
+      let length = bitArraySliceToInt(bytes, 32, 64, false, false);
+      let rest = bitArraySlice(bytes, 64);
+      return $result.try$(
+        $bit_array.slice(rest, 0, length),
+        (item) => {
+          return $result.try$(
+            $bit_array.slice(rest, length, $bit_array.byte_size(rest) - length),
+            (rest) => {
+              return read_encapsulated_pixel_data_items(
+                rest,
+                vr,
+                listPrepend(item, items),
               );
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else {
-          return new Error(undefined);
-        }
-      } else {
-        return new Error(undefined);
-      }
+            },
+          );
+        },
+      );
     } else {
       return new Error(undefined);
     }
@@ -244,6 +252,11 @@ function read_encapsulated_pixel_data_items(bytes, vr, items) {
   }
 }
 
+/**
+ * Reads a data element value from a DICOM JSON "InlineBinary" property.
+ * 
+ * @ignore
+ */
 function read_dicom_json_inline_binary_value(
   inline_binary,
   tag,
@@ -320,6 +333,11 @@ function read_dicom_json_inline_binary_value(
   );
 }
 
+/**
+ * Reads a data element value from a DICOM JSON "Value" property.
+ * 
+ * @ignore
+ */
 function read_dicom_json_primitive_value(tag, vr, value, path) {
   if (vr instanceof $value_representation.AgeString) {
     let _block;
@@ -533,7 +551,7 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   } else if (vr instanceof $value_representation.DecimalString) {
     let _pipe = value;
     let _pipe$1 = $decode.run(_pipe, $decode.list($decode.dynamic));
-    let _pipe$2 = $result.then$(
+    let _pipe$2 = $result.try$(
       _pipe$1,
       (lst) => {
         let _pipe$2 = $list.map(
@@ -541,16 +559,14 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
           (i) => {
             let $ = $decode.run(i, $decode.float);
             if ($ instanceof Ok) {
-              let i$1 = $[0];
-              return new Ok(i$1);
+              return $;
             } else {
               let $1 = $decode.run(i, $decode.int);
               if ($1 instanceof Ok) {
                 let i$1 = $1[0];
                 return new Ok($int.to_float(i$1));
               } else {
-                let e = $1[0];
-                return new Error(e);
+                return $1;
               }
             }
           },
@@ -850,8 +866,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
             _block$1 = [0, 0xFFFF];
           }
           let $1 = _block$1;
-          let min = $1[0];
-          let max = $1[1];
+          let min;
+          let max;
+          min = $1[0];
+          max = $1[1];
           let is_valid = $list.all(
             ints,
             (i) => { return (i >= min) && (i <= max); },
@@ -884,8 +902,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
               _block$1 = [0, 0xFFFF];
             }
             let $2 = _block$1;
-            let min = $2[0];
-            let max = $2[1];
+            let min;
+            let max;
+            min = $2[0];
+            max = $2[1];
             let is_valid = $list.all(
               ints,
               (i) => { return (i >= min) && (i <= max); },
@@ -918,8 +938,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
                 _block$1 = [0, 0xFFFF];
               }
               let $3 = _block$1;
-              let min = $3[0];
-              let max = $3[1];
+              let min;
+              let max;
+              min = $3[0];
+              max = $3[1];
               let is_valid = $list.all(
                 ints,
                 (i) => { return (i >= min) && (i <= max); },
@@ -950,62 +972,22 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
               );
             } else {
               let $3 = $2.tail;
-              if ($3 instanceof $Empty) {
-                if ($) {
-                  let entry_count = ints.head;
-                  let first_input_value = $1.head;
-                  let bits_per_entry = $2.head;
-                  let _pipe$2 = toBitArray([
-                    sizedInt(entry_count, 16, false),
-                    sizedInt(first_input_value, 16, false),
-                    sizedInt(bits_per_entry, 16, false),
-                  ]);
-                  let _pipe$3 = ((_capture) => {
-                    return $data_element_value.new_lookup_table_descriptor_unchecked(
-                      vr,
-                      _capture,
-                    );
-                  })(_pipe$2);
-                  return new Ok(_pipe$3);
-                } else {
-                  let _block$1;
-                  if (vr instanceof $value_representation.SignedShort) {
-                    _block$1 = [-1 * 0x8000, 0x7FFF];
-                  } else {
-                    _block$1 = [0, 0xFFFF];
-                  }
-                  let $4 = _block$1;
-                  let min = $4[0];
-                  let max = $4[1];
-                  let is_valid = $list.all(
-                    ints,
-                    (i) => { return (i >= min) && (i <= max); },
+              if ($3 instanceof $Empty && $) {
+                let entry_count = ints.head;
+                let first_input_value = $1.head;
+                let bits_per_entry = $2.head;
+                let _pipe$2 = toBitArray([
+                  sizedInt(entry_count, 16, false),
+                  sizedInt(first_input_value, 16, false),
+                  sizedInt(bits_per_entry, 16, false),
+                ]);
+                let _pipe$3 = ((_capture) => {
+                  return $data_element_value.new_lookup_table_descriptor_unchecked(
+                    vr,
+                    _capture,
                   );
-                  return $bool.guard(
-                    !is_valid,
-                    new Error(
-                      new $json_error.JsonInvalid(
-                        "Short value is out of range",
-                        path,
-                      ),
-                    ),
-                    () => {
-                      let _pipe$2 = ints;
-                      let _pipe$3 = $list.map(
-                        _pipe$2,
-                        (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-                      );
-                      let _pipe$4 = $bit_array.concat(_pipe$3);
-                      let _pipe$5 = ((_capture) => {
-                        return $data_element_value.new_binary_unchecked(
-                          vr,
-                          _capture,
-                        );
-                      })(_pipe$4);
-                      return new Ok(_pipe$5);
-                    },
-                  );
-                }
+                })(_pipe$2);
+                return new Ok(_pipe$3);
               } else {
                 let _block$1;
                 if (vr instanceof $value_representation.SignedShort) {
@@ -1014,8 +996,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
                   _block$1 = [0, 0xFFFF];
                 }
                 let $4 = _block$1;
-                let min = $4[0];
-                let max = $4[1];
+                let min;
+                let max;
+                min = $4[0];
+                max = $4[1];
                 let is_valid = $list.all(
                   ints,
                   (i) => { return (i >= min) && (i <= max); },
@@ -1351,8 +1335,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
             _block$1 = [0, 0xFFFF];
           }
           let $1 = _block$1;
-          let min = $1[0];
-          let max = $1[1];
+          let min;
+          let max;
+          min = $1[0];
+          max = $1[1];
           let is_valid = $list.all(
             ints,
             (i) => { return (i >= min) && (i <= max); },
@@ -1385,8 +1371,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
               _block$1 = [0, 0xFFFF];
             }
             let $2 = _block$1;
-            let min = $2[0];
-            let max = $2[1];
+            let min;
+            let max;
+            min = $2[0];
+            max = $2[1];
             let is_valid = $list.all(
               ints,
               (i) => { return (i >= min) && (i <= max); },
@@ -1419,8 +1407,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
                 _block$1 = [0, 0xFFFF];
               }
               let $3 = _block$1;
-              let min = $3[0];
-              let max = $3[1];
+              let min;
+              let max;
+              min = $3[0];
+              max = $3[1];
               let is_valid = $list.all(
                 ints,
                 (i) => { return (i >= min) && (i <= max); },
@@ -1451,62 +1441,22 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
               );
             } else {
               let $3 = $2.tail;
-              if ($3 instanceof $Empty) {
-                if ($) {
-                  let entry_count = ints.head;
-                  let first_input_value = $1.head;
-                  let bits_per_entry = $2.head;
-                  let _pipe$2 = toBitArray([
-                    sizedInt(entry_count, 16, false),
-                    sizedInt(first_input_value, 16, false),
-                    sizedInt(bits_per_entry, 16, false),
-                  ]);
-                  let _pipe$3 = ((_capture) => {
-                    return $data_element_value.new_lookup_table_descriptor_unchecked(
-                      vr,
-                      _capture,
-                    );
-                  })(_pipe$2);
-                  return new Ok(_pipe$3);
-                } else {
-                  let _block$1;
-                  if (vr instanceof $value_representation.SignedShort) {
-                    _block$1 = [-1 * 0x8000, 0x7FFF];
-                  } else {
-                    _block$1 = [0, 0xFFFF];
-                  }
-                  let $4 = _block$1;
-                  let min = $4[0];
-                  let max = $4[1];
-                  let is_valid = $list.all(
-                    ints,
-                    (i) => { return (i >= min) && (i <= max); },
+              if ($3 instanceof $Empty && $) {
+                let entry_count = ints.head;
+                let first_input_value = $1.head;
+                let bits_per_entry = $2.head;
+                let _pipe$2 = toBitArray([
+                  sizedInt(entry_count, 16, false),
+                  sizedInt(first_input_value, 16, false),
+                  sizedInt(bits_per_entry, 16, false),
+                ]);
+                let _pipe$3 = ((_capture) => {
+                  return $data_element_value.new_lookup_table_descriptor_unchecked(
+                    vr,
+                    _capture,
                   );
-                  return $bool.guard(
-                    !is_valid,
-                    new Error(
-                      new $json_error.JsonInvalid(
-                        "Short value is out of range",
-                        path,
-                      ),
-                    ),
-                    () => {
-                      let _pipe$2 = ints;
-                      let _pipe$3 = $list.map(
-                        _pipe$2,
-                        (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-                      );
-                      let _pipe$4 = $bit_array.concat(_pipe$3);
-                      let _pipe$5 = ((_capture) => {
-                        return $data_element_value.new_binary_unchecked(
-                          vr,
-                          _capture,
-                        );
-                      })(_pipe$4);
-                      return new Ok(_pipe$5);
-                    },
-                  );
-                }
+                })(_pipe$2);
+                return new Ok(_pipe$3);
               } else {
                 let _block$1;
                 if (vr instanceof $value_representation.SignedShort) {
@@ -1515,8 +1465,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
                   _block$1 = [0, 0xFFFF];
                 }
                 let $4 = _block$1;
-                let min = $4[0];
-                let max = $4[1];
+                let min;
+                let max;
+                min = $4[0];
+                max = $4[1];
                 let is_valid = $list.all(
                   ints,
                   (i) => { return (i >= min) && (i <= max); },
@@ -1644,6 +1596,10 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
   }
 }
 
+/**
+ * Converts DICOM JSON into a data set. This is used to read the root data set
+ * and also recursively when reading sequences.
+ */
 export function convert_json_to_data_set(in$, path) {
   let _block;
   let _pipe = in$;
@@ -1667,8 +1623,10 @@ export function convert_json_to_data_set(in$, path) {
           return $result.try$(
             context,
             (context) => {
-              let data_set = context[0];
-              let transfer_syntax = context[1];
+              let data_set;
+              let transfer_syntax;
+              data_set = context[0];
+              transfer_syntax = context[1];
               let _block$1;
               let _pipe$3 = raw_tag;
               let _pipe$4 = $data_element_tag.from_hex_string(_pipe$3);
@@ -1684,7 +1642,10 @@ export function convert_json_to_data_set(in$, path) {
                 tag,
                 (tag) => {
                   let $ = $data_set_path.add_data_element(path, tag);
-                  if (!($ instanceof Ok)) {
+                  let path$1;
+                  if ($ instanceof Ok) {
+                    path$1 = $[0];
+                  } else {
                     throw makeError(
                       "let_assert",
                       FILEPATH,
@@ -1701,7 +1662,6 @@ export function convert_json_to_data_set(in$, path) {
                       }
                     )
                   }
-                  let path$1 = $[0];
                   let value = convert_json_to_data_element(
                     raw_value,
                     tag,
@@ -1740,6 +1700,12 @@ export function convert_json_to_data_set(in$, path) {
   );
 }
 
+/**
+ * Reads the value of a single item in DICOM JSON as a native data element
+ * value.
+ * 
+ * @ignore
+ */
 function convert_json_to_data_element(in$, tag, transfer_syntax, path) {
   let _block;
   let _pipe = in$;

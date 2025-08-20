@@ -9,41 +9,28 @@ import type * as $byte_stream from "../dcmfx_p10/internal/byte_stream.d.mts";
 import type * as $data_element_header from "../dcmfx_p10/internal/data_element_header.d.mts";
 import type * as $p10_location from "../dcmfx_p10/internal/p10_location.d.mts";
 import type * as $p10_error from "../dcmfx_p10/p10_error.d.mts";
+import type * as $p10_read_config from "../dcmfx_p10/p10_read_config.d.mts";
 import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../gleam.d.mts";
 
-export class P10ReadConfig extends _.CustomType {
-  constructor(
-    max_token_size: number,
-    max_string_size: number,
-    max_sequence_depth: number,
-    require_ordered_data_elements: boolean
-  );
-  
-  max_token_size: number;
-  max_string_size: number;
-  max_sequence_depth: number;
-  require_ordered_data_elements: boolean;
-}
-
-export type P10ReadConfig$ = P10ReadConfig;
-
 declare class P10ReadContext extends _.CustomType {
   constructor(
-    config: P10ReadConfig$,
+    config: $p10_read_config.P10ReadConfig$,
     stream: $byte_stream.ByteStream$,
     next_action: NextAction$,
     transfer_syntax: $transfer_syntax.TransferSyntax$,
     path: $data_set_path.DataSetPath$,
-    location: _.List<$p10_location.LocationEntry$>
+    location: _.List<$p10_location.LocationEntry$>,
+    has_emitted_specific_character_set_data_element: boolean
   );
   
-  config: P10ReadConfig$;
+  config: $p10_read_config.P10ReadConfig$;
   stream: $byte_stream.ByteStream$;
   next_action: NextAction$;
   transfer_syntax: $transfer_syntax.TransferSyntax$;
   path: $data_set_path.DataSetPath$;
   location: _.List<$p10_location.LocationEntry$>;
+  has_emitted_specific_character_set_data_element: boolean;
 }
 
 export type P10ReadContext$ = P10ReadContext;
@@ -82,18 +69,11 @@ declare class ReadPixelDataItem extends _.CustomType {
 
 declare type NextAction$ = ReadFilePreambleAndDICMPrefix | ReadFileMetaInformation | ReadDataElementHeader | ReadDataElementValueBytes | ReadPixelDataItem;
 
-export function default_config(): P10ReadConfig$;
-
-export function with_config(context: P10ReadContext$, config: P10ReadConfig$): P10ReadContext$;
-
-export function set_fallback_transfer_syntax(
-  context: P10ReadContext$,
-  transfer_syntax: $transfer_syntax.TransferSyntax$
+export function new_read_context(
+  config: $option.Option$<$p10_read_config.P10ReadConfig$>
 ): P10ReadContext$;
 
 export function transfer_syntax(context: P10ReadContext$): $transfer_syntax.TransferSyntax$;
-
-export function new_read_context(): P10ReadContext$;
 
 export function write_bytes(
   context: P10ReadContext$,

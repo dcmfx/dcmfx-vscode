@@ -25,6 +25,10 @@ class P10CustomTypeTransform extends $CustomType {
   }
 }
 
+/**
+ * An error that occurred when adding a P10 token to the data set builder.
+ * This can happen when the stream of DICOM P10 tokens is invalid.
+ */
 export class P10Error extends $CustomType {
   constructor($0) {
     super();
@@ -32,6 +36,10 @@ export class P10Error extends $CustomType {
   }
 }
 
+/**
+ * An error that occurred when creating the custom type from the gathered
+ * data set.
+ */
 export class DataError extends $CustomType {
   constructor($0) {
     super();
@@ -39,6 +47,11 @@ export class DataError extends $CustomType {
   }
 }
 
+/**
+ * Creates a new transform for converting a stream of DICOM P10 tokens to
+ * a custom type. The data elements needed by the custom type must be
+ * specified.
+ */
 export function new$(tags, target_from_data_set) {
   let filter = $p10_filter_transform.new$(
     (tag, _, _1, _2) => { return $list.contains(tags, tag); },
@@ -56,6 +69,9 @@ export function new$(tags, target_from_data_set) {
   );
 }
 
+/**
+ * Adds the next token in the DICOM P10 token stream.
+ */
 export function add_token(transform, token) {
   let $ = transform.filter;
   if ($ instanceof Some) {
@@ -91,8 +107,10 @@ export function add_token(transform, token) {
         }
       })(),
       (_use0) => {
-        let filter$1 = _use0[0];
-        let builder$1 = _use0[1];
+        let filter$1;
+        let builder$1;
+        filter$1 = _use0[0];
+        builder$1 = _use0[1];
         let is_complete = is_at_root && (() => {
           if (token instanceof $p10_token.DataElementHeader) {
             let tag = token.tag;
@@ -129,7 +147,10 @@ export function add_token(transform, token) {
           let _pipe$1 = $data_set_builder.force_end(_pipe);
           _block = $data_set_builder.final_data_set(_pipe$1);
           let $1 = _block;
-          if (!($1 instanceof Ok)) {
+          let data_set;
+          if ($1 instanceof Ok) {
+            data_set = $1[0];
+          } else {
             throw makeError(
               "let_assert",
               FILEPATH,
@@ -146,7 +167,6 @@ export function add_token(transform, token) {
               }
             )
           }
-          let data_set = $1[0];
           let _block$1;
           let _pipe$2 = transform.target_from_data_set(data_set);
           _block$1 = $result.map_error(
@@ -157,28 +177,22 @@ export function add_token(transform, token) {
           return $result.try$(
             target,
             (target) => {
-              let _block$2;
-              let _record = transform;
-              _block$2 = new P10CustomTypeTransform(
+              let _pipe$3 = new P10CustomTypeTransform(
                 new None(),
-                _record.highest_tag,
-                _record.target_from_data_set,
+                transform.highest_tag,
+                transform.target_from_data_set,
                 new Some(target),
               );
-              let _pipe$3 = _block$2;
               return new Ok(_pipe$3);
             },
           );
         } else {
-          let _block;
-          let _record = transform;
-          _block = new P10CustomTypeTransform(
+          let _pipe = new P10CustomTypeTransform(
             new Some([filter$1, builder$1]),
-            _record.highest_tag,
-            _record.target_from_data_set,
-            _record.target,
+            transform.highest_tag,
+            transform.target_from_data_set,
+            transform.target,
           );
-          let _pipe = _block;
           return new Ok(_pipe);
         }
       },
@@ -188,6 +202,11 @@ export function add_token(transform, token) {
   }
 }
 
+/**
+ * Returns the custom type created by this transform. This is set once all the
+ * required data elements have been gathered from the stream of DICOM P10
+ * tokens and successfully constructed into the custom type.
+ */
 export function get_output(transform) {
   return transform.target;
 }

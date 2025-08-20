@@ -15,7 +15,6 @@ import {
   Error,
   toList,
   Empty as $Empty,
-  NonEmpty as $NonEmpty,
   CustomType as $CustomType,
   makeError,
 } from "../../gleam.mjs";
@@ -72,14 +71,12 @@ function parse_person_name_component_group(component_group) {
             components,
             $list.repeat("", 5 - component_count),
           );
-          if (
-            components$1 instanceof $Empty ||
-            components$1.tail instanceof $Empty ||
-            components$1.tail.tail instanceof $Empty ||
-            components$1.tail.tail.tail instanceof $Empty ||
-            components$1.tail.tail.tail.tail instanceof $Empty ||
-            components$1.tail.tail.tail.tail.tail instanceof $NonEmpty
-          ) {
+          let last_name;
+          let first_name;
+          let middle_name;
+          let prefix;
+          let suffix;
+          if (components$1 instanceof $Empty) {
             throw makeError(
               "let_assert",
               FILEPATH,
@@ -95,12 +92,108 @@ function parse_person_name_component_group(component_group) {
                 pattern_end: 3640
               }
             )
+          } else {
+            let $ = components$1.tail;
+            if ($ instanceof $Empty) {
+              throw makeError(
+                "let_assert",
+                FILEPATH,
+                "dcmfx_core/data_element_value/person_name",
+                117,
+                "parse_person_name_component_group",
+                "Pattern match failed, no pattern matched the value.",
+                {
+                  value: components$1,
+                  start: 3577,
+                  end: 3653,
+                  pattern_start: 3588,
+                  pattern_end: 3640
+                }
+              )
+            } else {
+              let $1 = $.tail;
+              if ($1 instanceof $Empty) {
+                throw makeError(
+                  "let_assert",
+                  FILEPATH,
+                  "dcmfx_core/data_element_value/person_name",
+                  117,
+                  "parse_person_name_component_group",
+                  "Pattern match failed, no pattern matched the value.",
+                  {
+                    value: components$1,
+                    start: 3577,
+                    end: 3653,
+                    pattern_start: 3588,
+                    pattern_end: 3640
+                  }
+                )
+              } else {
+                let $2 = $1.tail;
+                if ($2 instanceof $Empty) {
+                  throw makeError(
+                    "let_assert",
+                    FILEPATH,
+                    "dcmfx_core/data_element_value/person_name",
+                    117,
+                    "parse_person_name_component_group",
+                    "Pattern match failed, no pattern matched the value.",
+                    {
+                      value: components$1,
+                      start: 3577,
+                      end: 3653,
+                      pattern_start: 3588,
+                      pattern_end: 3640
+                    }
+                  )
+                } else {
+                  let $3 = $2.tail;
+                  if ($3 instanceof $Empty) {
+                    throw makeError(
+                      "let_assert",
+                      FILEPATH,
+                      "dcmfx_core/data_element_value/person_name",
+                      117,
+                      "parse_person_name_component_group",
+                      "Pattern match failed, no pattern matched the value.",
+                      {
+                        value: components$1,
+                        start: 3577,
+                        end: 3653,
+                        pattern_start: 3588,
+                        pattern_end: 3640
+                      }
+                    )
+                  } else {
+                    let $4 = $3.tail;
+                    if ($4 instanceof $Empty) {
+                      last_name = components$1.head;
+                      first_name = $.head;
+                      middle_name = $1.head;
+                      prefix = $2.head;
+                      suffix = $3.head;
+                    } else {
+                      throw makeError(
+                        "let_assert",
+                        FILEPATH,
+                        "dcmfx_core/data_element_value/person_name",
+                        117,
+                        "parse_person_name_component_group",
+                        "Pattern match failed, no pattern matched the value.",
+                        {
+                          value: components$1,
+                          start: 3577,
+                          end: 3653,
+                          pattern_start: 3588,
+                          pattern_end: 3640
+                        }
+                      )
+                    }
+                  }
+                }
+              }
+            }
           }
-          let last_name = components$1.head;
-          let first_name = components$1.tail.head;
-          let middle_name = components$1.tail.tail.head;
-          let prefix = components$1.tail.tail.tail.head;
-          let suffix = components$1.tail.tail.tail.tail.head;
           return new Ok(
             new Some(
               new PersonNameComponents(
@@ -118,6 +211,13 @@ function parse_person_name_component_group(component_group) {
   );
 }
 
+/**
+ * Parses a `PersonName` value by splitting it on the '=' character to find the
+ * list of component groups, then splitting each component group on
+ * the '^' character to find the individual components of each name variant.
+ * 
+ * @ignore
+ */
 function parse_person_name_string(person_name_string) {
   let component_groups = $string.split(person_name_string, "=");
   let component_group_count = $list.length(component_groups);
@@ -168,9 +268,12 @@ function parse_person_name_string(person_name_string) {
             }
           }
           let $ = _block$1;
-          let alphabetic = $[0];
-          let ideographic = $[1];
-          let phonetic = $[2];
+          let alphabetic;
+          let ideographic;
+          let phonetic;
+          alphabetic = $[0];
+          ideographic = $[1];
+          phonetic = $[2];
           return new Ok(
             new StructuredPersonName(alphabetic, ideographic, phonetic),
           );
@@ -180,6 +283,9 @@ function parse_person_name_string(person_name_string) {
   );
 }
 
+/**
+ * Converts a `PersonName` value to a list of structured person names.
+ */
 export function from_bytes(bytes) {
   let _block;
   let _pipe = bytes;
@@ -250,6 +356,9 @@ function components_to_string(components) {
   );
 }
 
+/**
+ * Converts a list of structured person names to a `PersonName` value.
+ */
 export function to_bytes(value) {
   let _block;
   let _pipe = value;

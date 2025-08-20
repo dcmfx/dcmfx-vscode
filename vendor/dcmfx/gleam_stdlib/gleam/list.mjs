@@ -49,6 +49,32 @@ function length_loop(loop$list, loop$count) {
   }
 }
 
+/**
+ * Counts the number of elements in a given list.
+ *
+ * This function has to traverse the list to determine the number of elements,
+ * so it runs in linear time.
+ *
+ * This function is natively implemented by the virtual machine and is highly
+ * optimised.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * length([])
+ * // -> 0
+ * ```
+ *
+ * ```gleam
+ * length([1])
+ * // -> 1
+ * ```
+ *
+ * ```gleam
+ * length([1, 2])
+ * // -> 2
+ * ```
+ */
 export function length(list) {
   return length_loop(list, 0);
 }
@@ -77,10 +103,40 @@ function count_loop(loop$list, loop$predicate, loop$acc) {
   }
 }
 
+/**
+ * Counts the number of elements in a given list satisfying a given predicate.
+ *
+ * This function has to traverse the list to determine the number of elements,
+ * so it runs in linear time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * count([], fn(a) { a > 0 })
+ * // -> 0
+ * ```
+ *
+ * ```gleam
+ * count([1], fn(a) { a > 0 })
+ * // -> 1
+ * ```
+ *
+ * ```gleam
+ * count([1, 2, 3], int.is_odd)
+ * // -> 2
+ * ```
+ */
 export function count(list, predicate) {
   return count_loop(list, predicate, 0);
 }
 
+/**
+ * Reverses a list and prepends it to another list.
+ * This function runs in linear time, proportional to the lenght of the list
+ * to prepend.
+ * 
+ * @ignore
+ */
 function reverse_and_prepend(loop$prefix, loop$suffix) {
   while (true) {
     let prefix = loop$prefix;
@@ -96,14 +152,96 @@ function reverse_and_prepend(loop$prefix, loop$suffix) {
   }
 }
 
+/**
+ * Creates a new list from a given list containing the same elements but in the
+ * opposite order.
+ *
+ * This function has to traverse the list to create the new reversed list, so
+ * it runs in linear time.
+ *
+ * This function is natively implemented by the virtual machine and is highly
+ * optimised.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * reverse([])
+ * // -> []
+ * ```
+ *
+ * ```gleam
+ * reverse([1])
+ * // -> [1]
+ * ```
+ *
+ * ```gleam
+ * reverse([1, 2])
+ * // -> [2, 1]
+ * ```
+ */
 export function reverse(list) {
   return reverse_and_prepend(list, toList([]));
 }
 
+/**
+ * Determines whether or not the list is empty.
+ *
+ * This function runs in constant time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * is_empty([])
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * is_empty([1])
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * is_empty([1, 1])
+ * // -> False
+ * ```
+ */
 export function is_empty(list) {
   return isEqual(list, toList([]));
 }
 
+/**
+ * Determines whether or not a given element exists within a given list.
+ *
+ * This function traverses the list to find the element, so it runs in linear
+ * time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * [] |> contains(any: 0)
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * [0] |> contains(any: 0)
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * [1] |> contains(any: 0)
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * [1, 1] |> contains(any: 0)
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * [1, 0] |> contains(any: 0)
+ * // -> True
+ * ```
+ */
 export function contains(loop$list, loop$elem) {
   while (true) {
     let list = loop$list;
@@ -123,6 +261,26 @@ export function contains(loop$list, loop$elem) {
   }
 }
 
+/**
+ * Gets the first element from the start of the list, if there is one.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * first([])
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * first([0])
+ * // -> Ok(0)
+ * ```
+ *
+ * ```gleam
+ * first([1, 2])
+ * // -> Ok(1)
+ * ```
+ */
 export function first(list) {
   if (list instanceof $Empty) {
     return new Error(undefined);
@@ -132,6 +290,29 @@ export function first(list) {
   }
 }
 
+/**
+ * Returns the list minus the first element. If the list is empty, `Error(Nil)` is
+ * returned.
+ *
+ * This function runs in constant time and does not make a copy of the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * rest([])
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * rest([0])
+ * // -> Ok([])
+ * ```
+ *
+ * ```gleam
+ * rest([1, 2])
+ * // -> Ok([2])
+ * ```
+ */
 export function rest(list) {
   if (list instanceof $Empty) {
     return new Error(undefined);
@@ -168,6 +349,38 @@ function group_loop(loop$list, loop$to_key, loop$groups) {
   }
 }
 
+/**
+ * Groups the elements from the given list by the given key function.
+ *
+ * Does not preserve the initial value order.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * import gleam/dict
+ *
+ * [Ok(3), Error("Wrong"), Ok(200), Ok(73)]
+ * |> group(by: fn(i) {
+ *   case i {
+ *     Ok(_) -> "Successful"
+ *     Error(_) -> "Failed"
+ *   }
+ * })
+ * |> dict.to_list
+ * // -> [
+ * //   #("Failed", [Error("Wrong")]),
+ * //   #("Successful", [Ok(73), Ok(200), Ok(3)])
+ * // ]
+ * ```
+ *
+ * ```gleam
+ * import gleam/dict
+ *
+ * group([1,2,3,4,5], by: fn(i) { i - i / 3 * 3 })
+ * |> dict.to_list
+ * // -> [#(0, [3]), #(1, [4, 1]), #(2, [5, 2])]
+ * ```
+ */
 export function group(list, key) {
   return group_loop(list, key, $dict.new$());
 }
@@ -197,6 +410,22 @@ function filter_loop(loop$list, loop$fun, loop$acc) {
   }
 }
 
+/**
+ * Returns a new list containing only the elements from the first list for
+ * which the given functions returns `True`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * filter([2, 4, 6, 1], fn(x) { x > 2 })
+ * // -> [4, 6]
+ * ```
+ *
+ * ```gleam
+ * filter([2, 4, 6, 1], fn(x) { x > 6 })
+ * // -> []
+ * ```
+ */
 export function filter(list, predicate) {
   return filter_loop(list, predicate, toList([]));
 }
@@ -227,6 +456,22 @@ function filter_map_loop(loop$list, loop$fun, loop$acc) {
   }
 }
 
+/**
+ * Returns a new list containing only the elements from the first list for
+ * which the given functions returns `Ok(_)`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * filter_map([2, 4, 6, 1], Error)
+ * // -> []
+ * ```
+ *
+ * ```gleam
+ * filter_map([2, 4, 6, 1], fn(x) { Ok(x + 1) })
+ * // -> [3, 5, 7, 2]
+ * ```
+ */
 export function filter_map(list, fun) {
   return filter_map_loop(list, fun, toList([]));
 }
@@ -248,6 +493,17 @@ function map_loop(loop$list, loop$fun, loop$acc) {
   }
 }
 
+/**
+ * Returns a new list containing only the elements of the first list after the
+ * function has been applied to each one.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * map([2, 4, 6], fn(x) { x * 2 })
+ * // -> [4, 8, 12]
+ * ```
+ */
 export function map(list, fun) {
   return map_loop(list, fun, toList([]));
 }
@@ -275,6 +531,23 @@ function map2_loop(loop$list1, loop$list2, loop$fun, loop$acc) {
   }
 }
 
+/**
+ * Combines two lists into a single list using the given function.
+ *
+ * If a list is longer than the other the extra elements are dropped.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * map2([1, 2, 3], [4, 5, 6], fn(x, y) { x + y })
+ * // -> [5, 7, 9]
+ * ```
+ *
+ * ```gleam
+ * map2([1, 2], ["a", "b", "c"], fn(i, x) { #(i, x) })
+ * // -> [#(1, "a"), #(2, "b")]
+ * ```
+ */
 export function map2(list1, list2, fun) {
   return map2_loop(list1, list2, fun, toList([]));
 }
@@ -291,8 +564,10 @@ function map_fold_loop(loop$list, loop$fun, loop$acc, loop$list_acc) {
       let first$1 = list.head;
       let rest$1 = list.tail;
       let $ = fun(acc, first$1);
-      let acc$1 = $[0];
-      let first$2 = $[1];
+      let acc$1;
+      let first$2;
+      acc$1 = $[0];
+      first$2 = $[1];
       loop$list = rest$1;
       loop$fun = fun;
       loop$acc = acc$1;
@@ -301,6 +576,20 @@ function map_fold_loop(loop$list, loop$fun, loop$acc, loop$list_acc) {
   }
 }
 
+/**
+ * Similar to `map` but also lets you pass around an accumulated value.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * map_fold(
+ *   over: [1, 2, 3],
+ *   from: 100,
+ *   with: fn(memo, i) { #(memo + i, i * 2) }
+ * )
+ * // -> #(106, [2, 4, 6])
+ * ```
+ */
 export function map_fold(list, initial, fun) {
   return map_fold_loop(list, fun, initial, toList([]));
 }
@@ -325,6 +614,20 @@ function index_map_loop(loop$list, loop$fun, loop$index, loop$acc) {
   }
 }
 
+/**
+ * Returns a new list containing only the elements of the first list after the
+ * function has been applied to each one and their index.
+ *
+ * The index starts at 0, so the first element is 0, the second is 1, and so
+ * on.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * index_map(["a", "b"], fn(x, i) { #(i, x) })
+ * // -> [#(0, "a"), #(1, "b")]
+ * ```
+ */
 export function index_map(list, fun) {
   return index_map_loop(list, fun, 0, toList([]));
 }
@@ -346,17 +649,70 @@ function try_map_loop(loop$list, loop$fun, loop$acc) {
         loop$fun = fun;
         loop$acc = listPrepend(first$2, acc);
       } else {
-        let error = $[0];
-        return new Error(error);
+        return $;
       }
     }
   }
 }
 
+/**
+ * Takes a function that returns a `Result` and applies it to each element in a
+ * given list in turn.
+ *
+ * If the function returns `Ok(new_value)` for all elements in the list then a
+ * list of the new values is returned.
+ *
+ * If the function returns `Error(reason)` for any of the elements then it is
+ * returned immediately. None of the elements in the list are processed after
+ * one returns an `Error`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * try_map([1, 2, 3], fn(x) { Ok(x + 2) })
+ * // -> Ok([3, 4, 5])
+ * ```
+ *
+ * ```gleam
+ * try_map([1, 2, 3], fn(_) { Error(0) })
+ * // -> Error(0)
+ * ```
+ *
+ * ```gleam
+ * try_map([[1], [2, 3]], first)
+ * // -> Ok([1, 2])
+ * ```
+ *
+ * ```gleam
+ * try_map([[1], [], [2]], first)
+ * // -> Error(Nil)
+ * ```
+ */
 export function try_map(list, fun) {
   return try_map_loop(list, fun, toList([]));
 }
 
+/**
+ * Returns a list that is the given list with up to the given number of
+ * elements removed from the front of the list.
+ *
+ * If the element has less than the number of elements an empty list is
+ * returned.
+ *
+ * This function runs in linear time but does not copy the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * drop([1, 2, 3, 4], 2)
+ * // -> [3, 4]
+ * ```
+ *
+ * ```gleam
+ * drop([1, 2, 3, 4], 9)
+ * // -> []
+ * ```
+ */
 export function drop(loop$list, loop$n) {
   while (true) {
     let list = loop$list;
@@ -366,7 +722,7 @@ export function drop(loop$list, loop$n) {
       return list;
     } else {
       if (list instanceof $Empty) {
-        return toList([]);
+        return list;
       } else {
         let rest$1 = list.tail;
         loop$list = rest$1;
@@ -398,14 +754,61 @@ function take_loop(loop$list, loop$n, loop$acc) {
   }
 }
 
+/**
+ * Returns a list containing the first given number of elements from the given
+ * list.
+ *
+ * If the element has less than the number of elements then the full list is
+ * returned.
+ *
+ * This function runs in linear time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * take([1, 2, 3, 4], 2)
+ * // -> [1, 2]
+ * ```
+ *
+ * ```gleam
+ * take([1, 2, 3, 4], 9)
+ * // -> [1, 2, 3, 4]
+ * ```
+ */
 export function take(list, n) {
   return take_loop(list, n, toList([]));
 }
 
+/**
+ * Returns a new empty list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * new()
+ * // -> []
+ * ```
+ */
 export function new$() {
   return toList([]);
 }
 
+/**
+ * Returns the given item wrapped in a list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * wrap(1)
+ * // -> [1]
+ *
+ * wrap(["a", "b", "c"])
+ * // -> [["a", "b", "c"]]
+ *
+ * wrap([[]])
+ * // -> [[[]]]
+ * ```
+ */
 export function wrap(item) {
   return toList([item]);
 }
@@ -425,10 +828,37 @@ function append_loop(loop$first, loop$second) {
   }
 }
 
+/**
+ * Joins one list onto the end of another.
+ *
+ * This function runs in linear time, and it traverses and copies the first
+ * list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * append([1, 2], [3])
+ * // -> [1, 2, 3]
+ * ```
+ */
 export function append(first, second) {
   return append_loop(reverse(first), second);
 }
 
+/**
+ * Prefixes an item to a list. This can also be done using the dedicated
+ * syntax instead
+ *
+ * ```gleam
+ * let existing_list = [2, 3, 4]
+ *
+ * [1, ..existing_list]
+ * // -> [1, 2, 3, 4]
+ *
+ * prepend(to: existing_list, this: 1)
+ * // -> [1, 2, 3, 4]
+ * ```
+ */
 export function prepend(list, item) {
   return listPrepend(item, list);
 }
@@ -448,14 +878,45 @@ function flatten_loop(loop$lists, loop$acc) {
   }
 }
 
+/**
+ * Joins a list of lists into a single list.
+ *
+ * This function traverses all elements twice.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * flatten([[1], [2, 3], []])
+ * // -> [1, 2, 3]
+ * ```
+ */
 export function flatten(lists) {
   return flatten_loop(lists, toList([]));
 }
 
+/**
+ * Maps the list with the given function into a list of lists, and then flattens it.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * flat_map([2, 4, 6], fn(x) { [x, x + 1] })
+ * // -> [2, 3, 4, 5, 6, 7]
+ * ```
+ */
 export function flat_map(list, fun) {
   return flatten(map(list, fun));
 }
 
+/**
+ * Reduces a list of elements into a single value by calling a given function
+ * on each element, going from left to right.
+ *
+ * `fold([1, 2, 3], 0, add)` is the equivalent of
+ * `add(add(add(0, 1), 2), 3)`.
+ *
+ * This function runs in linear time.
+ */
 export function fold(loop$list, loop$initial, loop$fun) {
   while (true) {
     let list = loop$list;
@@ -473,6 +934,18 @@ export function fold(loop$list, loop$initial, loop$fun) {
   }
 }
 
+/**
+ * Reduces a list of elements into a single value by calling a given function
+ * on each element, going from right to left.
+ *
+ * `fold_right([1, 2, 3], 0, add)` is the equivalent of
+ * `add(add(add(0, 3), 2), 1)`.
+ *
+ * This function runs in linear time.
+ *
+ * Unlike `fold` this function is not tail recursive. Where possible use
+ * `fold` instead as it will use less memory.
+ */
 export function fold_right(list, initial, fun) {
   if (list instanceof $Empty) {
     return initial;
@@ -502,10 +975,40 @@ function index_fold_loop(loop$over, loop$acc, loop$with, loop$index) {
   }
 }
 
+/**
+ * Like fold but the folding function also receives the index of the current element.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * ["a", "b", "c"]
+ * |> index_fold([], fn(acc, item, index) { ... })
+ * ```
+ */
 export function index_fold(list, initial, fun) {
   return index_fold_loop(list, initial, fun, 0);
 }
 
+/**
+ * A variant of fold that might fail.
+ *
+ * The folding function should return `Result(accumulator, error)`.
+ * If the returned value is `Ok(accumulator)` try_fold will try the next value in the list.
+ * If the returned value is `Error(error)` try_fold will stop and return that error.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * [1, 2, 3, 4]
+ * |> try_fold(0, fn(acc, i) {
+ *   case i < 3 {
+ *     True -> Ok(acc + i)
+ *     False -> Error(Nil)
+ *   }
+ * })
+ * // -> Error(Nil)
+ * ```
+ */
 export function try_fold(loop$list, loop$initial, loop$fun) {
   while (true) {
     let list = loop$list;
@@ -523,13 +1026,32 @@ export function try_fold(loop$list, loop$initial, loop$fun) {
         loop$initial = result;
         loop$fun = fun;
       } else {
-        let error = $;
-        return error;
+        return $;
       }
     }
   }
 }
 
+/**
+ * A variant of fold that allows to stop folding earlier.
+ *
+ * The folding function should return `ContinueOrStop(accumulator)`.
+ * If the returned value is `Continue(accumulator)` fold_until will try the next value in the list.
+ * If the returned value is `Stop(accumulator)` fold_until will stop and return that accumulator.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * [1, 2, 3, 4]
+ * |> fold_until(0, fn(acc, i) {
+ *   case i < 3 {
+ *     True -> Continue(acc + i)
+ *     False -> Stop(acc)
+ *   }
+ * })
+ * // -> 3
+ * ```
+ */
 export function fold_until(loop$list, loop$initial, loop$fun) {
   while (true) {
     let list = loop$list;
@@ -554,6 +1076,29 @@ export function fold_until(loop$list, loop$initial, loop$fun) {
   }
 }
 
+/**
+ * Finds the first element in a given list for which the given function returns
+ * `True`.
+ *
+ * Returns `Error(Nil)` if no such element is found.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * find([1, 2, 3], fn(x) { x > 2 })
+ * // -> Ok(3)
+ * ```
+ *
+ * ```gleam
+ * find([1, 2, 3], fn(x) { x > 4 })
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * find([], fn(_) { True })
+ * // -> Error(Nil)
+ * ```
+ */
 export function find(loop$list, loop$is_desired) {
   while (true) {
     let list = loop$list;
@@ -574,6 +1119,29 @@ export function find(loop$list, loop$is_desired) {
   }
 }
 
+/**
+ * Finds the first element in a given list for which the given function returns
+ * `Ok(new_value)`, then returns the wrapped `new_value`.
+ *
+ * Returns `Error(Nil)` if no such element is found.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * find_map([[], [2], [3]], first)
+ * // -> Ok(2)
+ * ```
+ *
+ * ```gleam
+ * find_map([[], []], first)
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * find_map([], first)
+ * // -> Error(Nil)
+ * ```
+ */
 export function find_map(loop$list, loop$fun) {
   while (true) {
     let list = loop$list;
@@ -585,8 +1153,7 @@ export function find_map(loop$list, loop$fun) {
       let rest$1 = list.tail;
       let $ = fun(first$1);
       if ($ instanceof Ok) {
-        let first$2 = $[0];
-        return new Ok(first$2);
+        return $;
       } else {
         loop$list = rest$1;
         loop$fun = fun;
@@ -595,6 +1162,28 @@ export function find_map(loop$list, loop$fun) {
   }
 }
 
+/**
+ * Returns `True` if the given function returns `True` for all the elements in
+ * the given list. If the function returns `False` for any of the elements it
+ * immediately returns `False` without checking the rest of the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * all([], fn(x) { x > 3 })
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * all([4, 5], fn(x) { x > 3 })
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * all([4, 3], fn(x) { x > 3 })
+ * // -> False
+ * ```
+ */
 export function all(loop$list, loop$predicate) {
   while (true) {
     let list = loop$list;
@@ -609,12 +1198,39 @@ export function all(loop$list, loop$predicate) {
         loop$list = rest$1;
         loop$predicate = predicate;
       } else {
-        return false;
+        return $;
       }
     }
   }
 }
 
+/**
+ * Returns `True` if the given function returns `True` for any the elements in
+ * the given list. If the function returns `True` for any of the elements it
+ * immediately returns `True` without checking the rest of the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * any([], fn(x) { x > 3 })
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * any([4, 5], fn(x) { x > 3 })
+ * // -> True
+ * ```
+ *
+ * ```gleam
+ * any([4, 3], fn(x) { x > 4 })
+ * // -> False
+ * ```
+ *
+ * ```gleam
+ * any([3, 4], fn(x) { x > 3 })
+ * // -> True
+ * ```
+ */
 export function any(loop$list, loop$predicate) {
   while (true) {
     let list = loop$list;
@@ -626,7 +1242,7 @@ export function any(loop$list, loop$predicate) {
       let rest$1 = list.tail;
       let $ = predicate(first$1);
       if ($) {
-        return true;
+        return $;
       } else {
         loop$list = rest$1;
         loop$predicate = predicate;
@@ -656,6 +1272,34 @@ function zip_loop(loop$one, loop$other, loop$acc) {
   }
 }
 
+/**
+ * Takes two lists and returns a single list of 2-element tuples.
+ *
+ * If one of the lists is longer than the other, the remaining elements from
+ * the longer list are not used.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * zip([], [])
+ * // -> []
+ * ```
+ *
+ * ```gleam
+ * zip([1, 2], [3])
+ * // -> [#(1, 3)]
+ * ```
+ *
+ * ```gleam
+ * zip([1], [3, 4])
+ * // -> [#(1, 3)]
+ * ```
+ *
+ * ```gleam
+ * zip([1, 2], [3, 4])
+ * // -> [#(1, 3), #(2, 4)]
+ * ```
+ */
 export function zip(list, other) {
   return zip_loop(list, other, toList([]));
 }
@@ -685,6 +1329,33 @@ function strict_zip_loop(loop$one, loop$other, loop$acc) {
   }
 }
 
+/**
+ * Takes two lists and returns a single list of 2-element tuples.
+ *
+ * If one of the lists is longer than the other, an `Error` is returned.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * strict_zip([], [])
+ * // -> Ok([])
+ * ```
+ *
+ * ```gleam
+ * strict_zip([1, 2], [3])
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * strict_zip([1], [3, 4])
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * strict_zip([1, 2], [3, 4])
+ * // -> Ok([#(1, 3), #(2, 4)])
+ * ```
+ */
 export function strict_zip(list, other) {
   return strict_zip_loop(list, other, toList([]));
 }
@@ -707,6 +1378,21 @@ function unzip_loop(loop$input, loop$one, loop$other) {
   }
 }
 
+/**
+ * Takes a single list of 2-element tuples and returns two lists.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * unzip([#(1, 2), #(3, 4)])
+ * // -> #([1, 3], [2, 4])
+ * ```
+ *
+ * ```gleam
+ * unzip([])
+ * // -> #([], [])
+ * ```
+ */
 export function unzip(input) {
   return unzip_loop(input, toList([]), toList([]));
 }
@@ -728,6 +1414,23 @@ function intersperse_loop(loop$list, loop$separator, loop$acc) {
   }
 }
 
+/**
+ * Inserts a given value between each existing element in a given list.
+ *
+ * This function runs in linear time and copies the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * intersperse([1, 1, 1], 2)
+ * // -> [1, 2, 1, 2, 1]
+ * ```
+ *
+ * ```gleam
+ * intersperse([], 2)
+ * // -> []
+ * ```
+ */
 export function intersperse(list, elem) {
   if (list instanceof $Empty) {
     return list;
@@ -767,10 +1470,48 @@ function unique_loop(loop$list, loop$seen, loop$acc) {
   }
 }
 
+/**
+ * Removes any duplicate elements from a given list.
+ *
+ * This function returns in loglinear time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * unique([1, 1, 1, 4, 7, 3, 3, 4])
+ * // -> [1, 4, 7, 3]
+ * ```
+ */
 export function unique(list) {
   return unique_loop(list, $dict.new$(), toList([]));
 }
 
+/**
+ * Given a list it returns slices of it that are locally sorted in ascending
+ * order.
+ *
+ * Imagine you have this list:
+ *
+ * ```
+ *   [1, 2, 3, 2, 1, 0]
+ *    ^^^^^^^  ^^^^^^^ This is a slice in descending order
+ *    |
+ *    | This is a slice that is sorted in ascending order
+ * ```
+ *
+ * So the produced result will contain these two slices, each one sorted in
+ * ascending order: `[[1, 2, 3], [0, 1, 2]]`.
+ *
+ * - `growing` is an accumulator with the current slice being grown
+ * - `direction` is the growing direction of the slice being grown, it could
+ *   either be ascending or strictly descending
+ * - `prev` is the previous element that needs to be added to the growing slice
+ *   it is carried around to check whether we have to keep growing the current
+ *   slice or not
+ * - `acc` is the accumulator containing the slices sorted in ascending order
+ * 
+ * @ignore
+ */
 function sequences(
   loop$list,
   loop$compare,
@@ -915,6 +1656,17 @@ function sequences(
   }
 }
 
+/**
+ * Merges two lists sorted in ascending order into a single list sorted in
+ * descending order according to the given comparator function.
+ *
+ * This reversing of the sort order is not avoidable if we want to implement
+ * merge as a tail recursive function. We could reverse the accumulator before
+ * returning it but that would end up being less efficient; so the merging
+ * algorithm has to play around this.
+ * 
+ * @ignore
+ */
 function merge_ascendings(loop$list1, loop$list2, loop$compare, loop$acc) {
   while (true) {
     let list1 = loop$list1;
@@ -953,6 +1705,13 @@ function merge_ascendings(loop$list1, loop$list2, loop$compare, loop$acc) {
   }
 }
 
+/**
+ * Given a list of ascending lists, it merges adjacent pairs into a single
+ * descending list, halving their number.
+ * It returns a list of the remaining descending lists.
+ * 
+ * @ignore
+ */
 function merge_ascending_pairs(loop$sequences, loop$compare, loop$acc) {
   while (true) {
     let sequences = loop$sequences;
@@ -983,6 +1742,18 @@ function merge_ascending_pairs(loop$sequences, loop$compare, loop$acc) {
   }
 }
 
+/**
+ * This is exactly the same as merge_ascendings but mirrored: it merges two
+ * lists sorted in descending order into a single list sorted in ascending
+ * order according to the given comparator function.
+ *
+ * This reversing of the sort order is not avoidable if we want to implement
+ * merge as a tail recursive function. We could reverse the accumulator before
+ * returning it but that would end up being less efficient; so the merging
+ * algorithm has to play around this.
+ * 
+ * @ignore
+ */
 function merge_descendings(loop$list1, loop$list2, loop$compare, loop$acc) {
   while (true) {
     let list1 = loop$list1;
@@ -1021,6 +1792,11 @@ function merge_descendings(loop$list1, loop$list2, loop$compare, loop$acc) {
   }
 }
 
+/**
+ * This is the same as merge_ascending_pairs but flipped for descending lists.
+ * 
+ * @ignore
+ */
 function merge_descending_pairs(loop$sequences, loop$compare, loop$acc) {
   while (true) {
     let sequences = loop$sequences;
@@ -1051,13 +1827,20 @@ function merge_descending_pairs(loop$sequences, loop$compare, loop$acc) {
   }
 }
 
+/**
+ * Given some some sorted sequences (assumed to be sorted in `direction`) it
+ * merges them all together until we're left with just a list sorted in
+ * ascending order.
+ * 
+ * @ignore
+ */
 function merge_all(loop$sequences, loop$direction, loop$compare) {
   while (true) {
     let sequences = loop$sequences;
     let direction = loop$direction;
     let compare = loop$compare;
     if (sequences instanceof $Empty) {
-      return toList([]);
+      return sequences;
     } else if (direction instanceof Ascending) {
       let $ = sequences.tail;
       if ($ instanceof $Empty) {
@@ -1084,14 +1867,26 @@ function merge_all(loop$sequences, loop$direction, loop$compare) {
   }
 }
 
+/**
+ * Sorts from smallest to largest based upon the ordering specified by a given
+ * function.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * import gleam/int
+ *
+ * sort([4, 3, 6, 5, 4, 1, 2], by: int.compare)
+ * // -> [1, 2, 3, 4, 4, 5, 6]
+ * ```
+ */
 export function sort(list, compare) {
   if (list instanceof $Empty) {
-    return toList([]);
+    return list;
   } else {
     let $ = list.tail;
     if ($ instanceof $Empty) {
-      let x = list.head;
-      return toList([x]);
+      return list;
     } else {
       let x = list.head;
       let y = $.head;
@@ -1139,6 +1934,26 @@ function range_loop(loop$start, loop$stop, loop$acc) {
   }
 }
 
+/**
+ * Creates a list of ints ranging from a given start and finish.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * range(0, 0)
+ * // -> [0]
+ * ```
+ *
+ * ```gleam
+ * range(0, 5)
+ * // -> [0, 1, 2, 3, 4, 5]
+ * ```
+ *
+ * ```gleam
+ * range(1, -5)
+ * // -> [1, 0, -1, -2, -3, -4, -5]
+ * ```
+ */
 export function range(start, stop) {
   return range_loop(start, stop, toList([]));
 }
@@ -1159,6 +1974,21 @@ function repeat_loop(loop$item, loop$times, loop$acc) {
   }
 }
 
+/**
+ * Builds a list of a given value a given number of times.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * repeat("a", times: 0)
+ * // -> []
+ * ```
+ *
+ * ```gleam
+ * repeat("a", times: 5)
+ * // -> ["a", "a", "a", "a", "a"]
+ * ```
+ */
 export function repeat(a, times) {
   return repeat_loop(a, times, toList([]));
 }
@@ -1185,6 +2015,29 @@ function split_loop(loop$list, loop$n, loop$taken) {
   }
 }
 
+/**
+ * Splits a list in two before the given index.
+ *
+ * If the list is not long enough to have the given index the before list will
+ * be the input list, and the after list will be empty.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * split([6, 7, 8, 9], 0)
+ * // -> #([], [6, 7, 8, 9])
+ * ```
+ *
+ * ```gleam
+ * split([6, 7, 8, 9], 2)
+ * // -> #([6, 7], [8, 9])
+ * ```
+ *
+ * ```gleam
+ * split([6, 7, 8, 9], 4)
+ * // -> #([6, 7, 8, 9], [])
+ * ```
+ */
 export function split(list, index) {
   return split_loop(list, index, toList([]));
 }
@@ -1211,16 +2064,63 @@ function split_while_loop(loop$list, loop$f, loop$acc) {
   }
 }
 
+/**
+ * Splits a list in two before the first element that a given function returns
+ * `False` for.
+ *
+ * If the function returns `True` for all elements the first list will be the
+ * input list, and the second list will be empty.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * split_while([1, 2, 3, 4, 5], fn(x) { x <= 3 })
+ * // -> #([1, 2, 3], [4, 5])
+ * ```
+ *
+ * ```gleam
+ * split_while([1, 2, 3, 4, 5], fn(x) { x <= 5 })
+ * // -> #([1, 2, 3, 4, 5], [])
+ * ```
+ */
 export function split_while(list, predicate) {
   return split_while_loop(list, predicate, toList([]));
 }
 
+/**
+ * Given a list of 2-element tuples, finds the first tuple that has a given
+ * key as the first element and returns the second element.
+ *
+ * If no tuple is found with the given key then `Error(Nil)` is returned.
+ *
+ * This function may be useful for interacting with Erlang code where lists of
+ * tuples are common.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * key_find([#("a", 0), #("b", 1)], "a")
+ * // -> Ok(0)
+ * ```
+ *
+ * ```gleam
+ * key_find([#("a", 0), #("b", 1)], "b")
+ * // -> Ok(1)
+ * ```
+ *
+ * ```gleam
+ * key_find([#("a", 0), #("b", 1)], "c")
+ * // -> Error(Nil)
+ * ```
+ */
 export function key_find(keyword_list, desired_key) {
   return find_map(
     keyword_list,
     (keyword) => {
-      let key = keyword[0];
-      let value = keyword[1];
+      let key;
+      let value;
+      key = keyword[0];
+      value = keyword[1];
       let $ = isEqual(key, desired_key);
       if ($) {
         return new Ok(value);
@@ -1231,12 +2131,33 @@ export function key_find(keyword_list, desired_key) {
   );
 }
 
+/**
+ * Given a list of 2-element tuples, finds all tuples that have a given
+ * key as the first element and returns the second element.
+ *
+ * This function may be useful for interacting with Erlang code where lists of
+ * tuples are common.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * key_filter([#("a", 0), #("b", 1), #("a", 2)], "a")
+ * // -> [0, 2]
+ * ```
+ *
+ * ```gleam
+ * key_filter([#("a", 0), #("b", 1)], "c")
+ * // -> []
+ * ```
+ */
 export function key_filter(keyword_list, desired_key) {
   return filter_map(
     keyword_list,
     (keyword) => {
-      let key = keyword[0];
-      let value = keyword[1];
+      let key;
+      let value;
+      key = keyword[0];
+      value = keyword[1];
       let $ = isEqual(key, desired_key);
       if ($) {
         return new Ok(value);
@@ -1271,6 +2192,30 @@ function key_pop_loop(loop$list, loop$key, loop$checked) {
   }
 }
 
+/**
+ * Given a list of 2-element tuples, finds the first tuple that has a given
+ * key as the first element. This function will return the second element
+ * of the found tuple and list with tuple removed.
+ *
+ * If no tuple is found with the given key then `Error(Nil)` is returned.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * key_pop([#("a", 0), #("b", 1)], "a")
+ * // -> Ok(#(0, [#("b", 1)]))
+ * ```
+ *
+ * ```gleam
+ * key_pop([#("a", 0), #("b", 1)], "b")
+ * // -> Ok(#(1, [#("a", 0)]))
+ * ```
+ *
+ * ```gleam
+ * key_pop([#("a", 0), #("b", 1)], "c")
+ * // -> Error(Nil)
+ * ```
+ */
 export function key_pop(list, key) {
   return key_pop_loop(list, key, toList([]));
 }
@@ -1300,10 +2245,43 @@ function key_set_loop(loop$list, loop$key, loop$value, loop$inspected) {
   }
 }
 
+/**
+ * Given a list of 2-element tuples, inserts a key and value into the list.
+ *
+ * If there was already a tuple with the key then it is replaced, otherwise it
+ * is added to the end of the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * key_set([#(5, 0), #(4, 1)], 4, 100)
+ * // -> [#(5, 0), #(4, 100)]
+ * ```
+ *
+ * ```gleam
+ * key_set([#(5, 0), #(4, 1)], 1, 100)
+ * // -> [#(5, 0), #(4, 1), #(1, 100)]
+ * ```
+ */
 export function key_set(list, key, value) {
   return key_set_loop(list, key, value, toList([]));
 }
 
+/**
+ * Calls a function for each element in a list, discarding the return value.
+ *
+ * Useful for calling a side effect for every item of a list.
+ *
+ * ```gleam
+ * import gleam/io
+ *
+ * each(["1", "2", "3"], io.println)
+ * // -> Nil
+ * // 1
+ * // 2
+ * // 3
+ * ```
+ */
 export function each(loop$list, loop$f) {
   while (true) {
     let list = loop$list;
@@ -1320,6 +2298,23 @@ export function each(loop$list, loop$f) {
   }
 }
 
+/**
+ * Calls a `Result` returning function for each element in a list, discarding
+ * the return value. If the function returns `Error` then the iteration is
+ * stopped and the error is returned.
+ *
+ * Useful for calling a side effect for every item of a list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * try_each(
+ *   over: [1, 2, 3],
+ *   with: function_that_might_fail,
+ * )
+ * // -> Ok(Nil)
+ * ```
+ */
 export function try_each(loop$list, loop$fun) {
   while (true) {
     let list = loop$list;
@@ -1334,8 +2329,7 @@ export function try_each(loop$list, loop$fun) {
         loop$list = rest$1;
         loop$fun = fun;
       } else {
-        let e = $[0];
-        return new Error(e);
+        return $;
       }
     }
   }
@@ -1368,10 +2362,33 @@ function partition_loop(loop$list, loop$categorise, loop$trues, loop$falses) {
   }
 }
 
+/**
+ * Partitions a list into a tuple/pair of lists
+ * by a given categorisation function.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * import gleam/int
+ *
+ * [1, 2, 3, 4, 5] |> partition(int.is_odd)
+ * // -> #([1, 3, 5], [2, 4])
+ * ```
+ */
 export function partition(list, categorise) {
   return partition_loop(list, categorise, toList([]), toList([]));
 }
 
+/**
+ * Returns all the permutations of a list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * permutations([1, 2])
+ * // -> [[1, 2], [2, 1]]
+ * ```
+ */
 export function permutations(list) {
   if (list instanceof $Empty) {
     return toList([toList([])]);
@@ -1420,6 +2437,21 @@ function window_loop(loop$acc, loop$list, loop$n) {
   }
 }
 
+/**
+ * Returns a list of sliding windows.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * window([1,2,3,4,5], 3)
+ * // -> [[1, 2, 3], [2, 3, 4], [3, 4, 5]]
+ * ```
+ *
+ * ```gleam
+ * window([1, 2], 4)
+ * // -> []
+ * ```
+ */
 export function window(list, n) {
   let $ = n <= 0;
   if ($) {
@@ -1429,16 +2461,41 @@ export function window(list, n) {
   }
 }
 
+/**
+ * Returns a list of tuples containing two contiguous elements.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * window_by_2([1,2,3,4])
+ * // -> [#(1, 2), #(2, 3), #(3, 4)]
+ * ```
+ *
+ * ```gleam
+ * window_by_2([1])
+ * // -> []
+ * ```
+ */
 export function window_by_2(list) {
   return zip(list, drop(list, 1));
 }
 
+/**
+ * Drops the first elements in a given list for which the predicate function returns `True`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * drop_while([1, 2, 3, 4], fn (x) { x < 3 })
+ * // -> [3, 4]
+ * ```
+ */
 export function drop_while(loop$list, loop$predicate) {
   while (true) {
     let list = loop$list;
     let predicate = loop$predicate;
     if (list instanceof $Empty) {
-      return toList([]);
+      return list;
     } else {
       let first$1 = list.head;
       let rest$1 = list.tail;
@@ -1475,6 +2532,16 @@ function take_while_loop(loop$list, loop$predicate, loop$acc) {
   }
 }
 
+/**
+ * Takes the first elements in a given list for which the predicate function returns `True`.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * take_while([1, 2, 3, 2, 4], fn (x) { x < 3 })
+ * // -> [1, 2]
+ * ```
+ */
 export function take_while(list, predicate) {
   return take_while_loop(list, predicate, toList([]));
 }
@@ -1517,9 +2584,20 @@ function chunk_loop(
   }
 }
 
+/**
+ * Returns a list of chunks in which
+ * the return value of calling `f` on each element is the same.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * [1, 2, 2, 3, 4, 4, 6, 7, 7] |> chunk(by: fn(n) { n % 2 })
+ * // -> [[1], [2, 2], [3], [4, 4, 6], [7, 7]]
+ * ```
+ */
 export function chunk(list, f) {
   if (list instanceof $Empty) {
-    return toList([]);
+    return list;
   } else {
     let first$1 = list.head;
     let rest$1 = list.tail;
@@ -1569,10 +2647,51 @@ function sized_chunk_loop(
   }
 }
 
+/**
+ * Returns a list of chunks containing `count` elements each.
+ *
+ * If the last chunk does not have `count` elements, it is instead
+ * a partial chunk, with less than `count` elements.
+ *
+ * For any `count` less than 1 this function behaves as if it was set to 1.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * [1, 2, 3, 4, 5, 6] |> sized_chunk(into: 2)
+ * // -> [[1, 2], [3, 4], [5, 6]]
+ * ```
+ *
+ * ```gleam
+ * [1, 2, 3, 4, 5, 6, 7, 8] |> sized_chunk(into: 3)
+ * // -> [[1, 2, 3], [4, 5, 6], [7, 8]]
+ * ```
+ */
 export function sized_chunk(list, count) {
   return sized_chunk_loop(list, count, count, toList([]), toList([]));
 }
 
+/**
+ * This function acts similar to fold, but does not take an initial state.
+ * Instead, it starts from the first element in the list
+ * and combines it with each subsequent element in turn using the given
+ * function. The function is called as `fun(accumulator, current_element)`.
+ *
+ * Returns `Ok` to indicate a successful run, and `Error` if called on an
+ * empty list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * [] |> reduce(fn(acc, x) { acc + x })
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * [1, 2, 3, 4, 5] |> reduce(fn(acc, x) { acc + x })
+ * // -> Ok(15)
+ * ```
+ */
 export function reduce(list, fun) {
   if (list instanceof $Empty) {
     return new Error(undefined);
@@ -1603,10 +2722,39 @@ function scan_loop(loop$list, loop$accumulator, loop$accumulated, loop$fun) {
   }
 }
 
+/**
+ * Similar to `fold`, but yields the state of the accumulator at each stage.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * scan(over: [1, 2, 3], from: 100, with: fn(acc, i) { acc + i })
+ * // -> [101, 103, 106]
+ * ```
+ */
 export function scan(list, initial, fun) {
   return scan_loop(list, initial, toList([]), fun);
 }
 
+/**
+ * Returns the last element in the given list.
+ *
+ * Returns `Error(Nil)` if the list is empty.
+ *
+ * This function runs in linear time.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * last([])
+ * // -> Error(Nil)
+ * ```
+ *
+ * ```gleam
+ * last([1, 2, 3, 4, 5])
+ * // -> Ok(5)
+ * ```
+ */
 export function last(loop$list) {
   while (true) {
     let list = loop$list;
@@ -1625,11 +2773,26 @@ export function last(loop$list) {
   }
 }
 
+/**
+ * Return unique combinations of elements in the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * combinations([1, 2, 3], 2)
+ * // -> [[1, 2], [1, 3], [2, 3]]
+ * ```
+ *
+ * ```gleam
+ * combinations([1, 2, 3, 4], 3)
+ * // -> [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
+ * ```
+ */
 export function combinations(items, n) {
   if (n === 0) {
     return toList([toList([])]);
   } else if (items instanceof $Empty) {
-    return toList([]);
+    return items;
   } else {
     let first$1 = items.head;
     let rest$1 = items.tail;
@@ -1667,6 +2830,16 @@ function combination_pairs_loop(loop$items, loop$acc) {
   }
 }
 
+/**
+ * Return unique pair combinations of elements in the list.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * combination_pairs([1, 2, 3])
+ * // -> [#(1, 2), #(1, 3), #(2, 3)]
+ * ```
+ */
 export function combination_pairs(items) {
   return combination_pairs_loop(items, toList([]));
 }
@@ -1706,8 +2879,10 @@ function transpose_loop(loop$rows, loop$columns) {
       return reverse(columns);
     } else {
       let $ = take_firsts(rows, toList([]), toList([]));
-      let column = $[0];
-      let rest$1 = $[1];
+      let column;
+      let rest$1;
+      column = $[0];
+      rest$1 = $[1];
       if (column instanceof $Empty) {
         loop$rows = rest$1;
         loop$columns = columns;
@@ -1719,10 +2894,34 @@ function transpose_loop(loop$rows, loop$columns) {
   }
 }
 
+/**
+ * Transpose rows and columns of the list of lists.
+ *
+ * Notice: This function is not tail recursive,
+ * and thus may exceed stack size if called,
+ * with large lists (on the JavaScript target).
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * transpose([[1, 2, 3], [101, 102, 103]])
+ * // -> [[1, 101], [2, 102], [3, 103]]
+ * ```
+ */
 export function transpose(list_of_lists) {
   return transpose_loop(list_of_lists, toList([]));
 }
 
+/**
+ * Make a list alternating the elements from the given lists
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * interleave([[1, 2], [101, 102], [201, 202]])
+ * // -> [1, 101, 201, 2, 102, 202]
+ * ```
+ */
 export function interleave(list) {
   let _pipe = transpose(list);
   return flatten(_pipe);
@@ -1750,6 +2949,18 @@ function do_shuffle_by_pair_indexes(list_of_pairs) {
   );
 }
 
+/**
+ * Takes a list, randomly sorts all items and returns the shuffled list.
+ *
+ * This function uses `float.random` to decide the order of the elements.
+ *
+ * ## Example
+ *
+ * ```gleam
+ * range(1, 10) |> shuffle()
+ * // -> [1, 6, 9, 10, 3, 8, 4, 2, 7, 5]
+ * ```
+ */
 export function shuffle(list) {
   let _pipe = list;
   let _pipe$1 = fold(
@@ -1789,6 +3000,22 @@ function max_loop(loop$list, loop$compare, loop$max) {
   }
 }
 
+/**
+ * Takes a list and a comparator, and returns the maximum element in the list
+ *
+ *
+ * ## Example
+ *
+ * ```gleam
+ * range(1, 10) |> list.max(int.compare)
+ * // -> Ok(10)
+ * ```
+ *
+ * ```gleam
+ * ["a", "c", "b"] |> list.max(string.compare)
+ * // -> Ok("c")
+ * ```
+ */
 export function max(list, compare) {
   if (list instanceof $Empty) {
     return new Error(undefined);
@@ -1802,7 +3029,10 @@ export function max(list, compare) {
 function log_random() {
   let min_positive = 2.2250738585072014e-308;
   let $ = $float.logarithm($float.random() + min_positive);
-  if (!($ instanceof Ok)) {
+  let random;
+  if ($ instanceof Ok) {
+    random = $[0];
+  } else {
     throw makeError(
       "let_assert",
       FILEPATH,
@@ -1819,7 +3049,6 @@ function log_random() {
       }
     )
   }
-  let random = $[0];
   return random;
 }
 
@@ -1833,7 +3062,10 @@ function sample_loop(loop$list, loop$reservoir, loop$k, loop$index, loop$w) {
     let _block;
     {
       let $ = $float.logarithm(1.0 - w);
-      if (!($ instanceof Ok)) {
+      let log_result;
+      if ($ instanceof Ok) {
+        log_result = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -1850,7 +3082,6 @@ function sample_loop(loop$list, loop$reservoir, loop$k, loop$index, loop$w) {
           }
         )
       }
-      let log_result = $[0];
       let _pipe = divideFloat(log_random(), log_result);
       let _pipe$1 = $float.floor(_pipe);
       _block = $float.round(_pipe$1);
@@ -1876,14 +3107,29 @@ function sample_loop(loop$list, loop$reservoir, loop$k, loop$index, loop$w) {
   }
 }
 
+/**
+ * Take a random sample of k elements from a list using reservoir sampling via
+ * Algo L. Returns an empty list if the sample size is less than or equal to 0.
+ *
+ * Order is not random, only selection is.
+ *
+ * ## Examples
+ *
+ * ```gleam
+ * reservoir_sample([1, 2, 3, 4, 5], 3)
+ * // -> [2, 4, 5]  // A random sample of 3 items
+ * ```
+ */
 export function sample(list, k) {
   let $ = k <= 0;
   if ($) {
     return toList([]);
   } else {
     let $1 = split(list, k);
-    let reservoir = $1[0];
-    let list$1 = $1[1];
+    let reservoir;
+    let list$1;
+    reservoir = $1[0];
+    list$1 = $1[1];
     let $2 = length(reservoir) < k;
     if ($2) {
       return reservoir;

@@ -82,6 +82,9 @@ export class LengthRequirements extends $CustomType {
   }
 }
 
+/**
+ * Converts a value representation into its equivalent two-character string.
+ */
 export function to_string(vr) {
   if (vr instanceof AgeString) {
     return "AS";
@@ -154,6 +157,9 @@ export function to_string(vr) {
   }
 }
 
+/**
+ * Converts a two-character string, e.g. "DA", into a value representation.
+ */
 export function from_bytes(bytes) {
   if (bytes.bitSize >= 8) {
     if (bytes.byteAt(0) === 65) {
@@ -164,1842 +170,20 @@ export function from_bytes(bytes) {
           return new Ok(new AgeString());
         } else if (bytes.byteAt(1) === 84) {
           return new Ok(new AttributeTag());
-        } else if (bytes.byteAt(0) === 68) {
-          if (bytes.byteAt(1) === 65) {
-            return new Ok(new Date());
-          } else if (bytes.byteAt(0) === 70) {
-            if (bytes.byteAt(1) === 68) {
-              return new Ok(new FloatingPointDouble());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new FloatingPointSingle());
-            } else if (bytes.byteAt(0) === 76) {
-              if (bytes.byteAt(1) === 79) {
-                return new Ok(new LongString());
-              } else if (bytes.byteAt(0) === 79) {
-                if (bytes.byteAt(1) === 66) {
-                  return new Ok(new OtherByteString());
-                } else if (bytes.byteAt(1) === 70) {
-                  return new Ok(new OtherFloatString());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new OtherVeryLongString());
-                } else if (bytes.byteAt(1) === 87) {
-                  return new Ok(new OtherWordString());
-                } else if (bytes.byteAt(0) === 80) {
-                  if (bytes.byteAt(1) === 78) {
-                    return new Ok(new PersonName());
-                  } else if (bytes.byteAt(0) === 83) {
-                    if (bytes.byteAt(1) === 72) {
-                      return new Ok(new ShortString());
-                    } else if (bytes.byteAt(1) === 81) {
-                      return new Ok(new Sequence());
-                    } else if (bytes.byteAt(0) === 84) {
-                      if (bytes.byteAt(1) === 77) {
-                        return new Ok(new Time());
-                      } else if (bytes.byteAt(0) === 85) {
-                        if (bytes.byteAt(1) === 67) {
-                          return new Ok(new UnlimitedCharacters());
-                        } else if (bytes.byteAt(1) === 73) {
-                          return new Ok(new UniqueIdentifier());
-                        } else if (bytes.byteAt(1) === 82) {
-                          return new Ok(new UniversalResourceIdentifier());
-                        } else {
-                          return new Error(undefined);
-                        }
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 78) {
-                        return new Ok(new Unknown());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 80) {
-                if (bytes.byteAt(1) === 78) {
-                  return new Ok(new PersonName());
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new SignedVeryLong());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else if (bytes.byteAt(1) === 86) {
-                      return new Ok(new UnsignedVeryLong());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 79) {
-              if (bytes.byteAt(1) === 66) {
-                return new Ok(new OtherByteString());
-              } else if (bytes.byteAt(1) === 70) {
-                return new Ok(new OtherFloatString());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new OtherVeryLongString());
-              } else if (bytes.byteAt(1) === 87) {
-                return new Ok(new OtherWordString());
-              } else if (bytes.byteAt(0) === 80) {
-                if (bytes.byteAt(1) === 78) {
-                  return new Ok(new PersonName());
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 80) {
-              if (bytes.byteAt(1) === 78) {
-                return new Ok(new PersonName());
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 76) {
-            if (bytes.byteAt(1) === 79) {
-              return new Ok(new LongString());
-            } else if (bytes.byteAt(0) === 79) {
-              if (bytes.byteAt(1) === 66) {
-                return new Ok(new OtherByteString());
-              } else if (bytes.byteAt(1) === 68) {
-                return new Ok(new OtherDoubleString());
-              } else if (bytes.byteAt(1) === 70) {
-                return new Ok(new OtherFloatString());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new OtherLongString());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new OtherVeryLongString());
-              } else if (bytes.byteAt(1) === 87) {
-                return new Ok(new OtherWordString());
-              } else if (bytes.byteAt(0) === 80) {
-                if (bytes.byteAt(1) === 78) {
-                  return new Ok(new PersonName());
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 80) {
-              if (bytes.byteAt(1) === 78) {
-                return new Ok(new PersonName());
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new SignedLong());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 76) {
-                    return new Ok(new UnsignedLong());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new SignedLong());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 79) {
-            if (bytes.byteAt(1) === 66) {
-              return new Ok(new OtherByteString());
-            } else if (bytes.byteAt(1) === 68) {
-              return new Ok(new OtherDoubleString());
-            } else if (bytes.byteAt(1) === 70) {
-              return new Ok(new OtherFloatString());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new OtherLongString());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new OtherVeryLongString());
-            } else if (bytes.byteAt(1) === 87) {
-              return new Ok(new OtherWordString());
-            } else if (bytes.byteAt(0) === 80) {
-              if (bytes.byteAt(1) === 78) {
-                return new Ok(new PersonName());
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 80) {
-            if (bytes.byteAt(1) === 78) {
-              return new Ok(new PersonName());
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new SignedLong());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 83) {
-            if (bytes.byteAt(1) === 72) {
-              return new Ok(new ShortString());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new SignedLong());
-            } else if (bytes.byteAt(1) === 81) {
-              return new Ok(new Sequence());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
+        } else if (bytes.byteAt(0) === 68 && bytes.byteAt(1) === 65) {
+          return new Ok(new Date());
         } else if (bytes.byteAt(0) === 70) {
           if (bytes.byteAt(1) === 68) {
             return new Ok(new FloatingPointDouble());
           } else if (bytes.byteAt(1) === 76) {
             return new Ok(new FloatingPointSingle());
-          } else if (bytes.byteAt(0) === 76) {
-            if (bytes.byteAt(1) === 79) {
-              return new Ok(new LongString());
-            } else if (bytes.byteAt(0) === 79) {
-              if (bytes.byteAt(1) === 66) {
-                return new Ok(new OtherByteString());
-              } else if (bytes.byteAt(1) === 70) {
-                return new Ok(new OtherFloatString());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new OtherVeryLongString());
-              } else if (bytes.byteAt(1) === 87) {
-                return new Ok(new OtherWordString());
-              } else if (bytes.byteAt(0) === 80) {
-                if (bytes.byteAt(1) === 78) {
-                  return new Ok(new PersonName());
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 80) {
-              if (bytes.byteAt(1) === 78) {
-                return new Ok(new PersonName());
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 79) {
-            if (bytes.byteAt(1) === 66) {
-              return new Ok(new OtherByteString());
-            } else if (bytes.byteAt(1) === 70) {
-              return new Ok(new OtherFloatString());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new OtherVeryLongString());
-            } else if (bytes.byteAt(1) === 87) {
-              return new Ok(new OtherWordString());
-            } else if (bytes.byteAt(0) === 80) {
-              if (bytes.byteAt(1) === 78) {
-                return new Ok(new PersonName());
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 80) {
-            if (bytes.byteAt(1) === 78) {
-              return new Ok(new PersonName());
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 83) {
-            if (bytes.byteAt(1) === 72) {
-              return new Ok(new ShortString());
-            } else if (bytes.byteAt(1) === 81) {
-              return new Ok(new Sequence());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 76) {
-          if (bytes.byteAt(1) === 79) {
+          } else if (bytes.byteAt(0) === 76 && bytes.byteAt(1) === 79) {
             return new Ok(new LongString());
           } else if (bytes.byteAt(0) === 79) {
             if (bytes.byteAt(1) === 66) {
               return new Ok(new OtherByteString());
-            } else if (bytes.byteAt(1) === 68) {
-              return new Ok(new OtherDoubleString());
             } else if (bytes.byteAt(1) === 70) {
               return new Ok(new OtherFloatString());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new OtherLongString());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new OtherVeryLongString());
             } else if (bytes.byteAt(1) === 87) {
@@ -2012,37 +196,7 @@ export function from_bytes(bytes) {
                   return new Ok(new ShortString());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -2057,6 +211,8 @@ export function from_bytes(bytes) {
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -2075,41 +231,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortString());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -2126,6 +248,8 @@ export function from_bytes(bytes) {
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -2147,68 +271,32 @@ export function from_bytes(bytes) {
             } else if (bytes.byteAt(0) === 83) {
               if (bytes.byteAt(1) === 72) {
                 return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new SignedLong());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
                 } else if (bytes.byteAt(1) === 73) {
                   return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
               } else if (bytes.byteAt(1) === 86) {
@@ -2222,74 +310,34 @@ export function from_bytes(bytes) {
           } else if (bytes.byteAt(0) === 83) {
             if (bytes.byteAt(1) === 72) {
               return new Ok(new ShortString());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new SignedLong());
             } else if (bytes.byteAt(1) === 81) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 78) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
             } else if (bytes.byteAt(1) === 73) {
               return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
             } else if (bytes.byteAt(1) === 78) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
@@ -2302,6 +350,8 @@ export function from_bytes(bytes) {
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 76 && bytes.byteAt(1) === 79) {
+          return new Ok(new LongString());
         } else if (bytes.byteAt(0) === 79) {
           if (bytes.byteAt(1) === 66) {
             return new Ok(new OtherByteString());
@@ -2323,37 +373,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortString());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -2368,6 +388,8 @@ export function from_bytes(bytes) {
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -2386,41 +408,7 @@ export function from_bytes(bytes) {
               return new Ok(new ShortString());
             } else if (bytes.byteAt(1) === 81) {
               return new Ok(new Sequence());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -2437,6 +425,8 @@ export function from_bytes(bytes) {
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -2464,55 +454,23 @@ export function from_bytes(bytes) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -2539,61 +497,25 @@ export function from_bytes(bytes) {
             return new Ok(new Sequence());
           } else if (bytes.byteAt(1) === 86) {
             return new Ok(new SignedVeryLong());
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
             return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
             } else if (bytes.byteAt(1) === 73) {
               return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
             } else if (bytes.byteAt(1) === 78) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
               return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
             } else {
               return new Error(undefined);
             }
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -2630,611 +552,13 @@ export function from_bytes(bytes) {
               return new Ok(new FloatingPointDouble());
             } else if (bytes.byteAt(1) === 76) {
               return new Ok(new FloatingPointSingle());
-            } else if (bytes.byteAt(0) === 76) {
-              if (bytes.byteAt(1) === 79) {
-                return new Ok(new LongString());
-              } else if (bytes.byteAt(0) === 79) {
-                if (bytes.byteAt(1) === 66) {
-                  return new Ok(new OtherByteString());
-                } else if (bytes.byteAt(1) === 70) {
-                  return new Ok(new OtherFloatString());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new OtherVeryLongString());
-                } else if (bytes.byteAt(1) === 87) {
-                  return new Ok(new OtherWordString());
-                } else if (bytes.byteAt(0) === 80) {
-                  if (bytes.byteAt(1) === 78) {
-                    return new Ok(new PersonName());
-                  } else if (bytes.byteAt(0) === 83) {
-                    if (bytes.byteAt(1) === 72) {
-                      return new Ok(new ShortString());
-                    } else if (bytes.byteAt(1) === 81) {
-                      return new Ok(new Sequence());
-                    } else if (bytes.byteAt(0) === 84) {
-                      if (bytes.byteAt(1) === 77) {
-                        return new Ok(new Time());
-                      } else if (bytes.byteAt(0) === 85) {
-                        if (bytes.byteAt(1) === 67) {
-                          return new Ok(new UnlimitedCharacters());
-                        } else if (bytes.byteAt(1) === 73) {
-                          return new Ok(new UniqueIdentifier());
-                        } else if (bytes.byteAt(1) === 82) {
-                          return new Ok(new UniversalResourceIdentifier());
-                        } else {
-                          return new Error(undefined);
-                        }
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 78) {
-                        return new Ok(new Unknown());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 80) {
-                if (bytes.byteAt(1) === 78) {
-                  return new Ok(new PersonName());
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new SignedVeryLong());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else if (bytes.byteAt(1) === 86) {
-                      return new Ok(new UnsignedVeryLong());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 79) {
-              if (bytes.byteAt(1) === 66) {
-                return new Ok(new OtherByteString());
-              } else if (bytes.byteAt(1) === 70) {
-                return new Ok(new OtherFloatString());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new OtherVeryLongString());
-              } else if (bytes.byteAt(1) === 87) {
-                return new Ok(new OtherWordString());
-              } else if (bytes.byteAt(0) === 80) {
-                if (bytes.byteAt(1) === 78) {
-                  return new Ok(new PersonName());
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 80) {
-              if (bytes.byteAt(1) === 78) {
-                return new Ok(new PersonName());
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 76) {
-            if (bytes.byteAt(1) === 79) {
+            } else if (bytes.byteAt(0) === 76 && bytes.byteAt(1) === 79) {
               return new Ok(new LongString());
             } else if (bytes.byteAt(0) === 79) {
               if (bytes.byteAt(1) === 66) {
                 return new Ok(new OtherByteString());
-              } else if (bytes.byteAt(1) === 68) {
-                return new Ok(new OtherDoubleString());
               } else if (bytes.byteAt(1) === 70) {
                 return new Ok(new OtherFloatString());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new OtherLongString());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new OtherVeryLongString());
               } else if (bytes.byteAt(1) === 87) {
@@ -3247,37 +571,7 @@ export function from_bytes(bytes) {
                     return new Ok(new ShortString());
                   } else if (bytes.byteAt(1) === 81) {
                     return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
+                  } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                     return new Ok(new Time());
                   } else if (bytes.byteAt(0) === 85) {
                     if (bytes.byteAt(1) === 67) {
@@ -3292,6 +586,8 @@ export function from_bytes(bytes) {
                   } else {
                     return new Error(undefined);
                   }
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                  return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
                     return new Ok(new UnlimitedCharacters());
@@ -3310,41 +606,7 @@ export function from_bytes(bytes) {
                   return new Ok(new ShortString());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -3361,6 +623,8 @@ export function from_bytes(bytes) {
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -3382,68 +646,32 @@ export function from_bytes(bytes) {
               } else if (bytes.byteAt(0) === 83) {
                 if (bytes.byteAt(1) === 72) {
                   return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new SignedLong());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
                 } else if (bytes.byteAt(1) === 86) {
                   return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
                     return new Ok(new UnlimitedCharacters());
                   } else if (bytes.byteAt(1) === 73) {
                     return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 76) {
-                    return new Ok(new UnsignedLong());
                   } else if (bytes.byteAt(1) === 82) {
                     return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
                   } else {
                     return new Error(undefined);
                   }
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
                 } else if (bytes.byteAt(1) === 73) {
                   return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
                 } else if (bytes.byteAt(1) === 86) {
@@ -3457,74 +685,34 @@ export function from_bytes(bytes) {
             } else if (bytes.byteAt(0) === 83) {
               if (bytes.byteAt(1) === 72) {
                 return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new SignedLong());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
                 } else if (bytes.byteAt(1) === 73) {
                   return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
                 } else if (bytes.byteAt(1) === 78) {
                   return new Ok(new Unknown());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 78) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
@@ -3537,6 +725,8 @@ export function from_bytes(bytes) {
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 76 && bytes.byteAt(1) === 79) {
+            return new Ok(new LongString());
           } else if (bytes.byteAt(0) === 79) {
             if (bytes.byteAt(1) === 66) {
               return new Ok(new OtherByteString());
@@ -3558,37 +748,7 @@ export function from_bytes(bytes) {
                   return new Ok(new ShortString());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -3603,6 +763,8 @@ export function from_bytes(bytes) {
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -3621,41 +783,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortString());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -3672,6 +800,8 @@ export function from_bytes(bytes) {
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -3699,55 +829,23 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
                 } else if (bytes.byteAt(1) === 73) {
                   return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -3774,61 +872,25 @@ export function from_bytes(bytes) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 78) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -3875,37 +937,7 @@ export function from_bytes(bytes) {
                     return new Ok(new ShortString());
                   } else if (bytes.byteAt(1) === 81) {
                     return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
+                  } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                     return new Ok(new Time());
                   } else if (bytes.byteAt(0) === 85) {
                     if (bytes.byteAt(1) === 67) {
@@ -3920,6 +952,8 @@ export function from_bytes(bytes) {
                   } else {
                     return new Error(undefined);
                   }
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                  return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
                     return new Ok(new UnlimitedCharacters());
@@ -3938,41 +972,7 @@ export function from_bytes(bytes) {
                   return new Ok(new ShortString());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -3989,6 +989,8 @@ export function from_bytes(bytes) {
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -4014,37 +1016,7 @@ export function from_bytes(bytes) {
                   return new Ok(new Sequence());
                 } else if (bytes.byteAt(1) === 86) {
                   return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -4053,14 +1025,14 @@ export function from_bytes(bytes) {
                     return new Ok(new UniqueIdentifier());
                   } else if (bytes.byteAt(1) === 82) {
                     return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
                   } else {
                     return new Error(undefined);
                   }
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -4083,41 +1055,7 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -4128,14 +1066,14 @@ export function from_bytes(bytes) {
                   return new Ok(new Unknown());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -4172,37 +1110,7 @@ export function from_bytes(bytes) {
                   return new Ok(new Sequence());
                 } else if (bytes.byteAt(1) === 84) {
                   return new Ok(new ShortText());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -4211,14 +1119,14 @@ export function from_bytes(bytes) {
                     return new Ok(new UniqueIdentifier());
                   } else if (bytes.byteAt(1) === 82) {
                     return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 84) {
-                    return new Ok(new UnlimitedText());
                   } else {
                     return new Error(undefined);
                   }
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -4241,41 +1149,7 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 84) {
                 return new Ok(new ShortText());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -4286,14 +1160,14 @@ export function from_bytes(bytes) {
                   return new Ok(new Unknown());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 84) {
-                  return new Ok(new UnlimitedText());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -4323,37 +1197,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortText());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -4362,16 +1206,14 @@ export function from_bytes(bytes) {
                   return new Ok(new UniqueIdentifier());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 84) {
-                  return new Ok(new UnlimitedText());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -4398,41 +1240,7 @@ export function from_bytes(bytes) {
               return new Ok(new ShortText());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -4443,16 +1251,14 @@ export function from_bytes(bytes) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -4498,37 +1304,7 @@ export function from_bytes(bytes) {
                   return new Ok(new ShortString());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -4543,6 +1319,8 @@ export function from_bytes(bytes) {
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -4561,41 +1339,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortString());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -4612,6 +1356,8 @@ export function from_bytes(bytes) {
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -4639,55 +1385,23 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
                 } else if (bytes.byteAt(1) === 73) {
                   return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -4714,61 +1428,25 @@ export function from_bytes(bytes) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 78) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -4811,37 +1489,7 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 84) {
                 return new Ok(new ShortText());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -4850,14 +1498,14 @@ export function from_bytes(bytes) {
                   return new Ok(new UniqueIdentifier());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 84) {
-                  return new Ok(new UnlimitedText());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -4880,41 +1528,7 @@ export function from_bytes(bytes) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 84) {
               return new Ok(new ShortText());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -4925,14 +1539,14 @@ export function from_bytes(bytes) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -4964,57 +1578,23 @@ export function from_bytes(bytes) {
               return new Ok(new ShortText());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -5045,63 +1625,25 @@ export function from_bytes(bytes) {
             return new Ok(new ShortText());
           } else if (bytes.byteAt(1) === 86) {
             return new Ok(new SignedVeryLong());
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
             return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
             } else if (bytes.byteAt(1) === 73) {
               return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
             } else if (bytes.byteAt(1) === 78) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
               return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 84) {
-              return new Ok(new UnlimitedText());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
             } else {
               return new Error(undefined);
             }
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -5139,611 +1681,13 @@ export function from_bytes(bytes) {
             return new Ok(new FloatingPointDouble());
           } else if (bytes.byteAt(1) === 76) {
             return new Ok(new FloatingPointSingle());
-          } else if (bytes.byteAt(0) === 76) {
-            if (bytes.byteAt(1) === 79) {
-              return new Ok(new LongString());
-            } else if (bytes.byteAt(0) === 79) {
-              if (bytes.byteAt(1) === 66) {
-                return new Ok(new OtherByteString());
-              } else if (bytes.byteAt(1) === 70) {
-                return new Ok(new OtherFloatString());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new OtherVeryLongString());
-              } else if (bytes.byteAt(1) === 87) {
-                return new Ok(new OtherWordString());
-              } else if (bytes.byteAt(0) === 80) {
-                if (bytes.byteAt(1) === 78) {
-                  return new Ok(new PersonName());
-                } else if (bytes.byteAt(0) === 83) {
-                  if (bytes.byteAt(1) === 72) {
-                    return new Ok(new ShortString());
-                  } else if (bytes.byteAt(1) === 81) {
-                    return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 80) {
-              if (bytes.byteAt(1) === 78) {
-                return new Ok(new PersonName());
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 79) {
-            if (bytes.byteAt(1) === 66) {
-              return new Ok(new OtherByteString());
-            } else if (bytes.byteAt(1) === 70) {
-              return new Ok(new OtherFloatString());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new OtherVeryLongString());
-            } else if (bytes.byteAt(1) === 87) {
-              return new Ok(new OtherWordString());
-            } else if (bytes.byteAt(0) === 80) {
-              if (bytes.byteAt(1) === 78) {
-                return new Ok(new PersonName());
-              } else if (bytes.byteAt(0) === 83) {
-                if (bytes.byteAt(1) === 72) {
-                  return new Ok(new ShortString());
-                } else if (bytes.byteAt(1) === 81) {
-                  return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 80) {
-            if (bytes.byteAt(1) === 78) {
-              return new Ok(new PersonName());
-            } else if (bytes.byteAt(0) === 83) {
-              if (bytes.byteAt(1) === 72) {
-                return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 81) {
-                return new Ok(new Sequence());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 83) {
-            if (bytes.byteAt(1) === 72) {
-              return new Ok(new ShortString());
-            } else if (bytes.byteAt(1) === 81) {
-              return new Ok(new Sequence());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 76) {
-          if (bytes.byteAt(1) === 79) {
+          } else if (bytes.byteAt(0) === 76 && bytes.byteAt(1) === 79) {
             return new Ok(new LongString());
           } else if (bytes.byteAt(0) === 79) {
             if (bytes.byteAt(1) === 66) {
               return new Ok(new OtherByteString());
-            } else if (bytes.byteAt(1) === 68) {
-              return new Ok(new OtherDoubleString());
             } else if (bytes.byteAt(1) === 70) {
               return new Ok(new OtherFloatString());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new OtherLongString());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new OtherVeryLongString());
             } else if (bytes.byteAt(1) === 87) {
@@ -5756,37 +1700,7 @@ export function from_bytes(bytes) {
                   return new Ok(new ShortString());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -5801,6 +1715,8 @@ export function from_bytes(bytes) {
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -5819,41 +1735,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortString());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -5870,6 +1752,8 @@ export function from_bytes(bytes) {
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -5891,68 +1775,32 @@ export function from_bytes(bytes) {
             } else if (bytes.byteAt(0) === 83) {
               if (bytes.byteAt(1) === 72) {
                 return new Ok(new ShortString());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new SignedLong());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
                 } else if (bytes.byteAt(1) === 73) {
                   return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
               } else if (bytes.byteAt(1) === 86) {
@@ -5966,74 +1814,34 @@ export function from_bytes(bytes) {
           } else if (bytes.byteAt(0) === 83) {
             if (bytes.byteAt(1) === 72) {
               return new Ok(new ShortString());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new SignedLong());
             } else if (bytes.byteAt(1) === 81) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 78) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
             } else if (bytes.byteAt(1) === 73) {
               return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
             } else if (bytes.byteAt(1) === 78) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
@@ -6046,6 +1854,8 @@ export function from_bytes(bytes) {
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 76 && bytes.byteAt(1) === 79) {
+          return new Ok(new LongString());
         } else if (bytes.byteAt(0) === 79) {
           if (bytes.byteAt(1) === 66) {
             return new Ok(new OtherByteString());
@@ -6067,37 +1877,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortString());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -6112,6 +1892,8 @@ export function from_bytes(bytes) {
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -6130,41 +1912,7 @@ export function from_bytes(bytes) {
               return new Ok(new ShortString());
             } else if (bytes.byteAt(1) === 81) {
               return new Ok(new Sequence());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -6181,6 +1929,8 @@ export function from_bytes(bytes) {
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -6208,55 +1958,23 @@ export function from_bytes(bytes) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -6283,61 +2001,25 @@ export function from_bytes(bytes) {
             return new Ok(new Sequence());
           } else if (bytes.byteAt(1) === 86) {
             return new Ok(new SignedVeryLong());
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
             return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
             } else if (bytes.byteAt(1) === 73) {
               return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
             } else if (bytes.byteAt(1) === 78) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
               return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
             } else {
               return new Error(undefined);
             }
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -6391,37 +2073,7 @@ export function from_bytes(bytes) {
                     return new Ok(new ShortString());
                   } else if (bytes.byteAt(1) === 81) {
                     return new Ok(new Sequence());
-                  } else if (bytes.byteAt(0) === 84) {
-                    if (bytes.byteAt(1) === 77) {
-                      return new Ok(new Time());
-                    } else if (bytes.byteAt(0) === 85) {
-                      if (bytes.byteAt(1) === 67) {
-                        return new Ok(new UnlimitedCharacters());
-                      } else if (bytes.byteAt(1) === 73) {
-                        return new Ok(new UniqueIdentifier());
-                      } else if (bytes.byteAt(1) === 82) {
-                        return new Ok(new UniversalResourceIdentifier());
-                      } else {
-                        return new Error(undefined);
-                      }
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
+                  } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                     return new Ok(new Time());
                   } else if (bytes.byteAt(0) === 85) {
                     if (bytes.byteAt(1) === 67) {
@@ -6436,6 +2088,8 @@ export function from_bytes(bytes) {
                   } else {
                     return new Error(undefined);
                   }
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                  return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
                     return new Ok(new UnlimitedCharacters());
@@ -6454,41 +2108,7 @@ export function from_bytes(bytes) {
                   return new Ok(new ShortString());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 78) {
-                      return new Ok(new Unknown());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -6505,6 +2125,8 @@ export function from_bytes(bytes) {
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -6530,37 +2152,7 @@ export function from_bytes(bytes) {
                   return new Ok(new Sequence());
                 } else if (bytes.byteAt(1) === 86) {
                   return new Ok(new SignedVeryLong());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -6569,14 +2161,14 @@ export function from_bytes(bytes) {
                     return new Ok(new UniqueIdentifier());
                   } else if (bytes.byteAt(1) === 82) {
                     return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 86) {
-                    return new Ok(new UnsignedVeryLong());
                   } else {
                     return new Error(undefined);
                   }
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -6599,41 +2191,7 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -6644,14 +2202,14 @@ export function from_bytes(bytes) {
                   return new Ok(new Unknown());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -6688,37 +2246,7 @@ export function from_bytes(bytes) {
                   return new Ok(new Sequence());
                 } else if (bytes.byteAt(1) === 84) {
                   return new Ok(new ShortText());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -6727,14 +2255,14 @@ export function from_bytes(bytes) {
                     return new Ok(new UniqueIdentifier());
                   } else if (bytes.byteAt(1) === 82) {
                     return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 84) {
-                    return new Ok(new UnlimitedText());
                   } else {
                     return new Error(undefined);
                   }
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -6757,41 +2285,7 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 84) {
                 return new Ok(new ShortText());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -6802,14 +2296,14 @@ export function from_bytes(bytes) {
                   return new Ok(new Unknown());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 84) {
-                  return new Ok(new UnlimitedText());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -6839,37 +2333,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortText());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -6878,16 +2342,14 @@ export function from_bytes(bytes) {
                   return new Ok(new UniqueIdentifier());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 84) {
-                  return new Ok(new UnlimitedText());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -6914,41 +2376,7 @@ export function from_bytes(bytes) {
               return new Ok(new ShortText());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -6959,16 +2387,14 @@ export function from_bytes(bytes) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -7012,37 +2438,7 @@ export function from_bytes(bytes) {
                   return new Ok(new Sequence());
                 } else if (bytes.byteAt(1) === 83) {
                   return new Ok(new SignedShort());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -7051,14 +2447,14 @@ export function from_bytes(bytes) {
                     return new Ok(new UniqueIdentifier());
                   } else if (bytes.byteAt(1) === 82) {
                     return new Ok(new UniversalResourceIdentifier());
-                  } else if (bytes.byteAt(1) === 83) {
-                    return new Ok(new UnsignedShort());
                   } else {
                     return new Error(undefined);
                   }
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -7081,41 +2477,7 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 83) {
                 return new Ok(new SignedShort());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -7126,14 +2488,14 @@ export function from_bytes(bytes) {
                   return new Ok(new Unknown());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 83) {
-                  return new Ok(new UnsignedShort());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -7163,37 +2525,7 @@ export function from_bytes(bytes) {
                 return new Ok(new SignedShort());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -7202,16 +2534,14 @@ export function from_bytes(bytes) {
                   return new Ok(new UniqueIdentifier());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 83) {
-                  return new Ok(new UnsignedShort());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -7238,41 +2568,7 @@ export function from_bytes(bytes) {
               return new Ok(new SignedShort());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -7283,16 +2579,14 @@ export function from_bytes(bytes) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 83) {
-                return new Ok(new UnsignedShort());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -7333,37 +2627,7 @@ export function from_bytes(bytes) {
                 return new Ok(new SignedShort());
               } else if (bytes.byteAt(1) === 84) {
                 return new Ok(new ShortText());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -7372,16 +2636,14 @@ export function from_bytes(bytes) {
                   return new Ok(new UniqueIdentifier());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 83) {
-                  return new Ok(new UnsignedShort());
-                } else if (bytes.byteAt(1) === 84) {
-                  return new Ok(new UnlimitedText());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -7408,41 +2670,7 @@ export function from_bytes(bytes) {
               return new Ok(new SignedShort());
             } else if (bytes.byteAt(1) === 84) {
               return new Ok(new ShortText());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -7453,16 +2681,14 @@ export function from_bytes(bytes) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 83) {
-                return new Ok(new UnsignedShort());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -7496,37 +2722,7 @@ export function from_bytes(bytes) {
               return new Ok(new ShortText());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -7535,18 +2731,14 @@ export function from_bytes(bytes) {
                 return new Ok(new UniqueIdentifier());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 83) {
-                return new Ok(new UnsignedShort());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -7577,41 +2769,7 @@ export function from_bytes(bytes) {
             return new Ok(new ShortText());
           } else if (bytes.byteAt(1) === 86) {
             return new Ok(new SignedVeryLong());
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
             return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
@@ -7622,18 +2780,14 @@ export function from_bytes(bytes) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
               return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 83) {
-              return new Ok(new UnsignedShort());
-            } else if (bytes.byteAt(1) === 84) {
-              return new Ok(new UnlimitedText());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
             } else {
               return new Error(undefined);
             }
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -7688,37 +2842,7 @@ export function from_bytes(bytes) {
                   return new Ok(new ShortString());
                 } else if (bytes.byteAt(1) === 81) {
                   return new Ok(new Sequence());
-                } else if (bytes.byteAt(0) === 84) {
-                  if (bytes.byteAt(1) === 77) {
-                    return new Ok(new Time());
-                  } else if (bytes.byteAt(0) === 85) {
-                    if (bytes.byteAt(1) === 67) {
-                      return new Ok(new UnlimitedCharacters());
-                    } else if (bytes.byteAt(1) === 73) {
-                      return new Ok(new UniqueIdentifier());
-                    } else if (bytes.byteAt(1) === 82) {
-                      return new Ok(new UniversalResourceIdentifier());
-                    } else {
-                      return new Error(undefined);
-                    }
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
+                } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                   return new Ok(new Time());
                 } else if (bytes.byteAt(0) === 85) {
                   if (bytes.byteAt(1) === 67) {
@@ -7733,6 +2857,8 @@ export function from_bytes(bytes) {
                 } else {
                   return new Error(undefined);
                 }
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+                return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
@@ -7751,41 +2877,7 @@ export function from_bytes(bytes) {
                 return new Ok(new ShortString());
               } else if (bytes.byteAt(1) === 81) {
                 return new Ok(new Sequence());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 78) {
-                    return new Ok(new Unknown());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -7802,6 +2894,8 @@ export function from_bytes(bytes) {
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -7829,55 +2923,23 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 86) {
                 return new Ok(new SignedVeryLong());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
                   return new Ok(new UnlimitedCharacters());
                 } else if (bytes.byteAt(1) === 73) {
                   return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 76) {
-                  return new Ok(new UnsignedLong());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 86) {
-                  return new Ok(new UnsignedVeryLong());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -7904,61 +2966,25 @@ export function from_bytes(bytes) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 78) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -8001,37 +3027,7 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 84) {
                 return new Ok(new ShortText());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -8040,14 +3036,14 @@ export function from_bytes(bytes) {
                   return new Ok(new UniqueIdentifier());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 84) {
-                  return new Ok(new UnlimitedText());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -8070,41 +3066,7 @@ export function from_bytes(bytes) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 84) {
               return new Ok(new ShortText());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -8115,14 +3077,14 @@ export function from_bytes(bytes) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -8154,57 +3116,23 @@ export function from_bytes(bytes) {
               return new Ok(new ShortText());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -8235,63 +3163,25 @@ export function from_bytes(bytes) {
             return new Ok(new ShortText());
           } else if (bytes.byteAt(1) === 86) {
             return new Ok(new SignedVeryLong());
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
             return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
             } else if (bytes.byteAt(1) === 73) {
               return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
             } else if (bytes.byteAt(1) === 78) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
               return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 84) {
-              return new Ok(new UnlimitedText());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
             } else {
               return new Error(undefined);
             }
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -8345,37 +3235,7 @@ export function from_bytes(bytes) {
                 return new Ok(new Sequence());
               } else if (bytes.byteAt(1) === 83) {
                 return new Ok(new SignedShort());
-              } else if (bytes.byteAt(0) === 84) {
-                if (bytes.byteAt(1) === 77) {
-                  return new Ok(new Time());
-                } else if (bytes.byteAt(0) === 85) {
-                  if (bytes.byteAt(1) === 67) {
-                    return new Ok(new UnlimitedCharacters());
-                  } else if (bytes.byteAt(1) === 73) {
-                    return new Ok(new UniqueIdentifier());
-                  } else if (bytes.byteAt(1) === 82) {
-                    return new Ok(new UniversalResourceIdentifier());
-                  } else {
-                    return new Error(undefined);
-                  }
-                } else {
-                  return new Error(undefined);
-                }
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
+              } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
                 return new Ok(new Time());
               } else if (bytes.byteAt(0) === 85) {
                 if (bytes.byteAt(1) === 67) {
@@ -8384,14 +3244,14 @@ export function from_bytes(bytes) {
                   return new Ok(new UniqueIdentifier());
                 } else if (bytes.byteAt(1) === 82) {
                   return new Ok(new UniversalResourceIdentifier());
-                } else if (bytes.byteAt(1) === 83) {
-                  return new Ok(new UnsignedShort());
                 } else {
                   return new Error(undefined);
                 }
               } else {
                 return new Error(undefined);
               }
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+              return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
@@ -8414,41 +3274,7 @@ export function from_bytes(bytes) {
               return new Ok(new Sequence());
             } else if (bytes.byteAt(1) === 83) {
               return new Ok(new SignedShort());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 78) {
-                  return new Ok(new Unknown());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -8459,14 +3285,14 @@ export function from_bytes(bytes) {
                 return new Ok(new Unknown());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 83) {
-                return new Ok(new UnsignedShort());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -8498,57 +3324,23 @@ export function from_bytes(bytes) {
               return new Ok(new SignedShort());
             } else if (bytes.byteAt(1) === 86) {
               return new Ok(new SignedVeryLong());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
                 return new Ok(new UnlimitedCharacters());
               } else if (bytes.byteAt(1) === 73) {
                 return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 76) {
-                return new Ok(new UnsignedLong());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 83) {
-                return new Ok(new UnsignedShort());
-              } else if (bytes.byteAt(1) === 86) {
-                return new Ok(new UnsignedVeryLong());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -8579,63 +3371,25 @@ export function from_bytes(bytes) {
             return new Ok(new SignedShort());
           } else if (bytes.byteAt(1) === 86) {
             return new Ok(new SignedVeryLong());
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
             return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
             } else if (bytes.byteAt(1) === 73) {
               return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
             } else if (bytes.byteAt(1) === 78) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
               return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 83) {
-              return new Ok(new UnsignedShort());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
             } else {
               return new Error(undefined);
             }
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -8686,37 +3440,7 @@ export function from_bytes(bytes) {
               return new Ok(new SignedShort());
             } else if (bytes.byteAt(1) === 84) {
               return new Ok(new ShortText());
-            } else if (bytes.byteAt(0) === 84) {
-              if (bytes.byteAt(1) === 77) {
-                return new Ok(new Time());
-              } else if (bytes.byteAt(0) === 85) {
-                if (bytes.byteAt(1) === 67) {
-                  return new Ok(new UnlimitedCharacters());
-                } else if (bytes.byteAt(1) === 73) {
-                  return new Ok(new UniqueIdentifier());
-                } else if (bytes.byteAt(1) === 82) {
-                  return new Ok(new UniversalResourceIdentifier());
-                } else {
-                  return new Error(undefined);
-                }
-              } else {
-                return new Error(undefined);
-              }
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
+            } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
               return new Ok(new Time());
             } else if (bytes.byteAt(0) === 85) {
               if (bytes.byteAt(1) === 67) {
@@ -8725,16 +3449,14 @@ export function from_bytes(bytes) {
                 return new Ok(new UniqueIdentifier());
               } else if (bytes.byteAt(1) === 82) {
                 return new Ok(new UniversalResourceIdentifier());
-              } else if (bytes.byteAt(1) === 83) {
-                return new Ok(new UnsignedShort());
-              } else if (bytes.byteAt(1) === 84) {
-                return new Ok(new UnlimitedText());
               } else {
                 return new Error(undefined);
               }
             } else {
               return new Error(undefined);
             }
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+            return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
@@ -8761,41 +3483,7 @@ export function from_bytes(bytes) {
             return new Ok(new SignedShort());
           } else if (bytes.byteAt(1) === 84) {
             return new Ok(new ShortText());
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 78) {
-                return new Ok(new Unknown());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
             return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
@@ -8806,16 +3494,14 @@ export function from_bytes(bytes) {
               return new Ok(new Unknown());
             } else if (bytes.byteAt(1) === 82) {
               return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 83) {
-              return new Ok(new UnsignedShort());
-            } else if (bytes.byteAt(1) === 84) {
-              return new Ok(new UnlimitedText());
             } else {
               return new Error(undefined);
             }
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -8855,59 +3541,23 @@ export function from_bytes(bytes) {
             return new Ok(new ShortText());
           } else if (bytes.byteAt(1) === 86) {
             return new Ok(new SignedVeryLong());
-          } else if (bytes.byteAt(0) === 84) {
-            if (bytes.byteAt(1) === 77) {
-              return new Ok(new Time());
-            } else if (bytes.byteAt(0) === 85) {
-              if (bytes.byteAt(1) === 67) {
-                return new Ok(new UnlimitedCharacters());
-              } else if (bytes.byteAt(1) === 73) {
-                return new Ok(new UniqueIdentifier());
-              } else if (bytes.byteAt(1) === 82) {
-                return new Ok(new UniversalResourceIdentifier());
-              } else {
-                return new Error(undefined);
-              }
-            } else {
-              return new Error(undefined);
-            }
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
+          } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
             return new Ok(new Time());
           } else if (bytes.byteAt(0) === 85) {
             if (bytes.byteAt(1) === 67) {
               return new Ok(new UnlimitedCharacters());
             } else if (bytes.byteAt(1) === 73) {
               return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 76) {
-              return new Ok(new UnsignedLong());
             } else if (bytes.byteAt(1) === 82) {
               return new Ok(new UniversalResourceIdentifier());
-            } else if (bytes.byteAt(1) === 83) {
-              return new Ok(new UnsignedShort());
-            } else if (bytes.byteAt(1) === 84) {
-              return new Ok(new UnlimitedText());
-            } else if (bytes.byteAt(1) === 86) {
-              return new Ok(new UnsignedVeryLong());
             } else {
               return new Error(undefined);
             }
           } else {
             return new Error(undefined);
           }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -8946,24 +3596,8 @@ export function from_bytes(bytes) {
           return new Ok(new ShortText());
         } else if (bytes.byteAt(1) === 86) {
           return new Ok(new SignedVeryLong());
-        } else if (bytes.byteAt(0) === 84) {
-          if (bytes.byteAt(1) === 77) {
-            return new Ok(new Time());
-          } else if (bytes.byteAt(0) === 85) {
-            if (bytes.byteAt(1) === 67) {
-              return new Ok(new UnlimitedCharacters());
-            } else if (bytes.byteAt(1) === 73) {
-              return new Ok(new UniqueIdentifier());
-            } else if (bytes.byteAt(1) === 78) {
-              return new Ok(new Unknown());
-            } else if (bytes.byteAt(1) === 82) {
-              return new Ok(new UniversalResourceIdentifier());
-            } else {
-              return new Error(undefined);
-            }
-          } else {
-            return new Error(undefined);
-          }
+        } else if (bytes.byteAt(0) === 84 && bytes.byteAt(1) === 77) {
+          return new Ok(new Time());
         } else if (bytes.byteAt(0) === 85) {
           if (bytes.byteAt(1) === 67) {
             return new Ok(new UnlimitedCharacters());
@@ -9012,27 +3646,23 @@ export function from_bytes(bytes) {
       } else {
         return new Error(undefined);
       }
-    } else if (bytes.byteAt(0) === 85) {
-      if (bytes.bitSize === 16) {
-        if (bytes.byteAt(1) === 67) {
-          return new Ok(new UnlimitedCharacters());
-        } else if (bytes.byteAt(1) === 73) {
-          return new Ok(new UniqueIdentifier());
-        } else if (bytes.byteAt(1) === 76) {
-          return new Ok(new UnsignedLong());
-        } else if (bytes.byteAt(1) === 78) {
-          return new Ok(new Unknown());
-        } else if (bytes.byteAt(1) === 82) {
-          return new Ok(new UniversalResourceIdentifier());
-        } else if (bytes.byteAt(1) === 83) {
-          return new Ok(new UnsignedShort());
-        } else if (bytes.byteAt(1) === 84) {
-          return new Ok(new UnlimitedText());
-        } else if (bytes.byteAt(1) === 86) {
-          return new Ok(new UnsignedVeryLong());
-        } else {
-          return new Error(undefined);
-        }
+    } else if (bytes.byteAt(0) === 85 && bytes.bitSize === 16) {
+      if (bytes.byteAt(1) === 67) {
+        return new Ok(new UnlimitedCharacters());
+      } else if (bytes.byteAt(1) === 73) {
+        return new Ok(new UniqueIdentifier());
+      } else if (bytes.byteAt(1) === 76) {
+        return new Ok(new UnsignedLong());
+      } else if (bytes.byteAt(1) === 78) {
+        return new Ok(new Unknown());
+      } else if (bytes.byteAt(1) === 82) {
+        return new Ok(new UniversalResourceIdentifier());
+      } else if (bytes.byteAt(1) === 83) {
+        return new Ok(new UnsignedShort());
+      } else if (bytes.byteAt(1) === 84) {
+        return new Ok(new UnlimitedText());
+      } else if (bytes.byteAt(1) === 86) {
+        return new Ok(new UnsignedVeryLong());
       } else {
         return new Error(undefined);
       }
@@ -9044,6 +3674,10 @@ export function from_bytes(bytes) {
   }
 }
 
+/**
+ * Returns the human-readable name of a value representation, e.g.
+ * `CodeString`, `AttributeTag`.
+ */
 export function name(vr) {
   if (vr instanceof AgeString) {
     return "AgeString";
@@ -9116,6 +3750,9 @@ export function name(vr) {
   }
 }
 
+/**
+ * Returns whether a value representation stores string data.
+ */
 export function is_string(vr) {
   return ((((((((((((((((isEqual(vr, new AgeString())) || (isEqual(
     vr,
@@ -9141,6 +3778,10 @@ export function is_string(vr) {
   ));
 }
 
+/**
+ * Returns whether a value representation stores string data that is UTF-8
+ * encoded and can therefore store any Unicode codepoint.
+ */
 export function is_encoded_string(vr) {
   return ((((((isEqual(vr, new LongString())) || (isEqual(vr, new LongText()))) || (isEqual(
     vr,
@@ -9151,6 +3792,10 @@ export function is_encoded_string(vr) {
   ))) || (isEqual(vr, new UnlimitedText()));
 }
 
+/**
+ * Appends the correct padding byte for the given value representation if the
+ * bytes are not of even length.
+ */
 export function pad_bytes_to_even_length(vr, bytes) {
   if (vr instanceof UniqueIdentifier) {
     return $bit_array_utils.pad_to_even_length(bytes, 0);
@@ -9164,6 +3809,10 @@ export function pad_bytes_to_even_length(vr, bytes) {
   }
 }
 
+/**
+ * Returns the length requirements for a value representation. See the
+ * `LengthRequirements` type for details.
+ */
 export function length_requirements(vr) {
   if (vr instanceof AgeString) {
     return new LengthRequirements(4, new None(), new None());
@@ -9236,6 +3885,9 @@ export function length_requirements(vr) {
   }
 }
 
+/**
+ * Swaps the endianness of data for a value representation.
+ */
 export function swap_endianness(vr, bytes) {
   if (vr instanceof AttributeTag) {
     return $endian.swap_16_bit(bytes, toList([]));

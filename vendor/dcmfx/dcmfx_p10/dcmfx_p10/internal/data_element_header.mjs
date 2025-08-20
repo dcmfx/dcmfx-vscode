@@ -20,6 +20,10 @@ export class ValueLengthU16 extends $CustomType {}
 
 export class ValueLengthU32 extends $CustomType {}
 
+/**
+ * Converts a data element header to a human-readable string in the format
+ * "(GROUP,ELEMENT) VR NAME", e.g. `"(0008,0020) DA StudyDate"`.
+ */
 export function to_string(header) {
   let _block;
   let $ = header.vr;
@@ -36,6 +40,9 @@ export function to_string(header) {
   );
 }
 
+/**
+ * Returns the maximum supported value length in bytes.
+ */
 export function value_length_size_max_length(size) {
   if (size instanceof ValueLengthU16) {
     return 0xFFFF;
@@ -44,6 +51,10 @@ export function value_length_size_max_length(size) {
   }
 }
 
+/**
+ * Returns the size of the value length for a VR stored in the DICOM P10
+ * format.
+ */
 export function value_length_size(vr) {
   if (vr instanceof $value_representation.AgeString) {
     return new ValueLengthU16();

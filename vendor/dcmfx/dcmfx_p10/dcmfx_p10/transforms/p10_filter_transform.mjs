@@ -24,14 +24,29 @@ class P10FilterTransform extends $CustomType {
   }
 }
 
+/**
+ * Creates a new filter transform for filtering a stream of DICOM P10 tokens.
+ *
+ * The predicate function is called as tokens are added to the transform, and
+ * only those data elements that return `True` from the predicate function
+ * will pass through the filter.
+ */
 export function new$(predicate) {
   return new P10FilterTransform(predicate, toList([]));
 }
 
+/**
+ * Returns whether the current position of the P10 filter transform is the root
+ * data set, i.e. there are no nested sequences currently active.
+ */
 export function is_at_root(transform) {
   return $list.length(transform.path_filter_results) <= 1;
 }
 
+/**
+ * Adds the next token to the P10 filter transform and returns whether it
+ * should be included in the filtered token stream.
+ */
 export function add_token(transform, token) {
   let _block;
   let $ = transform.path_filter_results;
@@ -60,10 +75,10 @@ export function add_token(transform, token) {
       filter_result,
       transform.path_filter_results,
     );
-    let _block$2;
-    let _record = transform;
-    _block$2 = new P10FilterTransform(_record.predicate, path_filter_results);
-    let new_transform = _block$2;
+    let new_transform = new P10FilterTransform(
+      transform.predicate,
+      path_filter_results,
+    );
     return new Ok([filter_result, new_transform]);
   };
   if (token instanceof $p10_token.FilePreambleAndDICMPrefix) {
@@ -98,13 +113,10 @@ export function add_token(transform, token) {
     return $result.map(
       path_filter_results,
       (path_filter_results) => {
-        let _block$2;
-        let _record = transform;
-        _block$2 = new P10FilterTransform(
-          _record.predicate,
+        let new_transform = new P10FilterTransform(
+          transform.predicate,
           path_filter_results,
         );
-        let new_transform = _block$2;
         return [current_filter_state, new_transform];
       },
     );
@@ -130,13 +142,10 @@ export function add_token(transform, token) {
     return $result.map(
       path_filter_results,
       (path_filter_results) => {
-        let _block$2;
-        let _record = transform;
-        _block$2 = new P10FilterTransform(
-          _record.predicate,
+        let new_transform = new P10FilterTransform(
+          transform.predicate,
           path_filter_results,
         );
-        let new_transform = _block$2;
         return [current_filter_state, new_transform];
       },
     );
@@ -145,10 +154,10 @@ export function add_token(transform, token) {
       current_filter_state,
       transform.path_filter_results,
     );
-    let _block$1;
-    let _record = transform;
-    _block$1 = new P10FilterTransform(_record.predicate, path_filter_results);
-    let new_transform = _block$1;
+    let new_transform = new P10FilterTransform(
+      transform.predicate,
+      path_filter_results,
+    );
     return new Ok([current_filter_state, new_transform]);
   } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let _block$1;
@@ -167,13 +176,10 @@ export function add_token(transform, token) {
     return $result.map(
       path_filter_results,
       (path_filter_results) => {
-        let _block$2;
-        let _record = transform;
-        _block$2 = new P10FilterTransform(
-          _record.predicate,
+        let new_transform = new P10FilterTransform(
+          transform.predicate,
           path_filter_results,
         );
-        let new_transform = _block$2;
         return [current_filter_state, new_transform];
       },
     );
@@ -182,10 +188,10 @@ export function add_token(transform, token) {
       current_filter_state,
       transform.path_filter_results,
     );
-    let _block$1;
-    let _record = transform;
-    _block$1 = new P10FilterTransform(_record.predicate, path_filter_results);
-    let new_transform = _block$1;
+    let new_transform = new P10FilterTransform(
+      transform.predicate,
+      path_filter_results,
+    );
     return new Ok([current_filter_state, new_transform]);
   } else {
     return new Ok([true, transform]);

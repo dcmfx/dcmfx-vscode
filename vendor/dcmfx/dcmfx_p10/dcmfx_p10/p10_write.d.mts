@@ -10,25 +10,12 @@ import type * as $p10_location from "../dcmfx_p10/internal/p10_location.d.mts";
 import type * as $zlib from "../dcmfx_p10/internal/zlib.d.mts";
 import type * as $p10_error from "../dcmfx_p10/p10_error.d.mts";
 import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
+import type * as $p10_write_config from "../dcmfx_p10/p10_write_config.d.mts";
 import type * as _ from "../gleam.d.mts";
-
-export class P10WriteConfig extends _.CustomType {
-  constructor(
-    implementation_class_uid: string,
-    implementation_version_name: string,
-    zlib_compression_level: number
-  );
-  
-  implementation_class_uid: string;
-  implementation_version_name: string;
-  zlib_compression_level: number;
-}
-
-export type P10WriteConfig$ = P10WriteConfig;
 
 declare class P10WriteContext extends _.CustomType {
   constructor(
-    config: P10WriteConfig$,
+    config: $p10_write_config.P10WriteConfig$,
     p10_bytes: _.List<_.BitArray>,
     p10_total_byte_count: number,
     is_ended: boolean,
@@ -38,7 +25,7 @@ declare class P10WriteContext extends _.CustomType {
     path: $data_set_path.DataSetPath$
   );
   
-  config: P10WriteConfig$;
+  config: $p10_write_config.P10WriteConfig$;
   p10_bytes: _.List<_.BitArray>;
   p10_total_byte_count: number;
   is_ended: boolean;
@@ -50,11 +37,9 @@ declare class P10WriteContext extends _.CustomType {
 
 export type P10WriteContext$ = P10WriteContext;
 
-export function default_config(): P10WriteConfig$;
-
-export function new_write_context(): P10WriteContext$;
-
-export function with_config(context: P10WriteContext$, config: P10WriteConfig$): P10WriteContext$;
+export function new_write_context(
+  config: $option.Option$<$p10_write_config.P10WriteConfig$>
+): P10WriteContext$;
 
 export function read_bytes(context: P10WriteContext$): [
   _.List<_.BitArray>,
@@ -67,31 +52,31 @@ export function data_element_header_to_bytes(
   context: P10WriteContext$
 ): _.Result<_.BitArray, $p10_error.P10Error$>;
 
-export function data_set_to_tokens<BZJS, BZJT>(
+export function data_set_to_tokens<BZKG, BZKH>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   path: $data_set_path.DataSetPath$,
-  callback_context: BZJS,
-  token_callback: (x0: BZJS, x1: $p10_token.P10Token$) => _.Result<BZJS, BZJT>
-): _.Result<BZJS, BZJT>;
+  callback_context: BZKG,
+  token_callback: (x0: BZKG, x1: $p10_token.P10Token$) => _.Result<BZKG, BZKH>
+): _.Result<BZKG, BZKH>;
 
 export function write_token(
   context: P10WriteContext$,
   token: $p10_token.P10Token$
 ): _.Result<P10WriteContext$, $p10_error.P10Error$>;
 
-export function data_set_to_bytes<BZJY>(
+export function data_set_to_bytes<BZKM>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   path: $data_set_path.DataSetPath$,
-  context: BZJY,
-  bytes_callback: (x0: BZJY, x1: _.BitArray) => _.Result<
-    BZJY,
+  context: BZKM,
+  bytes_callback: (x0: BZKM, x1: _.BitArray) => _.Result<
+    BZKM,
     $p10_error.P10Error$
   >,
-  config: P10WriteConfig$
-): _.Result<BZJY, $p10_error.P10Error$>;
+  config: $option.Option$<$p10_write_config.P10WriteConfig$>
+): _.Result<BZKM, $p10_error.P10Error$>;

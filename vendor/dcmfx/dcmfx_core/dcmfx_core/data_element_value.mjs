@@ -33,7 +33,6 @@ import {
   Empty as $Empty,
   CustomType as $CustomType,
   remainderInt,
-  divideInt,
   toBitArray,
   bitArraySlice,
   bitArraySliceToInt,
@@ -74,17 +73,15 @@ class SequenceValue extends $CustomType {
 function validate_default_charset_bytes(loop$bytes) {
   while (true) {
     let bytes = loop$bytes;
-    if (bytes.bitSize >= 8) {
-      if ((bytes.bitSize - 8) % 8 === 0) {
-        let b = bytes.byteAt(0);
-        if (((((((b !== 0x0) && (b !== 0x9)) && (b !== 0xA)) && (b !== 0xC)) && (b !== 0xD)) && (b !== 0x1B)) && ((b < 0x20) || (b > 0x7E))) {
-          return new Error(b);
-        } else {
-          let rest = bitArraySlice(bytes, 8);
-          loop$bytes = rest;
-        }
+    if (bytes.bitSize >= 8 && (bytes.bitSize - 8) % 8 === 0) {
+      let b = bytes.byteAt(0);
+      if (
+        ((((((b !== 0x0) && (b !== 0x9)) && (b !== 0xA)) && (b !== 0xC)) && (b !== 0xD)) && (b !== 0x1B)) && ((b < 0x20) || (b > 0x7E))
+      ) {
+        return new Error(b);
       } else {
-        return new Ok(undefined);
+        let rest = bitArraySlice(bytes, 8);
+        loop$bytes = rest;
       }
     } else {
       return new Ok(undefined);
@@ -92,22 +89,40 @@ function validate_default_charset_bytes(loop$bytes) {
   }
 }
 
+/**
+ * Constructs a new data element binary value similar to `new_binary`,
+ * but does not validate `vr` or `bytes`.
+ */
 export function new_binary_unchecked(vr, bytes) {
   return new BinaryValue(vr, bytes);
 }
 
+/**
+ * Constructs a new data element lookup table descriptor value similar to
+ * `new_lookup_table_descriptor_value`, but does not validate `vr` or `bytes`.
+ */
 export function new_lookup_table_descriptor_unchecked(vr, bytes) {
   return new LookupTableDescriptorValue(vr, bytes);
 }
 
+/**
+ * Constructs a new data element string value similar to
+ * `new_encapsulated_pixel_data`, but does not validate `vr` or `items`.
+ */
 export function new_encapsulated_pixel_data_unchecked(vr, items) {
   return new EncapsulatedPixelDataValue(vr, items);
 }
 
+/**
+ * Creates a new `Sequence` data element value.
+ */
 export function new_sequence(items) {
   return new SequenceValue(items);
 }
 
+/**
+ * Returns the value representation for a data element value.
+ */
 export function value_representation(value) {
   if (value instanceof BinaryValue) {
     let vr = value.vr;
@@ -123,6 +138,9 @@ export function value_representation(value) {
   }
 }
 
+/**
+ * Creates a new `AgeString` data element value.
+ */
 export function new_age_string(value) {
   let _pipe = value;
   let _pipe$1 = $age_string.to_bytes(_pipe);
@@ -137,6 +155,9 @@ export function new_age_string(value) {
   );
 }
 
+/**
+ * Creates a new `Date` data element value.
+ */
 export function new_date(value) {
   let _pipe = value;
   let _pipe$1 = $date.to_bytes(_pipe);
@@ -148,6 +169,9 @@ export function new_date(value) {
   );
 }
 
+/**
+ * Creates a new `DateTime` data element value.
+ */
 export function new_date_time(value) {
   let _pipe = value;
   let _pipe$1 = $date_time.to_bytes(_pipe);
@@ -162,6 +186,9 @@ export function new_date_time(value) {
   );
 }
 
+/**
+ * Creates a new `Time` data element value.
+ */
 export function new_time(value) {
   let _pipe = value;
   let _pipe$1 = $time.to_bytes(_pipe);
@@ -173,6 +200,9 @@ export function new_time(value) {
   );
 }
 
+/**
+ * For data element values that hold binary data, returns that data.
+ */
 export function bytes(value) {
   if (value instanceof BinaryValue) {
     let bytes$1 = value.bytes;
@@ -180,11 +210,17 @@ export function bytes(value) {
   } else if (value instanceof LookupTableDescriptorValue) {
     let bytes$1 = value.bytes;
     return new Ok(bytes$1);
+  } else if (value instanceof EncapsulatedPixelDataValue) {
+    return new Error($data_error.new_value_not_present());
   } else {
     return new Error($data_error.new_value_not_present());
   }
 }
 
+/**
+ * For data element values that hold binary data, returns that data if its
+ * value representation is one of the specified allowed VRs.
+ */
 export function vr_bytes(value, allowed_vrs) {
   let $ = $list.contains(allowed_vrs, value_representation(value));
   if ($) {
@@ -194,6 +230,10 @@ export function vr_bytes(value, allowed_vrs) {
   }
 }
 
+/**
+ * For data element values that hold encapsulated pixel data, returns a
+ * reference to the encapsulated items.
+ */
 export function encapsulated_pixel_data(value) {
   if (value instanceof EncapsulatedPixelDataValue) {
     let items = value.items;
@@ -203,6 +243,10 @@ export function encapsulated_pixel_data(value) {
   }
 }
 
+/**
+ * For data element values that hold a sequence, returns a reference to the
+ * sequence's items.
+ */
 export function sequence_items(value) {
   if (value instanceof SequenceValue) {
     let items = value.items;
@@ -212,6 +256,11 @@ export function sequence_items(value) {
   }
 }
 
+/**
+ * Returns the size in bytes of a data element value. This recurses through
+ * sequences and also includes a fixed per-value overhead, so never returns
+ * zero even for an empty data element value.
+ */
 export function total_byte_size(value) {
   let _block;
   if (value instanceof BinaryValue) {
@@ -248,6 +297,10 @@ export function total_byte_size(value) {
   return data_size + fixed_size;
 }
 
+/**
+ * Returns the strings contained in a data element value. This is only
+ * supported for value representations that allow multiplicity.
+ */
 export function get_strings(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -274,7 +327,87 @@ export function get_strings(value) {
             _capture,
             (s) => {
               let $1 = value_representation(value);
-              if ($1 instanceof $value_representation.UniqueIdentifier) {
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else if ($ instanceof $value_representation.Date) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else if ($ instanceof $value_representation.DateTime) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
                 return $utils.trim_ascii_end(s, 0x0);
               } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
                 return $utils.trim_ascii_end(s, 0x20);
@@ -308,7 +441,49 @@ export function get_strings(value) {
             _capture,
             (s) => {
               let $1 = value_representation(value);
-              if ($1 instanceof $value_representation.UniqueIdentifier) {
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else if ($ instanceof $value_representation.PersonName) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
                 return $utils.trim_ascii_end(s, 0x0);
               } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
                 return $utils.trim_ascii_end(s, 0x20);
@@ -342,7 +517,49 @@ export function get_strings(value) {
             _capture,
             (s) => {
               let $1 = value_representation(value);
-              if ($1 instanceof $value_representation.UniqueIdentifier) {
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
+                return $utils.trim_ascii_end(s, 0x0);
+              } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
+                return $utils.trim_ascii_end(s, 0x20);
+              } else {
+                return $utils.trim_ascii(s, 0x20);
+              }
+            },
+          );
+        },
+      );
+    } else if ($ instanceof $value_representation.Time) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      let _pipe$3 = $result.map(
+        _pipe$2,
+        (_capture) => { return $string.split(_capture, "\\"); },
+      );
+      return $result.map(
+        _pipe$3,
+        (_capture) => {
+          return $list.map(
+            _capture,
+            (s) => {
+              let $1 = value_representation(value);
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
                 return $utils.trim_ascii_end(s, 0x0);
               } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
                 return $utils.trim_ascii_end(s, 0x20);
@@ -376,7 +593,11 @@ export function get_strings(value) {
             _capture,
             (s) => {
               let $1 = value_representation(value);
-              if ($1 instanceof $value_representation.UniqueIdentifier) {
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
                 return $utils.trim_ascii_end(s, 0x0);
               } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
                 return $utils.trim_ascii_end(s, 0x20);
@@ -410,7 +631,11 @@ export function get_strings(value) {
             _capture,
             (s) => {
               let $1 = value_representation(value);
-              if ($1 instanceof $value_representation.UniqueIdentifier) {
+              if ($1 instanceof $value_representation.CodeString) {
+                let _pipe$4 = s;
+                let _pipe$5 = $utils.trim_ascii_end(_pipe$4, 0x0);
+                return $utils.trim_ascii(_pipe$5, 0x20);
+              } else if ($1 instanceof $value_representation.UniqueIdentifier) {
                 return $utils.trim_ascii_end(s, 0x0);
               } else if ($1 instanceof $value_representation.UnlimitedCharacters) {
                 return $utils.trim_ascii_end(s, 0x20);
@@ -429,10 +654,15 @@ export function get_strings(value) {
   }
 }
 
+/**
+ * Returns the string contained in a data element value. This is only supported
+ * for value representations that either don't allow multiplicity, or those
+ * that do allow multiplicity but only one string is present in the value.
+ */
 export function get_string(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
-    if ($ instanceof $value_representation.ApplicationEntity) {
+    if ($ instanceof $value_representation.AgeString) {
       let bytes$1 = value.bytes;
       let _pipe = bytes$1;
       let _pipe$1 = $bit_array.to_string(_pipe);
@@ -450,7 +680,36 @@ export function get_string(value) {
           let $1 = value_representation(value);
           if ($1 instanceof $value_representation.ApplicationEntity) {
             return $utils.trim_ascii(s, 0x20);
-          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+          } else if (
+            $1 instanceof $value_representation.UniversalResourceIdentifier
+          ) {
+            return $utils.trim_ascii(s, 0x20);
+          } else {
+            return $utils.trim_ascii_end(s, 0x20);
+          }
+        },
+      );
+    } else if ($ instanceof $value_representation.ApplicationEntity) {
+      let bytes$1 = value.bytes;
+      let _pipe = bytes$1;
+      let _pipe$1 = $bit_array.to_string(_pipe);
+      let _pipe$2 = $result.map_error(
+        _pipe$1,
+        (_) => {
+          return $data_error.new_value_invalid(
+            "String bytes are not valid UTF-8",
+          );
+        },
+      );
+      return $result.map(
+        _pipe$2,
+        (s) => {
+          let $1 = value_representation(value);
+          if ($1 instanceof $value_representation.ApplicationEntity) {
+            return $utils.trim_ascii(s, 0x20);
+          } else if (
+            $1 instanceof $value_representation.UniversalResourceIdentifier
+          ) {
             return $utils.trim_ascii(s, 0x20);
           } else {
             return $utils.trim_ascii_end(s, 0x20);
@@ -475,7 +734,9 @@ export function get_string(value) {
           let $1 = value_representation(value);
           if ($1 instanceof $value_representation.ApplicationEntity) {
             return $utils.trim_ascii(s, 0x20);
-          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+          } else if (
+            $1 instanceof $value_representation.UniversalResourceIdentifier
+          ) {
             return $utils.trim_ascii(s, 0x20);
           } else {
             return $utils.trim_ascii_end(s, 0x20);
@@ -500,7 +761,9 @@ export function get_string(value) {
           let $1 = value_representation(value);
           if ($1 instanceof $value_representation.ApplicationEntity) {
             return $utils.trim_ascii(s, 0x20);
-          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+          } else if (
+            $1 instanceof $value_representation.UniversalResourceIdentifier
+          ) {
             return $utils.trim_ascii(s, 0x20);
           } else {
             return $utils.trim_ascii_end(s, 0x20);
@@ -525,7 +788,9 @@ export function get_string(value) {
           let $1 = value_representation(value);
           if ($1 instanceof $value_representation.ApplicationEntity) {
             return $utils.trim_ascii(s, 0x20);
-          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+          } else if (
+            $1 instanceof $value_representation.UniversalResourceIdentifier
+          ) {
             return $utils.trim_ascii(s, 0x20);
           } else {
             return $utils.trim_ascii_end(s, 0x20);
@@ -550,7 +815,9 @@ export function get_string(value) {
           let $1 = value_representation(value);
           if ($1 instanceof $value_representation.ApplicationEntity) {
             return $utils.trim_ascii(s, 0x20);
-          } else if ($1 instanceof $value_representation.UniversalResourceIdentifier) {
+          } else if (
+            $1 instanceof $value_representation.UniversalResourceIdentifier
+          ) {
             return $utils.trim_ascii(s, 0x20);
           } else {
             return $utils.trim_ascii_end(s, 0x20);
@@ -595,33 +862,25 @@ export function get_string(value) {
   }
 }
 
+/**
+ * Returns the three integers contained in a lookup table descriptor data
+ * element value.
+ */
 export function get_lookup_table_descriptor(value) {
   if (value instanceof LookupTableDescriptorValue) {
     let vr = value.vr;
     let bytes$1 = value.bytes;
-    if (bytes$1.bitSize >= 16) {
-      if (bytes$1.bitSize >= 32) {
-        if (bytes$1.bitSize === 48) {
-          if (vr instanceof $value_representation.SignedShort) {
-            let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
-            let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, true);
-            let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
-            return new Ok([entry_count, first_input_value, bits_per_entry]);
-          } else if (vr instanceof $value_representation.UnsignedShort) {
-            let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
-            let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, false);
-            let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
-            return new Ok([entry_count, first_input_value, bits_per_entry]);
-          } else {
-            return new Error(
-              $data_error.new_value_invalid("Invalid lookup table descriptor"),
-            );
-          }
-        } else {
-          return new Error(
-            $data_error.new_value_invalid("Invalid lookup table descriptor"),
-          );
-        }
+    if (bytes$1.bitSize >= 16 && bytes$1.bitSize >= 32 && bytes$1.bitSize === 48) {
+      if (vr instanceof $value_representation.SignedShort) {
+        let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
+        let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, true);
+        let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
+        return new Ok([entry_count, first_input_value, bits_per_entry]);
+      } else if (vr instanceof $value_representation.UnsignedShort) {
+        let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
+        let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, false);
+        let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
+        return new Ok([entry_count, first_input_value, bits_per_entry]);
       } else {
         return new Error(
           $data_error.new_value_invalid("Invalid lookup table descriptor"),
@@ -637,6 +896,10 @@ export function get_lookup_table_descriptor(value) {
   }
 }
 
+/**
+ * Returns the integers contained in a data element value. This is only
+ * supported for value representations that contain integer data.
+ */
 export function get_ints(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -678,9 +941,12 @@ export function get_ints(value) {
     return $result.map(
       get_lookup_table_descriptor(value),
       (_use0) => {
-        let entry_count = _use0[0];
-        let first_input_value = _use0[1];
-        let bits_per_entry = _use0[2];
+        let entry_count;
+        let first_input_value;
+        let bits_per_entry;
+        entry_count = _use0[0];
+        first_input_value = _use0[1];
+        bits_per_entry = _use0[2];
         return toList([entry_count, first_input_value, bits_per_entry]);
       },
     );
@@ -689,6 +955,11 @@ export function get_ints(value) {
   }
 }
 
+/**
+ * Returns the integer contained in a data element value. This is only
+ * supported for value representations that contain integer data and when
+ * exactly one integer is present.
+ */
 export function get_int(value) {
   return $result.try$(
     get_ints(value),
@@ -708,6 +979,10 @@ export function get_int(value) {
   );
 }
 
+/**
+ * Returns the big integers contained in a data element value. This is only
+ * supported for value representations that contain big integer data.
+ */
 export function get_big_ints(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -734,6 +1009,11 @@ export function get_big_ints(value) {
   }
 }
 
+/**
+ * Returns the big integer contained in a data element value. This is only
+ * supported for value representations that contain big integer data and when
+ * exactly one big integer is present.
+ */
 export function get_big_int(value) {
   return $result.try$(
     get_big_ints(value),
@@ -753,6 +1033,10 @@ export function get_big_int(value) {
   );
 }
 
+/**
+ * Returns the floats contained in a data element value. This is only supported
+ * for value representations containing floating point data.
+ */
 export function get_floats(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -800,8 +1084,12 @@ export function get_floats(value) {
   }
 }
 
+/**
+ * Formats a data element value as a human-readable single line of text. Values
+ * longer than the output width are truncated with a trailing ellipsis.
+ */
 export function to_string(value, tag, output_width) {
-  let output_list_max_size = divideInt((output_width + 2), 3);
+  let output_list_max_size = globalThis.Math.trunc((output_width + 2) / 3);
   let vr_is_string = $value_representation.is_string(
     value_representation(value),
   );
@@ -813,18 +1101,17 @@ export function to_string(value, tag, output_width) {
       let _block$1;
       let $ = $bit_array.to_string(bytes$1);
       if ($ instanceof Ok) {
-        let utf8 = $[0];
-        _block$1 = new Ok(utf8);
+        _block$1 = $;
       } else {
         let _pipe = $bit_array_utils.reverse_index(
           bytes$1,
           (b) => { return $int.bitwise_and(b, 0b1100_0000) !== 0b1000_0000; },
         );
-        let _pipe$1 = $result.then$(
+        let _pipe$1 = $result.try$(
           _pipe,
           (_capture) => { return $bit_array.slice(bytes$1, 0, _capture); },
         );
-        _block$1 = $result.then$(_pipe$1, $bit_array.to_string);
+        _block$1 = $result.try$(_pipe$1, $bit_array.to_string);
       }
       let utf8 = _block$1;
       if (utf8 instanceof Ok) {
@@ -919,6 +1206,25 @@ export function to_string(value, tag, output_width) {
           );
           _block$2 = $string.join(_pipe$2, ", ");
         } else if (vr instanceof $value_representation.LongString) {
+          let _pipe = value$1;
+          let _pipe$1 = $string.split(_pipe, "\\");
+          let _pipe$2 = $list.map(
+            _pipe$1,
+            (s) => {
+              let _block$3;
+              if (vr instanceof $value_representation.UniqueIdentifier) {
+                _block$3 = $utils.trim_ascii_end(s, 0x0);
+              } else if (vr instanceof $value_representation.UnlimitedCharacters) {
+                _block$3 = $utils.trim_ascii_end(s, 0x20);
+              } else {
+                _block$3 = $utils.trim_ascii(s, 0x20);
+              }
+              let _pipe$2 = _block$3;
+              return $string.inspect(_pipe$2);
+            },
+          );
+          _block$2 = $string.join(_pipe$2, ", ");
+        } else if (vr instanceof $value_representation.PersonName) {
           let _pipe = value$1;
           let _pipe$1 = $string.split(_pipe, "\\");
           let _pipe$2 = $list.map(
@@ -1380,8 +1686,10 @@ export function to_string(value, tag, output_width) {
   let _pipe$1 = $result.map(
     _pipe,
     (res) => {
-      let s = res[0];
-      let suffix = res[1];
+      let s;
+      let suffix;
+      s = res[0];
+      suffix = res[1];
       let _block$1;
       let _pipe$1 = suffix;
       _block$1 = $option.unwrap(_pipe$1, "");
@@ -1401,6 +1709,11 @@ export function to_string(value, tag, output_width) {
   return $result.unwrap(_pipe$1, "<error converting to string>");
 }
 
+/**
+ * Returns the float contained in a data element value. This is only supported
+ * for value representations that contain floating point data and when exactly
+ * one float is present.
+ */
 export function get_float(value) {
   return $result.try$(
     get_floats(value),
@@ -1420,6 +1733,10 @@ export function get_float(value) {
   );
 }
 
+/**
+ * Returns the structured age contained in a data element value. This is only
+ * supported for the `AgeString` value representation.
+ */
 export function get_age(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -1434,6 +1751,10 @@ export function get_age(value) {
   }
 }
 
+/**
+ * Returns the data element tags contained in a data element value. This is
+ * only supported for the `AttributeTag` value representation.
+ */
 export function get_attribute_tags(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -1448,6 +1769,10 @@ export function get_attribute_tags(value) {
   }
 }
 
+/**
+ * Returns the structured date contained in a data element value. This is only
+ * supported for the `Date` value representation.
+ */
 export function get_date(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -1462,6 +1787,10 @@ export function get_date(value) {
   }
 }
 
+/**
+ * Returns the structured date/time contained in a data element value. This is
+ * only supported for the `DateTime` value representation.
+ */
 export function get_date_time(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -1476,6 +1805,10 @@ export function get_date_time(value) {
   }
 }
 
+/**
+ * Returns the structured time contained in a data element value. This is only
+ * supported for the `Time` value representation.
+ */
 export function get_time(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -1490,6 +1823,10 @@ export function get_time(value) {
   }
 }
 
+/**
+ * Returns the structured person names contained in a data element value. This
+ * is only supported for the `PersonName` value representation.
+ */
 export function get_person_names(value) {
   if (value instanceof BinaryValue) {
     let $ = value.vr;
@@ -1504,6 +1841,11 @@ export function get_person_names(value) {
   }
 }
 
+/**
+ * Returns the structured person name contained in a data element value. This
+ * is only supported for the `PersonName` value representation when exactly one
+ * person name is present.
+ */
 export function get_person_name(value) {
   return $result.try$(
     get_person_names(value),
@@ -1523,6 +1865,10 @@ export function get_person_name(value) {
   );
 }
 
+/**
+ * Checks that the number of bytes stored in a data element value is valid for
+ * its value representation.
+ */
 export function validate_length(value) {
   let _block;
   let _pipe = bytes(value);
@@ -1532,8 +1878,10 @@ export function validate_length(value) {
   if (value instanceof BinaryValue) {
     let vr = value.vr;
     let $ = $value_representation.length_requirements(vr);
-    let bytes_max = $.bytes_max;
-    let bytes_multiple_of = $.bytes_multiple_of;
+    let bytes_max;
+    let bytes_multiple_of;
+    bytes_max = $.bytes_max;
+    bytes_multiple_of = $.bytes_multiple_of;
     let _block$1;
     let _pipe$2 = bytes_multiple_of;
     _block$1 = $option.unwrap(_pipe$2, 2);
@@ -1592,7 +1940,7 @@ export function validate_length(value) {
             ),
           );
         } else {
-          let $1 = remainderInt(item_length, 2);
+          let $1 = item_length % 2;
           if ($1 === 0) {
             return new Ok(value);
           } else {
@@ -1613,6 +1961,17 @@ export function validate_length(value) {
   }
 }
 
+/**
+ * Constructs a new data element binary value with the specified value
+ * representation. The only VR that's not allowed is `Sequence`. The length
+ * of `bytes` must not exceed the maximum allowed for the VR, and, where
+ * applicable, must also be an exact multiple of the size of the contained data
+ * type. E.g. for the `UnsignedLong` VR the length of `bytes` must be a
+ * multiple of 4.
+ *
+ * When the VR is a string type, `bytes` must be UTF-8 encoded in order for the
+ * value to be readable.
+ */
 export function new_binary(vr, bytes) {
   let _block;
   if (vr instanceof $value_representation.Sequence) {
@@ -1646,7 +2005,7 @@ export function new_binary(vr, bytes) {
         if ($1) {
           let $2 = validate_default_charset_bytes(bytes);
           if ($2 instanceof Ok) {
-            _block$1 = new Ok(undefined);
+            _block$1 = $2;
           } else {
             let invalid_byte = $2[0];
             let _block$2;
@@ -1676,6 +2035,15 @@ export function new_binary(vr, bytes) {
   );
 }
 
+/**
+ * Constructs a new data element lookup table descriptor value with the
+ * specified `vr`, which must be one of the following:
+ *
+ * - `SignedShort`
+ * - `UnsignedShort`
+ *
+ * The length of `bytes` must be exactly six.
+ */
 export function new_lookup_table_descriptor(vr, bytes) {
   let _block;
   if (vr instanceof $value_representation.SignedShort) {
@@ -1699,6 +2067,20 @@ export function new_lookup_table_descriptor(vr, bytes) {
   );
 }
 
+/**
+ * Constructs a new data element encapsulated pixel data value with the
+ * specified `vr`, which must be one of the following:
+ *
+ * - `OtherByteString`
+ * - `OtherWordString`
+ *
+ * Although the DICOM standard states that only `OtherByteString` is valid for
+ * encapsulated pixel data, in practice this is not always followed.
+ *
+ * `items` specifies the data of the encapsulated pixel data items, where the
+ * first item is an optional basic offset table, and is followed by fragments
+ * of pixel data. Each item must be of even length. Ref: PS3.5 A.4.
+ */
 export function new_encapsulated_pixel_data(vr, items) {
   let _block;
   if (vr instanceof $value_representation.OtherByteString) {
@@ -1722,10 +2104,13 @@ export function new_encapsulated_pixel_data(vr, items) {
   );
 }
 
+/**
+ * Creates a new `AttributeTag` data element value.
+ */
 export function new_attribute_tag(value) {
   let _pipe = value;
   let _pipe$1 = $attribute_tag.to_bytes(_pipe);
-  return $result.then$(
+  return $result.try$(
     _pipe$1,
     (_capture) => {
       return new_binary(new $value_representation.AttributeTag(), _capture);
@@ -1733,6 +2118,9 @@ export function new_attribute_tag(value) {
   );
 }
 
+/**
+ * Creates a new `DecimalString` data element value.
+ */
 export function new_decimal_string(value) {
   let _pipe = value;
   let _pipe$1 = $decimal_string.to_bytes(_pipe);
@@ -1741,6 +2129,9 @@ export function new_decimal_string(value) {
   })(_pipe$1);
 }
 
+/**
+ * Creates a new `FloatingPointDouble` data element value.
+ */
 export function new_floating_point_double(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(_pipe, $ieee_float.to_bytes_64_le);
@@ -1750,6 +2141,9 @@ export function new_floating_point_double(value) {
   })(_pipe$2);
 }
 
+/**
+ * Creates a new `FloatingPointSingle` data element value.
+ */
 export function new_floating_point_single(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(_pipe, $ieee_float.to_bytes_32_le);
@@ -1759,10 +2153,13 @@ export function new_floating_point_single(value) {
   })(_pipe$2);
 }
 
+/**
+ * Creates a new `IntegerString` data element value.
+ */
 export function new_integer_string(value) {
   let _pipe = value;
   let _pipe$1 = $integer_string.to_bytes(_pipe);
-  return $result.then$(
+  return $result.try$(
     _pipe$1,
     (_capture) => {
       return new_binary(new $value_representation.IntegerString(), _capture);
@@ -1770,6 +2167,9 @@ export function new_integer_string(value) {
   );
 }
 
+/**
+ * Creates a new `LongText` data element value.
+ */
 export function new_long_text(value) {
   let _pipe = value;
   let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
@@ -1785,10 +2185,16 @@ export function new_long_text(value) {
   })(_pipe$3);
 }
 
+/**
+ * Creates a new `OtherByteString` data element value.
+ */
 export function new_other_byte_string(value) {
   return new_binary(new $value_representation.OtherByteString(), value);
 }
 
+/**
+ * Creates a new `OtherDoubleString` data element value.
+ */
 export function new_other_double_string(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(_pipe, $ieee_float.to_bytes_64_le);
@@ -1798,6 +2204,9 @@ export function new_other_double_string(value) {
   })(_pipe$2);
 }
 
+/**
+ * Creates a new `OtherFloatString` data element value.
+ */
 export function new_other_float_string(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(_pipe, $ieee_float.to_bytes_32_le);
@@ -1807,22 +2216,34 @@ export function new_other_float_string(value) {
   })(_pipe$2);
 }
 
+/**
+ * Creates a new `OtherLongString` data element value.
+ */
 export function new_other_long_string(value) {
   return new_binary(new $value_representation.OtherLongString(), value);
 }
 
+/**
+ * Creates a new `OtherVeryLongString` data element value.
+ */
 export function new_other_very_long_string(value) {
   return new_binary(new $value_representation.OtherVeryLongString(), value);
 }
 
+/**
+ * Creates a new `OtherWordString` data element value.
+ */
 export function new_other_word_string(value) {
   return new_binary(new $value_representation.OtherWordString(), value);
 }
 
+/**
+ * Creates a new `PersonName` data element value.
+ */
 export function new_person_name(value) {
   let _pipe = value;
   let _pipe$1 = $person_name.to_bytes(_pipe);
-  return $result.then$(
+  return $result.try$(
     _pipe$1,
     (_capture) => {
       return new_binary(new $value_representation.PersonName(), _capture);
@@ -1830,6 +2251,9 @@ export function new_person_name(value) {
   );
 }
 
+/**
+ * Creates a new `ShortText` data element value.
+ */
 export function new_short_text(value) {
   let _pipe = value;
   let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
@@ -1845,6 +2269,9 @@ export function new_short_text(value) {
   })(_pipe$3);
 }
 
+/**
+ * Creates a new `SignedLong` data element value.
+ */
 export function new_signed_long(value) {
   let is_valid = $list.all(
     value,
@@ -1869,6 +2296,9 @@ export function new_signed_long(value) {
   );
 }
 
+/**
+ * Creates a new `SignedShort` data element value.
+ */
 export function new_signed_short(value) {
   let is_valid = $list.all(
     value,
@@ -1893,6 +2323,9 @@ export function new_signed_short(value) {
   );
 }
 
+/**
+ * Creates a new `SignedVeryLong` data element value.
+ */
 export function new_signed_very_long(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(
@@ -1916,7 +2349,7 @@ export function new_signed_very_long(value) {
     },
   );
   let _pipe$4 = $result.map(_pipe$3, $bit_array.concat);
-  return $result.then$(
+  return $result.try$(
     _pipe$4,
     (_capture) => {
       return new_binary(new $value_representation.SignedVeryLong(), _capture);
@@ -1924,10 +2357,13 @@ export function new_signed_very_long(value) {
   );
 }
 
+/**
+ * Creates a new `UniqueIdentifier` data element value.
+ */
 export function new_unique_identifier(value) {
   let _pipe = value;
   let _pipe$1 = $unique_identifier.to_bytes(_pipe);
-  return $result.then$(
+  return $result.try$(
     _pipe$1,
     (_capture) => {
       return new_binary(new $value_representation.UniqueIdentifier(), _capture);
@@ -1935,6 +2371,9 @@ export function new_unique_identifier(value) {
   );
 }
 
+/**
+ * Creates a new `UniversalResourceIdentifier` data element value.
+ */
 export function new_universal_resource_identifier(value) {
   let _pipe = value;
   let _pipe$1 = $utils.trim_ascii(_pipe, 0x20);
@@ -1953,10 +2392,16 @@ export function new_universal_resource_identifier(value) {
   })(_pipe$3);
 }
 
+/**
+ * Creates a new `Unknown` data element value.
+ */
 export function new_unknown(value) {
   return new_binary(new $value_representation.Unknown(), value);
 }
 
+/**
+ * Creates a new `UnlimitedText` data element value.
+ */
 export function new_unlimited_text(value) {
   let _pipe = value;
   let _pipe$1 = $utils.trim_ascii_end(_pipe, 0x20);
@@ -1972,6 +2417,9 @@ export function new_unlimited_text(value) {
   })(_pipe$3);
 }
 
+/**
+ * Creates a new `UnsignedLong` data element value.
+ */
 export function new_unsigned_long(value) {
   let is_valid = $list.all(
     value,
@@ -1996,6 +2444,9 @@ export function new_unsigned_long(value) {
   );
 }
 
+/**
+ * Creates a new `UnsignedShort` data element value.
+ */
 export function new_unsigned_short(value) {
   let is_valid = $list.all(value, (i) => { return (i >= 0) && (i <= 0xFFFF); });
   return $bool.guard(
@@ -2017,6 +2468,9 @@ export function new_unsigned_short(value) {
   );
 }
 
+/**
+ * Creates a new `UnsignedVeryLong` data element value.
+ */
 export function new_unsigned_very_long(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(
@@ -2040,7 +2494,7 @@ export function new_unsigned_very_long(value) {
     },
   );
   let _pipe$4 = $result.map(_pipe$3, $bit_array.concat);
-  return $result.then$(
+  return $result.try$(
     _pipe$4,
     (_capture) => {
       return new_binary(new $value_representation.UnsignedVeryLong(), _capture);
@@ -2048,6 +2502,12 @@ export function new_unsigned_very_long(value) {
   );
 }
 
+/**
+ * Creates a data element containing a multi-valued string. This checks that
+ * the individual values are valid and then combines them into final bytes.
+ * 
+ * @ignore
+ */
 function new_string_list(vr, value) {
   let string_characters_max = $option.unwrap(
     $value_representation.length_requirements(vr).string_characters_max,
@@ -2094,6 +2554,9 @@ function new_string_list(vr, value) {
   );
 }
 
+/**
+ * Creates a new `ApplicationEntity` data element value.
+ */
 export function new_application_entity(value) {
   let _pipe = toList([value]);
   let _pipe$1 = $list.map(
@@ -2108,6 +2571,9 @@ export function new_application_entity(value) {
   })(_pipe$1);
 }
 
+/**
+ * Creates a new `CodeString` data element value.
+ */
 export function new_code_string(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(
@@ -2119,6 +2585,9 @@ export function new_code_string(value) {
   })(_pipe$1);
 }
 
+/**
+ * Creates a new `LongString` data element value.
+ */
 export function new_long_string(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(
@@ -2130,6 +2599,9 @@ export function new_long_string(value) {
   })(_pipe$1);
 }
 
+/**
+ * Creates a new `ShortString` data element value.
+ */
 export function new_short_string(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(
@@ -2141,6 +2613,9 @@ export function new_short_string(value) {
   })(_pipe$1);
 }
 
+/**
+ * Creates a new `UnlimitedCharacters` data element value.
+ */
 export function new_unlimited_characters(value) {
   let _pipe = value;
   let _pipe$1 = $list.map(

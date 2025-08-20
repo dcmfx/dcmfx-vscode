@@ -19,6 +19,10 @@ export class DataSetPrintOptions extends $CustomType {
   }
 }
 
+/**
+ * Constructs new data set print options and auto-detects output settings when
+ * possible.
+ */
 export function new_print_options() {
   let term = $envoy.get("TERM");
   let colorterm = $envoy.get("COLORTERM");
@@ -54,6 +58,11 @@ function text_green(s) {
   return "\u{001b}[32m" + s;
 }
 
+/**
+ * Formats details for a data element for display on stdout, excluding its
+ * value. Returns the string to display along with the number of printable
+ * characters.
+ */
 export function format_data_element_prefix(
   tag,
   tag_name,

@@ -32,7 +32,6 @@ import {
   prepend as listPrepend,
   CustomType as $CustomType,
   makeError,
-  divideInt,
   isEqual,
   toBitArray,
   sizedInt,
@@ -54,6 +53,9 @@ export class P10JsonTransform extends $CustomType {
   }
 }
 
+/**
+ * Constructs a new P10 tokens to DICOM JSON transform.
+ */
 export function new$(config) {
   return new P10JsonTransform(
     config,
@@ -92,27 +94,24 @@ function begin(transform, file_meta_information) {
     );
     if (transfer_syntax_uid instanceof Ok) {
       let transfer_syntax_uid$1 = transfer_syntax_uid[0];
-      let _block$1;
-      let _record = transform;
-      _block$1 = new P10JsonTransform(
-        _record.config,
+      let transform$1 = new P10JsonTransform(
+        transform.config,
         true,
-        _record.current_data_element,
-        _record.ignore_data_element_value_bytes,
-        _record.in_encapsulated_pixel_data,
-        _record.pending_base64_input,
-        _record.data_set_path,
-        _record.sequence_item_counts,
+        transform.current_data_element,
+        transform.ignore_data_element_value_bytes,
+        transform.in_encapsulated_pixel_data,
+        transform.pending_base64_input,
+        transform.data_set_path,
+        transform.sequence_item_counts,
       );
-      let transform$1 = _block$1;
-      let _block$2;
+      let _block$1;
       let $2 = transform$1.config.pretty_print;
       if ($2) {
-        _block$2 = ("  \"00020010\": {\n    \"vr\": \"UI\",\n    \"Value\": [\n      \"" + transfer_syntax_uid$1) + "\"\n    ]\n  }";
+        _block$1 = ("  \"00020010\": {\n    \"vr\": \"UI\",\n    \"Value\": [\n      \"" + transfer_syntax_uid$1) + "\"\n    ]\n  }";
       } else {
-        _block$2 = ("\"00020010\":{\"vr\":\"UI\",\"Value\":[\"" + transfer_syntax_uid$1) + "\"]}";
+        _block$1 = ("\"00020010\":{\"vr\":\"UI\",\"Value\":[\"" + transfer_syntax_uid$1) + "\"]}";
       }
-      let json$1 = _block$2;
+      let json$1 = _block$1;
       _block = [json$1, transform$1];
     } else {
       _block = ["", transform];
@@ -121,8 +120,10 @@ function begin(transform, file_meta_information) {
     _block = ["", transform];
   }
   let $ = _block;
-  let transfer_syntax_json = $[0];
-  let transform$1 = $[1];
+  let transfer_syntax_json;
+  let transform$1;
+  transfer_syntax_json = $[0];
+  transform$1 = $[1];
   return [json + transfer_syntax_json, transform$1];
 }
 
@@ -130,19 +131,16 @@ function write_data_element_header(transform, tag, vr, length) {
   return $bool.lazy_guard(
     (tag.element === 0) || (isEqual(tag, $dictionary.specific_character_set.tag)),
     () => {
-      let _block;
-      let _record = transform;
-      _block = new P10JsonTransform(
-        _record.config,
-        _record.insert_comma,
-        _record.current_data_element,
+      let transform$1 = new P10JsonTransform(
+        transform.config,
+        transform.insert_comma,
+        transform.current_data_element,
         true,
-        _record.in_encapsulated_pixel_data,
-        _record.pending_base64_input,
-        _record.data_set_path,
-        _record.sequence_item_counts,
+        transform.in_encapsulated_pixel_data,
+        transform.pending_base64_input,
+        transform.data_set_path,
+        transform.sequence_item_counts,
       );
-      let transform$1 = _block;
       return ["", transform$1];
     },
     () => {
@@ -159,19 +157,16 @@ function write_data_element_header(transform, tag, vr, length) {
         _block = "";
       }
       let json = _block;
-      let _block$1;
-      let _record = transform;
-      _block$1 = new P10JsonTransform(
-        _record.config,
+      let transform$1 = new P10JsonTransform(
+        transform.config,
         true,
         [tag, toList([])],
-        _record.ignore_data_element_value_bytes,
-        _record.in_encapsulated_pixel_data,
-        _record.pending_base64_input,
-        _record.data_set_path,
-        _record.sequence_item_counts,
+        transform.ignore_data_element_value_bytes,
+        transform.in_encapsulated_pixel_data,
+        transform.pending_base64_input,
+        transform.data_set_path,
+        transform.sequence_item_counts,
       );
-      let transform$1 = _block$1;
       let json$1 = json + (() => {
         let $1 = transform$1.config.pretty_print;
         if ($1) {
@@ -197,19 +192,16 @@ function write_data_element_header(transform, tag, vr, length) {
               return "}";
             }
           })();
-          let _block$2;
-          let _record$1 = transform$1;
-          _block$2 = new P10JsonTransform(
-            _record$1.config,
-            _record$1.insert_comma,
-            _record$1.current_data_element,
+          let transform$2 = new P10JsonTransform(
+            transform$1.config,
+            transform$1.insert_comma,
+            transform$1.current_data_element,
             true,
-            _record$1.in_encapsulated_pixel_data,
-            _record$1.pending_base64_input,
-            _record$1.data_set_path,
-            _record$1.sequence_item_counts,
+            transform$1.in_encapsulated_pixel_data,
+            transform$1.pending_base64_input,
+            transform$1.data_set_path,
+            transform$1.sequence_item_counts,
           );
-          let transform$2 = _block$2;
           return [json$2, transform$2];
         },
         () => {
@@ -293,33 +285,27 @@ function write_sequence_start(transform, tag, vr) {
     _block = "";
   }
   let json = _block;
-  let _block$1;
-  let _record = transform;
-  _block$1 = new P10JsonTransform(
-    _record.config,
+  let transform$1 = new P10JsonTransform(
+    transform.config,
     true,
-    _record.current_data_element,
-    _record.ignore_data_element_value_bytes,
-    _record.in_encapsulated_pixel_data,
-    _record.pending_base64_input,
-    _record.data_set_path,
-    _record.sequence_item_counts,
+    transform.current_data_element,
+    transform.ignore_data_element_value_bytes,
+    transform.in_encapsulated_pixel_data,
+    transform.pending_base64_input,
+    transform.data_set_path,
+    transform.sequence_item_counts,
   );
-  let transform$1 = _block$1;
   if (vr instanceof $value_representation.Sequence) {
-    let _block$2;
-    let _record$1 = transform$1;
-    _block$2 = new P10JsonTransform(
-      _record$1.config,
+    let transform$2 = new P10JsonTransform(
+      transform$1.config,
       false,
-      _record$1.current_data_element,
-      _record$1.ignore_data_element_value_bytes,
-      _record$1.in_encapsulated_pixel_data,
-      _record$1.pending_base64_input,
-      _record$1.data_set_path,
-      _record$1.sequence_item_counts,
+      transform$1.current_data_element,
+      transform$1.ignore_data_element_value_bytes,
+      transform$1.in_encapsulated_pixel_data,
+      transform$1.pending_base64_input,
+      transform$1.data_set_path,
+      transform$1.sequence_item_counts,
     );
-    let transform$2 = _block$2;
     let json$1 = json + (() => {
       let $1 = transform$2.config.pretty_print;
       if ($1) {
@@ -350,19 +336,16 @@ function write_sequence_start(transform, tag, vr) {
         );
       },
       () => {
-        let _block$2;
-        let _record$1 = transform$1;
-        _block$2 = new P10JsonTransform(
-          _record$1.config,
-          _record$1.insert_comma,
-          _record$1.current_data_element,
-          _record$1.ignore_data_element_value_bytes,
+        let transform$2 = new P10JsonTransform(
+          transform$1.config,
+          transform$1.insert_comma,
+          transform$1.current_data_element,
+          transform$1.ignore_data_element_value_bytes,
           true,
-          _record$1.pending_base64_input,
-          _record$1.data_set_path,
-          _record$1.sequence_item_counts,
+          transform$1.pending_base64_input,
+          transform$1.data_set_path,
+          transform$1.sequence_item_counts,
         );
-        let transform$2 = _block$2;
         let json$1 = json + (() => {
           let $1 = transform$2.config.pretty_print;
           if ($1) {
@@ -392,19 +375,16 @@ function write_sequence_item_start(transform) {
     _block = "";
   }
   let json = _block;
-  let _block$1;
-  let _record = transform;
-  _block$1 = new P10JsonTransform(
-    _record.config,
+  let transform$1 = new P10JsonTransform(
+    transform.config,
     false,
-    _record.current_data_element,
-    _record.ignore_data_element_value_bytes,
-    _record.in_encapsulated_pixel_data,
-    _record.pending_base64_input,
-    _record.data_set_path,
-    _record.sequence_item_counts,
+    transform.current_data_element,
+    transform.ignore_data_element_value_bytes,
+    transform.in_encapsulated_pixel_data,
+    transform.pending_base64_input,
+    transform.data_set_path,
+    transform.sequence_item_counts,
   );
-  let transform$1 = _block$1;
   let json$1 = json + (() => {
     let $1 = transform$1.config.pretty_print;
     if ($1) {
@@ -417,27 +397,24 @@ function write_sequence_item_start(transform) {
 }
 
 function write_sequence_item_end(transform) {
-  let _block;
-  let _record = transform;
-  _block = new P10JsonTransform(
-    _record.config,
+  let transform$1 = new P10JsonTransform(
+    transform.config,
     true,
-    _record.current_data_element,
-    _record.ignore_data_element_value_bytes,
-    _record.in_encapsulated_pixel_data,
-    _record.pending_base64_input,
-    _record.data_set_path,
-    _record.sequence_item_counts,
+    transform.current_data_element,
+    transform.ignore_data_element_value_bytes,
+    transform.in_encapsulated_pixel_data,
+    transform.pending_base64_input,
+    transform.data_set_path,
+    transform.sequence_item_counts,
   );
-  let transform$1 = _block;
-  let _block$1;
+  let _block;
   let $ = transform$1.config.pretty_print;
   if ($) {
-    _block$1 = ("\n" + indent(transform$1, -1)) + "}";
+    _block = ("\n" + indent(transform$1, -1)) + "}";
   } else {
-    _block$1 = "}";
+    _block = "}";
   }
-  let json = _block$1;
+  let json = _block;
   return [json, transform$1];
 }
 
@@ -458,19 +435,16 @@ function write_base64(transform, input, finish) {
   return $bool.lazy_guard(
     (($bit_array.byte_size(transform.pending_base64_input) + input_size) < 3) && !finish,
     () => {
-      let _block;
-      let _record = transform;
-      _block = new P10JsonTransform(
-        _record.config,
-        _record.insert_comma,
-        _record.current_data_element,
-        _record.ignore_data_element_value_bytes,
-        _record.in_encapsulated_pixel_data,
+      let transform$1 = new P10JsonTransform(
+        transform.config,
+        transform.insert_comma,
+        transform.current_data_element,
+        transform.ignore_data_element_value_bytes,
+        transform.in_encapsulated_pixel_data,
         toBitArray([transform.pending_base64_input, input]),
-        _record.data_set_path,
-        _record.sequence_item_counts,
+        transform.data_set_path,
+        transform.sequence_item_counts,
       );
-      let transform$1 = _block;
       return ["", transform$1];
     },
     () => {
@@ -478,14 +452,16 @@ function write_base64(transform, input, finish) {
       if (finish) {
         _block = input_size;
       } else {
-        _block = (divideInt(
-          ($bit_array.byte_size(transform.pending_base64_input) + input_size),
-          3
+        _block = (globalThis.Math.trunc(
+          ($bit_array.byte_size(transform.pending_base64_input) + input_size) / 3
         )) * 3 - $bit_array.byte_size(transform.pending_base64_input);
       }
       let input_bytes_consumed = _block;
       let $ = $bit_array.slice(input, 0, input_bytes_consumed);
-      if (!($ instanceof Ok)) {
+      let base64_input;
+      if ($ instanceof Ok) {
+        base64_input = $[0];
+      } else {
         throw makeError(
           "let_assert",
           FILEPATH,
@@ -502,19 +478,16 @@ function write_base64(transform, input, finish) {
           }
         )
       }
-      let base64_input = $[0];
       let json = $bit_array.base64_encode(
         toBitArray([transform.pending_base64_input, base64_input]),
         finish,
       );
-      let _block$1;
-      let _record = transform;
-      _block$1 = new P10JsonTransform(
-        _record.config,
-        _record.insert_comma,
-        _record.current_data_element,
-        _record.ignore_data_element_value_bytes,
-        _record.in_encapsulated_pixel_data,
+      let transform$1 = new P10JsonTransform(
+        transform.config,
+        transform.insert_comma,
+        transform.current_data_element,
+        transform.ignore_data_element_value_bytes,
+        transform.in_encapsulated_pixel_data,
         (() => {
           let $1 = $bit_array.slice(
             input,
@@ -528,10 +501,9 @@ function write_base64(transform, input, finish) {
             return toBitArray([]);
           }
         })(),
-        _record.data_set_path,
-        _record.sequence_item_counts,
+        transform.data_set_path,
+        transform.sequence_item_counts,
       );
-      let transform$1 = _block$1;
       return [json, transform$1];
     },
   );
@@ -540,22 +512,21 @@ function write_base64(transform, input, finish) {
 function write_sequence_end(transform) {
   let $ = transform.in_encapsulated_pixel_data;
   if ($) {
-    let _block;
-    let _record = transform;
-    _block = new P10JsonTransform(
-      _record.config,
-      _record.insert_comma,
-      _record.current_data_element,
-      _record.ignore_data_element_value_bytes,
+    let transform$1 = new P10JsonTransform(
+      transform.config,
+      transform.insert_comma,
+      transform.current_data_element,
+      transform.ignore_data_element_value_bytes,
       false,
-      _record.pending_base64_input,
-      _record.data_set_path,
-      _record.sequence_item_counts,
+      transform.pending_base64_input,
+      transform.data_set_path,
+      transform.sequence_item_counts,
     );
-    let transform$1 = _block;
     let $1 = write_base64(transform$1, toBitArray([]), true);
-    let json = $1[0];
-    let transform$2 = $1[1];
+    let json;
+    let transform$2;
+    json = $1[0];
+    transform$2 = $1[1];
     let json$1 = json + (() => {
       let $2 = transform$2.config.pretty_print;
       if ($2) {
@@ -566,30 +537,27 @@ function write_sequence_end(transform) {
     })();
     return [json$1, transform$2];
   } else {
-    let _block;
-    let _record = transform;
-    _block = new P10JsonTransform(
-      _record.config,
+    let transform$1 = new P10JsonTransform(
+      transform.config,
       true,
-      _record.current_data_element,
-      _record.ignore_data_element_value_bytes,
-      _record.in_encapsulated_pixel_data,
-      _record.pending_base64_input,
-      _record.data_set_path,
-      _record.sequence_item_counts,
+      transform.current_data_element,
+      transform.ignore_data_element_value_bytes,
+      transform.in_encapsulated_pixel_data,
+      transform.pending_base64_input,
+      transform.data_set_path,
+      transform.sequence_item_counts,
     );
-    let transform$1 = _block;
-    let _block$1;
+    let _block;
     let $1 = transform$1.config.pretty_print;
     if ($1) {
-      _block$1 = ((("\n" + indent(transform$1, 1)) + "]\n") + indent(
+      _block = ((("\n" + indent(transform$1, 1)) + "]\n") + indent(
         transform$1,
         0,
       )) + "}";
     } else {
-      _block$1 = "]}";
+      _block = "]}";
     }
-    let json = _block$1;
+    let json = _block;
     return [json, transform$1];
   }
 }
@@ -625,6 +593,13 @@ function prepare_json_string(value) {
   }
 }
 
+/**
+ * Encodes an `IEEEFloat` to JSON. Because gleam_json on Erlang doesn't
+ * natively support Infinity and NaN values, these are instead converted to
+ * strings.
+ * 
+ * @ignore
+ */
 function encode_ieee_float(f) {
   let $ = $ieee_float.to_finite(f);
   if ($ instanceof Ok) {
@@ -910,7 +885,10 @@ function convert_binary_value_to_json(value, bytes, transform) {
       $data_element_value.get_big_ints(value),
       (value) => {
         let $1 = $bigi.from_string("-9007199254740991");
-        if (!($1 instanceof Ok)) {
+        let min_safe_integer;
+        if ($1 instanceof Ok) {
+          min_safe_integer = $1[0];
+        } else {
           throw makeError(
             "let_assert",
             FILEPATH,
@@ -927,9 +905,11 @@ function convert_binary_value_to_json(value, bytes, transform) {
             }
           )
         }
-        let min_safe_integer = $1[0];
         let $2 = $bigi.from_string("9007199254740991");
-        if (!($2 instanceof Ok)) {
+        let max_safe_integer;
+        if ($2 instanceof Ok) {
+          max_safe_integer = $2[0];
+        } else {
           throw makeError(
             "let_assert",
             FILEPATH,
@@ -946,7 +926,6 @@ function convert_binary_value_to_json(value, bytes, transform) {
             }
           )
         }
-        let max_safe_integer = $2[0];
         let _pipe = value;
         let _pipe$1 = $list.map(
           _pipe,
@@ -957,7 +936,10 @@ function convert_binary_value_to_json(value, bytes, transform) {
             )) && (!isEqual($bigi.compare(i, max_safe_integer), new $order.Gt()));
             if ($3) {
               let $4 = $bigi.to_int(i);
-              if (!($4 instanceof Ok)) {
+              let i$1;
+              if ($4 instanceof Ok) {
+                i$1 = $4[0];
+              } else {
                 throw makeError(
                   "let_assert",
                   FILEPATH,
@@ -974,7 +956,6 @@ function convert_binary_value_to_json(value, bytes, transform) {
                   }
                 )
               }
-              let i$1 = $4[0];
               return $int.to_string(i$1);
             } else {
               return ("\"" + $bigi.to_string(i)) + "\"";
@@ -1056,7 +1037,10 @@ function convert_binary_value_to_json(value, bytes, transform) {
       $data_element_value.get_big_ints(value),
       (value) => {
         let $1 = $bigi.from_string("-9007199254740991");
-        if (!($1 instanceof Ok)) {
+        let min_safe_integer;
+        if ($1 instanceof Ok) {
+          min_safe_integer = $1[0];
+        } else {
           throw makeError(
             "let_assert",
             FILEPATH,
@@ -1073,9 +1057,11 @@ function convert_binary_value_to_json(value, bytes, transform) {
             }
           )
         }
-        let min_safe_integer = $1[0];
         let $2 = $bigi.from_string("9007199254740991");
-        if (!($2 instanceof Ok)) {
+        let max_safe_integer;
+        if ($2 instanceof Ok) {
+          max_safe_integer = $2[0];
+        } else {
           throw makeError(
             "let_assert",
             FILEPATH,
@@ -1092,7 +1078,6 @@ function convert_binary_value_to_json(value, bytes, transform) {
             }
           )
         }
-        let max_safe_integer = $2[0];
         let _pipe = value;
         let _pipe$1 = $list.map(
           _pipe,
@@ -1103,7 +1088,10 @@ function convert_binary_value_to_json(value, bytes, transform) {
             )) && (!isEqual($bigi.compare(i, max_safe_integer), new $order.Gt()));
             if ($3) {
               let $4 = $bigi.to_int(i);
-              if (!($4 instanceof Ok)) {
+              let i$1;
+              if ($4 instanceof Ok) {
+                i$1 = $4[0];
+              } else {
                 throw makeError(
                   "let_assert",
                   FILEPATH,
@@ -1120,7 +1108,6 @@ function convert_binary_value_to_json(value, bytes, transform) {
                   }
                 )
               }
-              let i$1 = $4[0];
               return $int.to_string(i$1);
             } else {
               return ("\"" + $bigi.to_string(i)) + "\"";
@@ -1141,19 +1128,16 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
   return $bool.lazy_guard(
     transform.ignore_data_element_value_bytes,
     () => {
-      let _block;
-      let _record = transform;
-      _block = new P10JsonTransform(
-        _record.config,
-        _record.insert_comma,
-        _record.current_data_element,
+      let transform$1 = new P10JsonTransform(
+        transform.config,
+        transform.insert_comma,
+        transform.current_data_element,
         false,
-        _record.in_encapsulated_pixel_data,
-        _record.pending_base64_input,
-        _record.data_set_path,
-        _record.sequence_item_counts,
+        transform.in_encapsulated_pixel_data,
+        transform.pending_base64_input,
+        transform.data_set_path,
+        transform.sequence_item_counts,
       );
-      let transform$1 = _block;
       return new Ok(["", transform$1]);
     },
     () => {
@@ -1178,8 +1162,10 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
             data,
             (bytes_remaining === 0) && !transform.in_encapsulated_pixel_data,
           );
-          let json = $[0];
-          let transform$1 = $[1];
+          let json;
+          let transform$1;
+          json = $[0];
+          transform$1 = $[1];
           let json$1 = json + (() => {
             let $1 = (bytes_remaining === 0) && !transform$1.in_encapsulated_pixel_data;
             if ($1) {
@@ -1200,22 +1186,19 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
             ($bit_array.byte_size(data) === 0) && (bytes_remaining === 0),
             new Ok(["", transform]),
             () => {
-              let _block;
-              let _record = transform;
-              _block = new P10JsonTransform(
-                _record.config,
-                _record.insert_comma,
+              let transform$1 = new P10JsonTransform(
+                transform.config,
+                transform.insert_comma,
                 [
                   transform.current_data_element[0],
                   listPrepend(data, transform.current_data_element[1]),
                 ],
-                _record.ignore_data_element_value_bytes,
-                _record.in_encapsulated_pixel_data,
-                _record.pending_base64_input,
-                _record.data_set_path,
-                _record.sequence_item_counts,
+                transform.ignore_data_element_value_bytes,
+                transform.in_encapsulated_pixel_data,
+                transform.pending_base64_input,
+                transform.data_set_path,
+                transform.sequence_item_counts,
               );
-              let transform$1 = _block;
               return $bool.guard(
                 bytes_remaining > 0,
                 new Ok(["", transform$1]),
@@ -1227,13 +1210,13 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
                     vr,
                     bytes,
                   );
-                  let _block$1;
+                  let _block;
                   let _pipe = convert_binary_value_to_json(
                     value,
                     bytes,
                     transform$1,
                   );
-                  _block$1 = $result.map_error(
+                  _block = $result.map_error(
                     _pipe,
                     (e) => {
                       return new $json_error.DataError(
@@ -1241,14 +1224,14 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
                       );
                     },
                   );
-                  let json_values = _block$1;
+                  let json_values = _block;
                   return $result.map(
                     json_values,
                     (json_values) => {
-                      let _block$2;
+                      let _block$1;
                       let $ = transform$1.config.pretty_print;
                       if ($) {
-                        _block$2 = (((((indent(transform$1, 2) + $string.join(
+                        _block$1 = (((((indent(transform$1, 2) + $string.join(
                           json_values,
                           ",\n" + indent(transform$1, 2),
                         )) + "\n") + indent(transform$1, 1)) + "]\n") + indent(
@@ -1256,9 +1239,9 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
                           0,
                         )) + "}";
                       } else {
-                        _block$2 = $string.join(json_values, ",") + "]}";
+                        _block$1 = $string.join(json_values, ",") + "]}";
                       }
-                      let json = _block$2;
+                      let json = _block$1;
                       return [json, transform$1];
                     },
                   );
@@ -1272,6 +1255,15 @@ function write_data_element_value_bytes(transform, vr, data, bytes_remaining) {
   );
 }
 
+/**
+ * Adds the next DICOM P10 token to this JSON transform. Bytes of JSON data are
+ * returned as they become available.
+ *
+ * If P10 tokens are provided in an invalid order then an error may be
+ * returned, but this is not guaranteed for all invalid token orders, so in
+ * some cases the resulting JSON stream could be invalid when the incoming
+ * stream of P10 tokens is malformed.
+ */
 export function add_token(transform, token) {
   let token_stream_invalid_error = (_) => {
     let _pipe = new $p10_error.TokenStreamInvalid(
@@ -1291,8 +1283,10 @@ export function add_token(transform, token) {
     let vr = token.vr;
     let length = token.length;
     let $ = write_data_element_header(transform, tag, vr, length);
-    let json = $[0];
-    let transform$1 = $[1];
+    let json;
+    let transform$1;
+    json = $[0];
+    transform$1 = $[1];
     return $result.map(
       (() => {
         let _pipe = $data_set_path.add_data_element(
@@ -1302,19 +1296,16 @@ export function add_token(transform, token) {
         return $result.map_error(_pipe, token_stream_invalid_error);
       })(),
       (path) => {
-        let _block;
-        let _record = transform$1;
-        _block = new P10JsonTransform(
-          _record.config,
-          _record.insert_comma,
-          _record.current_data_element,
-          _record.ignore_data_element_value_bytes,
-          _record.in_encapsulated_pixel_data,
-          _record.pending_base64_input,
+        let transform$2 = new P10JsonTransform(
+          transform$1.config,
+          transform$1.insert_comma,
+          transform$1.current_data_element,
+          transform$1.ignore_data_element_value_bytes,
+          transform$1.in_encapsulated_pixel_data,
+          transform$1.pending_base64_input,
           path,
-          _record.sequence_item_counts,
+          transform$1.sequence_item_counts,
         );
-        let transform$2 = _block;
         return [json, transform$2];
       },
     );
@@ -1325,8 +1316,10 @@ export function add_token(transform, token) {
     return $result.try$(
       write_data_element_value_bytes(transform, vr, data, bytes_remaining),
       (_use0) => {
-        let json = _use0[0];
-        let transform$1 = _use0[1];
+        let json;
+        let transform$1;
+        json = _use0[0];
+        transform$1 = _use0[1];
         let _block;
         if (bytes_remaining === 0) {
           let _pipe = $data_set_path.pop(transform$1.data_set_path);
@@ -1334,16 +1327,15 @@ export function add_token(transform, token) {
           _block = $result.map(
             _pipe$1,
             (path) => {
-              let _record = transform$1;
               return new P10JsonTransform(
-                _record.config,
-                _record.insert_comma,
-                _record.current_data_element,
-                _record.ignore_data_element_value_bytes,
-                _record.in_encapsulated_pixel_data,
-                _record.pending_base64_input,
+                transform$1.config,
+                transform$1.insert_comma,
+                transform$1.current_data_element,
+                transform$1.ignore_data_element_value_bytes,
+                transform$1.in_encapsulated_pixel_data,
+                transform$1.pending_base64_input,
                 path,
-                _record.sequence_item_counts,
+                transform$1.sequence_item_counts,
               );
             },
           );
@@ -1363,8 +1355,10 @@ export function add_token(transform, token) {
     return $result.try$(
       write_sequence_start(transform, tag, vr),
       (_use0) => {
-        let json = _use0[0];
-        let transform$1 = _use0[1];
+        let json;
+        let transform$1;
+        json = _use0[0];
+        transform$1 = _use0[1];
         let _block;
         let _pipe = $data_set_path.add_data_element(
           transform$1.data_set_path,
@@ -1375,19 +1369,16 @@ export function add_token(transform, token) {
         return $result.map(
           path,
           (path) => {
-            let _block$1;
-            let _record = transform$1;
-            _block$1 = new P10JsonTransform(
-              _record.config,
-              _record.insert_comma,
-              _record.current_data_element,
-              _record.ignore_data_element_value_bytes,
-              _record.in_encapsulated_pixel_data,
-              _record.pending_base64_input,
+            let transform$2 = new P10JsonTransform(
+              transform$1.config,
+              transform$1.insert_comma,
+              transform$1.current_data_element,
+              transform$1.ignore_data_element_value_bytes,
+              transform$1.in_encapsulated_pixel_data,
+              transform$1.pending_base64_input,
               path,
               listPrepend(0, transform$1.sequence_item_counts),
             );
-            let transform$2 = _block$1;
             return [json, transform$2];
           },
         );
@@ -1395,8 +1386,10 @@ export function add_token(transform, token) {
     );
   } else if (token instanceof $p10_token.SequenceDelimiter) {
     let $ = write_sequence_end(transform);
-    let json = $[0];
-    let transform$1 = $[1];
+    let json;
+    let transform$1;
+    json = $[0];
+    transform$1 = $[1];
     let _block;
     let _pipe = $data_set_path.pop(transform$1.data_set_path);
     _block = $result.map_error(_pipe, token_stream_invalid_error);
@@ -1408,19 +1401,16 @@ export function add_token(transform, token) {
         let _pipe$1 = $list.rest(transform$1.sequence_item_counts);
         _block$1 = $result.unwrap(_pipe$1, toList([]));
         let sequence_item_counts = _block$1;
-        let _block$2;
-        let _record = transform$1;
-        _block$2 = new P10JsonTransform(
-          _record.config,
-          _record.insert_comma,
-          _record.current_data_element,
-          _record.ignore_data_element_value_bytes,
-          _record.in_encapsulated_pixel_data,
-          _record.pending_base64_input,
+        let transform$2 = new P10JsonTransform(
+          transform$1.config,
+          transform$1.insert_comma,
+          transform$1.current_data_element,
+          transform$1.ignore_data_element_value_bytes,
+          transform$1.in_encapsulated_pixel_data,
+          transform$1.pending_base64_input,
           path,
           sequence_item_counts,
         );
-        let transform$2 = _block$2;
         return new Ok([json, transform$2]);
       },
     );
@@ -1444,28 +1434,29 @@ export function add_token(transform, token) {
     return $result.map(
       path_and_item_counts,
       (_use0) => {
-        let path = _use0[0];
-        let sequence_item_counts = _use0[1];
-        let _block$1;
-        let _record = transform;
-        _block$1 = new P10JsonTransform(
-          _record.config,
-          _record.insert_comma,
-          _record.current_data_element,
-          _record.ignore_data_element_value_bytes,
-          _record.in_encapsulated_pixel_data,
-          _record.pending_base64_input,
+        let path;
+        let sequence_item_counts;
+        path = _use0[0];
+        sequence_item_counts = _use0[1];
+        let transform$1 = new P10JsonTransform(
+          transform.config,
+          transform.insert_comma,
+          transform.current_data_element,
+          transform.ignore_data_element_value_bytes,
+          transform.in_encapsulated_pixel_data,
+          transform.pending_base64_input,
           path,
           sequence_item_counts,
         );
-        let transform$1 = _block$1;
         return write_sequence_item_start(transform$1);
       },
     );
   } else if (token instanceof $p10_token.SequenceItemDelimiter) {
     let $ = write_sequence_item_end(transform);
-    let json = $[0];
-    let transform$1 = $[1];
+    let json;
+    let transform$1;
+    json = $[0];
+    transform$1 = $[1];
     let _block;
     let _pipe = $data_set_path.pop(transform$1.data_set_path);
     _block = $result.map_error(_pipe, token_stream_invalid_error);
@@ -1473,19 +1464,16 @@ export function add_token(transform, token) {
     return $result.try$(
       path,
       (path) => {
-        let _block$1;
-        let _record = transform$1;
-        _block$1 = new P10JsonTransform(
-          _record.config,
-          _record.insert_comma,
-          _record.current_data_element,
-          _record.ignore_data_element_value_bytes,
-          _record.in_encapsulated_pixel_data,
-          _record.pending_base64_input,
+        let transform$2 = new P10JsonTransform(
+          transform$1.config,
+          transform$1.insert_comma,
+          transform$1.current_data_element,
+          transform$1.ignore_data_element_value_bytes,
+          transform$1.in_encapsulated_pixel_data,
+          transform$1.pending_base64_input,
           path,
-          _record.sequence_item_counts,
+          transform$1.sequence_item_counts,
         );
-        let transform$2 = _block$1;
         return new Ok([json, transform$2]);
       },
     );
@@ -1510,21 +1498,20 @@ export function add_token(transform, token) {
     return $result.try$(
       path_and_item_counts,
       (_use0) => {
-        let path = _use0[0];
-        let sequence_item_counts = _use0[1];
-        let _block$1;
-        let _record = transform;
-        _block$1 = new P10JsonTransform(
-          _record.config,
-          _record.insert_comma,
-          _record.current_data_element,
-          _record.ignore_data_element_value_bytes,
-          _record.in_encapsulated_pixel_data,
-          _record.pending_base64_input,
+        let path;
+        let sequence_item_counts;
+        path = _use0[0];
+        sequence_item_counts = _use0[1];
+        let transform$1 = new P10JsonTransform(
+          transform.config,
+          transform.insert_comma,
+          transform.current_data_element,
+          transform.ignore_data_element_value_bytes,
+          transform.in_encapsulated_pixel_data,
+          transform.pending_base64_input,
           path,
           sequence_item_counts,
         );
-        let transform$1 = _block$1;
         return write_encapsulated_pixel_data_item(transform$1, length);
       },
     );

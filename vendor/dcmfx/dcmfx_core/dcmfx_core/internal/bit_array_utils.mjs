@@ -15,6 +15,9 @@ import {
   bitArraySliceToInt,
 } from "../../gleam.mjs";
 
+/**
+ * Reads `bytes` as a 16-bit signed integer.
+ */
 export function to_int16(bytes) {
   if (bytes.bitSize === 16) {
     let value = bitArraySliceToInt(bytes, 0, 16, false, true);
@@ -24,6 +27,9 @@ export function to_int16(bytes) {
   }
 }
 
+/**
+ * Reads `bytes` as a 16-bit unsigned integer.
+ */
 export function to_uint16(bytes) {
   if (bytes.bitSize === 16) {
     let value = bitArraySliceToInt(bytes, 0, 16, false, false);
@@ -33,6 +39,9 @@ export function to_uint16(bytes) {
   }
 }
 
+/**
+ * Reads `bytes` as a 32-bit signed integer.
+ */
 export function to_int32(bytes) {
   if (bytes.bitSize === 32) {
     let value = bitArraySliceToInt(bytes, 0, 32, false, true);
@@ -42,6 +51,9 @@ export function to_int32(bytes) {
   }
 }
 
+/**
+ * Reads `bytes` as a 32-bit unsigned integer.
+ */
 export function to_uint32(bytes) {
   if (bytes.bitSize === 32) {
     let value = bitArraySliceToInt(bytes, 0, 32, false, false);
@@ -51,6 +63,9 @@ export function to_uint32(bytes) {
   }
 }
 
+/**
+ * Reads `bytes` as a 64-bit signed integer.
+ */
 export function to_int64(bytes) {
   let $ = $bit_array.byte_size(bytes);
   if ($ === 8) {
@@ -60,6 +75,9 @@ export function to_int64(bytes) {
   }
 }
 
+/**
+ * Reads `bytes` as a 64-bit unsigned integer.
+ */
 export function to_uint64(bytes) {
   let $ = $bit_array.byte_size(bytes);
   if ($ === 8) {
@@ -73,10 +91,16 @@ export function to_uint64(bytes) {
   }
 }
 
+/**
+ * Reads `bytes` as a 32-bit single-precision floating point number.
+ */
 export function to_float32(bytes) {
   return new Ok($ieee_float.from_bytes_32_le(bytes));
 }
 
+/**
+ * Reads `bytes` as an 64-bit double-precision floating point number.
+ */
 export function to_float64(bytes) {
   return new Ok($ieee_float.from_bytes_64_le(bytes));
 }
@@ -102,7 +126,7 @@ function do_to_list(
       let _block;
       let _pipe = bytes;
       let _pipe$1 = $bit_array.slice(_pipe, i * item_size, item_size);
-      _block = $result.then$(_pipe$1, read_item);
+      _block = $result.try$(_pipe$1, read_item);
       let item = _block;
       if (item instanceof Ok) {
         let item$1 = item[0];
@@ -113,12 +137,17 @@ function do_to_list(
         loop$item_count = item_count;
         loop$acc = listPrepend(item$1, acc);
       } else {
-        return new Error(undefined);
+        return item;
       }
     }
   }
 }
 
+/**
+ * Reads `bytes` as a list of one of the supported primitive types.
+ * 
+ * @ignore
+ */
 function to_list(bytes, item_size, read_item) {
   let byte_count = $bit_array.byte_size(bytes);
   let $ = remainderInt(byte_count, item_size);
@@ -137,38 +166,65 @@ function to_list(bytes, item_size, read_item) {
   }
 }
 
+/**
+ * Reads `bytes` as a list of 16-bit signed integers.
+ */
 export function to_int16_list(bytes) {
   return to_list(bytes, 2, to_int16);
 }
 
+/**
+ * Reads `bytes` as a list of 16-bit unsigned integers.
+ */
 export function to_uint16_list(bytes) {
   return to_list(bytes, 2, to_uint16);
 }
 
+/**
+ * Reads `bytes` as a list of 32-bit signed integers.
+ */
 export function to_int32_list(bytes) {
   return to_list(bytes, 4, to_int32);
 }
 
+/**
+ * Reads `bytes` as a list of 32-bit unsigned integers.
+ */
 export function to_uint32_list(bytes) {
   return to_list(bytes, 4, to_uint32);
 }
 
+/**
+ * Reads `bytes` as a list of 64-bit signed integers.
+ */
 export function to_int64_list(bytes) {
   return to_list(bytes, 8, to_int64);
 }
 
+/**
+ * Reads `bytes` as a list of 64-bit unsigned integers.
+ */
 export function to_uint64_list(bytes) {
   return to_list(bytes, 8, to_uint64);
 }
 
+/**
+ * Reads `bytes` as a list of 32-bit single-precision floating point numbers.
+ */
 export function to_float32_list(bytes) {
   return to_list(bytes, 4, to_float32);
 }
 
+/**
+ * Reads `bytes` as a list of 64-bit double-precision floating point numbers.
+ */
 export function to_float64_list(bytes) {
   return to_list(bytes, 8, to_float64);
 }
 
+/**
+ * Appends the specified padding byte if the bytes are of odd length.
+ */
 export function pad_to_even_length(bytes, padding_byte) {
   let $ = $int.is_odd($bit_array.byte_size(bytes));
   if ($) {
@@ -209,6 +265,10 @@ function do_reverse_index(loop$bytes, loop$predicate, loop$index) {
   }
 }
 
+/**
+ * Returns the index of the last byte in a bit array that satisfies the given
+ * predicate.
+ */
 export function reverse_index(bytes, predicate) {
   let index = $bit_array.byte_size(bytes) - 1;
   return do_reverse_index(bytes, predicate, index);

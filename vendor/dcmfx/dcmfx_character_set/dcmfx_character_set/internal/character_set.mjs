@@ -76,6 +76,11 @@ export class CodeElement extends $CustomType {
   }
 }
 
+/**
+ * Decodes bytes into Unicode codepoints using the specified decoder. The list
+ * is returned in reverse order, i.e. with the last codepoint at the list's
+ * head.
+ */
 export function decode_bytes(loop$bytes, loop$decoder, loop$acc) {
   while (true) {
     let bytes = loop$bytes;
@@ -94,6 +99,9 @@ export function decode_bytes(loop$bytes, loop$decoder, loop$acc) {
   }
 }
 
+/**
+ * Returns the G0 and G1 code elements for a character set.
+ */
 export function code_elements(character_set) {
   if (character_set instanceof SingleByteWithExtensions) {
     let code_element_g0 = character_set.code_element_g0;
@@ -108,78 +116,129 @@ export function code_elements(character_set) {
   }
 }
 
+/**
+ * ISO IR 6 character set, also known as ISO 646 and US-ASCII.
+ */
 export const iso_ir_6 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 6",
   "Default repertoire",
   $iso_ir_6.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 100 character set, also known as ISO 8859-1 and Latin-1. Used by many
+ * Western European languages.
+ */
 export const iso_ir_100 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 100",
   "Latin alphabet No. 1",
   $iso_8859_1.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 101 character set, also known as ISO 8859-2 and Latin-2. Used by many
+ * Central European languages.
+ */
 export const iso_ir_101 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 101",
   "Latin alphabet No. 2",
   $iso_8859_2.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 109 character set, also known as ISO 8859-3 and Latin-3. Used by many
+ * South European languages.
+ */
 export const iso_ir_109 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 109",
   "Latin alphabet No. 3",
   $iso_8859_3.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 110 character set, also known as ISO 8859-4 and Latin-4. Used by many
+ * North European languages.
+ */
 export const iso_ir_110 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 110",
   "Latin alphabet No. 4",
   $iso_8859_4.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 144 character set, also known as ISO 8859-5 and Latin/Cyrillic. Used
+ * by Slavic languages that use a Cyrillic alphabet.
+ */
 export const iso_ir_144 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 144",
   "Cyrillic",
   $iso_8859_5.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 127 character set, also known as ISO 8859-6 and Latin/Arabic. Used by
+ * the Arabic language.
+ */
 export const iso_ir_127 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 127",
   "Arabic",
   $iso_8859_6.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 126 character set, also known as ISO 8859-7 and Latin/Greek. Used by
+ * the Greek language.
+ */
 export const iso_ir_126 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 126",
   "Greek",
   $iso_8859_7.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 138 character set, also known as ISO 8859-8 and Latin/Hebrew. Used by
+ * the Hebrew language.
+ */
 export const iso_ir_138 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 138",
   "Hebrew",
   $iso_8859_8.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 148 character set, also known as ISO 8859-9 and Latin-5. Used by the
+ * Turkish language.
+ */
 export const iso_ir_148 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 148",
   "Latin alphabet No. 5",
   $iso_8859_9.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 203 character set, also known as ISO 8859-15 and Latin-9. Used by
+ * many languages.
+ */
 export const iso_ir_203 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 203",
   "Latin alphabet No. 9",
   $iso_8859_15.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 13 character set, also known as JIS X 0201. Used by the Japanese
+ * language.
+ */
 export const iso_ir_13 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 13",
   "Japanese",
   $jis_x_0201.decode_next_codepoint,
 );
 
+/**
+ * ISO IR 166 character set, also known as ISO 8859-11 and TIS 620-2533. Used
+ * by the Thai language.
+ */
 export const iso_ir_166 = /* @__PURE__ */ new SingleByteWithoutExtensions(
   "ISO_IR 166",
   "Thai",
@@ -191,6 +250,9 @@ const iso_ir_6_code_element = /* @__PURE__ */ new CodeElement(
   $iso_ir_6.decode_next_codepoint,
 );
 
+/**
+ * ISO 2022 IR 6 character set, also known as ISO 646 and US-ASCII.
+ */
 export const iso_2022_ir_6 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 6",
   "Default repertoire",
@@ -198,6 +260,10 @@ export const iso_2022_ir_6 = /* @__PURE__ */ new SingleByteWithExtensions(
   /* @__PURE__ */ new None(),
 );
 
+/**
+ * ISO 2022 IR 100 character set, also known as ISO 8859-1 and Latin-1. Used by
+ * many Western European languages.
+ */
 export const iso_2022_ir_100 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 100",
   "Latin alphabet No. 1",
@@ -210,6 +276,10 @@ export const iso_2022_ir_100 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 101 character set, also known as ISO 8859-2 and Latin-2. Used by
+ * many Central European languages.
+ */
 export const iso_2022_ir_101 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 101",
   "Latin alphabet No. 2",
@@ -222,6 +292,10 @@ export const iso_2022_ir_101 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 109 character set, also known as ISO 8859-3 and Latin-3. Used by
+ * many South European languages.
+ */
 export const iso_2022_ir_109 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 109",
   "Latin alphabet No. 3",
@@ -234,6 +308,10 @@ export const iso_2022_ir_109 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 110 character set, also known as ISO 8859-4 and Latin-4. Used by
+ * many North European languages.
+ */
 export const iso_2022_ir_110 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 110",
   "Latin alphabet No. 4",
@@ -246,6 +324,10 @@ export const iso_2022_ir_110 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 144 character set, also known as ISO 8859-5 and Latin/Cyrillic.
+ * Used by Slavic languages that use a Cyrillic alphabet.
+ */
 export const iso_2022_ir_144 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 144",
   "Cyrillic",
@@ -258,6 +340,10 @@ export const iso_2022_ir_144 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 127 character set, also known as ISO 8859-6 and Latin/Arabic.
+ * Used by the Arabic language.
+ */
 export const iso_2022_ir_127 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 127",
   "Arabic",
@@ -270,6 +356,10 @@ export const iso_2022_ir_127 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 126 character set, also known as ISO 8859-7 and Latin/Greek.
+ * Used by the Greek language.
+ */
 export const iso_2022_ir_126 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 126",
   "Greek",
@@ -282,6 +372,10 @@ export const iso_2022_ir_126 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 138 character set, also known as ISO 8859-8 and Latin/Hebrew.
+ * Used by the Hebrew language.
+ */
 export const iso_2022_ir_138 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 138",
   "Hebrew",
@@ -294,6 +388,10 @@ export const iso_2022_ir_138 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 148 character set, also known as ISO 8859-9 and Latin-5. Used by
+ * the Turkish language.
+ */
 export const iso_2022_ir_148 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 148",
   "Latin alphabet No. 5",
@@ -306,6 +404,10 @@ export const iso_2022_ir_148 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 203 character set, also known as ISO 8859-15 and Latin-9. Used
+ * by many languages.
+ */
 export const iso_2022_ir_203 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 203",
   "Latin alphabet No. 9",
@@ -318,6 +420,10 @@ export const iso_2022_ir_203 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 13 character set, also known as JIS X 0201. Used by the Japanese
+ * language.
+ */
 export const iso_2022_ir_13 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 13",
   "Japanese",
@@ -333,6 +439,10 @@ export const iso_2022_ir_13 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 166 character set, also known as ISO 8859-11 and TIS 620-2533.
+ * Used by the Thai language.
+ */
 export const iso_2022_ir_166 = /* @__PURE__ */ new SingleByteWithExtensions(
   "ISO 2022 IR 166",
   "Thai",
@@ -345,6 +455,10 @@ export const iso_2022_ir_166 = /* @__PURE__ */ new SingleByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 87 character set, also known as JIS X 0208. Used by the Japanese
+ * language.
+ */
 export const iso_2022_ir_87 = /* @__PURE__ */ new MultiByteWithExtensions(
   "ISO 2022 IR 87",
   "Japanese",
@@ -357,6 +471,10 @@ export const iso_2022_ir_87 = /* @__PURE__ */ new MultiByteWithExtensions(
   /* @__PURE__ */ new None(),
 );
 
+/**
+ * ISO 2022 IR 159 character set, also known as JIS X 0212. Used by the
+ * Japanese language.
+ */
 export const iso_2022_ir_159 = /* @__PURE__ */ new MultiByteWithExtensions(
   "ISO 2022 IR 159",
   "Japanese",
@@ -369,6 +487,10 @@ export const iso_2022_ir_159 = /* @__PURE__ */ new MultiByteWithExtensions(
   /* @__PURE__ */ new None(),
 );
 
+/**
+ * ISO 2022 IR 149 character set, also known as KS X 1001. Used by the Korean
+ * language.
+ */
 export const iso_2022_ir_149 = /* @__PURE__ */ new MultiByteWithExtensions(
   "ISO 2022 IR 149",
   "Korean",
@@ -381,6 +503,10 @@ export const iso_2022_ir_149 = /* @__PURE__ */ new MultiByteWithExtensions(
   ),
 );
 
+/**
+ * ISO 2022 IR 58 character set, also known as GB 2312. Used by the Chinese
+ * language.
+ */
 export const iso_2022_ir_58 = /* @__PURE__ */ new MultiByteWithExtensions(
   "ISO 2022 IR 58",
   "Simplified Chinese",
@@ -393,24 +519,39 @@ export const iso_2022_ir_58 = /* @__PURE__ */ new MultiByteWithExtensions(
   ),
 );
 
+/**
+ * ISO IR 192 character set, also known as UTF-8. Used by all languages.
+ */
 export const iso_ir_192 = /* @__PURE__ */ new MultiByteWithoutExtensions(
   "ISO_IR 192",
   "Unicode in UTF-8",
   $utf8.decode_next_codepoint,
 );
 
+/**
+ * GB 18030 character set. Used by the Chinese language.
+ */
 export const gb_18030 = /* @__PURE__ */ new MultiByteWithoutExtensions(
   "GB18030",
   "GB 18030",
   $gb_18030.decode_next_codepoint,
 );
 
+/**
+ * GBK character set. Used by the Chinese language.
+ */
 export const gbk = /* @__PURE__ */ new MultiByteWithoutExtensions(
   "GBK",
   "GBK",
   $gb_18030.decode_next_codepoint,
 );
 
+/**
+ * The list of all DICOM character sets, in the order in which they appear in
+ * the DICOM standard: single-byte character sets without extensions,
+ * single-byte character sets with extensions, multi-byte character sets with
+ * extensions, multi-byte character sets without extensions.
+ */
 export const all_character_sets = /* @__PURE__ */ toList([
   iso_ir_6,
   iso_ir_100,
@@ -447,6 +588,12 @@ export const all_character_sets = /* @__PURE__ */ toList([
   gbk,
 ]);
 
+/**
+ * Converts a string containing the 'Defined Term' for a character set in the
+ * DICOM standard into a `CharacterSet` instance.
+ *
+ * If the passed term isn't recognized then an error is returned.
+ */
 export function from_string(defined_term) {
   let standardize_defined_term = (term) => {
     let _pipe = term;
