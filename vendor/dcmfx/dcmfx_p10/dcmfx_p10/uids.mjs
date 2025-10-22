@@ -15,4 +15,4 @@ export const dcmfx_implementation_class_uid = dcmfx_root_uid_prefix + "0";
  * DCMfx's implementation version name that is included in the File Meta
  * Information header of DICOM P10 data it serializes.
  */
-export const dcmfx_implementation_version_name = "DCMfx " + "0.32.1";
+export const dcmfx_implementation_version_name = "DCMfx " + "0.36.0";

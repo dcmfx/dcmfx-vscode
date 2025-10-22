@@ -1,10 +1,16 @@
 import type * as _ from "../gleam.d.mts";
 
 export class Lt extends _.CustomType {}
+export function Order$Lt(): Order$;
+export function Order$isLt(value: Order$): boolean;
 
 export class Eq extends _.CustomType {}
+export function Order$Eq(): Order$;
+export function Order$isEq(value: Order$): boolean;
 
 export class Gt extends _.CustomType {}
+export function Order$Gt(): Order$;
+export function Order$isGt(value: Order$): boolean;
 
 export type Order$ = Lt | Eq | Gt;
 

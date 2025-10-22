@@ -1,13 +1,13 @@
 import * as vscode from "vscode";
+import { convertJsonToP10 } from "./commands/convert-json-to-p10.mjs";
+import { extractPixelData } from "./commands/extract-pixel-data.mjs";
 import {
   DCMFX_SCHEME,
   DcmfxPrintContentProvider,
   DcmfxPrintHoverProvider,
   printDicomCommand,
 } from "./commands/print.mjs";
-import { convertJsonToP10 } from "./commands/convert-json-to-p10.mjs";
 import { rewriteP10 } from "./commands/rewrite-p10.mjs";
-import { extractPixelData } from "./commands/extract-pixel-data.mjs";
 
 export function activate(context: vscode.ExtensionContext): void {
   const printContentProvider =

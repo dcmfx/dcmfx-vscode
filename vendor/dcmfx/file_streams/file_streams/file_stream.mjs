@@ -57,6 +57,13 @@ export class BeginningOfFile extends $CustomType {
     this.offset = offset;
   }
 }
+export const FileStreamLocation$BeginningOfFile = (offset) =>
+  new BeginningOfFile(offset);
+export const FileStreamLocation$isBeginningOfFile = (value) =>
+  value instanceof BeginningOfFile;
+export const FileStreamLocation$BeginningOfFile$offset = (value) =>
+  value.offset;
+export const FileStreamLocation$BeginningOfFile$0 = (value) => value.offset;
 
 /**
  * A location relative to the current position in the file stream. The offset
@@ -68,6 +75,13 @@ export class CurrentLocation extends $CustomType {
     this.offset = offset;
   }
 }
+export const FileStreamLocation$CurrentLocation = (offset) =>
+  new CurrentLocation(offset);
+export const FileStreamLocation$isCurrentLocation = (value) =>
+  value instanceof CurrentLocation;
+export const FileStreamLocation$CurrentLocation$offset = (value) =>
+  value.offset;
+export const FileStreamLocation$CurrentLocation$0 = (value) => value.offset;
 
 /**
  * A location relative to the end of the file stream. The offset should not
@@ -79,6 +93,13 @@ export class EndOfFile extends $CustomType {
     this.offset = offset;
   }
 }
+export const FileStreamLocation$EndOfFile = (offset) => new EndOfFile(offset);
+export const FileStreamLocation$isEndOfFile = (value) =>
+  value instanceof EndOfFile;
+export const FileStreamLocation$EndOfFile$offset = (value) => value.offset;
+export const FileStreamLocation$EndOfFile$0 = (value) => value.offset;
+
+export const FileStreamLocation$offset = (value) => value.offset;
 
 /**
  * Opens a new file stream that can read and/or write data from the specified

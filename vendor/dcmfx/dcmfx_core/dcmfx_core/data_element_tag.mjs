@@ -14,6 +14,14 @@ export class DataElementTag extends $CustomType {
     this.element = element;
   }
 }
+export const DataElementTag$DataElementTag = (group, element) =>
+  new DataElementTag(group, element);
+export const DataElementTag$isDataElementTag = (value) =>
+  value instanceof DataElementTag;
+export const DataElementTag$DataElementTag$group = (value) => value.group;
+export const DataElementTag$DataElementTag$0 = (value) => value.group;
+export const DataElementTag$DataElementTag$element = (value) => value.element;
+export const DataElementTag$DataElementTag$1 = (value) => value.element;
 
 /**
  * Returns whether the tag is File Meta Information, which is determined by its 

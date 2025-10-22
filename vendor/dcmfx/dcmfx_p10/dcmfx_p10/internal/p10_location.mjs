@@ -458,10 +458,14 @@ export function add_sequence(location, tag, is_implicit_vr, ends_at) {
       )) + "' encountered outside of the root data set or an item",
     );
   } else {
-    let $ = location.head;
-    if ($ instanceof RootDataSet) {
-      let $1 = location.tail;
-      if ($1 instanceof $Empty) {
+    let $ = location.tail;
+    if ($ instanceof $Empty) {
+      let $1 = location.head;
+      if ($1 instanceof RootDataSet) {
+        return new Ok(
+          listPrepend(new Sequence(tag, is_implicit_vr, ends_at, 0), location),
+        );
+      } else if ($1 instanceof Item) {
         return new Ok(
           listPrepend(new Sequence(tag, is_implicit_vr, ends_at, 0), location),
         );
@@ -477,21 +481,24 @@ export function add_sequence(location, tag, is_implicit_vr, ends_at) {
           )) + "' encountered outside of the root data set or an item",
         );
       }
-    } else if ($ instanceof Item) {
-      return new Ok(
-        listPrepend(new Sequence(tag, is_implicit_vr, ends_at, 0), location),
-      );
     } else {
-      let private_creator = private_creator_for_tag(
-        active_clarifying_data_elements(location),
-        tag,
-      );
-      return new Error(
-        ("Sequence data element '" + $dictionary.tag_with_name(
+      let $1 = location.head;
+      if ($1 instanceof Item) {
+        return new Ok(
+          listPrepend(new Sequence(tag, is_implicit_vr, ends_at, 0), location),
+        );
+      } else {
+        let private_creator = private_creator_for_tag(
+          active_clarifying_data_elements(location),
           tag,
-          private_creator,
-        )) + "' encountered outside of the root data set or an item",
-      );
+        );
+        return new Error(
+          ("Sequence data element '" + $dictionary.tag_with_name(
+            tag,
+            private_creator,
+          )) + "' encountered outside of the root data set or an item",
+        );
+      }
     }
   }
 }
@@ -856,10 +863,10 @@ export function infer_vr_for_tag(location, tag) {
     } else {
       let $2 = $1.tail;
       if ($2 instanceof $Empty) {
-        let $3 = $1.head;
-        if ($3 instanceof $value_representation.OtherWordString) {
-          let $4 = allowed_vrs.head;
-          if ($4 instanceof $value_representation.OtherByteString) {
+        let $3 = allowed_vrs.head;
+        if ($3 instanceof $value_representation.OtherByteString) {
+          let $4 = $1.head;
+          if ($4 instanceof $value_representation.OtherWordString) {
             if (isEqual(tag, $dictionary.pixel_data.tag)) {
               return new Ok(new $value_representation.OtherWordString());
             } else if (
@@ -907,18 +914,18 @@ export function infer_vr_for_tag(location, tag) {
             } else {
               return new Ok(new $value_representation.Unknown());
             }
-          } else if (
-            $4 instanceof $value_representation.UnsignedShort &&
-            isEqual(tag, $dictionary.lut_data.tag)
-          ) {
-            return new Ok(new $value_representation.OtherWordString());
           } else {
             return new Ok(new $value_representation.Unknown());
           }
-        } else if ($3 instanceof $value_representation.SignedShort) {
-          let $4 = allowed_vrs.head;
+        } else if ($3 instanceof $value_representation.UnsignedShort) {
+          let $4 = $1.head;
           if (
-            $4 instanceof $value_representation.UnsignedShort &&
+            $4 instanceof $value_representation.OtherWordString &&
+            isEqual(tag, $dictionary.lut_data.tag)
+          ) {
+            return new Ok(new $value_representation.OtherWordString());
+          } else if (
+            $4 instanceof $value_representation.SignedShort &&
             (((((((((((((((((((isEqual(
               tag,
               $dictionary.zero_velocity_pixel_value.tag

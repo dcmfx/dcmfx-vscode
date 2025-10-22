@@ -277,57 +277,43 @@ function check_equal(loop$xs, loop$x_tail, loop$ys, loop$y_tail, loop$eq) {
     let ys = loop$ys;
     let y_tail = loop$y_tail;
     let eq = loop$eq;
-    if (ys instanceof $Empty) {
-      if (y_tail instanceof $Empty) {
-        if (x_tail instanceof $Empty) {
-          if (xs instanceof $Empty) {
+    if (xs instanceof $Empty) {
+      if (x_tail instanceof $Empty) {
+        if (ys instanceof $Empty) {
+          if (y_tail instanceof $Empty) {
             return true;
           } else {
-            return false;
+            loop$xs = xs;
+            loop$x_tail = x_tail;
+            loop$ys = $list.reverse(y_tail);
+            loop$y_tail = toList([]);
+            loop$eq = eq;
           }
-        } else if (xs instanceof $Empty) {
-          loop$xs = $list.reverse(x_tail);
-          loop$x_tail = toList([]);
-          loop$ys = ys;
-          loop$y_tail = y_tail;
-          loop$eq = eq;
         } else {
           return false;
         }
-      } else if (x_tail instanceof $Empty) {
-        loop$xs = xs;
-        loop$x_tail = x_tail;
-        loop$ys = $list.reverse(y_tail);
-        loop$y_tail = toList([]);
-        loop$eq = eq;
-      } else if (xs instanceof $Empty) {
+      } else {
         loop$xs = $list.reverse(x_tail);
         loop$x_tail = toList([]);
         loop$ys = ys;
         loop$y_tail = y_tail;
-        loop$eq = eq;
-      } else {
-        loop$xs = xs;
-        loop$x_tail = x_tail;
-        loop$ys = $list.reverse(y_tail);
-        loop$y_tail = toList([]);
         loop$eq = eq;
       }
-    } else if (xs instanceof $Empty) {
-      if (x_tail instanceof $Empty) {
+    } else if (ys instanceof $Empty) {
+      if (y_tail instanceof $Empty) {
         return false;
       } else {
-        loop$xs = $list.reverse(x_tail);
-        loop$x_tail = toList([]);
-        loop$ys = ys;
-        loop$y_tail = y_tail;
+        loop$xs = xs;
+        loop$x_tail = x_tail;
+        loop$ys = $list.reverse(y_tail);
+        loop$y_tail = toList([]);
         loop$eq = eq;
       }
     } else {
-      let y = ys.head;
-      let ys$1 = ys.tail;
       let x = xs.head;
       let xs$1 = xs.tail;
+      let y = ys.head;
+      let ys$1 = ys.tail;
       let $ = eq(x, y);
       if ($) {
         loop$xs = xs$1;

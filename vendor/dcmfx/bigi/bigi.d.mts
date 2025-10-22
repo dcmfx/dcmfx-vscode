@@ -6,14 +6,22 @@ import type * as _ from "./gleam.d.mts";
 export type BigInt$ = unknown;
 
 export class LittleEndian extends _.CustomType {}
+export function Endianness$LittleEndian(): Endianness$;
+export function Endianness$isLittleEndian(value: Endianness$): boolean;
 
 export class BigEndian extends _.CustomType {}
+export function Endianness$BigEndian(): Endianness$;
+export function Endianness$isBigEndian(value: Endianness$): boolean;
 
 export type Endianness$ = LittleEndian | BigEndian;
 
 export class Signed extends _.CustomType {}
+export function Signedness$Signed(): Signedness$;
+export function Signedness$isSigned(value: Signedness$): boolean;
 
 export class Unsigned extends _.CustomType {}
+export function Signedness$Unsigned(): Signedness$;
+export function Signedness$isUnsigned(value: Signedness$): boolean;
 
 export type Signedness$ = Signed | Unsigned;
 

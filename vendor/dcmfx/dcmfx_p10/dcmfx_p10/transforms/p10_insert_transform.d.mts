@@ -8,16 +8,18 @@ import type * as $p10_filter_transform from "../../dcmfx_p10/transforms/p10_filt
 import type * as _ from "../../gleam.d.mts";
 
 declare class P10InsertTransform extends _.CustomType {
+  /** @deprecated */
   constructor(
     data_elements_to_insert: _.List<
       [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
     >,
     filter_transform: $p10_filter_transform.P10FilterTransform$
   );
-  
+  /** @deprecated */
   data_elements_to_insert: _.List<
     [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
   >;
+  /** @deprecated */
   filter_transform: $p10_filter_transform.P10FilterTransform$;
 }
 

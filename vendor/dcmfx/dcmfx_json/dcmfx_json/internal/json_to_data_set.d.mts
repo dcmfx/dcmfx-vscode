@@ -12,14 +12,17 @@ import type * as $json_error from "../../dcmfx_json/json_error.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class PersonNameVariants extends _.CustomType {
+  /** @deprecated */
   constructor(
     alphabetic: $option.Option$<string>,
     ideographic: $option.Option$<string>,
     phonetic: $option.Option$<string>
   );
-  
+  /** @deprecated */
   alphabetic: $option.Option$<string>;
+  /** @deprecated */
   ideographic: $option.Option$<string>;
+  /** @deprecated */
   phonetic: $option.Option$<string>;
 }
 

@@ -8,8 +8,14 @@ export class Defined extends $CustomType {
     this.length = length;
   }
 }
+export const ValueLength$Defined = (length) => new Defined(length);
+export const ValueLength$isDefined = (value) => value instanceof Defined;
+export const ValueLength$Defined$length = (value) => value.length;
+export const ValueLength$Defined$0 = (value) => value.length;
 
 export class Undefined extends $CustomType {}
+export const ValueLength$Undefined = () => new Undefined();
+export const ValueLength$isUndefined = (value) => value instanceof Undefined;
 
 /**
  * Constructs a new value length from the given `u32` value. `0xFFFFFFFF` is an

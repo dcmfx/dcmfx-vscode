@@ -12,36 +12,43 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 declare class BinaryValue extends _.CustomType {
+  /** @deprecated */
   constructor(vr: $value_representation.ValueRepresentation$, bytes: _.BitArray);
-  
+  /** @deprecated */
   vr: $value_representation.ValueRepresentation$;
+  /** @deprecated */
   bytes: _.BitArray;
 }
 
 declare class LookupTableDescriptorValue extends _.CustomType {
+  /** @deprecated */
   constructor(vr: $value_representation.ValueRepresentation$, bytes: _.BitArray);
-  
+  /** @deprecated */
   vr: $value_representation.ValueRepresentation$;
+  /** @deprecated */
   bytes: _.BitArray;
 }
 
 declare class EncapsulatedPixelDataValue extends _.CustomType {
+  /** @deprecated */
   constructor(
     vr: $value_representation.ValueRepresentation$,
     items: _.List<_.BitArray>
   );
-  
+  /** @deprecated */
   vr: $value_representation.ValueRepresentation$;
+  /** @deprecated */
   items: _.List<_.BitArray>;
 }
 
 declare class SequenceValue extends _.CustomType {
+  /** @deprecated */
   constructor(
     items: _.List<
       $dict.Dict$<$data_element_tag.DataElementTag$, DataElementValue$>
     >
   );
-  
+  /** @deprecated */
   items: _.List<
     $dict.Dict$<$data_element_tag.DataElementTag$, DataElementValue$>
   >;

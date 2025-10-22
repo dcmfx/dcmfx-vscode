@@ -14,6 +14,7 @@ import type * as $p10_write_config from "../dcmfx_p10/p10_write_config.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 declare class P10WriteContext extends _.CustomType {
+  /** @deprecated */
   constructor(
     config: $p10_write_config.P10WriteConfig$,
     p10_bytes: _.List<_.BitArray>,
@@ -24,14 +25,21 @@ declare class P10WriteContext extends _.CustomType {
     location: _.List<$p10_location.LocationEntry$>,
     path: $data_set_path.DataSetPath$
   );
-  
+  /** @deprecated */
   config: $p10_write_config.P10WriteConfig$;
+  /** @deprecated */
   p10_bytes: _.List<_.BitArray>;
+  /** @deprecated */
   p10_total_byte_count: number;
+  /** @deprecated */
   is_ended: boolean;
+  /** @deprecated */
   transfer_syntax: $transfer_syntax.TransferSyntax$;
+  /** @deprecated */
   zlib_stream: $option.Option$<$zlib.ZlibStream$>;
+  /** @deprecated */
   location: _.List<$p10_location.LocationEntry$>;
+  /** @deprecated */
   path: $data_set_path.DataSetPath$;
 }
 
@@ -52,31 +60,31 @@ export function data_element_header_to_bytes(
   context: P10WriteContext$
 ): _.Result<_.BitArray, $p10_error.P10Error$>;
 
-export function data_set_to_tokens<BZKG, BZKH>(
+export function data_set_to_tokens<BZEL, BZEM>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   path: $data_set_path.DataSetPath$,
-  callback_context: BZKG,
-  token_callback: (x0: BZKG, x1: $p10_token.P10Token$) => _.Result<BZKG, BZKH>
-): _.Result<BZKG, BZKH>;
+  callback_context: BZEL,
+  token_callback: (x0: BZEL, x1: $p10_token.P10Token$) => _.Result<BZEL, BZEM>
+): _.Result<BZEL, BZEM>;
 
 export function write_token(
   context: P10WriteContext$,
   token: $p10_token.P10Token$
 ): _.Result<P10WriteContext$, $p10_error.P10Error$>;
 
-export function data_set_to_bytes<BZKM>(
+export function data_set_to_bytes<BZER>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   path: $data_set_path.DataSetPath$,
-  context: BZKM,
-  bytes_callback: (x0: BZKM, x1: _.BitArray) => _.Result<
-    BZKM,
+  context: BZER,
+  bytes_callback: (x0: BZER, x1: _.BitArray) => _.Result<
+    BZER,
     $p10_error.P10Error$
   >,
   config: $option.Option$<$p10_write_config.P10WriteConfig$>
-): _.Result<BZKM, $p10_error.P10Error$>;
+): _.Result<BZER, $p10_error.P10Error$>;

@@ -5,16 +5,26 @@ import type * as _ from "../../gleam.d.mts";
 export type ZlibStream$ = unknown;
 
 export class Deflated extends _.CustomType {}
+export function Zmethod$Deflated(): Zmethod$;
+export function Zmethod$isDeflated(value: Zmethod$): boolean;
 
 export type Zmethod$ = Deflated;
 
 export class Default extends _.CustomType {}
+export function Zstrategy$Default(): Zstrategy$;
+export function Zstrategy$isDefault(value: Zstrategy$): boolean;
 
 export class Filtered extends _.CustomType {}
+export function Zstrategy$Filtered(): Zstrategy$;
+export function Zstrategy$isFiltered(value: Zstrategy$): boolean;
 
 export class HuffmanOnly extends _.CustomType {}
+export function Zstrategy$HuffmanOnly(): Zstrategy$;
+export function Zstrategy$isHuffmanOnly(value: Zstrategy$): boolean;
 
 export class Rle extends _.CustomType {}
+export function Zstrategy$Rle(): Zstrategy$;
+export function Zstrategy$isRle(value: Zstrategy$): boolean;
 
 export type Zstrategy$ = Default | Filtered | HuffmanOnly | Rle;
 

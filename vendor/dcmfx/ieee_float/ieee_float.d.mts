@@ -2,14 +2,16 @@ import type * as $order from "../gleam_stdlib/gleam/order.d.mts";
 import type * as _ from "./gleam.d.mts";
 
 declare class Finite extends _.CustomType {
+  /** @deprecated */
   constructor(value: number);
-  
+  /** @deprecated */
   value: number;
 }
 
 declare class Infinite extends _.CustomType {
+  /** @deprecated */
   constructor(sign: Sign$);
-  
+  /** @deprecated */
   sign: Sign$;
 }
 

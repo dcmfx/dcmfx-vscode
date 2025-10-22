@@ -18,6 +18,18 @@ export class DataSetPrintOptions extends $CustomType {
     this.max_width = max_width;
   }
 }
+export const DataSetPrintOptions$DataSetPrintOptions = (styled, max_width) =>
+  new DataSetPrintOptions(styled, max_width);
+export const DataSetPrintOptions$isDataSetPrintOptions = (value) =>
+  value instanceof DataSetPrintOptions;
+export const DataSetPrintOptions$DataSetPrintOptions$styled = (value) =>
+  value.styled;
+export const DataSetPrintOptions$DataSetPrintOptions$0 = (value) =>
+  value.styled;
+export const DataSetPrintOptions$DataSetPrintOptions$max_width = (value) =>
+  value.max_width;
+export const DataSetPrintOptions$DataSetPrintOptions$1 = (value) =>
+  value.max_width;
 
 /**
  * Constructs new data set print options and auto-detects output settings when

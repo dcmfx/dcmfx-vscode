@@ -22,6 +22,16 @@ export class StructuredTime extends $CustomType {
     this.second = second;
   }
 }
+export const StructuredTime$StructuredTime = (hour, minute, second) =>
+  new StructuredTime(hour, minute, second);
+export const StructuredTime$isStructuredTime = (value) =>
+  value instanceof StructuredTime;
+export const StructuredTime$StructuredTime$hour = (value) => value.hour;
+export const StructuredTime$StructuredTime$0 = (value) => value.hour;
+export const StructuredTime$StructuredTime$minute = (value) => value.minute;
+export const StructuredTime$StructuredTime$1 = (value) => value.minute;
+export const StructuredTime$StructuredTime$second = (value) => value.second;
+export const StructuredTime$StructuredTime$2 = (value) => value.second;
 
 /**
  * Converts a `Time` value into a structured time.

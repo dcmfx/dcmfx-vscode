@@ -25,6 +25,10 @@ import {
 export { to_string_tree };
 
 export class UnexpectedEndOfInput extends $CustomType {}
+export const DecodeError$UnexpectedEndOfInput = () =>
+  new UnexpectedEndOfInput();
+export const DecodeError$isUnexpectedEndOfInput = (value) =>
+  value instanceof UnexpectedEndOfInput;
 
 export class UnexpectedByte extends $CustomType {
   constructor($0) {
@@ -32,6 +36,10 @@ export class UnexpectedByte extends $CustomType {
     this[0] = $0;
   }
 }
+export const DecodeError$UnexpectedByte = ($0) => new UnexpectedByte($0);
+export const DecodeError$isUnexpectedByte = (value) =>
+  value instanceof UnexpectedByte;
+export const DecodeError$UnexpectedByte$0 = (value) => value[0];
 
 export class UnexpectedSequence extends $CustomType {
   constructor($0) {
@@ -39,6 +47,11 @@ export class UnexpectedSequence extends $CustomType {
     this[0] = $0;
   }
 }
+export const DecodeError$UnexpectedSequence = ($0) =>
+  new UnexpectedSequence($0);
+export const DecodeError$isUnexpectedSequence = (value) =>
+  value instanceof UnexpectedSequence;
+export const DecodeError$UnexpectedSequence$0 = (value) => value[0];
 
 export class UnableToDecode extends $CustomType {
   constructor($0) {
@@ -46,6 +59,10 @@ export class UnableToDecode extends $CustomType {
     this[0] = $0;
   }
 }
+export const DecodeError$UnableToDecode = ($0) => new UnableToDecode($0);
+export const DecodeError$isUnableToDecode = (value) =>
+  value instanceof UnableToDecode;
+export const DecodeError$UnableToDecode$0 = (value) => value[0];
 
 function do_parse(json, decoder) {
   return $result.then$(

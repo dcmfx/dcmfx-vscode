@@ -11,6 +11,24 @@ export class P10WriteConfig extends $CustomType {
     this.zlib_compression_level = zlib_compression_level;
   }
 }
+export const P10WriteConfig$P10WriteConfig = (implementation_class_uid, implementation_version_name, zlib_compression_level) =>
+  new P10WriteConfig(implementation_class_uid,
+  implementation_version_name,
+  zlib_compression_level);
+export const P10WriteConfig$isP10WriteConfig = (value) =>
+  value instanceof P10WriteConfig;
+export const P10WriteConfig$P10WriteConfig$implementation_class_uid = (value) =>
+  value.implementation_class_uid;
+export const P10WriteConfig$P10WriteConfig$0 = (value) =>
+  value.implementation_class_uid;
+export const P10WriteConfig$P10WriteConfig$implementation_version_name = (value) =>
+  value.implementation_version_name;
+export const P10WriteConfig$P10WriteConfig$1 = (value) =>
+  value.implementation_version_name;
+export const P10WriteConfig$P10WriteConfig$zlib_compression_level = (value) =>
+  value.zlib_compression_level;
+export const P10WriteConfig$P10WriteConfig$2 = (value) =>
+  value.zlib_compression_level;
 
 /**
  * Returns the default write config.

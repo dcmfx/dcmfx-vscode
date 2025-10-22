@@ -35,14 +35,29 @@ class ByteStream extends $CustomType {
 }
 
 export class ReadOversized extends $CustomType {}
+export const ByteStreamError$ReadOversized = () => new ReadOversized();
+export const ByteStreamError$isReadOversized = (value) =>
+  value instanceof ReadOversized;
 
 export class DataRequired extends $CustomType {}
+export const ByteStreamError$DataRequired = () => new DataRequired();
+export const ByteStreamError$isDataRequired = (value) =>
+  value instanceof DataRequired;
 
 export class DataEnd extends $CustomType {}
+export const ByteStreamError$DataEnd = () => new DataEnd();
+export const ByteStreamError$isDataEnd = (value) => value instanceof DataEnd;
 
 export class ZlibDataError extends $CustomType {}
+export const ByteStreamError$ZlibDataError = () => new ZlibDataError();
+export const ByteStreamError$isZlibDataError = (value) =>
+  value instanceof ZlibDataError;
 
 export class WriteAfterCompletion extends $CustomType {}
+export const ByteStreamError$WriteAfterCompletion = () =>
+  new WriteAfterCompletion();
+export const ByteStreamError$isWriteAfterCompletion = (value) =>
+  value instanceof WriteAfterCompletion;
 
 /**
  * Creates a new empty byte stream with the given maximum read size.

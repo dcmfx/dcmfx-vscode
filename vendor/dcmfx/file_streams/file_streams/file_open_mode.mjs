@@ -3,8 +3,12 @@ import * as $text_encoding from "../file_streams/text_encoding.mjs";
 import { CustomType as $CustomType } from "../gleam.mjs";
 
 export class Append extends $CustomType {}
+export const FileOpenMode$Append = () => new Append();
+export const FileOpenMode$isAppend = (value) => value instanceof Append;
 
 export class Binary extends $CustomType {}
+export const FileOpenMode$Binary = () => new Binary();
+export const FileOpenMode$isBinary = (value) => value instanceof Binary;
 
 /**
  * Data in subsequent `file_stream.write_*` calls are buffered until at least
@@ -40,6 +44,14 @@ export class DelayedWrite extends $CustomType {
     this.delay = delay;
   }
 }
+export const FileOpenMode$DelayedWrite = (size, delay) =>
+  new DelayedWrite(size, delay);
+export const FileOpenMode$isDelayedWrite = (value) =>
+  value instanceof DelayedWrite;
+export const FileOpenMode$DelayedWrite$size = (value) => value.size;
+export const FileOpenMode$DelayedWrite$0 = (value) => value.size;
+export const FileOpenMode$DelayedWrite$delay = (value) => value.delay;
+export const FileOpenMode$DelayedWrite$1 = (value) => value.delay;
 
 /**
  * Makes the file stream perform automatic translation of text to and from
@@ -64,12 +76,22 @@ export class Encoding extends $CustomType {
     this.encoding = encoding;
   }
 }
+export const FileOpenMode$Encoding = (encoding) => new Encoding(encoding);
+export const FileOpenMode$isEncoding = (value) => value instanceof Encoding;
+export const FileOpenMode$Encoding$encoding = (value) => value.encoding;
+export const FileOpenMode$Encoding$0 = (value) => value.encoding;
 
 export class Exclusive extends $CustomType {}
+export const FileOpenMode$Exclusive = () => new Exclusive();
+export const FileOpenMode$isExclusive = (value) => value instanceof Exclusive;
 
 export class Raw extends $CustomType {}
+export const FileOpenMode$Raw = () => new Raw();
+export const FileOpenMode$isRaw = (value) => value instanceof Raw;
 
 export class Read extends $CustomType {}
+export const FileOpenMode$Read = () => new Read();
+export const FileOpenMode$isRead = (value) => value instanceof Read;
 
 /**
  * Activates read data buffering. If `file_stream.read_*` calls are for
@@ -90,5 +112,11 @@ export class ReadAhead extends $CustomType {
     this.size = size;
   }
 }
+export const FileOpenMode$ReadAhead = (size) => new ReadAhead(size);
+export const FileOpenMode$isReadAhead = (value) => value instanceof ReadAhead;
+export const FileOpenMode$ReadAhead$size = (value) => value.size;
+export const FileOpenMode$ReadAhead$0 = (value) => value.size;
 
 export class Write extends $CustomType {}
+export const FileOpenMode$Write = () => new Write();
+export const FileOpenMode$isWrite = (value) => value instanceof Write;

@@ -8,6 +8,7 @@ import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 declare class DataSetBuilder extends _.CustomType {
+  /** @deprecated */
   constructor(
     file_preamble: $option.Option$<_.BitArray>,
     file_meta_information: $option.Option$<
@@ -20,29 +21,34 @@ declare class DataSetBuilder extends _.CustomType {
     pending_data_element: $option.Option$<PendingDataElement$>,
     is_complete: boolean
   );
-  
+  /** @deprecated */
   file_preamble: $option.Option$<_.BitArray>;
+  /** @deprecated */
   file_meta_information: $option.Option$<
     $dict.Dict$<
       $data_element_tag.DataElementTag$,
       $data_element_value.DataElementValue$
     >
   >;
+  /** @deprecated */
   location: _.List<BuilderLocation$>;
+  /** @deprecated */
   pending_data_element: $option.Option$<PendingDataElement$>;
+  /** @deprecated */
   is_complete: boolean;
 }
 
 export type DataSetBuilder$ = DataSetBuilder;
 
 declare class RootDataSet extends _.CustomType {
+  /** @deprecated */
   constructor(
     data_set: $dict.Dict$<
       $data_element_tag.DataElementTag$,
       $data_element_value.DataElementValue$
     >
   );
-  
+  /** @deprecated */
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -50,6 +56,7 @@ declare class RootDataSet extends _.CustomType {
 }
 
 declare class Sequence extends _.CustomType {
+  /** @deprecated */
   constructor(
     tag: $data_element_tag.DataElementTag$,
     items: _.List<
@@ -59,8 +66,9 @@ declare class Sequence extends _.CustomType {
       >
     >
   );
-  
+  /** @deprecated */
   tag: $data_element_tag.DataElementTag$;
+  /** @deprecated */
   items: _.List<
     $dict.Dict$<
       $data_element_tag.DataElementTag$,
@@ -70,13 +78,14 @@ declare class Sequence extends _.CustomType {
 }
 
 declare class SequenceItem extends _.CustomType {
+  /** @deprecated */
   constructor(
     data_set: $dict.Dict$<
       $data_element_tag.DataElementTag$,
       $data_element_value.DataElementValue$
     >
   );
-  
+  /** @deprecated */
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -84,26 +93,31 @@ declare class SequenceItem extends _.CustomType {
 }
 
 declare class EncapsulatedPixelDataSequence extends _.CustomType {
+  /** @deprecated */
   constructor(
     vr: $value_representation.ValueRepresentation$,
     items: _.List<_.BitArray>
   );
-  
+  /** @deprecated */
   vr: $value_representation.ValueRepresentation$;
+  /** @deprecated */
   items: _.List<_.BitArray>;
 }
 
 declare type BuilderLocation$ = RootDataSet | Sequence | SequenceItem | EncapsulatedPixelDataSequence;
 
 declare class PendingDataElement extends _.CustomType {
+  /** @deprecated */
   constructor(
     tag: $data_element_tag.DataElementTag$,
     vr: $value_representation.ValueRepresentation$,
     data: _.List<_.BitArray>
   );
-  
+  /** @deprecated */
   tag: $data_element_tag.DataElementTag$;
+  /** @deprecated */
   vr: $value_representation.ValueRepresentation$;
+  /** @deprecated */
   data: _.List<_.BitArray>;
 }
 

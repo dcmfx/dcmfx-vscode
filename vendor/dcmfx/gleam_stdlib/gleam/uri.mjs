@@ -36,6 +36,23 @@ export class Uri extends $CustomType {
     this.fragment = fragment;
   }
 }
+export const Uri$Uri = (scheme, userinfo, host, port, path, query, fragment) =>
+  new Uri(scheme, userinfo, host, port, path, query, fragment);
+export const Uri$isUri = (value) => value instanceof Uri;
+export const Uri$Uri$scheme = (value) => value.scheme;
+export const Uri$Uri$0 = (value) => value.scheme;
+export const Uri$Uri$userinfo = (value) => value.userinfo;
+export const Uri$Uri$1 = (value) => value.userinfo;
+export const Uri$Uri$host = (value) => value.host;
+export const Uri$Uri$2 = (value) => value.host;
+export const Uri$Uri$port = (value) => value.port;
+export const Uri$Uri$3 = (value) => value.port;
+export const Uri$Uri$path = (value) => value.path;
+export const Uri$Uri$4 = (value) => value.path;
+export const Uri$Uri$query = (value) => value.query;
+export const Uri$Uri$5 = (value) => value.query;
+export const Uri$Uri$fragment = (value) => value.fragment;
+export const Uri$Uri$6 = (value) => value.fragment;
 
 function is_valid_host_within_brackets_char(char) {
   return (((((48 >= char) && (char <= 57)) || ((65 >= char) && (char <= 90))) || ((97 >= char) && (char <= 122))) || (char === 58)) || (char === 46);
@@ -863,7 +880,7 @@ export function to_string(uri) {
   let _block$2;
   let $2 = uri.host;
   let $3 = $string.starts_with(uri.path, "/");
-  if (!$3 && $2 instanceof Some) {
+  if ($2 instanceof Some && !$3) {
     let host = $2[0];
     if (host !== "") {
       _block$2 = listPrepend("/", parts$2);
@@ -877,7 +894,7 @@ export function to_string(uri) {
   let _block$3;
   let $4 = uri.host;
   let $5 = uri.port;
-  if ($5 instanceof Some && $4 instanceof Some) {
+  if ($4 instanceof Some && $5 instanceof Some) {
     let port = $5[0];
     _block$3 = listPrepend(":", listPrepend($int.to_string(port), parts$3));
   } else {
@@ -888,12 +905,12 @@ export function to_string(uri) {
   let $6 = uri.scheme;
   let $7 = uri.userinfo;
   let $8 = uri.host;
-  if ($8 instanceof Some) {
+  if ($6 instanceof Some) {
     if ($7 instanceof Some) {
-      if ($6 instanceof Some) {
-        let h = $8[0];
-        let u = $7[0];
+      if ($8 instanceof Some) {
         let s = $6[0];
+        let u = $7[0];
+        let h = $8[0];
         _block$4 = listPrepend(
           s,
           listPrepend(
@@ -902,26 +919,20 @@ export function to_string(uri) {
           ),
         );
       } else {
-        _block$4 = parts$4;
+        let s = $6[0];
+        _block$4 = listPrepend(s, listPrepend(":", parts$4));
       }
-    } else if ($6 instanceof Some) {
-      let h = $8[0];
+    } else if ($8 instanceof Some) {
       let s = $6[0];
+      let h = $8[0];
       _block$4 = listPrepend(s, listPrepend("://", listPrepend(h, parts$4)));
     } else {
-      let h = $8[0];
-      _block$4 = listPrepend("//", listPrepend(h, parts$4));
-    }
-  } else if ($7 instanceof Some) {
-    if ($6 instanceof Some) {
       let s = $6[0];
       _block$4 = listPrepend(s, listPrepend(":", parts$4));
-    } else {
-      _block$4 = parts$4;
     }
-  } else if ($6 instanceof Some) {
-    let s = $6[0];
-    _block$4 = listPrepend(s, listPrepend(":", parts$4));
+  } else if ($7 instanceof None && $8 instanceof Some) {
+    let h = $8[0];
+    _block$4 = listPrepend("//", listPrepend(h, parts$4));
   } else {
     _block$4 = parts$4;
   }
@@ -953,7 +964,7 @@ export function origin(uri) {
   scheme = uri.scheme;
   host = uri.host;
   port = uri.port;
-  if (scheme instanceof Some && host instanceof Some) {
+  if (host instanceof Some && scheme instanceof Some) {
     let $ = scheme[0];
     if ($ === "https" && isEqual(port, new Some(443))) {
       let h = host[0];
@@ -998,9 +1009,9 @@ function join_segments(segments) {
  * [RFC 3986](https://tools.ietf.org/html/rfc3986#section-5.2).
  */
 export function merge(base, relative) {
-  let $ = base.host;
+  let $ = base.scheme;
   if ($ instanceof Some) {
-    let $1 = base.scheme;
+    let $1 = base.host;
     if ($1 instanceof Some) {
       let $2 = relative.host;
       if ($2 instanceof Some) {

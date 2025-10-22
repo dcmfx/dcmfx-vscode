@@ -19,6 +19,13 @@ export class Match extends $CustomType {
     this.submatches = submatches;
   }
 }
+export const Match$Match = (content, submatches) =>
+  new Match(content, submatches);
+export const Match$isMatch = (value) => value instanceof Match;
+export const Match$Match$content = (value) => value.content;
+export const Match$Match$0 = (value) => value.content;
+export const Match$Match$submatches = (value) => value.submatches;
+export const Match$Match$1 = (value) => value.submatches;
 
 export class CompileError extends $CustomType {
   constructor(error, byte_index) {
@@ -27,6 +34,14 @@ export class CompileError extends $CustomType {
     this.byte_index = byte_index;
   }
 }
+export const CompileError$CompileError = (error, byte_index) =>
+  new CompileError(error, byte_index);
+export const CompileError$isCompileError = (value) =>
+  value instanceof CompileError;
+export const CompileError$CompileError$error = (value) => value.error;
+export const CompileError$CompileError$0 = (value) => value.error;
+export const CompileError$CompileError$byte_index = (value) => value.byte_index;
+export const CompileError$CompileError$1 = (value) => value.byte_index;
 
 export class Options extends $CustomType {
   constructor(case_insensitive, multi_line) {
@@ -35,6 +50,14 @@ export class Options extends $CustomType {
     this.multi_line = multi_line;
   }
 }
+export const Options$Options = (case_insensitive, multi_line) =>
+  new Options(case_insensitive, multi_line);
+export const Options$isOptions = (value) => value instanceof Options;
+export const Options$Options$case_insensitive = (value) =>
+  value.case_insensitive;
+export const Options$Options$0 = (value) => value.case_insensitive;
+export const Options$Options$multi_line = (value) => value.multi_line;
+export const Options$Options$1 = (value) => value.multi_line;
 
 /**
  * Creates a `Regexp` with some additional options.

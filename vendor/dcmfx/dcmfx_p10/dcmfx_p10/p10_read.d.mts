@@ -14,6 +14,7 @@ import type * as $p10_token from "../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 declare class P10ReadContext extends _.CustomType {
+  /** @deprecated */
   constructor(
     config: $p10_read_config.P10ReadConfig$,
     stream: $byte_stream.ByteStream$,
@@ -23,13 +24,19 @@ declare class P10ReadContext extends _.CustomType {
     location: _.List<$p10_location.LocationEntry$>,
     has_emitted_specific_character_set_data_element: boolean
   );
-  
+  /** @deprecated */
   config: $p10_read_config.P10ReadConfig$;
+  /** @deprecated */
   stream: $byte_stream.ByteStream$;
+  /** @deprecated */
   next_action: NextAction$;
+  /** @deprecated */
   transfer_syntax: $transfer_syntax.TransferSyntax$;
+  /** @deprecated */
   path: $data_set_path.DataSetPath$;
+  /** @deprecated */
   location: _.List<$p10_location.LocationEntry$>;
+  /** @deprecated */
   has_emitted_specific_character_set_data_element: boolean;
 }
 
@@ -38,14 +45,16 @@ export type P10ReadContext$ = P10ReadContext;
 declare class ReadFilePreambleAndDICMPrefix extends _.CustomType {}
 
 declare class ReadFileMetaInformation extends _.CustomType {
+  /** @deprecated */
   constructor(starts_at: number);
-  
+  /** @deprecated */
   starts_at: number;
 }
 
 declare class ReadDataElementHeader extends _.CustomType {}
 
 declare class ReadDataElementValueBytes extends _.CustomType {
+  /** @deprecated */
   constructor(
     tag: $data_element_tag.DataElementTag$,
     vr: $value_representation.ValueRepresentation$,
@@ -53,17 +62,22 @@ declare class ReadDataElementValueBytes extends _.CustomType {
     bytes_remaining: number,
     emit_tokens: boolean
   );
-  
+  /** @deprecated */
   tag: $data_element_tag.DataElementTag$;
+  /** @deprecated */
   vr: $value_representation.ValueRepresentation$;
+  /** @deprecated */
   length: number;
+  /** @deprecated */
   bytes_remaining: number;
+  /** @deprecated */
   emit_tokens: boolean;
 }
 
 declare class ReadPixelDataItem extends _.CustomType {
+  /** @deprecated */
   constructor(vr: $value_representation.ValueRepresentation$);
-  
+  /** @deprecated */
   vr: $value_representation.ValueRepresentation$;
 }
 

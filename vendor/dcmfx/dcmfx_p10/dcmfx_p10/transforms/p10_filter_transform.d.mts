@@ -7,6 +7,7 @@ import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class P10FilterTransform extends _.CustomType {
+  /** @deprecated */
   constructor(
     predicate: (
       x0: $data_element_tag.DataElementTag$,
@@ -16,13 +17,14 @@ declare class P10FilterTransform extends _.CustomType {
     ) => boolean,
     path_filter_results: _.List<boolean>
   );
-  
+  /** @deprecated */
   predicate: (
     x0: $data_element_tag.DataElementTag$,
     x1: $value_representation.ValueRepresentation$,
     x2: $option.Option$<number>,
     x3: $data_set_path.DataSetPath$
   ) => boolean;
+  /** @deprecated */
   path_filter_results: _.List<boolean>;
 }
 

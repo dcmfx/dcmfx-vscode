@@ -858,7 +858,188 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
       ints,
       (ints) => {
         let $ = $dictionary.is_lut_descriptor_tag(tag);
-        if (ints instanceof $Empty) {
+        if ($) {
+          if (ints instanceof $Empty) {
+            let _block$1;
+            if (vr instanceof $value_representation.SignedShort) {
+              _block$1 = [-1 * 0x8000, 0x7FFF];
+            } else {
+              _block$1 = [0, 0xFFFF];
+            }
+            let $1 = _block$1;
+            let min;
+            let max;
+            min = $1[0];
+            max = $1[1];
+            let is_valid = $list.all(
+              ints,
+              (i) => { return (i >= min) && (i <= max); },
+            );
+            return $bool.guard(
+              !is_valid,
+              new Error(
+                new $json_error.JsonInvalid("Short value is out of range", path),
+              ),
+              () => {
+                let _pipe$2 = ints;
+                let _pipe$3 = $list.map(
+                  _pipe$2,
+                  (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                );
+                let _pipe$4 = $bit_array.concat(_pipe$3);
+                let _pipe$5 = ((_capture) => {
+                  return $data_element_value.new_binary_unchecked(vr, _capture);
+                })(_pipe$4);
+                return new Ok(_pipe$5);
+              },
+            );
+          } else {
+            let $1 = ints.tail;
+            if ($1 instanceof $Empty) {
+              let _block$1;
+              if (vr instanceof $value_representation.SignedShort) {
+                _block$1 = [-1 * 0x8000, 0x7FFF];
+              } else {
+                _block$1 = [0, 0xFFFF];
+              }
+              let $2 = _block$1;
+              let min;
+              let max;
+              min = $2[0];
+              max = $2[1];
+              let is_valid = $list.all(
+                ints,
+                (i) => { return (i >= min) && (i <= max); },
+              );
+              return $bool.guard(
+                !is_valid,
+                new Error(
+                  new $json_error.JsonInvalid(
+                    "Short value is out of range",
+                    path,
+                  ),
+                ),
+                () => {
+                  let _pipe$2 = ints;
+                  let _pipe$3 = $list.map(
+                    _pipe$2,
+                    (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                  );
+                  let _pipe$4 = $bit_array.concat(_pipe$3);
+                  let _pipe$5 = ((_capture) => {
+                    return $data_element_value.new_binary_unchecked(
+                      vr,
+                      _capture,
+                    );
+                  })(_pipe$4);
+                  return new Ok(_pipe$5);
+                },
+              );
+            } else {
+              let $2 = $1.tail;
+              if ($2 instanceof $Empty) {
+                let _block$1;
+                if (vr instanceof $value_representation.SignedShort) {
+                  _block$1 = [-1 * 0x8000, 0x7FFF];
+                } else {
+                  _block$1 = [0, 0xFFFF];
+                }
+                let $3 = _block$1;
+                let min;
+                let max;
+                min = $3[0];
+                max = $3[1];
+                let is_valid = $list.all(
+                  ints,
+                  (i) => { return (i >= min) && (i <= max); },
+                );
+                return $bool.guard(
+                  !is_valid,
+                  new Error(
+                    new $json_error.JsonInvalid(
+                      "Short value is out of range",
+                      path,
+                    ),
+                  ),
+                  () => {
+                    let _pipe$2 = ints;
+                    let _pipe$3 = $list.map(
+                      _pipe$2,
+                      (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                    );
+                    let _pipe$4 = $bit_array.concat(_pipe$3);
+                    let _pipe$5 = ((_capture) => {
+                      return $data_element_value.new_binary_unchecked(
+                        vr,
+                        _capture,
+                      );
+                    })(_pipe$4);
+                    return new Ok(_pipe$5);
+                  },
+                );
+              } else {
+                let $3 = $2.tail;
+                if ($3 instanceof $Empty) {
+                  let entry_count = ints.head;
+                  let first_input_value = $1.head;
+                  let bits_per_entry = $2.head;
+                  let _pipe$2 = toBitArray([
+                    sizedInt(entry_count, 16, false),
+                    sizedInt(first_input_value, 16, false),
+                    sizedInt(bits_per_entry, 16, false),
+                  ]);
+                  let _pipe$3 = ((_capture) => {
+                    return $data_element_value.new_lookup_table_descriptor_unchecked(
+                      vr,
+                      _capture,
+                    );
+                  })(_pipe$2);
+                  return new Ok(_pipe$3);
+                } else {
+                  let _block$1;
+                  if (vr instanceof $value_representation.SignedShort) {
+                    _block$1 = [-1 * 0x8000, 0x7FFF];
+                  } else {
+                    _block$1 = [0, 0xFFFF];
+                  }
+                  let $4 = _block$1;
+                  let min;
+                  let max;
+                  min = $4[0];
+                  max = $4[1];
+                  let is_valid = $list.all(
+                    ints,
+                    (i) => { return (i >= min) && (i <= max); },
+                  );
+                  return $bool.guard(
+                    !is_valid,
+                    new Error(
+                      new $json_error.JsonInvalid(
+                        "Short value is out of range",
+                        path,
+                      ),
+                    ),
+                    () => {
+                      let _pipe$2 = ints;
+                      let _pipe$3 = $list.map(
+                        _pipe$2,
+                        (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                      );
+                      let _pipe$4 = $bit_array.concat(_pipe$3);
+                      let _pipe$5 = ((_capture) => {
+                        return $data_element_value.new_binary_unchecked(
+                          vr,
+                          _capture,
+                        );
+                      })(_pipe$4);
+                      return new Ok(_pipe$5);
+                    },
+                  );
+                }
+              }
+            }
+          }
+        } else {
           let _block$1;
           if (vr instanceof $value_representation.SignedShort) {
             _block$1 = [-1 * 0x8000, 0x7FFF];
@@ -892,145 +1073,6 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
               return new Ok(_pipe$5);
             },
           );
-        } else {
-          let $1 = ints.tail;
-          if ($1 instanceof $Empty) {
-            let _block$1;
-            if (vr instanceof $value_representation.SignedShort) {
-              _block$1 = [-1 * 0x8000, 0x7FFF];
-            } else {
-              _block$1 = [0, 0xFFFF];
-            }
-            let $2 = _block$1;
-            let min;
-            let max;
-            min = $2[0];
-            max = $2[1];
-            let is_valid = $list.all(
-              ints,
-              (i) => { return (i >= min) && (i <= max); },
-            );
-            return $bool.guard(
-              !is_valid,
-              new Error(
-                new $json_error.JsonInvalid("Short value is out of range", path),
-              ),
-              () => {
-                let _pipe$2 = ints;
-                let _pipe$3 = $list.map(
-                  _pipe$2,
-                  (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-                );
-                let _pipe$4 = $bit_array.concat(_pipe$3);
-                let _pipe$5 = ((_capture) => {
-                  return $data_element_value.new_binary_unchecked(vr, _capture);
-                })(_pipe$4);
-                return new Ok(_pipe$5);
-              },
-            );
-          } else {
-            let $2 = $1.tail;
-            if ($2 instanceof $Empty) {
-              let _block$1;
-              if (vr instanceof $value_representation.SignedShort) {
-                _block$1 = [-1 * 0x8000, 0x7FFF];
-              } else {
-                _block$1 = [0, 0xFFFF];
-              }
-              let $3 = _block$1;
-              let min;
-              let max;
-              min = $3[0];
-              max = $3[1];
-              let is_valid = $list.all(
-                ints,
-                (i) => { return (i >= min) && (i <= max); },
-              );
-              return $bool.guard(
-                !is_valid,
-                new Error(
-                  new $json_error.JsonInvalid(
-                    "Short value is out of range",
-                    path,
-                  ),
-                ),
-                () => {
-                  let _pipe$2 = ints;
-                  let _pipe$3 = $list.map(
-                    _pipe$2,
-                    (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-                  );
-                  let _pipe$4 = $bit_array.concat(_pipe$3);
-                  let _pipe$5 = ((_capture) => {
-                    return $data_element_value.new_binary_unchecked(
-                      vr,
-                      _capture,
-                    );
-                  })(_pipe$4);
-                  return new Ok(_pipe$5);
-                },
-              );
-            } else {
-              let $3 = $2.tail;
-              if ($3 instanceof $Empty && $) {
-                let entry_count = ints.head;
-                let first_input_value = $1.head;
-                let bits_per_entry = $2.head;
-                let _pipe$2 = toBitArray([
-                  sizedInt(entry_count, 16, false),
-                  sizedInt(first_input_value, 16, false),
-                  sizedInt(bits_per_entry, 16, false),
-                ]);
-                let _pipe$3 = ((_capture) => {
-                  return $data_element_value.new_lookup_table_descriptor_unchecked(
-                    vr,
-                    _capture,
-                  );
-                })(_pipe$2);
-                return new Ok(_pipe$3);
-              } else {
-                let _block$1;
-                if (vr instanceof $value_representation.SignedShort) {
-                  _block$1 = [-1 * 0x8000, 0x7FFF];
-                } else {
-                  _block$1 = [0, 0xFFFF];
-                }
-                let $4 = _block$1;
-                let min;
-                let max;
-                min = $4[0];
-                max = $4[1];
-                let is_valid = $list.all(
-                  ints,
-                  (i) => { return (i >= min) && (i <= max); },
-                );
-                return $bool.guard(
-                  !is_valid,
-                  new Error(
-                    new $json_error.JsonInvalid(
-                      "Short value is out of range",
-                      path,
-                    ),
-                  ),
-                  () => {
-                    let _pipe$2 = ints;
-                    let _pipe$3 = $list.map(
-                      _pipe$2,
-                      (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-                    );
-                    let _pipe$4 = $bit_array.concat(_pipe$3);
-                    let _pipe$5 = ((_capture) => {
-                      return $data_element_value.new_binary_unchecked(
-                        vr,
-                        _capture,
-                      );
-                    })(_pipe$4);
-                    return new Ok(_pipe$5);
-                  },
-                );
-              }
-            }
-          }
         }
       },
     );
@@ -1327,7 +1369,188 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
       ints,
       (ints) => {
         let $ = $dictionary.is_lut_descriptor_tag(tag);
-        if (ints instanceof $Empty) {
+        if ($) {
+          if (ints instanceof $Empty) {
+            let _block$1;
+            if (vr instanceof $value_representation.SignedShort) {
+              _block$1 = [-1 * 0x8000, 0x7FFF];
+            } else {
+              _block$1 = [0, 0xFFFF];
+            }
+            let $1 = _block$1;
+            let min;
+            let max;
+            min = $1[0];
+            max = $1[1];
+            let is_valid = $list.all(
+              ints,
+              (i) => { return (i >= min) && (i <= max); },
+            );
+            return $bool.guard(
+              !is_valid,
+              new Error(
+                new $json_error.JsonInvalid("Short value is out of range", path),
+              ),
+              () => {
+                let _pipe$2 = ints;
+                let _pipe$3 = $list.map(
+                  _pipe$2,
+                  (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                );
+                let _pipe$4 = $bit_array.concat(_pipe$3);
+                let _pipe$5 = ((_capture) => {
+                  return $data_element_value.new_binary_unchecked(vr, _capture);
+                })(_pipe$4);
+                return new Ok(_pipe$5);
+              },
+            );
+          } else {
+            let $1 = ints.tail;
+            if ($1 instanceof $Empty) {
+              let _block$1;
+              if (vr instanceof $value_representation.SignedShort) {
+                _block$1 = [-1 * 0x8000, 0x7FFF];
+              } else {
+                _block$1 = [0, 0xFFFF];
+              }
+              let $2 = _block$1;
+              let min;
+              let max;
+              min = $2[0];
+              max = $2[1];
+              let is_valid = $list.all(
+                ints,
+                (i) => { return (i >= min) && (i <= max); },
+              );
+              return $bool.guard(
+                !is_valid,
+                new Error(
+                  new $json_error.JsonInvalid(
+                    "Short value is out of range",
+                    path,
+                  ),
+                ),
+                () => {
+                  let _pipe$2 = ints;
+                  let _pipe$3 = $list.map(
+                    _pipe$2,
+                    (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                  );
+                  let _pipe$4 = $bit_array.concat(_pipe$3);
+                  let _pipe$5 = ((_capture) => {
+                    return $data_element_value.new_binary_unchecked(
+                      vr,
+                      _capture,
+                    );
+                  })(_pipe$4);
+                  return new Ok(_pipe$5);
+                },
+              );
+            } else {
+              let $2 = $1.tail;
+              if ($2 instanceof $Empty) {
+                let _block$1;
+                if (vr instanceof $value_representation.SignedShort) {
+                  _block$1 = [-1 * 0x8000, 0x7FFF];
+                } else {
+                  _block$1 = [0, 0xFFFF];
+                }
+                let $3 = _block$1;
+                let min;
+                let max;
+                min = $3[0];
+                max = $3[1];
+                let is_valid = $list.all(
+                  ints,
+                  (i) => { return (i >= min) && (i <= max); },
+                );
+                return $bool.guard(
+                  !is_valid,
+                  new Error(
+                    new $json_error.JsonInvalid(
+                      "Short value is out of range",
+                      path,
+                    ),
+                  ),
+                  () => {
+                    let _pipe$2 = ints;
+                    let _pipe$3 = $list.map(
+                      _pipe$2,
+                      (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                    );
+                    let _pipe$4 = $bit_array.concat(_pipe$3);
+                    let _pipe$5 = ((_capture) => {
+                      return $data_element_value.new_binary_unchecked(
+                        vr,
+                        _capture,
+                      );
+                    })(_pipe$4);
+                    return new Ok(_pipe$5);
+                  },
+                );
+              } else {
+                let $3 = $2.tail;
+                if ($3 instanceof $Empty) {
+                  let entry_count = ints.head;
+                  let first_input_value = $1.head;
+                  let bits_per_entry = $2.head;
+                  let _pipe$2 = toBitArray([
+                    sizedInt(entry_count, 16, false),
+                    sizedInt(first_input_value, 16, false),
+                    sizedInt(bits_per_entry, 16, false),
+                  ]);
+                  let _pipe$3 = ((_capture) => {
+                    return $data_element_value.new_lookup_table_descriptor_unchecked(
+                      vr,
+                      _capture,
+                    );
+                  })(_pipe$2);
+                  return new Ok(_pipe$3);
+                } else {
+                  let _block$1;
+                  if (vr instanceof $value_representation.SignedShort) {
+                    _block$1 = [-1 * 0x8000, 0x7FFF];
+                  } else {
+                    _block$1 = [0, 0xFFFF];
+                  }
+                  let $4 = _block$1;
+                  let min;
+                  let max;
+                  min = $4[0];
+                  max = $4[1];
+                  let is_valid = $list.all(
+                    ints,
+                    (i) => { return (i >= min) && (i <= max); },
+                  );
+                  return $bool.guard(
+                    !is_valid,
+                    new Error(
+                      new $json_error.JsonInvalid(
+                        "Short value is out of range",
+                        path,
+                      ),
+                    ),
+                    () => {
+                      let _pipe$2 = ints;
+                      let _pipe$3 = $list.map(
+                        _pipe$2,
+                        (i) => { return toBitArray([sizedInt(i, 16, false)]); },
+                      );
+                      let _pipe$4 = $bit_array.concat(_pipe$3);
+                      let _pipe$5 = ((_capture) => {
+                        return $data_element_value.new_binary_unchecked(
+                          vr,
+                          _capture,
+                        );
+                      })(_pipe$4);
+                      return new Ok(_pipe$5);
+                    },
+                  );
+                }
+              }
+            }
+          }
+        } else {
           let _block$1;
           if (vr instanceof $value_representation.SignedShort) {
             _block$1 = [-1 * 0x8000, 0x7FFF];
@@ -1361,145 +1584,6 @@ function read_dicom_json_primitive_value(tag, vr, value, path) {
               return new Ok(_pipe$5);
             },
           );
-        } else {
-          let $1 = ints.tail;
-          if ($1 instanceof $Empty) {
-            let _block$1;
-            if (vr instanceof $value_representation.SignedShort) {
-              _block$1 = [-1 * 0x8000, 0x7FFF];
-            } else {
-              _block$1 = [0, 0xFFFF];
-            }
-            let $2 = _block$1;
-            let min;
-            let max;
-            min = $2[0];
-            max = $2[1];
-            let is_valid = $list.all(
-              ints,
-              (i) => { return (i >= min) && (i <= max); },
-            );
-            return $bool.guard(
-              !is_valid,
-              new Error(
-                new $json_error.JsonInvalid("Short value is out of range", path),
-              ),
-              () => {
-                let _pipe$2 = ints;
-                let _pipe$3 = $list.map(
-                  _pipe$2,
-                  (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-                );
-                let _pipe$4 = $bit_array.concat(_pipe$3);
-                let _pipe$5 = ((_capture) => {
-                  return $data_element_value.new_binary_unchecked(vr, _capture);
-                })(_pipe$4);
-                return new Ok(_pipe$5);
-              },
-            );
-          } else {
-            let $2 = $1.tail;
-            if ($2 instanceof $Empty) {
-              let _block$1;
-              if (vr instanceof $value_representation.SignedShort) {
-                _block$1 = [-1 * 0x8000, 0x7FFF];
-              } else {
-                _block$1 = [0, 0xFFFF];
-              }
-              let $3 = _block$1;
-              let min;
-              let max;
-              min = $3[0];
-              max = $3[1];
-              let is_valid = $list.all(
-                ints,
-                (i) => { return (i >= min) && (i <= max); },
-              );
-              return $bool.guard(
-                !is_valid,
-                new Error(
-                  new $json_error.JsonInvalid(
-                    "Short value is out of range",
-                    path,
-                  ),
-                ),
-                () => {
-                  let _pipe$2 = ints;
-                  let _pipe$3 = $list.map(
-                    _pipe$2,
-                    (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-                  );
-                  let _pipe$4 = $bit_array.concat(_pipe$3);
-                  let _pipe$5 = ((_capture) => {
-                    return $data_element_value.new_binary_unchecked(
-                      vr,
-                      _capture,
-                    );
-                  })(_pipe$4);
-                  return new Ok(_pipe$5);
-                },
-              );
-            } else {
-              let $3 = $2.tail;
-              if ($3 instanceof $Empty && $) {
-                let entry_count = ints.head;
-                let first_input_value = $1.head;
-                let bits_per_entry = $2.head;
-                let _pipe$2 = toBitArray([
-                  sizedInt(entry_count, 16, false),
-                  sizedInt(first_input_value, 16, false),
-                  sizedInt(bits_per_entry, 16, false),
-                ]);
-                let _pipe$3 = ((_capture) => {
-                  return $data_element_value.new_lookup_table_descriptor_unchecked(
-                    vr,
-                    _capture,
-                  );
-                })(_pipe$2);
-                return new Ok(_pipe$3);
-              } else {
-                let _block$1;
-                if (vr instanceof $value_representation.SignedShort) {
-                  _block$1 = [-1 * 0x8000, 0x7FFF];
-                } else {
-                  _block$1 = [0, 0xFFFF];
-                }
-                let $4 = _block$1;
-                let min;
-                let max;
-                min = $4[0];
-                max = $4[1];
-                let is_valid = $list.all(
-                  ints,
-                  (i) => { return (i >= min) && (i <= max); },
-                );
-                return $bool.guard(
-                  !is_valid,
-                  new Error(
-                    new $json_error.JsonInvalid(
-                      "Short value is out of range",
-                      path,
-                    ),
-                  ),
-                  () => {
-                    let _pipe$2 = ints;
-                    let _pipe$3 = $list.map(
-                      _pipe$2,
-                      (i) => { return toBitArray([sizedInt(i, 16, false)]); },
-                    );
-                    let _pipe$4 = $bit_array.concat(_pipe$3);
-                    let _pipe$5 = ((_capture) => {
-                      return $data_element_value.new_binary_unchecked(
-                        vr,
-                        _capture,
-                      );
-                    })(_pipe$4);
-                    return new Ok(_pipe$5);
-                  },
-                );
-              }
-            }
-          }
         }
       },
     );

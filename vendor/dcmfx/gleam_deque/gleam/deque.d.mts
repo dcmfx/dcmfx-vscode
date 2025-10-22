@@ -1,44 +1,46 @@
 import type * as _ from "../gleam.d.mts";
 
-declare class Deque<BXFD> extends _.CustomType {
+declare class Deque<BWZN> extends _.CustomType {
+  /** @deprecated */
   constructor(in$: _.List<any>, out: _.List<any>);
-  
+  /** @deprecated */
   in$: _.List<any>;
+  /** @deprecated */
   out: _.List<any>;
 }
 
-export type Deque$<BXFD> = Deque<BXFD>;
+export type Deque$<BWZN> = Deque<BWZN>;
 
 export function new$(): Deque$<any>;
 
-export function from_list<BXFG>(list: _.List<BXFG>): Deque$<BXFG>;
+export function from_list<BWZQ>(list: _.List<BWZQ>): Deque$<BWZQ>;
 
-export function to_list<BXFJ>(deque: Deque$<BXFJ>): _.List<BXFJ>;
+export function to_list<BWZT>(deque: Deque$<BWZT>): _.List<BWZT>;
 
 export function is_empty(deque: Deque$<any>): boolean;
 
 export function length(deque: Deque$<any>): number;
 
-export function push_back<BXFQ>(deque: Deque$<BXFQ>, item: BXFQ): Deque$<BXFQ>;
+export function push_back<BXAA>(deque: Deque$<BXAA>, item: BXAA): Deque$<BXAA>;
 
-export function push_front<BXFT>(deque: Deque$<BXFT>, item: BXFT): Deque$<BXFT>;
+export function push_front<BXAD>(deque: Deque$<BXAD>, item: BXAD): Deque$<BXAD>;
 
-export function pop_back<BXFW>(deque: Deque$<BXFW>): _.Result<
-  [BXFW, Deque$<BXFW>],
+export function pop_back<BXAG>(deque: Deque$<BXAG>): _.Result<
+  [BXAG, Deque$<BXAG>],
   undefined
 >;
 
-export function pop_front<BXGB>(deque: Deque$<BXGB>): _.Result<
-  [BXGB, Deque$<BXGB>],
+export function pop_front<BXAL>(deque: Deque$<BXAL>): _.Result<
+  [BXAL, Deque$<BXAL>],
   undefined
 >;
 
-export function reverse<BXGG>(deque: Deque$<BXGG>): Deque$<BXGG>;
+export function reverse<BXAQ>(deque: Deque$<BXAQ>): Deque$<BXAQ>;
 
-export function is_logically_equal<BXGJ>(
-  a: Deque$<BXGJ>,
-  b: Deque$<BXGJ>,
-  element_is_equal: (x0: BXGJ, x1: BXGJ) => boolean
+export function is_logically_equal<BXAT>(
+  a: Deque$<BXAT>,
+  b: Deque$<BXAT>,
+  element_is_equal: (x0: BXAT, x1: BXAT) => boolean
 ): boolean;
 
-export function is_equal<BXGR>(a: Deque$<BXGR>, b: Deque$<BXGR>): boolean;
+export function is_equal<BXBB>(a: Deque$<BXBB>, b: Deque$<BXBB>): boolean;

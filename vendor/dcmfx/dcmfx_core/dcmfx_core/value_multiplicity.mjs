@@ -11,6 +11,14 @@ export class ValueMultiplicity extends $CustomType {
     this.max = max;
   }
 }
+export const ValueMultiplicity$ValueMultiplicity = (min, max) =>
+  new ValueMultiplicity(min, max);
+export const ValueMultiplicity$isValueMultiplicity = (value) =>
+  value instanceof ValueMultiplicity;
+export const ValueMultiplicity$ValueMultiplicity$min = (value) => value.min;
+export const ValueMultiplicity$ValueMultiplicity$0 = (value) => value.min;
+export const ValueMultiplicity$ValueMultiplicity$max = (value) => value.max;
+export const ValueMultiplicity$ValueMultiplicity$1 = (value) => value.max;
 
 /**
  * Returns whether the given value lies in the range specified by this value

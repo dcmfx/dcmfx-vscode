@@ -1,18 +1,27 @@
 import type * as _ from "../gleam.d.mts";
 
 export class VrImplicit extends _.CustomType {}
+export function VrSerialization$VrImplicit(): VrSerialization$;
+export function VrSerialization$isVrImplicit(value: VrSerialization$): boolean;
 
 export class VrExplicit extends _.CustomType {}
+export function VrSerialization$VrExplicit(): VrSerialization$;
+export function VrSerialization$isVrExplicit(value: VrSerialization$): boolean;
 
 export type VrSerialization$ = VrImplicit | VrExplicit;
 
 export class LittleEndian extends _.CustomType {}
+export function Endianness$LittleEndian(): Endianness$;
+export function Endianness$isLittleEndian(value: Endianness$): boolean;
 
 export class BigEndian extends _.CustomType {}
+export function Endianness$BigEndian(): Endianness$;
+export function Endianness$isBigEndian(value: Endianness$): boolean;
 
 export type Endianness$ = LittleEndian | BigEndian;
 
 export class TransferSyntax extends _.CustomType {
+  /** @deprecated */
   constructor(
     name: string,
     uid: string,
@@ -21,14 +30,52 @@ export class TransferSyntax extends _.CustomType {
     is_deflated: boolean,
     is_encapsulated: boolean
   );
-  
+  /** @deprecated */
   name: string;
+  /** @deprecated */
   uid: string;
+  /** @deprecated */
   vr_serialization: VrSerialization$;
+  /** @deprecated */
   endianness: Endianness$;
+  /** @deprecated */
   is_deflated: boolean;
+  /** @deprecated */
   is_encapsulated: boolean;
 }
+export function TransferSyntax$TransferSyntax(
+  name: string,
+  uid: string,
+  vr_serialization: VrSerialization$,
+  endianness: Endianness$,
+  is_deflated: boolean,
+  is_encapsulated: boolean,
+): TransferSyntax$;
+export function TransferSyntax$isTransferSyntax(
+  value: TransferSyntax$,
+): boolean;
+export function TransferSyntax$TransferSyntax$0(value: TransferSyntax$): string;
+export function TransferSyntax$TransferSyntax$name(value: TransferSyntax$): string;
+export function TransferSyntax$TransferSyntax$1(
+  value: TransferSyntax$,
+): string;
+export function TransferSyntax$TransferSyntax$uid(value: TransferSyntax$): string;
+export function TransferSyntax$TransferSyntax$2(
+  value: TransferSyntax$,
+): VrSerialization$;
+export function TransferSyntax$TransferSyntax$vr_serialization(value: TransferSyntax$): VrSerialization$;
+export function TransferSyntax$TransferSyntax$3(
+  value: TransferSyntax$,
+): Endianness$;
+export function TransferSyntax$TransferSyntax$endianness(value: TransferSyntax$): Endianness$;
+export function TransferSyntax$TransferSyntax$4(
+  value: TransferSyntax$,
+): boolean;
+export function TransferSyntax$TransferSyntax$is_deflated(value: TransferSyntax$): boolean;
+export function TransferSyntax$TransferSyntax$5(
+  value: TransferSyntax$,
+): boolean;
+export function TransferSyntax$TransferSyntax$is_encapsulated(value: TransferSyntax$): boolean;
 
 export type TransferSyntax$ = TransferSyntax;
 

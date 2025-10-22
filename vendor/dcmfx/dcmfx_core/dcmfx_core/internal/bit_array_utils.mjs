@@ -110,7 +110,6 @@ function do_to_list(
   loop$item_size,
   loop$read_item,
   loop$i,
-  loop$item_count,
   loop$acc
 ) {
   while (true) {
@@ -118,7 +117,6 @@ function do_to_list(
     let item_size = loop$item_size;
     let read_item = loop$read_item;
     let i = loop$i;
-    let item_count = loop$item_count;
     let acc = loop$acc;
     if (i === -1) {
       return new Ok(acc);
@@ -134,7 +132,6 @@ function do_to_list(
         loop$item_size = item_size;
         loop$read_item = read_item;
         loop$i = i - 1;
-        loop$item_count = item_count;
         loop$acc = listPrepend(item$1, acc);
       } else {
         return item;
@@ -153,14 +150,7 @@ function to_list(bytes, item_size, read_item) {
   let $ = remainderInt(byte_count, item_size);
   if ($ === 0) {
     let item_count = divideInt(byte_count, item_size);
-    return do_to_list(
-      bytes,
-      item_size,
-      read_item,
-      item_count - 1,
-      item_count,
-      toList([]),
-    );
+    return do_to_list(bytes, item_size, read_item, item_count - 1, toList([]));
   } else {
     return new Error(undefined);
   }

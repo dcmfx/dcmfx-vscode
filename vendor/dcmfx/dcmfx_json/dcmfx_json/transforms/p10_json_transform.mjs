@@ -52,6 +52,47 @@ export class P10JsonTransform extends $CustomType {
     this.sequence_item_counts = sequence_item_counts;
   }
 }
+export const P10JsonTransform$P10JsonTransform = (config, insert_comma, current_data_element, ignore_data_element_value_bytes, in_encapsulated_pixel_data, pending_base64_input, data_set_path, sequence_item_counts) =>
+  new P10JsonTransform(config,
+  insert_comma,
+  current_data_element,
+  ignore_data_element_value_bytes,
+  in_encapsulated_pixel_data,
+  pending_base64_input,
+  data_set_path,
+  sequence_item_counts);
+export const P10JsonTransform$isP10JsonTransform = (value) =>
+  value instanceof P10JsonTransform;
+export const P10JsonTransform$P10JsonTransform$config = (value) => value.config;
+export const P10JsonTransform$P10JsonTransform$0 = (value) => value.config;
+export const P10JsonTransform$P10JsonTransform$insert_comma = (value) =>
+  value.insert_comma;
+export const P10JsonTransform$P10JsonTransform$1 = (value) =>
+  value.insert_comma;
+export const P10JsonTransform$P10JsonTransform$current_data_element = (value) =>
+  value.current_data_element;
+export const P10JsonTransform$P10JsonTransform$2 = (value) =>
+  value.current_data_element;
+export const P10JsonTransform$P10JsonTransform$ignore_data_element_value_bytes = (value) =>
+  value.ignore_data_element_value_bytes;
+export const P10JsonTransform$P10JsonTransform$3 = (value) =>
+  value.ignore_data_element_value_bytes;
+export const P10JsonTransform$P10JsonTransform$in_encapsulated_pixel_data = (value) =>
+  value.in_encapsulated_pixel_data;
+export const P10JsonTransform$P10JsonTransform$4 = (value) =>
+  value.in_encapsulated_pixel_data;
+export const P10JsonTransform$P10JsonTransform$pending_base64_input = (value) =>
+  value.pending_base64_input;
+export const P10JsonTransform$P10JsonTransform$5 = (value) =>
+  value.pending_base64_input;
+export const P10JsonTransform$P10JsonTransform$data_set_path = (value) =>
+  value.data_set_path;
+export const P10JsonTransform$P10JsonTransform$6 = (value) =>
+  value.data_set_path;
+export const P10JsonTransform$P10JsonTransform$sequence_item_counts = (value) =>
+  value.sequence_item_counts;
+export const P10JsonTransform$P10JsonTransform$7 = (value) =>
+  value.sequence_item_counts;
 
 /**
  * Constructs a new P10 tokens to DICOM JSON transform.

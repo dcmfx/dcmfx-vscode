@@ -2,24 +2,45 @@ import type * as $data_element_tag from "../dcmfx_core/data_element_tag.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 declare class DataSetPath extends _.CustomType {
+  /** @deprecated */
   constructor(entries: _.List<DataSetPathEntry$>);
-  
+  /** @deprecated */
   entries: _.List<DataSetPathEntry$>;
 }
 
 export type DataSetPath$ = DataSetPath;
 
 export class DataElement extends _.CustomType {
+  /** @deprecated */
   constructor(tag: $data_element_tag.DataElementTag$);
-  
+  /** @deprecated */
   tag: $data_element_tag.DataElementTag$;
 }
+export function DataSetPathEntry$DataElement(
+  tag: $data_element_tag.DataElementTag$,
+): DataSetPathEntry$;
+export function DataSetPathEntry$isDataElement(
+  value: DataSetPathEntry$,
+): boolean;
+export function DataSetPathEntry$DataElement$0(value: DataSetPathEntry$): $data_element_tag.DataElementTag$;
+export function DataSetPathEntry$DataElement$tag(
+  value: DataSetPathEntry$,
+): $data_element_tag.DataElementTag$;
 
 export class SequenceItem extends _.CustomType {
+  /** @deprecated */
   constructor(index: number);
-  
+  /** @deprecated */
   index: number;
 }
+export function DataSetPathEntry$SequenceItem(index: number): DataSetPathEntry$;
+export function DataSetPathEntry$isSequenceItem(
+  value: DataSetPathEntry$,
+): boolean;
+export function DataSetPathEntry$SequenceItem$0(value: DataSetPathEntry$): number;
+export function DataSetPathEntry$SequenceItem$index(
+  value: DataSetPathEntry$,
+): number;
 
 export type DataSetPathEntry$ = DataElement | SequenceItem;
 

@@ -5,18 +5,43 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 export class Item extends _.CustomType {
+  /** @deprecated */
   constructor(
     tag: $data_element_tag.DataElementTag$,
     name: string,
     vrs: _.List<$value_representation.ValueRepresentation$>,
     multiplicity: $value_multiplicity.ValueMultiplicity$
   );
-  
+  /** @deprecated */
   tag: $data_element_tag.DataElementTag$;
+  /** @deprecated */
   name: string;
+  /** @deprecated */
   vrs: _.List<$value_representation.ValueRepresentation$>;
+  /** @deprecated */
   multiplicity: $value_multiplicity.ValueMultiplicity$;
 }
+export function Item$Item(
+  tag: $data_element_tag.DataElementTag$,
+  name: string,
+  vrs: _.List<$value_representation.ValueRepresentation$>,
+  multiplicity: $value_multiplicity.ValueMultiplicity$,
+): Item$;
+export function Item$isItem(value: Item$): boolean;
+export function Item$Item$0(value: Item$): $data_element_tag.DataElementTag$;
+export function Item$Item$tag(value: Item$): $data_element_tag.DataElementTag$;
+export function Item$Item$1(value: Item$): string;
+export function Item$Item$name(value: Item$): string;
+export function Item$Item$2(value: Item$): _.List<
+  $value_representation.ValueRepresentation$
+>;
+export function Item$Item$vrs(value: Item$): _.List<
+  $value_representation.ValueRepresentation$
+>;
+export function Item$Item$3(value: Item$): $value_multiplicity.ValueMultiplicity$;
+export function Item$Item$multiplicity(
+  value: Item$,
+): $value_multiplicity.ValueMultiplicity$;
 
 export type Item$ = Item;
 

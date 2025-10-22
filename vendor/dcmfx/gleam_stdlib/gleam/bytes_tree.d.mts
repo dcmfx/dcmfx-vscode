@@ -2,20 +2,23 @@ import type * as _ from "../gleam.d.mts";
 import type * as $string_tree from "../gleam/string_tree.d.mts";
 
 declare class Bytes extends _.CustomType {
+  /** @deprecated */
   constructor(argument$0: _.BitArray);
-  
+  /** @deprecated */
   0: _.BitArray;
 }
 
 declare class Text extends _.CustomType {
+  /** @deprecated */
   constructor(argument$0: $string_tree.StringTree$);
-  
+  /** @deprecated */
   0: $string_tree.StringTree$;
 }
 
 declare class Many extends _.CustomType {
+  /** @deprecated */
   constructor(argument$0: _.List<BytesTree$>);
-  
+  /** @deprecated */
   0: _.List<BytesTree$>;
 }
 

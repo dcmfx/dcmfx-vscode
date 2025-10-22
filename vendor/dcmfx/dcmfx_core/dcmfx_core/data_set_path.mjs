@@ -33,6 +33,11 @@ export class DataElement extends $CustomType {
     this.tag = tag;
   }
 }
+export const DataSetPathEntry$DataElement = (tag) => new DataElement(tag);
+export const DataSetPathEntry$isDataElement = (value) =>
+  value instanceof DataElement;
+export const DataSetPathEntry$DataElement$tag = (value) => value.tag;
+export const DataSetPathEntry$DataElement$0 = (value) => value.tag;
 
 export class SequenceItem extends $CustomType {
   constructor(index) {
@@ -40,6 +45,11 @@ export class SequenceItem extends $CustomType {
     this.index = index;
   }
 }
+export const DataSetPathEntry$SequenceItem = (index) => new SequenceItem(index);
+export const DataSetPathEntry$isSequenceItem = (value) =>
+  value instanceof SequenceItem;
+export const DataSetPathEntry$SequenceItem$index = (value) => value.index;
+export const DataSetPathEntry$SequenceItem$0 = (value) => value.index;
 
 /**
  * Constructs a new data set path with no entries. An empty path is a path to
@@ -81,10 +91,10 @@ export function is_root(path) {
   if ($ instanceof $Empty) {
     return true;
   } else {
-    let $1 = $.tail;
-    if ($1 instanceof $Empty) {
-      let $2 = $.head;
-      if ($2 instanceof DataElement) {
+    let $1 = $.head;
+    if ($1 instanceof DataElement) {
+      let $2 = $.tail;
+      if ($2 instanceof $Empty) {
         return true;
       } else {
         return false;
@@ -245,11 +255,11 @@ export function from_string(s) {
                 if ($4 instanceof $Empty) {
                   return new Error("Invalid data set path entry: " + entry);
                 } else {
-                  let $5 = $4.tail;
-                  if ($5 instanceof $Empty) {
-                    let $6 = $4.head;
-                    if ($6 instanceof Some) {
-                      let index = $6[0];
+                  let $5 = $4.head;
+                  if ($5 instanceof Some) {
+                    let $6 = $4.tail;
+                    if ($6 instanceof $Empty) {
+                      let index = $5[0];
                       let $7 = $int.parse(index);
                       let index$1;
                       if ($7 instanceof Ok) {

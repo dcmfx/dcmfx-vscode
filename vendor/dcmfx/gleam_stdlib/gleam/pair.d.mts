@@ -1,17 +1,17 @@
-export function first<COI>(pair: [COI, any]): COI;
+export function first<CKU>(pair: [CKU, any]): CKU;
 
-export function second<COL>(pair: [any, COL]): COL;
+export function second<CKX>(pair: [any, CKX]): CKX;
 
-export function swap<COM, CON>(pair: [COM, CON]): [CON, COM];
+export function swap<CKY, CKZ>(pair: [CKY, CKZ]): [CKZ, CKY];
 
-export function map_first<COO, COP, COQ>(
-  pair: [COO, COP],
-  fun: (x0: COO) => COQ
-): [COQ, COP];
+export function map_first<CLA, CLB, CLC>(
+  pair: [CLA, CLB],
+  fun: (x0: CLA) => CLC
+): [CLC, CLB];
 
-export function map_second<COR, COS, COT>(
-  pair: [COR, COS],
-  fun: (x0: COS) => COT
-): [COR, COT];
+export function map_second<CLD, CLE, CLF>(
+  pair: [CLD, CLE],
+  fun: (x0: CLE) => CLF
+): [CLD, CLF];
 
-export function new$<COU, COV>(first: COU, second: COV): [COU, COV];
+export function new$<CLG, CLH>(first: CLG, second: CLH): [CLG, CLH];

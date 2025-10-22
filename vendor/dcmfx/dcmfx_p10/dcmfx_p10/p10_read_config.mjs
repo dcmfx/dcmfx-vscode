@@ -14,6 +14,37 @@ export class P10ReadConfig extends $CustomType {
     this.default_transfer_syntax = default_transfer_syntax;
   }
 }
+export const P10ReadConfig$P10ReadConfig = (max_token_size, max_string_size, max_sequence_depth, require_dicm_prefix, require_ordered_data_elements, default_transfer_syntax) =>
+  new P10ReadConfig(max_token_size,
+  max_string_size,
+  max_sequence_depth,
+  require_dicm_prefix,
+  require_ordered_data_elements,
+  default_transfer_syntax);
+export const P10ReadConfig$isP10ReadConfig = (value) =>
+  value instanceof P10ReadConfig;
+export const P10ReadConfig$P10ReadConfig$max_token_size = (value) =>
+  value.max_token_size;
+export const P10ReadConfig$P10ReadConfig$0 = (value) => value.max_token_size;
+export const P10ReadConfig$P10ReadConfig$max_string_size = (value) =>
+  value.max_string_size;
+export const P10ReadConfig$P10ReadConfig$1 = (value) => value.max_string_size;
+export const P10ReadConfig$P10ReadConfig$max_sequence_depth = (value) =>
+  value.max_sequence_depth;
+export const P10ReadConfig$P10ReadConfig$2 = (value) =>
+  value.max_sequence_depth;
+export const P10ReadConfig$P10ReadConfig$require_dicm_prefix = (value) =>
+  value.require_dicm_prefix;
+export const P10ReadConfig$P10ReadConfig$3 = (value) =>
+  value.require_dicm_prefix;
+export const P10ReadConfig$P10ReadConfig$require_ordered_data_elements = (value) =>
+  value.require_ordered_data_elements;
+export const P10ReadConfig$P10ReadConfig$4 = (value) =>
+  value.require_ordered_data_elements;
+export const P10ReadConfig$P10ReadConfig$default_transfer_syntax = (value) =>
+  value.default_transfer_syntax;
+export const P10ReadConfig$P10ReadConfig$5 = (value) =>
+  value.default_transfer_syntax;
 
 /**
  * Returns the default read config.

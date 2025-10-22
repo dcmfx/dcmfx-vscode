@@ -870,22 +870,26 @@ export function get_lookup_table_descriptor(value) {
   if (value instanceof LookupTableDescriptorValue) {
     let vr = value.vr;
     let bytes$1 = value.bytes;
-    if (bytes$1.bitSize >= 16 && bytes$1.bitSize >= 32 && bytes$1.bitSize === 48) {
-      if (vr instanceof $value_representation.SignedShort) {
-        let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
-        let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, true);
-        let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
-        return new Ok([entry_count, first_input_value, bits_per_entry]);
-      } else if (vr instanceof $value_representation.UnsignedShort) {
-        let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
-        let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, false);
-        let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
-        return new Ok([entry_count, first_input_value, bits_per_entry]);
-      } else {
-        return new Error(
-          $data_error.new_value_invalid("Invalid lookup table descriptor"),
-        );
-      }
+    if (
+      vr instanceof $value_representation.SignedShort &&
+      bytes$1.bitSize >= 16 &&
+      bytes$1.bitSize >= 32 &&
+      bytes$1.bitSize === 48
+    ) {
+      let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
+      let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, true);
+      let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
+      return new Ok([entry_count, first_input_value, bits_per_entry]);
+    } else if (
+      vr instanceof $value_representation.UnsignedShort &&
+      bytes$1.bitSize >= 16 &&
+      bytes$1.bitSize >= 32 &&
+      bytes$1.bitSize === 48
+    ) {
+      let entry_count = bitArraySliceToInt(bytes$1, 0, 16, false, false);
+      let first_input_value = bitArraySliceToInt(bytes$1, 16, 32, false, false);
+      let bits_per_entry = bitArraySliceToInt(bytes$1, 32, 48, false, false);
+      return new Ok([entry_count, first_input_value, bits_per_entry]);
     } else {
       return new Error(
         $data_error.new_value_invalid("Invalid lookup table descriptor"),

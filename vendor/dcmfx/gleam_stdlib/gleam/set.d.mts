@@ -1,13 +1,14 @@
 import type * as _ from "../gleam.d.mts";
 import type * as $dict from "../gleam/dict.d.mts";
 
-declare class Set<CYO> extends _.CustomType {
+declare class Set<CVA> extends _.CustomType {
+  /** @deprecated */
   constructor(dict: $dict.Dict$<any, undefined>);
-  
+  /** @deprecated */
   dict: $dict.Dict$<any, undefined>;
 }
 
-export type Set$<CYO> = Set<CYO>;
+export type Set$<CVA> = Set<CVA>;
 
 export function new$(): Set$<any>;
 
@@ -15,46 +16,46 @@ export function size(set: Set$<any>): number;
 
 export function is_empty(set: Set$<any>): boolean;
 
-export function contains<CYY>(set: Set$<CYY>, member: CYY): boolean;
+export function contains<CVK>(set: Set$<CVK>, member: CVK): boolean;
 
-export function delete$<CZA>(set: Set$<CZA>, member: CZA): Set$<CZA>;
+export function delete$<CVM>(set: Set$<CVM>, member: CVM): Set$<CVM>;
 
-export function to_list<CZD>(set: Set$<CZD>): _.List<CZD>;
+export function to_list<CVP>(set: Set$<CVP>): _.List<CVP>;
 
-export function fold<CZJ, CZL>(
-  set: Set$<CZJ>,
-  initial: CZL,
-  reducer: (x0: CZL, x1: CZJ) => CZL
-): CZL;
+export function fold<CVV, CVX>(
+  set: Set$<CVV>,
+  initial: CVX,
+  reducer: (x0: CVX, x1: CVV) => CVX
+): CVX;
 
-export function filter<CZM>(set: Set$<CZM>, predicate: (x0: CZM) => boolean): Set$<
-  CZM
+export function filter<CVY>(set: Set$<CVY>, predicate: (x0: CVY) => boolean): Set$<
+  CVY
 >;
 
-export function drop<CZT>(set: Set$<CZT>, disallowed: _.List<CZT>): Set$<CZT>;
+export function drop<CWF>(set: Set$<CWF>, disallowed: _.List<CWF>): Set$<CWF>;
 
-export function take<CZX>(set: Set$<CZX>, desired: _.List<CZX>): Set$<CZX>;
+export function take<CWJ>(set: Set$<CWJ>, desired: _.List<CWJ>): Set$<CWJ>;
 
-export function intersection<DAK>(first: Set$<DAK>, second: Set$<DAK>): Set$<
-  DAK
+export function intersection<CWW>(first: Set$<CWW>, second: Set$<CWW>): Set$<
+  CWW
 >;
 
-export function difference<DAO>(first: Set$<DAO>, second: Set$<DAO>): Set$<DAO>;
+export function difference<CXA>(first: Set$<CXA>, second: Set$<CXA>): Set$<CXA>;
 
-export function is_subset<DAS>(first: Set$<DAS>, second: Set$<DAS>): boolean;
+export function is_subset<CXE>(first: Set$<CXE>, second: Set$<CXE>): boolean;
 
-export function is_disjoint<DAV>(first: Set$<DAV>, second: Set$<DAV>): boolean;
+export function is_disjoint<CXH>(first: Set$<CXH>, second: Set$<CXH>): boolean;
 
-export function each<DBC>(set: Set$<DBC>, fun: (x0: DBC) => any): undefined;
+export function each<CXO>(set: Set$<CXO>, fun: (x0: CXO) => any): undefined;
 
-export function insert<CYV>(set: Set$<CYV>, member: CYV): Set$<CYV>;
+export function insert<CVH>(set: Set$<CVH>, member: CVH): Set$<CVH>;
 
-export function from_list<CZG>(members: _.List<CZG>): Set$<CZG>;
+export function from_list<CVS>(members: _.List<CVS>): Set$<CVS>;
 
-export function map<CZP, CZR>(set: Set$<CZP>, fun: (x0: CZP) => CZR): Set$<CZR>;
+export function map<CWB, CWD>(set: Set$<CWB>, fun: (x0: CWB) => CWD): Set$<CWD>;
 
-export function union<DAB>(first: Set$<DAB>, second: Set$<DAB>): Set$<DAB>;
+export function union<CWN>(first: Set$<CWN>, second: Set$<CWN>): Set$<CWN>;
 
-export function symmetric_difference<DAY>(first: Set$<DAY>, second: Set$<DAY>): Set$<
-  DAY
+export function symmetric_difference<CXK>(first: Set$<CXK>, second: Set$<CXK>): Set$<
+  CXK
 >;

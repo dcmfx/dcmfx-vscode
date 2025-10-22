@@ -4,11 +4,28 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 export class DataSetPrintOptions extends _.CustomType {
+  /** @deprecated */
   constructor(styled: boolean, max_width: number);
-  
+  /** @deprecated */
   styled: boolean;
+  /** @deprecated */
   max_width: number;
 }
+export function DataSetPrintOptions$DataSetPrintOptions(
+  styled: boolean,
+  max_width: number,
+): DataSetPrintOptions$;
+export function DataSetPrintOptions$isDataSetPrintOptions(
+  value: DataSetPrintOptions$,
+): boolean;
+export function DataSetPrintOptions$DataSetPrintOptions$0(value: DataSetPrintOptions$): boolean;
+export function DataSetPrintOptions$DataSetPrintOptions$styled(
+  value: DataSetPrintOptions$,
+): boolean;
+export function DataSetPrintOptions$DataSetPrintOptions$1(value: DataSetPrintOptions$): number;
+export function DataSetPrintOptions$DataSetPrintOptions$max_width(
+  value: DataSetPrintOptions$,
+): number;
 
 export type DataSetPrintOptions$ = DataSetPrintOptions;
 

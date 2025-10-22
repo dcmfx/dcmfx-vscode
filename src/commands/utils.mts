@@ -1,13 +1,26 @@
-import * as vscode from "vscode";
-import { Readable } from "stream";
 import { Effect, pipe } from "effect";
 import { createReadStream } from "fs";
+import { Readable } from "stream";
+import * as vscode from "vscode";
 import * as dcmfx_json from "../../vendor/dcmfx/dcmfx_json/dcmfx_json.mjs";
-import * as dcmfx_p10 from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10.mjs";
 import * as json_error from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/json_error.mjs";
+import * as dcmfx_p10 from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10.mjs";
 import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
 import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
-import * as gleam from "../../vendor/dcmfx/prelude.mjs";
+import {
+  type BitArray,
+  BitArray$BitArray,
+  type List,
+  List$Empty,
+  List$isNonEmpty,
+  List$NonEmpty,
+  List$NonEmpty$first,
+  List$NonEmpty$rest,
+  type Result,
+  Result$Error$0,
+  Result$isOk,
+  Result$Ok$0,
+} from "../../vendor/dcmfx/prelude.mjs";
 
 /**
  * Reads a VS Code URI into a `Uint8Array`.
@@ -28,8 +41,10 @@ export function* readDicomDataSet(uri: vscode.Uri) {
   const inputBytes = yield* readFileContent(uri);
 
   const dataSet = yield* gleamResultToEffect(
-    dcmfx_p10.read_bytes(new gleam.BitArray(inputBytes)),
-  ).pipe(Effect.mapError((e) => p10_error.to_lines(e[0], "").toArray()));
+    dcmfx_p10.read_bytes(gleamBitArrayFromUint8Array(inputBytes)),
+  ).pipe(
+    Effect.mapError((e) => gleamListToArray(p10_error.to_lines(e[0], ""))),
+  );
 
   return dataSet;
 }
@@ -49,7 +64,7 @@ export function* readDicomJsonDataSet(uri: vscode.Uri) {
     dcmfx_json.json_to_data_set(inputString),
   ).pipe(
     Effect.mapError((e) =>
-      json_error.deserialize_error_to_lines(e, "").toArray(),
+      gleamListToArray(json_error.deserialize_error_to_lines(e, "")),
     ),
   );
 
@@ -124,11 +139,11 @@ export function* writeDataToReadContext(
     gleamResultToEffect(
       p10_read.write_bytes(
         readContext,
-        new gleam.BitArray(p10Bytes),
+        gleamBitArrayFromUint8Array(p10Bytes),
         dataComplete,
       ),
     ),
-    Effect.mapError((e) => p10_error.to_lines(e, "").toArray()),
+    Effect.mapError((e) => gleamListToArray(p10_error.to_lines(e, ""))),
   );
 
   return newReadContext;
@@ -139,13 +154,13 @@ export function* writeDataToReadContext(
  *
  * This bridges the gap between Gleam's Result type and the Effect.js library.
  */
-export function gleamResultToEffect<A, E>(
-  result: gleam.Result<A, E>,
-): Effect.Effect<A, E> {
-  if (result.isOk()) {
-    return Effect.succeed((result as gleam.Ok<A, E>)[0]);
+export function gleamResultToEffect<T, E>(
+  result: Result<T, E>,
+): Effect.Effect<T, E> {
+  if (Result$isOk(result)) {
+    return Effect.succeed(Result$Ok$0(result) as T);
   } else {
-    return Effect.fail((result as gleam.Error<A, E>)[0]);
+    return Effect.fail(Result$Error$0(result) as E);
   }
 }
 
@@ -153,10 +168,41 @@ export function gleamResultToEffect<A, E>(
  * Unwraps a Gleam `Result<A, E>` to an `A`. Throws an exception if the passed
  * `Result` is not `Ok`.
  */
-export function gleamResultUnwrap<A, E>(result: gleam.Result<A, E>): A {
-  if (result.isOk()) {
-    return (result as gleam.Ok<A, E>)[0];
+export function gleamResultUnwrap<T, E>(result: Result<T, E>): T {
+  if (Result$isOk(result)) {
+    return Result$Ok$0(result) as T;
   } else {
-    throw Error("Failed to unwrap gleam.Error");
+    throw Error("Failed to unwrap Gleam Error");
   }
+}
+
+/** Converts a Gleam List into a JavaScript array. */
+export function gleamListToArray<T>(inputList: List<T>): T[] {
+  const array: T[] = [];
+
+  let list = inputList;
+  while (List$isNonEmpty(list)) {
+    array.push(List$NonEmpty$first(list) as T);
+    list = List$NonEmpty$rest(list) as List<T>;
+  }
+
+  return array;
+}
+
+/** Converts a JavaScript array into a Gleam List. */
+export function arrayToGleamList<T>(array: T[]): List<T> {
+  let list: List<T> = List$Empty();
+
+  for (let i = array.length - 1; i >= 0; i--) {
+    list = List$NonEmpty(array[i], list);
+  }
+
+  return list;
+}
+
+/** Convert a JavaScript Uint8Array to a Gleam BitArray. */
+export function gleamBitArrayFromUint8Array(buffer: Uint8Array): BitArray {
+  const bitSize = buffer.byteLength * 8;
+
+  return BitArray$BitArray(buffer, bitSize, 0);
 }

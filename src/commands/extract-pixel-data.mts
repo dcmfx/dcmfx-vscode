@@ -1,22 +1,28 @@
-import * as vscode from "vscode";
 import { Effect, pipe } from "effect";
+import * as vscode from "vscode";
+import * as data_error from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_error.mjs";
+import * as data_set from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set.mjs";
+import * as transfer_syntax from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/transfer_syntax.mjs";
+import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
+import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
+import { P10ReadConfig$P10ReadConfig } from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read_config.mjs";
+import * as p10_token from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_token.mjs";
+import * as dcmfx_pixel_data from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data.mjs";
+import * as pixel_data_frame from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/pixel_data_frame.mjs";
+import * as p10_pixel_data_frame_transform from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform.mjs";
 import {
+  P10PixelDataFrameTransformError$DataError$0,
+  P10PixelDataFrameTransformError$P10Error$0,
+  P10PixelDataFrameTransformError$isP10Error,
+} from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform.mjs";
+import { Result$Ok$0, Result$isOk } from "../../vendor/dcmfx/prelude.mjs";
+import {
+  gleamListToArray,
   gleamResultToEffect,
   openReadStream,
   readDicomJsonDataSet,
   writeDataToReadContext,
 } from "./utils.mjs";
-import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
-import * as p10_read_config from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read_config.mjs";
-import * as p10_pixel_data_frame_transform from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/transforms/p10_pixel_data_frame_transform.mjs";
-import * as dcmfx_pixel_data from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data.mjs";
-import * as pixel_data_frame from "../../vendor/dcmfx/dcmfx_pixel_data/dcmfx_pixel_data/pixel_data_frame.mjs";
-import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
-import * as p10_token from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_token.mjs";
-import * as data_error from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_error.mjs";
-import * as data_set from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set.mjs";
-import * as transfer_syntax from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/transfer_syntax.mjs";
-import * as gleam from "../../vendor/dcmfx/prelude.mjs";
 
 /** VS Code command that extracts the frames of pixel data from a DICOM file. */
 export function extractPixelData(): (uri: vscode.Uri) => Promise<void> {
@@ -72,7 +78,7 @@ function* doExtractDicomPixelData(
   // Construct DICOM P10 read context with a max token size of 1 MiB to keep
   // the read context's memory usage low while extracting pixel data frames
   const maxTokenSize = 1024 * 1024;
-  const readConfig = new p10_read_config.P10ReadConfig(
+  const readConfig = P10ReadConfig$P10ReadConfig(
     maxTokenSize,
     0xfffffffe,
     10_000,
@@ -96,15 +102,17 @@ function* doExtractDicomPixelData(
         Effect.gen(function* () {
           readContext = newReadContext;
 
-          for (const token of tokens.toArray()) {
+          for (const token of gleamListToArray(tokens)) {
             // Update the file extension to use when a transfer syntax is
             // specified in the File Meta Information
-            if (token instanceof p10_token.FileMetaInformation) {
-              const ts = data_set.get_transfer_syntax(token.data_set);
-              if (ts instanceof gleam.Ok) {
+            if (p10_token.P10Token$isFileMetaInformation(token)) {
+              const ts = data_set.get_transfer_syntax(
+                p10_token.P10Token$FileMetaInformation$data_set(token),
+              );
+              if (Result$isOk(ts)) {
                 fileExtension =
                   dcmfx_pixel_data.file_extension_for_transfer_syntax(
-                    (ts as gleam.Ok<transfer_syntax.TransferSyntax, never>)[0],
+                    Result$Ok$0(ts) as transfer_syntax.TransferSyntax,
                   );
               }
             }
@@ -119,10 +127,20 @@ function* doExtractDicomPixelData(
                 ),
               ),
               Effect.mapError((e) => {
-                if (e instanceof p10_pixel_data_frame_transform.P10Error) {
-                  return p10_error.to_lines(e[0], "").toArray();
+                if (P10PixelDataFrameTransformError$isP10Error(e)) {
+                  const lines = p10_error.to_lines(
+                    P10PixelDataFrameTransformError$P10Error$0(e),
+                    "",
+                  );
+
+                  return gleamListToArray(lines);
                 } else {
-                  return data_error.to_lines(e[0], "").toArray();
+                  const lines = data_error.to_lines(
+                    P10PixelDataFrameTransformError$DataError$0(e),
+                    "",
+                  );
+
+                  return gleamListToArray(lines);
                 }
               }),
             );
@@ -155,7 +173,7 @@ function* doExtractDicomPixelData(
               readContext,
             );
           } else {
-            yield* Effect.fail(p10_error.to_lines(error, "").toArray());
+            yield* Effect.fail(gleamListToArray(p10_error.to_lines(error, "")));
           }
         }),
     });
@@ -172,17 +190,24 @@ function* doExtractDicomJsonPixelData(
   const frames = yield* pipe(
     gleamResultToEffect(dcmfx_pixel_data.get_pixel_data_frames(dataSet)),
     Effect.mapError((e) => {
-      if (e instanceof p10_pixel_data_frame_transform.P10Error) {
-        return p10_error.to_lines(e[0], "").toArray();
+      if (P10PixelDataFrameTransformError$isP10Error(e)) {
+        return gleamListToArray(
+          p10_error.to_lines(P10PixelDataFrameTransformError$P10Error$0(e), ""),
+        );
       } else {
-        return data_error.to_lines(e[0], "").toArray();
+        const lines = data_error.to_lines(
+          P10PixelDataFrameTransformError$DataError$0(e),
+          "",
+        );
+
+        return gleamListToArray(lines);
       }
     }),
   );
 
   const transferSyntax = yield* pipe(
     gleamResultToEffect(data_set.get_transfer_syntax(dataSet)),
-    Effect.mapError((e) => data_error.to_lines(e, "").toArray()),
+    Effect.mapError((e) => gleamListToArray(data_error.to_lines(e, ""))),
   );
 
   const fileExtension =

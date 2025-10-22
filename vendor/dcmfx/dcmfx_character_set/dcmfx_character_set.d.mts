@@ -4,8 +4,9 @@ import type * as $string_type from "./dcmfx_character_set/string_type.d.mts";
 import type * as _ from "./gleam.d.mts";
 
 declare class SpecificCharacterSet extends _.CustomType {
+  /** @deprecated */
   constructor(charsets: _.List<$character_set.CharacterSet$>);
-  
+  /** @deprecated */
   charsets: _.List<$character_set.CharacterSet$>;
 }
 
@@ -14,6 +15,10 @@ export type SpecificCharacterSet$ = SpecificCharacterSet;
 export function from_string(specific_character_set: string): _.Result<
   SpecificCharacterSet$,
   string
+>;
+
+export function character_sets(specific_character_set: SpecificCharacterSet$): _.List<
+  $character_set.CharacterSet$
 >;
 
 export function is_utf8_compatible(

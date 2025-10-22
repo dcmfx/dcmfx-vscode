@@ -77,8 +77,10 @@ export function is_valid_file(filename) {
 
 /**
  * Reads the next DICOM P10 tokens from a read stream. This repeatedly reads
- * bytes from the read stream in 256 KiB chunks until at least one DICOM P10
- * token is made available by the read context or an error occurs.
+ * chunks of bytes from the read stream until at least one DICOM P10 token is
+ * made available by the read context or an error occurs.
+ * 
+ * The chunk size defaults to 256 KiB if not specified.
  */
 export function read_tokens_from_stream(
   loop$stream,
@@ -282,15 +284,15 @@ export function read_bytes(bytes) {
       "let_assert",
       FILEPATH,
       "dcmfx_p10",
-      171,
+      173,
       "read_bytes",
       "Pattern match failed, no pattern matched the value.",
       {
         value: $,
-        start: 5483,
-        end: 5584,
-        pattern_start: 5494,
-        pattern_end: 5505
+        start: 5537,
+        end: 5638,
+        pattern_start: 5548,
+        pattern_end: 5559
       }
     )
   }
@@ -333,15 +335,15 @@ function read_stream_partial_loop(
               "let_assert",
               FILEPATH,
               "dcmfx_p10",
-              285,
+              287,
               "read_stream_partial_loop",
               "Pattern match failed, no pattern matched the value.",
               {
                 value: acc,
-                start: 8900,
-                end: 8951,
-                pattern_start: 8911,
-                pattern_end: 8945
+                start: 8954,
+                end: 9005,
+                pattern_start: 8965,
+                pattern_end: 8999
               }
             )
           }
@@ -474,15 +476,15 @@ export function read_stream_partial(stream, tags, config) {
           "let_assert",
           FILEPATH,
           "dcmfx_p10",
-          260,
+          262,
           "read_stream_partial",
           "Pattern match failed, no pattern matched the value.",
           {
             value: $,
-            start: 8123,
-            end: 8225,
-            pattern_start: 8134,
-            pattern_end: 8146
+            start: 8177,
+            end: 8279,
+            pattern_start: 8188,
+            pattern_end: 8200
           }
         )
       }

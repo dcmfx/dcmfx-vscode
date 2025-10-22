@@ -2,11 +2,26 @@ import type * as $order from "../../gleam_stdlib/gleam/order.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 export class DataElementTag extends _.CustomType {
+  /** @deprecated */
   constructor(group: number, element: number);
-  
+  /** @deprecated */
   group: number;
+  /** @deprecated */
   element: number;
 }
+export function DataElementTag$DataElementTag(
+  group: number,
+  element: number,
+): DataElementTag$;
+export function DataElementTag$isDataElementTag(
+  value: DataElementTag$,
+): boolean;
+export function DataElementTag$DataElementTag$0(value: DataElementTag$): number;
+export function DataElementTag$DataElementTag$group(value: DataElementTag$): number;
+export function DataElementTag$DataElementTag$1(
+  value: DataElementTag$,
+): number;
+export function DataElementTag$DataElementTag$element(value: DataElementTag$): number;
 
 export type DataElementTag$ = DataElementTag;
 

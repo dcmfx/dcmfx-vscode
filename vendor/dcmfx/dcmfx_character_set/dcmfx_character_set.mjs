@@ -166,6 +166,13 @@ export function from_string(specific_character_set) {
 }
 
 /**
+ * Returns the character sets in a specific character set.
+ */
+export function character_sets(specific_character_set) {
+  return specific_character_set.charsets;
+}
+
+/**
  * Returns whether a specific character set is byte compatible with UTF-8. This
  * is only the case for the DICOM default character set (ISO_IR 6) and the
  * UTF-8 character set itself (ISO_IR 192).
@@ -227,15 +234,15 @@ function update_code_element(candidate, bytes) {
           "let_assert",
           FILEPATH,
           "dcmfx_character_set",
-          297,
+          305,
           "update_code_element",
           "Pattern match failed, no pattern matched the value.",
           {
             value: $1,
-            start: 9249,
-            end: 9342,
-            pattern_start: 9260,
-            pattern_end: 9268
+            start: 9447,
+            end: 9540,
+            pattern_start: 9458,
+            pattern_end: 9466
           }
         )
       }
@@ -377,15 +384,15 @@ function decode_iso_2022_bytes(
           "let_assert",
           FILEPATH,
           "dcmfx_character_set",
-          192,
+          200,
           "decode_iso_2022_bytes",
           "Pattern match failed, no pattern matched the value.",
           {
             value: $1,
-            start: 6114,
-            end: 6165,
-            pattern_start: 6125,
-            pattern_end: 6148
+            start: 6312,
+            end: 6363,
+            pattern_start: 6323,
+            pattern_end: 6346
           }
         )
       }
@@ -512,15 +519,15 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
               "let_assert",
               FILEPATH,
               "dcmfx_character_set",
-              329,
+              337,
               "do_sanitize_default_charset_bytes",
               "Pattern match failed, no pattern matched the value.",
               {
                 value: $3,
-                start: 10032,
-                end: 10084,
-                pattern_start: 10043,
-                pattern_end: 10053
+                start: 10230,
+                end: 10282,
+                pattern_start: 10241,
+                pattern_end: 10251
               }
             )
           }
@@ -537,15 +544,15 @@ function do_sanitize_default_charset_bytes(loop$bytes, loop$i, loop$acc) {
               "let_assert",
               FILEPATH,
               "dcmfx_character_set",
-              330,
+              338,
               "do_sanitize_default_charset_bytes",
               "Pattern match failed, no pattern matched the value.",
               {
                 value: $4,
-                start: 10095,
-                end: 10195,
-                pattern_start: 10106,
-                pattern_end: 10115
+                start: 10293,
+                end: 10393,
+                pattern_start: 10304,
+                pattern_end: 10313
               }
             )
           }

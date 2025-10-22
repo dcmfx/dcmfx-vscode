@@ -125,12 +125,12 @@ export function compare(loop$a, loop$b) {
   while (true) {
     let a = loop$a;
     let b = loop$b;
-    if (b.bitSize >= 8) {
-      if (a.bitSize >= 8) {
-        let second_byte = b.byteAt(0);
-        let second_rest = bitArraySlice(b, 8);
+    if (a.bitSize >= 8) {
+      if (b.bitSize >= 8) {
         let first_byte = a.byteAt(0);
         let first_rest = bitArraySlice(a, 8);
+        let second_byte = b.byteAt(0);
+        let second_rest = bitArraySlice(b, 8);
         let f = first_byte;
         let s = second_byte;
         if (f > s) {
@@ -145,30 +145,30 @@ export function compare(loop$a, loop$b) {
             loop$b = second_rest;
           }
         }
-      } else if (a.bitSize === 0) {
-        return new $order.Lt();
+      } else if (b.bitSize === 0) {
+        return new $order.Gt();
       } else {
         let first = a;
         let second = b;
         let $ = bit_array_to_int_and_size(first);
         let $1 = bit_array_to_int_and_size(second);
-        let b$1 = $1[0];
         let a$1 = $[0];
+        let b$1 = $1[0];
         if (a$1 > b$1) {
           return new $order.Gt();
         } else {
-          let b$2 = $1[0];
           let a$2 = $[0];
+          let b$2 = $1[0];
           if (a$2 < b$2) {
             return new $order.Lt();
           } else {
-            let size_b = $1[1];
             let size_a = $[1];
+            let size_b = $1[1];
             if (size_a > size_b) {
               return new $order.Gt();
             } else {
-              let size_b$1 = $1[1];
               let size_a$1 = $[1];
+              let size_b$1 = $1[1];
               if (size_a$1 < size_b$1) {
                 return new $order.Lt();
               } else {
@@ -191,23 +191,23 @@ export function compare(loop$a, loop$b) {
       let second = b;
       let $ = bit_array_to_int_and_size(first);
       let $1 = bit_array_to_int_and_size(second);
-      let b$1 = $1[0];
       let a$1 = $[0];
+      let b$1 = $1[0];
       if (a$1 > b$1) {
         return new $order.Gt();
       } else {
-        let b$2 = $1[0];
         let a$2 = $[0];
+        let b$2 = $1[0];
         if (a$2 < b$2) {
           return new $order.Lt();
         } else {
-          let size_b = $1[1];
           let size_a = $[1];
+          let size_b = $1[1];
           if (size_a > size_b) {
             return new $order.Gt();
           } else {
-            let size_b$1 = $1[1];
             let size_a$1 = $[1];
+            let size_b$1 = $1[1];
             if (size_a$1 < size_b$1) {
               return new $order.Lt();
             } else {

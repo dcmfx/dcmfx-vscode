@@ -46,6 +46,12 @@ export class LookupResultDataElementValue extends $CustomType {
     this[0] = $0;
   }
 }
+export const DataSetLookupResult$LookupResultDataElementValue = ($0) =>
+  new LookupResultDataElementValue($0);
+export const DataSetLookupResult$isLookupResultDataElementValue = (value) =>
+  value instanceof LookupResultDataElementValue;
+export const DataSetLookupResult$LookupResultDataElementValue$0 = (value) =>
+  value[0];
 
 export class LookupResultDataSet extends $CustomType {
   constructor($0) {
@@ -53,6 +59,11 @@ export class LookupResultDataSet extends $CustomType {
     this[0] = $0;
   }
 }
+export const DataSetLookupResult$LookupResultDataSet = ($0) =>
+  new LookupResultDataSet($0);
+export const DataSetLookupResult$isLookupResultDataSet = (value) =>
+  value instanceof LookupResultDataSet;
+export const DataSetLookupResult$LookupResultDataSet$0 = (value) => value[0];
 
 /**
  * Returns a new empty data set.
@@ -598,7 +609,7 @@ export function file_meta_information(data_set) {
   let _block$1;
   let $ = get_value(data_set, $dictionary.sop_class_uid.tag);
   let $1 = get_string(data_set, $dictionary.sop_class_uid.tag);
-  if ($1 instanceof Ok && $ instanceof Ok) {
+  if ($ instanceof Ok && $1 instanceof Ok) {
     let value = $[0];
     _block$1 = $dict.insert(
       file_meta_information$1,
@@ -612,7 +623,7 @@ export function file_meta_information(data_set) {
   let _block$2;
   let $2 = get_value(data_set, $dictionary.sop_instance_uid.tag);
   let $3 = get_string(data_set, $dictionary.sop_instance_uid.tag);
-  if ($3 instanceof Ok && $2 instanceof Ok) {
+  if ($2 instanceof Ok && $3 instanceof Ok) {
     let value = $2[0];
     _block$2 = $dict.insert(
       file_meta_information$2,
@@ -1874,83 +1885,73 @@ export function insert_string_value(data_set, item, value) {
       } else {
         let $1 = $.tail;
         if ($1 instanceof $Empty) {
-          let $2 = $.head;
-          if ($2 instanceof $value_representation.ApplicationEntity) {
-            if (value instanceof $Empty) {
-              _block$1 = invalid_insert_error(item);
+          if (value instanceof $Empty) {
+            let $2 = $.head;
+            if ($2 instanceof $value_representation.CodeString) {
+              _block$1 = $data_element_value.new_code_string(value);
+            } else if ($2 instanceof $value_representation.LongString) {
+              _block$1 = $data_element_value.new_long_string(value);
+            } else if ($2 instanceof $value_representation.ShortString) {
+              _block$1 = $data_element_value.new_short_string(value);
+            } else if ($2 instanceof $value_representation.UniqueIdentifier) {
+              _block$1 = $data_element_value.new_unique_identifier(value);
+            } else if ($2 instanceof $value_representation.UnlimitedCharacters) {
+              _block$1 = $data_element_value.new_unlimited_characters(value);
             } else {
-              let $3 = value.tail;
-              if ($3 instanceof $Empty) {
+              _block$1 = invalid_insert_error(item);
+            }
+          } else {
+            let $2 = value.tail;
+            if ($2 instanceof $Empty) {
+              let $3 = $.head;
+              if ($3 instanceof $value_representation.ApplicationEntity) {
                 let value$1 = value.head;
                 _block$1 = $data_element_value.new_application_entity(value$1);
-              } else {
-                _block$1 = invalid_insert_error(item);
-              }
-            }
-          } else if ($2 instanceof $value_representation.CodeString) {
-            _block$1 = $data_element_value.new_code_string(value);
-          } else if ($2 instanceof $value_representation.LongString) {
-            _block$1 = $data_element_value.new_long_string(value);
-          } else if ($2 instanceof $value_representation.LongText) {
-            if (value instanceof $Empty) {
-              _block$1 = invalid_insert_error(item);
-            } else {
-              let $3 = value.tail;
-              if ($3 instanceof $Empty) {
+              } else if ($3 instanceof $value_representation.CodeString) {
+                _block$1 = $data_element_value.new_code_string(value);
+              } else if ($3 instanceof $value_representation.LongString) {
+                _block$1 = $data_element_value.new_long_string(value);
+              } else if ($3 instanceof $value_representation.LongText) {
                 let value$1 = value.head;
                 _block$1 = $data_element_value.new_long_text(value$1);
-              } else {
-                _block$1 = invalid_insert_error(item);
-              }
-            }
-          } else if ($2 instanceof $value_representation.ShortString) {
-            _block$1 = $data_element_value.new_short_string(value);
-          } else if ($2 instanceof $value_representation.ShortText) {
-            if (value instanceof $Empty) {
-              _block$1 = invalid_insert_error(item);
-            } else {
-              let $3 = value.tail;
-              if ($3 instanceof $Empty) {
+              } else if ($3 instanceof $value_representation.ShortString) {
+                _block$1 = $data_element_value.new_short_string(value);
+              } else if ($3 instanceof $value_representation.ShortText) {
                 let value$1 = value.head;
                 _block$1 = $data_element_value.new_short_text(value$1);
-              } else {
-                _block$1 = invalid_insert_error(item);
-              }
-            }
-          } else if ($2 instanceof $value_representation.UniqueIdentifier) {
-            _block$1 = $data_element_value.new_unique_identifier(value);
-          } else if (
-            $2 instanceof $value_representation.UniversalResourceIdentifier
-          ) {
-            if (value instanceof $Empty) {
-              _block$1 = invalid_insert_error(item);
-            } else {
-              let $3 = value.tail;
-              if ($3 instanceof $Empty) {
+              } else if ($3 instanceof $value_representation.UniqueIdentifier) {
+                _block$1 = $data_element_value.new_unique_identifier(value);
+              } else if (
+                $3 instanceof $value_representation.UniversalResourceIdentifier
+              ) {
                 let value$1 = value.head;
                 _block$1 = $data_element_value.new_universal_resource_identifier(
                   value$1,
                 );
-              } else {
-                _block$1 = invalid_insert_error(item);
-              }
-            }
-          } else if ($2 instanceof $value_representation.UnlimitedCharacters) {
-            _block$1 = $data_element_value.new_unlimited_characters(value);
-          } else if ($2 instanceof $value_representation.UnlimitedText) {
-            if (value instanceof $Empty) {
-              _block$1 = invalid_insert_error(item);
-            } else {
-              let $3 = value.tail;
-              if ($3 instanceof $Empty) {
+              } else if ($3 instanceof $value_representation.UnlimitedCharacters) {
+                _block$1 = $data_element_value.new_unlimited_characters(value);
+              } else if ($3 instanceof $value_representation.UnlimitedText) {
                 let value$1 = value.head;
                 _block$1 = $data_element_value.new_unlimited_text(value$1);
               } else {
                 _block$1 = invalid_insert_error(item);
               }
+            } else {
+              let $3 = $.head;
+              if ($3 instanceof $value_representation.CodeString) {
+                _block$1 = $data_element_value.new_code_string(value);
+              } else if ($3 instanceof $value_representation.LongString) {
+                _block$1 = $data_element_value.new_long_string(value);
+              } else if ($3 instanceof $value_representation.ShortString) {
+                _block$1 = $data_element_value.new_short_string(value);
+              } else if ($3 instanceof $value_representation.UniqueIdentifier) {
+                _block$1 = $data_element_value.new_unique_identifier(value);
+              } else if ($3 instanceof $value_representation.UnlimitedCharacters) {
+                _block$1 = $data_element_value.new_unlimited_characters(value);
+              } else {
+                _block$1 = invalid_insert_error(item);
+              }
             }
-          } else {
-            _block$1 = invalid_insert_error(item);
           }
         } else {
           _block$1 = invalid_insert_error(item);

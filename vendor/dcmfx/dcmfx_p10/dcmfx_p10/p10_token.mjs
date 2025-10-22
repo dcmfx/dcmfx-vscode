@@ -32,6 +32,13 @@ export class FilePreambleAndDICMPrefix extends $CustomType {
     this.preamble = preamble;
   }
 }
+export const P10Token$FilePreambleAndDICMPrefix = (preamble) =>
+  new FilePreambleAndDICMPrefix(preamble);
+export const P10Token$isFilePreambleAndDICMPrefix = (value) =>
+  value instanceof FilePreambleAndDICMPrefix;
+export const P10Token$FilePreambleAndDICMPrefix$preamble = (value) =>
+  value.preamble;
+export const P10Token$FilePreambleAndDICMPrefix$0 = (value) => value.preamble;
 
 /**
  * The File Meta Information dataset for the DICOM P10.
@@ -45,6 +52,12 @@ export class FileMetaInformation extends $CustomType {
     this.data_set = data_set;
   }
 }
+export const P10Token$FileMetaInformation = (data_set) =>
+  new FileMetaInformation(data_set);
+export const P10Token$isFileMetaInformation = (value) =>
+  value instanceof FileMetaInformation;
+export const P10Token$FileMetaInformation$data_set = (value) => value.data_set;
+export const P10Token$FileMetaInformation$0 = (value) => value.data_set;
 
 /**
  * The start of the next data element. This token will always be followed by
@@ -60,6 +73,18 @@ export class DataElementHeader extends $CustomType {
     this.path = path;
   }
 }
+export const P10Token$DataElementHeader = (tag, vr, length, path) =>
+  new DataElementHeader(tag, vr, length, path);
+export const P10Token$isDataElementHeader = (value) =>
+  value instanceof DataElementHeader;
+export const P10Token$DataElementHeader$tag = (value) => value.tag;
+export const P10Token$DataElementHeader$0 = (value) => value.tag;
+export const P10Token$DataElementHeader$vr = (value) => value.vr;
+export const P10Token$DataElementHeader$1 = (value) => value.vr;
+export const P10Token$DataElementHeader$length = (value) => value.length;
+export const P10Token$DataElementHeader$2 = (value) => value.length;
+export const P10Token$DataElementHeader$path = (value) => value.path;
+export const P10Token$DataElementHeader$3 = (value) => value.path;
 
 /**
  * Raw data for the value of the current data element. Data element values
@@ -75,6 +100,20 @@ export class DataElementValueBytes extends $CustomType {
     this.bytes_remaining = bytes_remaining;
   }
 }
+export const P10Token$DataElementValueBytes = (tag, vr, data, bytes_remaining) =>
+  new DataElementValueBytes(tag, vr, data, bytes_remaining);
+export const P10Token$isDataElementValueBytes = (value) =>
+  value instanceof DataElementValueBytes;
+export const P10Token$DataElementValueBytes$tag = (value) => value.tag;
+export const P10Token$DataElementValueBytes$0 = (value) => value.tag;
+export const P10Token$DataElementValueBytes$vr = (value) => value.vr;
+export const P10Token$DataElementValueBytes$1 = (value) => value.vr;
+export const P10Token$DataElementValueBytes$data = (value) => value.data;
+export const P10Token$DataElementValueBytes$2 = (value) => value.data;
+export const P10Token$DataElementValueBytes$bytes_remaining = (value) =>
+  value.bytes_remaining;
+export const P10Token$DataElementValueBytes$3 = (value) =>
+  value.bytes_remaining;
 
 /**
  * The start of a new sequence. If this is the start of a sequence of
@@ -90,6 +129,16 @@ export class SequenceStart extends $CustomType {
     this.path = path;
   }
 }
+export const P10Token$SequenceStart = (tag, vr, path) =>
+  new SequenceStart(tag, vr, path);
+export const P10Token$isSequenceStart = (value) =>
+  value instanceof SequenceStart;
+export const P10Token$SequenceStart$tag = (value) => value.tag;
+export const P10Token$SequenceStart$0 = (value) => value.tag;
+export const P10Token$SequenceStart$vr = (value) => value.vr;
+export const P10Token$SequenceStart$1 = (value) => value.vr;
+export const P10Token$SequenceStart$path = (value) => value.path;
+export const P10Token$SequenceStart$2 = (value) => value.path;
 
 /**
  * The end of the current sequence.
@@ -100,6 +149,11 @@ export class SequenceDelimiter extends $CustomType {
     this.tag = tag;
   }
 }
+export const P10Token$SequenceDelimiter = (tag) => new SequenceDelimiter(tag);
+export const P10Token$isSequenceDelimiter = (value) =>
+  value instanceof SequenceDelimiter;
+export const P10Token$SequenceDelimiter$tag = (value) => value.tag;
+export const P10Token$SequenceDelimiter$0 = (value) => value.tag;
 
 /**
  * The start of a new item in the current sequence.
@@ -110,8 +164,17 @@ export class SequenceItemStart extends $CustomType {
     this.index = index;
   }
 }
+export const P10Token$SequenceItemStart = (index) =>
+  new SequenceItemStart(index);
+export const P10Token$isSequenceItemStart = (value) =>
+  value instanceof SequenceItemStart;
+export const P10Token$SequenceItemStart$index = (value) => value.index;
+export const P10Token$SequenceItemStart$0 = (value) => value.index;
 
 export class SequenceItemDelimiter extends $CustomType {}
+export const P10Token$SequenceItemDelimiter = () => new SequenceItemDelimiter();
+export const P10Token$isSequenceItemDelimiter = (value) =>
+  value instanceof SequenceItemDelimiter;
 
 /**
  * The start of a new item in the current encapsulated pixel data sequence.
@@ -125,8 +188,18 @@ export class PixelDataItem extends $CustomType {
     this.length = length;
   }
 }
+export const P10Token$PixelDataItem = (index, length) =>
+  new PixelDataItem(index, length);
+export const P10Token$isPixelDataItem = (value) =>
+  value instanceof PixelDataItem;
+export const P10Token$PixelDataItem$index = (value) => value.index;
+export const P10Token$PixelDataItem$0 = (value) => value.index;
+export const P10Token$PixelDataItem$length = (value) => value.length;
+export const P10Token$PixelDataItem$1 = (value) => value.length;
 
 export class End extends $CustomType {}
+export const P10Token$End = () => new End();
+export const P10Token$isEnd = (value) => value instanceof End;
 
 /**
  * Converts a DICOM P10 token to a human-readable string.

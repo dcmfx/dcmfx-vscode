@@ -15,10 +15,27 @@ export class DataElementHeader extends $CustomType {
     this.length = length;
   }
 }
+export const DataElementHeader$DataElementHeader = (tag, vr, length) =>
+  new DataElementHeader(tag, vr, length);
+export const DataElementHeader$isDataElementHeader = (value) =>
+  value instanceof DataElementHeader;
+export const DataElementHeader$DataElementHeader$tag = (value) => value.tag;
+export const DataElementHeader$DataElementHeader$0 = (value) => value.tag;
+export const DataElementHeader$DataElementHeader$vr = (value) => value.vr;
+export const DataElementHeader$DataElementHeader$1 = (value) => value.vr;
+export const DataElementHeader$DataElementHeader$length = (value) =>
+  value.length;
+export const DataElementHeader$DataElementHeader$2 = (value) => value.length;
 
 export class ValueLengthU16 extends $CustomType {}
+export const ValueLengthSize$ValueLengthU16 = () => new ValueLengthU16();
+export const ValueLengthSize$isValueLengthU16 = (value) =>
+  value instanceof ValueLengthU16;
 
 export class ValueLengthU32 extends $CustomType {}
+export const ValueLengthSize$ValueLengthU32 = () => new ValueLengthU32();
+export const ValueLengthSize$isValueLengthU32 = (value) =>
+  value instanceof ValueLengthU32;
 
 /**
  * Converts a data element header to a human-readable string in the format

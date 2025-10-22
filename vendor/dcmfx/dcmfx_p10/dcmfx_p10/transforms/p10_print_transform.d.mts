@@ -7,6 +7,7 @@ import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class P10PrintTransform extends _.CustomType {
+  /** @deprecated */
   constructor(
     print_options: $data_set_print.DataSetPrintOptions$,
     indent: number,
@@ -23,18 +24,24 @@ declare class P10PrintTransform extends _.CustomType {
       $data_element_tag.DataElementTag$
     >
   );
-  
+  /** @deprecated */
   print_options: $data_set_print.DataSetPrintOptions$;
+  /** @deprecated */
   indent: number;
+  /** @deprecated */
   current_data_element: $data_element_tag.DataElementTag$;
+  /** @deprecated */
   ignore_data_element_value_bytes: boolean;
+  /** @deprecated */
   value_max_width: number;
+  /** @deprecated */
   private_creators: _.List<
     $dict.Dict$<
       $data_element_tag.DataElementTag$,
       $data_element_value.DataElementValue$
     >
   >;
+  /** @deprecated */
   last_data_element_private_creator_tag: $option.Option$<
     $data_element_tag.DataElementTag$
   >;

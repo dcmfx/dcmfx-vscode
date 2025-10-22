@@ -10,8 +10,8 @@ export function smart_parse_float(input: string): _.Result<number, undefined>;
 
 export function trim_ascii(s: string, ascii_character: number): string;
 
-export function list_at<EMD>(list: _.List<EMD>, index: number): _.Result<
-  EMD,
+export function list_at<EGY>(list: _.List<EGY>, index: number): _.Result<
+  EGY,
   undefined
 >;
 

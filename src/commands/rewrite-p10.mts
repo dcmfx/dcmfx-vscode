@@ -1,9 +1,13 @@
-import * as vscode from "vscode";
 import { Effect, pipe } from "effect";
+import * as vscode from "vscode";
 import * as dcmfx_p10 from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10.mjs";
-import * as option from "../../vendor/dcmfx/gleam_stdlib/gleam/option.mjs";
 import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
-import { gleamResultToEffect, readDicomDataSet } from "./utils.mjs";
+import * as option from "../../vendor/dcmfx/gleam_stdlib/gleam/option.mjs";
+import {
+  gleamListToArray,
+  gleamResultToEffect,
+  readDicomDataSet,
+} from "./utils.mjs";
 
 /**
  * VS Code command that rewrites a DICOM P10 file.
@@ -66,7 +70,7 @@ function* doRewriteP10(sourceUri: vscode.Uri, dstUri: vscode.Uri) {
   const bitArray = yield* pipe(
     gleamResultToEffect(dcmfx_p10.write_bytes(dataSet, new option.None())),
     Effect.mapError((e) =>
-      p10_error.to_lines(e, "writing output data").toArray(),
+      gleamListToArray(p10_error.to_lines(e, "writing output data")),
     ),
   );
 

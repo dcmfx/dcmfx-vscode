@@ -75,12 +75,21 @@ export {
 const FILEPATH = "src/bigi.gleam";
 
 export class LittleEndian extends $CustomType {}
+export const Endianness$LittleEndian = () => new LittleEndian();
+export const Endianness$isLittleEndian = (value) =>
+  value instanceof LittleEndian;
 
 export class BigEndian extends $CustomType {}
+export const Endianness$BigEndian = () => new BigEndian();
+export const Endianness$isBigEndian = (value) => value instanceof BigEndian;
 
 export class Signed extends $CustomType {}
+export const Signedness$Signed = () => new Signed();
+export const Signedness$isSigned = (value) => value instanceof Signed;
 
 export class Unsigned extends $CustomType {}
+export const Signedness$Unsigned = () => new Unsigned();
+export const Signedness$isUnsigned = (value) => value instanceof Unsigned;
 
 /**
  * Performs a *floored* integer division, which means that the result will

@@ -20,6 +20,11 @@ export class TagNotPresent extends $CustomType {
     this.path = path;
   }
 }
+export const DataError$TagNotPresent = (path) => new TagNotPresent(path);
+export const DataError$isTagNotPresent = (value) =>
+  value instanceof TagNotPresent;
+export const DataError$TagNotPresent$path = (value) => value.path;
+export const DataError$TagNotPresent$0 = (value) => value.path;
 
 /**
  * When retrieving a value, the requested type is not present. E.g. tried to
@@ -31,6 +36,11 @@ export class ValueNotPresent extends $CustomType {
     this.path = path;
   }
 }
+export const DataError$ValueNotPresent = (path) => new ValueNotPresent(path);
+export const DataError$isValueNotPresent = (value) =>
+  value instanceof ValueNotPresent;
+export const DataError$ValueNotPresent$path = (value) => value.path;
+export const DataError$ValueNotPresent$0 = (value) => value.path;
 
 /**
  * When retrieving a value, it did not have the required multiplicity. E.g.
@@ -43,6 +53,12 @@ export class MultiplicityMismatch extends $CustomType {
     this.path = path;
   }
 }
+export const DataError$MultiplicityMismatch = (path) =>
+  new MultiplicityMismatch(path);
+export const DataError$isMultiplicityMismatch = (value) =>
+  value instanceof MultiplicityMismatch;
+export const DataError$MultiplicityMismatch$path = (value) => value.path;
+export const DataError$MultiplicityMismatch$0 = (value) => value.path;
 
 /**
  * When retrieving a value, there was an error decoding its bytes. E.g. a
@@ -59,6 +75,14 @@ export class ValueInvalid extends $CustomType {
     this.path = path;
   }
 }
+export const DataError$ValueInvalid = (details, path) =>
+  new ValueInvalid(details, path);
+export const DataError$isValueInvalid = (value) =>
+  value instanceof ValueInvalid;
+export const DataError$ValueInvalid$details = (value) => value.details;
+export const DataError$ValueInvalid$0 = (value) => value.details;
+export const DataError$ValueInvalid$path = (value) => value.path;
+export const DataError$ValueInvalid$1 = (value) => value.path;
 
 /**
  * When creating a value, the supplied data did not meet a required length
@@ -74,6 +98,18 @@ export class ValueLengthInvalid extends $CustomType {
     this.path = path;
   }
 }
+export const DataError$ValueLengthInvalid = (vr, length, details, path) =>
+  new ValueLengthInvalid(vr, length, details, path);
+export const DataError$isValueLengthInvalid = (value) =>
+  value instanceof ValueLengthInvalid;
+export const DataError$ValueLengthInvalid$vr = (value) => value.vr;
+export const DataError$ValueLengthInvalid$0 = (value) => value.vr;
+export const DataError$ValueLengthInvalid$length = (value) => value.length;
+export const DataError$ValueLengthInvalid$1 = (value) => value.length;
+export const DataError$ValueLengthInvalid$details = (value) => value.details;
+export const DataError$ValueLengthInvalid$2 = (value) => value.details;
+export const DataError$ValueLengthInvalid$path = (value) => value.path;
+export const DataError$ValueLengthInvalid$3 = (value) => value.path;
 
 /**
  * Converts a data error a human-readable string.

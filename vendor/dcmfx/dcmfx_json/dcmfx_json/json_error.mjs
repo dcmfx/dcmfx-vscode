@@ -20,6 +20,13 @@ export class DataError extends $CustomType {
     this.data_error = data_error;
   }
 }
+export const JsonSerializeError$DataError = (data_error) =>
+  new DataError(data_error);
+export const JsonSerializeError$isDataError = (value) =>
+  value instanceof DataError;
+export const JsonSerializeError$DataError$data_error = (value) =>
+  value.data_error;
+export const JsonSerializeError$DataError$0 = (value) => value.data_error;
 
 /**
  * A P10 error that occurred during JSON serialization. The most common error
@@ -32,6 +39,12 @@ export class P10Error extends $CustomType {
     this.p10_error = p10_error;
   }
 }
+export const JsonSerializeError$P10Error = (p10_error) =>
+  new P10Error(p10_error);
+export const JsonSerializeError$isP10Error = (value) =>
+  value instanceof P10Error;
+export const JsonSerializeError$P10Error$p10_error = (value) => value.p10_error;
+export const JsonSerializeError$P10Error$0 = (value) => value.p10_error;
 
 /**
  * The DICOM JSON data to be deserialized is invalid.
@@ -43,6 +56,15 @@ export class JsonInvalid extends $CustomType {
     this.path = path;
   }
 }
+export const JsonDeserializeError$JsonInvalid = (details, path) =>
+  new JsonInvalid(details, path);
+export const JsonDeserializeError$isJsonInvalid = (value) =>
+  value instanceof JsonInvalid;
+export const JsonDeserializeError$JsonInvalid$details = (value) =>
+  value.details;
+export const JsonDeserializeError$JsonInvalid$0 = (value) => value.details;
+export const JsonDeserializeError$JsonInvalid$path = (value) => value.path;
+export const JsonDeserializeError$JsonInvalid$1 = (value) => value.path;
 
 /**
  * Returns lines of output that describe a DICOM JSON serialize error in a

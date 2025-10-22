@@ -30,6 +30,35 @@ export class StructuredDateTime extends $CustomType {
     this.time_zone_offset = time_zone_offset;
   }
 }
+export const StructuredDateTime$StructuredDateTime = (year, month, day, hour, minute, second, time_zone_offset) =>
+  new StructuredDateTime(year,
+  month,
+  day,
+  hour,
+  minute,
+  second,
+  time_zone_offset);
+export const StructuredDateTime$isStructuredDateTime = (value) =>
+  value instanceof StructuredDateTime;
+export const StructuredDateTime$StructuredDateTime$year = (value) => value.year;
+export const StructuredDateTime$StructuredDateTime$0 = (value) => value.year;
+export const StructuredDateTime$StructuredDateTime$month = (value) =>
+  value.month;
+export const StructuredDateTime$StructuredDateTime$1 = (value) => value.month;
+export const StructuredDateTime$StructuredDateTime$day = (value) => value.day;
+export const StructuredDateTime$StructuredDateTime$2 = (value) => value.day;
+export const StructuredDateTime$StructuredDateTime$hour = (value) => value.hour;
+export const StructuredDateTime$StructuredDateTime$3 = (value) => value.hour;
+export const StructuredDateTime$StructuredDateTime$minute = (value) =>
+  value.minute;
+export const StructuredDateTime$StructuredDateTime$4 = (value) => value.minute;
+export const StructuredDateTime$StructuredDateTime$second = (value) =>
+  value.second;
+export const StructuredDateTime$StructuredDateTime$5 = (value) => value.second;
+export const StructuredDateTime$StructuredDateTime$time_zone_offset = (value) =>
+  value.time_zone_offset;
+export const StructuredDateTime$StructuredDateTime$6 = (value) =>
+  value.time_zone_offset;
 
 /**
  * Converts a `DateTime` value into a structured date/time.
@@ -99,19 +128,9 @@ export function from_bytes(bytes) {
             new None(),
           ];
         } else {
-          let $3 = submatches.tail;
-          if ($3 instanceof $Empty) {
-            _block$2 = [
-              "0",
-              new None(),
-              new None(),
-              new None(),
-              new None(),
-              new None(),
-              new None(),
-            ];
-          } else {
-            let $4 = $3.tail;
+          let $3 = submatches.head;
+          if ($3 instanceof Some) {
+            let $4 = submatches.tail;
             if ($4 instanceof $Empty) {
               _block$2 = [
                 "0",
@@ -245,15 +264,25 @@ export function from_bytes(bytes) {
                                 } else {
                                   let $15 = $14.tail;
                                   if ($15 instanceof $Empty) {
-                                    let $16 = submatches.head;
-                                    if ($16 instanceof Some) {
-                                      let month = $4.head;
-                                      let day = $6.head;
-                                      let hour = $8.head;
-                                      let minute = $10.head;
-                                      let second = $11.head;
-                                      let offset = $14.head;
-                                      let year = $16[0];
+                                    _block$2 = [
+                                      "0",
+                                      new None(),
+                                      new None(),
+                                      new None(),
+                                      new None(),
+                                      new None(),
+                                      new None(),
+                                    ];
+                                  } else {
+                                    let $16 = $15.tail;
+                                    if ($16 instanceof $Empty) {
+                                      let year = $3[0];
+                                      let month = $5.head;
+                                      let day = $7.head;
+                                      let hour = $9.head;
+                                      let minute = $11.head;
+                                      let second = $12.head;
+                                      let offset = $15.head;
                                       _block$2 = [
                                         year,
                                         month,
@@ -274,16 +303,6 @@ export function from_bytes(bytes) {
                                         new None(),
                                       ];
                                     }
-                                  } else {
-                                    _block$2 = [
-                                      "0",
-                                      new None(),
-                                      new None(),
-                                      new None(),
-                                      new None(),
-                                      new None(),
-                                      new None(),
-                                    ];
                                   }
                                 }
                               }
@@ -296,6 +315,16 @@ export function from_bytes(bytes) {
                 }
               }
             }
+          } else {
+            _block$2 = [
+              "0",
+              new None(),
+              new None(),
+              new None(),
+              new None(),
+              new None(),
+              new None(),
+            ];
           }
         }
         let $2 = _block$2;

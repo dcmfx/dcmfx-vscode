@@ -742,7 +742,7 @@ function read_file_meta_information_data_set(
                                         let $3 = $data_set.is_empty(
                                           fmi_data_set,
                                         );
-                                        if ($3 && ends_at instanceof None) {
+                                        if (ends_at instanceof None && $3) {
                                           let $4 = $data_element_value.get_int(
                                             value,
                                           );
@@ -1427,7 +1427,7 @@ function read_data_element_header(context) {
       let $4 = context.next_action;
       if ($4 instanceof ReadFileMetaInformation) {
         _block$2 = false;
-      } else if ($3 && $2) {
+      } else if ($2 && $3) {
         _block$2 = $2;
       } else {
         _block$2 = false;
@@ -2708,12 +2708,12 @@ function read_pixel_data_item_token(context, vr) {
   if ($ instanceof Ok) {
     let header = $[0][0];
     let new_stream = $[0][1];
-    let $1 = header.length;
-    if ($1 instanceof $value_length.Defined) {
-      let $2 = header.vr;
-      if ($2 instanceof None) {
+    let $1 = header.vr;
+    if ($1 instanceof None) {
+      let $2 = header.length;
+      if ($2 instanceof $value_length.Defined) {
         let tag = header.tag;
-        let length = $1.length;
+        let length = $2.length;
         if ((isEqual(tag, $dictionary.item.tag)) && (length !== 0xFFFFFFFF)) {
           let next_action = new ReadDataElementValueBytes(
             $dictionary.item.tag,
@@ -2760,7 +2760,7 @@ function read_pixel_data_item_token(context, vr) {
           let token = new $p10_token.PixelDataItem(index, length);
           return new Ok([toList([token]), new_context]);
         } else {
-          let $3 = $1.length;
+          let $3 = $2.length;
           if ($3 === 0) {
             let tag$1 = header.tag;
             if (isEqual(tag$1, $dictionary.sequence_delimitation_item.tag)) {

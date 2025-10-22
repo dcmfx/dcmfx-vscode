@@ -15,8 +15,13 @@ export class Some extends $CustomType {
     this[0] = $0;
   }
 }
+export const Option$Some = ($0) => new Some($0);
+export const Option$isSome = (value) => value instanceof Some;
+export const Option$Some$0 = (value) => value[0];
 
 export class None extends $CustomType {}
+export const Option$None = () => new None();
+export const Option$isNone = (value) => value instanceof None;
 
 function reverse_and_prepend(loop$prefix, loop$suffix) {
   while (true) {

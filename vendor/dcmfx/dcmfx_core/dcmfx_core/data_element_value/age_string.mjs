@@ -15,12 +15,20 @@ import { Ok, Error, Empty as $Empty, CustomType as $CustomType, makeError } from
 const FILEPATH = "src/dcmfx_core/data_element_value/age_string.gleam";
 
 export class Days extends $CustomType {}
+export const AgeUnit$Days = () => new Days();
+export const AgeUnit$isDays = (value) => value instanceof Days;
 
 export class Weeks extends $CustomType {}
+export const AgeUnit$Weeks = () => new Weeks();
+export const AgeUnit$isWeeks = (value) => value instanceof Weeks;
 
 export class Months extends $CustomType {}
+export const AgeUnit$Months = () => new Months();
+export const AgeUnit$isMonths = (value) => value instanceof Months;
 
 export class Years extends $CustomType {}
+export const AgeUnit$Years = () => new Years();
+export const AgeUnit$isYears = (value) => value instanceof Years;
 
 export class StructuredAge extends $CustomType {
   constructor(number, unit) {
@@ -29,6 +37,14 @@ export class StructuredAge extends $CustomType {
     this.unit = unit;
   }
 }
+export const StructuredAge$StructuredAge = (number, unit) =>
+  new StructuredAge(number, unit);
+export const StructuredAge$isStructuredAge = (value) =>
+  value instanceof StructuredAge;
+export const StructuredAge$StructuredAge$number = (value) => value.number;
+export const StructuredAge$StructuredAge$0 = (value) => value.number;
+export const StructuredAge$StructuredAge$unit = (value) => value.unit;
+export const StructuredAge$StructuredAge$1 = (value) => value.unit;
 
 /**
  * Formats a structured age as a human-readable string.
@@ -116,22 +132,22 @@ export function from_bytes(bytes) {
               ),
             );
           } else {
-            let $4 = $3.tail;
-            if ($4 instanceof $Empty) {
-              return new Error(
-                $data_error.new_value_invalid(
-                  ("AgeString is invalid: '" + age_string$1) + "'",
-                ),
-              );
-            } else {
-              let $5 = $4.tail;
+            let $4 = $3.head;
+            if ($4 instanceof Some) {
+              let $5 = $3.tail;
               if ($5 instanceof $Empty) {
-                let $6 = $4.head;
+                return new Error(
+                  $data_error.new_value_invalid(
+                    ("AgeString is invalid: '" + age_string$1) + "'",
+                  ),
+                );
+              } else {
+                let $6 = $5.head;
                 if ($6 instanceof Some) {
-                  let $7 = $3.head;
-                  if ($7 instanceof Some) {
+                  let $7 = $5.tail;
+                  if ($7 instanceof $Empty) {
+                    let number = $4[0];
                     let unit = $6[0];
-                    let number = $7[0];
                     let $8 = $int.parse(number);
                     let number$1;
                     if ($8 instanceof Ok) {
@@ -179,13 +195,13 @@ export function from_bytes(bytes) {
                     ),
                   );
                 }
-              } else {
-                return new Error(
-                  $data_error.new_value_invalid(
-                    ("AgeString is invalid: '" + age_string$1) + "'",
-                  ),
-                );
               }
+            } else {
+              return new Error(
+                $data_error.new_value_invalid(
+                  ("AgeString is invalid: '" + age_string$1) + "'",
+                ),
+              );
             }
           }
         } else {

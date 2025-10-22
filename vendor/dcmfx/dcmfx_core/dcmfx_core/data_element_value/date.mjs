@@ -21,6 +21,16 @@ export class StructuredDate extends $CustomType {
     this.day = day;
   }
 }
+export const StructuredDate$StructuredDate = (year, month, day) =>
+  new StructuredDate(year, month, day);
+export const StructuredDate$isStructuredDate = (value) =>
+  value instanceof StructuredDate;
+export const StructuredDate$StructuredDate$year = (value) => value.year;
+export const StructuredDate$StructuredDate$0 = (value) => value.year;
+export const StructuredDate$StructuredDate$month = (value) => value.month;
+export const StructuredDate$StructuredDate$1 = (value) => value.month;
+export const StructuredDate$StructuredDate$day = (value) => value.day;
+export const StructuredDate$StructuredDate$2 = (value) => value.day;
 
 /**
  * Converts a `Date` value into a structured date.
@@ -81,15 +91,9 @@ export function from_bytes(bytes) {
               ),
             );
           } else {
-            let $4 = $3.tail;
-            if ($4 instanceof $Empty) {
-              return new Error(
-                $data_error.new_value_invalid(
-                  ("Date is invalid: '" + date_string$1) + "'",
-                ),
-              );
-            } else {
-              let $5 = $4.tail;
+            let $4 = $3.head;
+            if ($4 instanceof Some) {
+              let $5 = $3.tail;
               if ($5 instanceof $Empty) {
                 return new Error(
                   $data_error.new_value_invalid(
@@ -97,17 +101,23 @@ export function from_bytes(bytes) {
                   ),
                 );
               } else {
-                let $6 = $5.tail;
-                if ($6 instanceof $Empty) {
-                  let $7 = $5.head;
-                  if ($7 instanceof Some) {
-                    let $8 = $4.head;
+                let $6 = $5.head;
+                if ($6 instanceof Some) {
+                  let $7 = $5.tail;
+                  if ($7 instanceof $Empty) {
+                    return new Error(
+                      $data_error.new_value_invalid(
+                        ("Date is invalid: '" + date_string$1) + "'",
+                      ),
+                    );
+                  } else {
+                    let $8 = $7.head;
                     if ($8 instanceof Some) {
-                      let $9 = $3.head;
-                      if ($9 instanceof Some) {
-                        let day = $7[0];
-                        let month = $8[0];
-                        let year = $9[0];
+                      let $9 = $7.tail;
+                      if ($9 instanceof $Empty) {
+                        let year = $4[0];
+                        let month = $6[0];
+                        let day = $8[0];
                         let $10 = $int.parse(year);
                         let year$1;
                         if ($10 instanceof Ok) {
@@ -188,12 +198,6 @@ export function from_bytes(bytes) {
                         ),
                       );
                     }
-                  } else {
-                    return new Error(
-                      $data_error.new_value_invalid(
-                        ("Date is invalid: '" + date_string$1) + "'",
-                      ),
-                    );
                   }
                 } else {
                   return new Error(
@@ -203,6 +207,12 @@ export function from_bytes(bytes) {
                   );
                 }
               }
+            } else {
+              return new Error(
+                $data_error.new_value_invalid(
+                  ("Date is invalid: '" + date_string$1) + "'",
+                ),
+              );
             }
           }
         } else {

@@ -14,14 +14,14 @@ export function exclusive_nor(a: boolean, b: boolean): boolean;
 
 export function to_string(bool: boolean): string;
 
-export function guard<BUZ>(
+export function guard<BSI>(
   requirement: boolean,
-  consequence: BUZ,
-  alternative: () => BUZ
-): BUZ;
+  consequence: BSI,
+  alternative: () => BSI
+): BSI;
 
-export function lazy_guard<BVA>(
+export function lazy_guard<BSJ>(
   requirement: boolean,
-  consequence: () => BVA,
-  alternative: () => BVA
-): BVA;
+  consequence: () => BSJ,
+  alternative: () => BSJ
+): BSJ;

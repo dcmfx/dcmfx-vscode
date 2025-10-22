@@ -119,21 +119,25 @@ export function final_data_set(builder) {
   let _block;
   let $ = builder.is_complete;
   let $1 = builder.location;
-  if ($1 instanceof $Empty) {
-    _block = new Error(undefined);
-  } else {
-    let $2 = $1.tail;
-    if ($2 instanceof $Empty) {
-      let $3 = $1.head;
-      if ($3 instanceof RootDataSet && $) {
-        let data_set = $3.data_set;
-        _block = new Ok(data_set);
+  if ($) {
+    if ($1 instanceof $Empty) {
+      _block = new Error(undefined);
+    } else {
+      let $2 = $1.tail;
+      if ($2 instanceof $Empty) {
+        let $3 = $1.head;
+        if ($3 instanceof RootDataSet) {
+          let data_set = $3.data_set;
+          _block = new Ok(data_set);
+        } else {
+          _block = new Error(undefined);
+        }
       } else {
         _block = new Error(undefined);
       }
-    } else {
-      _block = new Error(undefined);
     }
+  } else {
+    _block = new Error(undefined);
   }
   let root_data_set = _block;
   return $result.map(
@@ -167,11 +171,11 @@ function insert_data_element_at_current_location(location, tag, value) {
       {}
     )
   } else {
-    let $1 = location.head;
-    if ($1 instanceof RootDataSet) {
-      let $2 = location.tail;
-      if ($2 instanceof $Empty) {
-        let data_set = $1.data_set;
+    let $1 = location.tail;
+    if ($1 instanceof $Empty) {
+      let $2 = location.head;
+      if ($2 instanceof RootDataSet) {
+        let data_set = $2.data_set;
         return toList([
           (() => {
             let _pipe = data_set;
@@ -179,6 +183,26 @@ function insert_data_element_at_current_location(location, tag, value) {
             return new RootDataSet(_pipe$1);
           })(),
         ]);
+      } else if ($2 instanceof SequenceItem) {
+        let rest = $1;
+        let item_data_set = $2.data_set;
+        return listPrepend(
+          (() => {
+            let _pipe = item_data_set;
+            let _pipe$1 = $data_set.insert(_pipe, tag, value);
+            return new SequenceItem(_pipe$1);
+          })(),
+          rest,
+        );
+      } else if ($2 instanceof EncapsulatedPixelDataSequence && $ instanceof Ok) {
+        let rest = $1;
+        let vr = $2.vr;
+        let items = $2.items;
+        let bytes = $[0];
+        return listPrepend(
+          new EncapsulatedPixelDataSequence(vr, listPrepend(bytes, items)),
+          rest,
+        );
       } else {
         throw makeError(
           "panic",
@@ -190,36 +214,39 @@ function insert_data_element_at_current_location(location, tag, value) {
           {}
         )
       }
-    } else if ($1 instanceof SequenceItem) {
-      let rest = location.tail;
-      let item_data_set = $1.data_set;
-      return listPrepend(
-        (() => {
-          let _pipe = item_data_set;
-          let _pipe$1 = $data_set.insert(_pipe, tag, value);
-          return new SequenceItem(_pipe$1);
-        })(),
-        rest,
-      );
-    } else if ($1 instanceof EncapsulatedPixelDataSequence && $ instanceof Ok) {
-      let rest = location.tail;
-      let vr = $1.vr;
-      let items = $1.items;
-      let bytes = $[0];
-      return listPrepend(
-        new EncapsulatedPixelDataSequence(vr, listPrepend(bytes, items)),
-        rest,
-      );
     } else {
-      throw makeError(
-        "panic",
-        FILEPATH,
-        "dcmfx_p10/data_set_builder",
-        412,
-        "insert_data_element_at_current_location",
-        "Internal error: unable to insert at current location",
-        {}
-      )
+      let $2 = location.head;
+      if ($2 instanceof SequenceItem) {
+        let rest = $1;
+        let item_data_set = $2.data_set;
+        return listPrepend(
+          (() => {
+            let _pipe = item_data_set;
+            let _pipe$1 = $data_set.insert(_pipe, tag, value);
+            return new SequenceItem(_pipe$1);
+          })(),
+          rest,
+        );
+      } else if ($2 instanceof EncapsulatedPixelDataSequence && $ instanceof Ok) {
+        let rest = $1;
+        let vr = $2.vr;
+        let items = $2.items;
+        let bytes = $[0];
+        return listPrepend(
+          new EncapsulatedPixelDataSequence(vr, listPrepend(bytes, items)),
+          rest,
+        );
+      } else {
+        throw makeError(
+          "panic",
+          FILEPATH,
+          "dcmfx_p10/data_set_builder",
+          412,
+          "insert_data_element_at_current_location",
+          "Internal error: unable to insert at current location",
+          {}
+        )
+      }
     }
   }
 }
@@ -310,10 +337,13 @@ function add_token_to_sequence(builder, token) {
     let token$1 = token;
     return unexpected_token_error(token$1, builder);
   } else {
-    let $1 = $.head;
-    if ($1 instanceof RootDataSet) {
-      let $2 = $.tail;
-      if ($2 instanceof $Empty && token instanceof $p10_token.SequenceItemStart) {
+    let $1 = $.tail;
+    if ($1 instanceof $Empty) {
+      let $2 = $.head;
+      if (
+        $2 instanceof RootDataSet &&
+        token instanceof $p10_token.SequenceItemStart
+      ) {
         return new Ok(
           new DataSetBuilder(
             builder.file_preamble,
@@ -323,51 +353,92 @@ function add_token_to_sequence(builder, token) {
             builder.is_complete,
           ),
         );
-      } else {
-        let token$1 = token;
-        return unexpected_token_error(token$1, builder);
-      }
-    } else if ($1 instanceof Sequence) {
-      if (token instanceof $p10_token.SequenceDelimiter) {
-        let sequence_location = $.tail;
-        let tag = $1.tag;
-        let items = $1.items;
-        let _block;
-        let _pipe = items;
-        let _pipe$1 = $list.reverse(_pipe);
-        _block = $data_element_value.new_sequence(_pipe$1);
-        let sequence = _block;
-        let new_location = insert_data_element_at_current_location(
-          sequence_location,
-          tag,
-          sequence,
-        );
-        return new Ok(
-          new DataSetBuilder(
-            builder.file_preamble,
-            builder.file_meta_information,
-            new_location,
-            builder.pending_data_element,
-            builder.is_complete,
-          ),
-        );
-      } else if (token instanceof $p10_token.SequenceItemStart) {
-        return new Ok(
-          new DataSetBuilder(
-            builder.file_preamble,
-            builder.file_meta_information,
-            listPrepend(new SequenceItem($data_set.new$()), builder.location),
-            builder.pending_data_element,
-            builder.is_complete,
-          ),
-        );
+      } else if ($2 instanceof Sequence) {
+        if (token instanceof $p10_token.SequenceDelimiter) {
+          let sequence_location = $1;
+          let tag = $2.tag;
+          let items = $2.items;
+          let _block;
+          let _pipe = items;
+          let _pipe$1 = $list.reverse(_pipe);
+          _block = $data_element_value.new_sequence(_pipe$1);
+          let sequence = _block;
+          let new_location = insert_data_element_at_current_location(
+            sequence_location,
+            tag,
+            sequence,
+          );
+          return new Ok(
+            new DataSetBuilder(
+              builder.file_preamble,
+              builder.file_meta_information,
+              new_location,
+              builder.pending_data_element,
+              builder.is_complete,
+            ),
+          );
+        } else if (token instanceof $p10_token.SequenceItemStart) {
+          return new Ok(
+            new DataSetBuilder(
+              builder.file_preamble,
+              builder.file_meta_information,
+              listPrepend(new SequenceItem($data_set.new$()), builder.location),
+              builder.pending_data_element,
+              builder.is_complete,
+            ),
+          );
+        } else {
+          let token$1 = token;
+          return unexpected_token_error(token$1, builder);
+        }
       } else {
         let token$1 = token;
         return unexpected_token_error(token$1, builder);
       }
     } else {
-      let token$1 = token;
-      return unexpected_token_error(token$1, builder);
+      let $2 = $.head;
+      if ($2 instanceof Sequence) {
+        if (token instanceof $p10_token.SequenceDelimiter) {
+          let sequence_location = $1;
+          let tag = $2.tag;
+          let items = $2.items;
+          let _block;
+          let _pipe = items;
+          let _pipe$1 = $list.reverse(_pipe);
+          _block = $data_element_value.new_sequence(_pipe$1);
+          let sequence = _block;
+          let new_location = insert_data_element_at_current_location(
+            sequence_location,
+            tag,
+            sequence,
+          );
+          return new Ok(
+            new DataSetBuilder(
+              builder.file_preamble,
+              builder.file_meta_information,
+              new_location,
+              builder.pending_data_element,
+              builder.is_complete,
+            ),
+          );
+        } else if (token instanceof $p10_token.SequenceItemStart) {
+          return new Ok(
+            new DataSetBuilder(
+              builder.file_preamble,
+              builder.file_meta_information,
+              listPrepend(new SequenceItem($data_set.new$()), builder.location),
+              builder.pending_data_element,
+              builder.is_complete,
+            ),
+          );
+        } else {
+          let token$1 = token;
+          return unexpected_token_error(token$1, builder);
+        }
+      } else {
+        let token$1 = token;
+        return unexpected_token_error(token$1, builder);
+      }
     }
   }
 }
@@ -513,14 +584,14 @@ function add_token_to_data_set(builder, token) {
           ),
         );
       } else {
-        let $2 = $1.head;
-        if ($2 instanceof Sequence) {
-          let $3 = $.head;
-          if ($3 instanceof SequenceItem) {
+        let $2 = $.head;
+        if ($2 instanceof SequenceItem) {
+          let $3 = $1.head;
+          if ($3 instanceof Sequence) {
             let rest = $1.tail;
-            let tag = $2.tag;
-            let items = $2.items;
-            let item_data_set = $3.data_set;
+            let item_data_set = $2.data_set;
+            let tag = $3.tag;
+            let items = $3.items;
             let new_location = listPrepend(
               new Sequence(tag, listPrepend(item_data_set, items)),
               rest,

@@ -31,6 +31,30 @@ export class PersonNameComponents extends $CustomType {
     this.suffix = suffix;
   }
 }
+export const PersonNameComponents$PersonNameComponents = (last_name, first_name, middle_name, prefix, suffix) =>
+  new PersonNameComponents(last_name, first_name, middle_name, prefix, suffix);
+export const PersonNameComponents$isPersonNameComponents = (value) =>
+  value instanceof PersonNameComponents;
+export const PersonNameComponents$PersonNameComponents$last_name = (value) =>
+  value.last_name;
+export const PersonNameComponents$PersonNameComponents$0 = (value) =>
+  value.last_name;
+export const PersonNameComponents$PersonNameComponents$first_name = (value) =>
+  value.first_name;
+export const PersonNameComponents$PersonNameComponents$1 = (value) =>
+  value.first_name;
+export const PersonNameComponents$PersonNameComponents$middle_name = (value) =>
+  value.middle_name;
+export const PersonNameComponents$PersonNameComponents$2 = (value) =>
+  value.middle_name;
+export const PersonNameComponents$PersonNameComponents$prefix = (value) =>
+  value.prefix;
+export const PersonNameComponents$PersonNameComponents$3 = (value) =>
+  value.prefix;
+export const PersonNameComponents$PersonNameComponents$suffix = (value) =>
+  value.suffix;
+export const PersonNameComponents$PersonNameComponents$4 = (value) =>
+  value.suffix;
 
 export class StructuredPersonName extends $CustomType {
   constructor(alphabetic, ideographic, phonetic) {
@@ -40,6 +64,22 @@ export class StructuredPersonName extends $CustomType {
     this.phonetic = phonetic;
   }
 }
+export const StructuredPersonName$StructuredPersonName = (alphabetic, ideographic, phonetic) =>
+  new StructuredPersonName(alphabetic, ideographic, phonetic);
+export const StructuredPersonName$isStructuredPersonName = (value) =>
+  value instanceof StructuredPersonName;
+export const StructuredPersonName$StructuredPersonName$alphabetic = (value) =>
+  value.alphabetic;
+export const StructuredPersonName$StructuredPersonName$0 = (value) =>
+  value.alphabetic;
+export const StructuredPersonName$StructuredPersonName$ideographic = (value) =>
+  value.ideographic;
+export const StructuredPersonName$StructuredPersonName$1 = (value) =>
+  value.ideographic;
+export const StructuredPersonName$StructuredPersonName$phonetic = (value) =>
+  value.phonetic;
+export const StructuredPersonName$StructuredPersonName$2 = (value) =>
+  value.phonetic;
 
 function parse_person_name_component_group(component_group) {
   let _block;

@@ -38,6 +38,22 @@ export class SingleByteWithoutExtensions extends $CustomType {
     this.decoder = decoder;
   }
 }
+export const CharacterSet$SingleByteWithoutExtensions = (defined_term, description, decoder) =>
+  new SingleByteWithoutExtensions(defined_term, description, decoder);
+export const CharacterSet$isSingleByteWithoutExtensions = (value) =>
+  value instanceof SingleByteWithoutExtensions;
+export const CharacterSet$SingleByteWithoutExtensions$defined_term = (value) =>
+  value.defined_term;
+export const CharacterSet$SingleByteWithoutExtensions$0 = (value) =>
+  value.defined_term;
+export const CharacterSet$SingleByteWithoutExtensions$description = (value) =>
+  value.description;
+export const CharacterSet$SingleByteWithoutExtensions$1 = (value) =>
+  value.description;
+export const CharacterSet$SingleByteWithoutExtensions$decoder = (value) =>
+  value.decoder;
+export const CharacterSet$SingleByteWithoutExtensions$2 = (value) =>
+  value.decoder;
 
 export class SingleByteWithExtensions extends $CustomType {
   constructor(defined_term, description, code_element_g0, code_element_g1) {
@@ -48,6 +64,29 @@ export class SingleByteWithExtensions extends $CustomType {
     this.code_element_g1 = code_element_g1;
   }
 }
+export const CharacterSet$SingleByteWithExtensions = (defined_term, description, code_element_g0, code_element_g1) =>
+  new SingleByteWithExtensions(defined_term,
+  description,
+  code_element_g0,
+  code_element_g1);
+export const CharacterSet$isSingleByteWithExtensions = (value) =>
+  value instanceof SingleByteWithExtensions;
+export const CharacterSet$SingleByteWithExtensions$defined_term = (value) =>
+  value.defined_term;
+export const CharacterSet$SingleByteWithExtensions$0 = (value) =>
+  value.defined_term;
+export const CharacterSet$SingleByteWithExtensions$description = (value) =>
+  value.description;
+export const CharacterSet$SingleByteWithExtensions$1 = (value) =>
+  value.description;
+export const CharacterSet$SingleByteWithExtensions$code_element_g0 = (value) =>
+  value.code_element_g0;
+export const CharacterSet$SingleByteWithExtensions$2 = (value) =>
+  value.code_element_g0;
+export const CharacterSet$SingleByteWithExtensions$code_element_g1 = (value) =>
+  value.code_element_g1;
+export const CharacterSet$SingleByteWithExtensions$3 = (value) =>
+  value.code_element_g1;
 
 export class MultiByteWithExtensions extends $CustomType {
   constructor(defined_term, description, code_element_g0, code_element_g1) {
@@ -58,6 +97,29 @@ export class MultiByteWithExtensions extends $CustomType {
     this.code_element_g1 = code_element_g1;
   }
 }
+export const CharacterSet$MultiByteWithExtensions = (defined_term, description, code_element_g0, code_element_g1) =>
+  new MultiByteWithExtensions(defined_term,
+  description,
+  code_element_g0,
+  code_element_g1);
+export const CharacterSet$isMultiByteWithExtensions = (value) =>
+  value instanceof MultiByteWithExtensions;
+export const CharacterSet$MultiByteWithExtensions$defined_term = (value) =>
+  value.defined_term;
+export const CharacterSet$MultiByteWithExtensions$0 = (value) =>
+  value.defined_term;
+export const CharacterSet$MultiByteWithExtensions$description = (value) =>
+  value.description;
+export const CharacterSet$MultiByteWithExtensions$1 = (value) =>
+  value.description;
+export const CharacterSet$MultiByteWithExtensions$code_element_g0 = (value) =>
+  value.code_element_g0;
+export const CharacterSet$MultiByteWithExtensions$2 = (value) =>
+  value.code_element_g0;
+export const CharacterSet$MultiByteWithExtensions$code_element_g1 = (value) =>
+  value.code_element_g1;
+export const CharacterSet$MultiByteWithExtensions$3 = (value) =>
+  value.code_element_g1;
 
 export class MultiByteWithoutExtensions extends $CustomType {
   constructor(defined_term, description, decoder) {
@@ -67,6 +129,25 @@ export class MultiByteWithoutExtensions extends $CustomType {
     this.decoder = decoder;
   }
 }
+export const CharacterSet$MultiByteWithoutExtensions = (defined_term, description, decoder) =>
+  new MultiByteWithoutExtensions(defined_term, description, decoder);
+export const CharacterSet$isMultiByteWithoutExtensions = (value) =>
+  value instanceof MultiByteWithoutExtensions;
+export const CharacterSet$MultiByteWithoutExtensions$defined_term = (value) =>
+  value.defined_term;
+export const CharacterSet$MultiByteWithoutExtensions$0 = (value) =>
+  value.defined_term;
+export const CharacterSet$MultiByteWithoutExtensions$description = (value) =>
+  value.description;
+export const CharacterSet$MultiByteWithoutExtensions$1 = (value) =>
+  value.description;
+export const CharacterSet$MultiByteWithoutExtensions$decoder = (value) =>
+  value.decoder;
+export const CharacterSet$MultiByteWithoutExtensions$2 = (value) =>
+  value.decoder;
+
+export const CharacterSet$defined_term = (value) => value.defined_term;
+export const CharacterSet$description = (value) => value.description;
 
 export class CodeElement extends $CustomType {
   constructor(escape_sequence, decoder) {
@@ -75,6 +156,15 @@ export class CodeElement extends $CustomType {
     this.decoder = decoder;
   }
 }
+export const CodeElement$CodeElement = (escape_sequence, decoder) =>
+  new CodeElement(escape_sequence, decoder);
+export const CodeElement$isCodeElement = (value) =>
+  value instanceof CodeElement;
+export const CodeElement$CodeElement$escape_sequence = (value) =>
+  value.escape_sequence;
+export const CodeElement$CodeElement$0 = (value) => value.escape_sequence;
+export const CodeElement$CodeElement$decoder = (value) => value.decoder;
+export const CodeElement$CodeElement$1 = (value) => value.decoder;
 
 /**
  * Decodes bytes into Unicode codepoints using the specified decoder. The list

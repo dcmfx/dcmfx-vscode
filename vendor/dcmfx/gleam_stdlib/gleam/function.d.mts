@@ -1,3 +1,3 @@
-export function identity<CNU>(x: CNU): CNU;
+export function identity<CKL>(x: CKL): CKL;
 
-export function tap<CNV>(arg: CNV, effect: (x0: CNV) => any): CNV;
+export function tap<CKM>(arg: CKM, effect: (x0: CKM) => any): CKM;

@@ -9,44 +9,54 @@ import type * as $p10_token from "../../dcmfx_p10/p10_token.d.mts";
 import type * as _ from "../../gleam.d.mts";
 
 declare class RootDataSet extends _.CustomType {
+  /** @deprecated */
   constructor(
     clarifying_data_elements: ClarifyingDataElements$,
     last_data_element_tag: $data_element_tag.DataElementTag$
   );
-  
+  /** @deprecated */
   clarifying_data_elements: ClarifyingDataElements$;
+  /** @deprecated */
   last_data_element_tag: $data_element_tag.DataElementTag$;
 }
 
 declare class Sequence extends _.CustomType {
+  /** @deprecated */
   constructor(
     tag: $data_element_tag.DataElementTag$,
     is_implicit_vr: boolean,
     ends_at: $option.Option$<number>,
     item_count: number
   );
-  
+  /** @deprecated */
   tag: $data_element_tag.DataElementTag$;
+  /** @deprecated */
   is_implicit_vr: boolean;
+  /** @deprecated */
   ends_at: $option.Option$<number>;
+  /** @deprecated */
   item_count: number;
 }
 
 declare class Item extends _.CustomType {
+  /** @deprecated */
   constructor(
     clarifying_data_elements: ClarifyingDataElements$,
     last_data_element_tag: $data_element_tag.DataElementTag$,
     ends_at: $option.Option$<number>
   );
-  
+  /** @deprecated */
   clarifying_data_elements: ClarifyingDataElements$;
+  /** @deprecated */
   last_data_element_tag: $data_element_tag.DataElementTag$;
+  /** @deprecated */
   ends_at: $option.Option$<number>;
 }
 
 export type LocationEntry$ = RootDataSet | Sequence | Item;
 
 declare class ClarifyingDataElements extends _.CustomType {
+  /** @deprecated */
   constructor(
     specific_character_set: $dcmfx_character_set.SpecificCharacterSet$,
     bits_allocated: $option.Option$<number>,
@@ -55,12 +65,17 @@ declare class ClarifyingDataElements extends _.CustomType {
     waveform_bits_allocated: $option.Option$<number>,
     private_creators: $dict.Dict$<$data_element_tag.DataElementTag$, string>
   );
-  
+  /** @deprecated */
   specific_character_set: $dcmfx_character_set.SpecificCharacterSet$;
+  /** @deprecated */
   bits_allocated: $option.Option$<number>;
+  /** @deprecated */
   pixel_representation: $option.Option$<number>;
+  /** @deprecated */
   waveform_bits_stored: $option.Option$<number>;
+  /** @deprecated */
   waveform_bits_allocated: $option.Option$<number>;
+  /** @deprecated */
   private_creators: $dict.Dict$<$data_element_tag.DataElementTag$, string>;
 }
 

@@ -2,12 +2,23 @@
 import { Ok, Error, toList, CustomType as $CustomType, isEqual } from "../gleam.mjs";
 
 export class VrImplicit extends $CustomType {}
+export const VrSerialization$VrImplicit = () => new VrImplicit();
+export const VrSerialization$isVrImplicit = (value) =>
+  value instanceof VrImplicit;
 
 export class VrExplicit extends $CustomType {}
+export const VrSerialization$VrExplicit = () => new VrExplicit();
+export const VrSerialization$isVrExplicit = (value) =>
+  value instanceof VrExplicit;
 
 export class LittleEndian extends $CustomType {}
+export const Endianness$LittleEndian = () => new LittleEndian();
+export const Endianness$isLittleEndian = (value) =>
+  value instanceof LittleEndian;
 
 export class BigEndian extends $CustomType {}
+export const Endianness$BigEndian = () => new BigEndian();
+export const Endianness$isBigEndian = (value) => value instanceof BigEndian;
 
 export class TransferSyntax extends $CustomType {
   constructor(name, uid, vr_serialization, endianness, is_deflated, is_encapsulated) {
@@ -20,6 +31,32 @@ export class TransferSyntax extends $CustomType {
     this.is_encapsulated = is_encapsulated;
   }
 }
+export const TransferSyntax$TransferSyntax = (name, uid, vr_serialization, endianness, is_deflated, is_encapsulated) =>
+  new TransferSyntax(name,
+  uid,
+  vr_serialization,
+  endianness,
+  is_deflated,
+  is_encapsulated);
+export const TransferSyntax$isTransferSyntax = (value) =>
+  value instanceof TransferSyntax;
+export const TransferSyntax$TransferSyntax$name = (value) => value.name;
+export const TransferSyntax$TransferSyntax$0 = (value) => value.name;
+export const TransferSyntax$TransferSyntax$uid = (value) => value.uid;
+export const TransferSyntax$TransferSyntax$1 = (value) => value.uid;
+export const TransferSyntax$TransferSyntax$vr_serialization = (value) =>
+  value.vr_serialization;
+export const TransferSyntax$TransferSyntax$2 = (value) =>
+  value.vr_serialization;
+export const TransferSyntax$TransferSyntax$endianness = (value) =>
+  value.endianness;
+export const TransferSyntax$TransferSyntax$3 = (value) => value.endianness;
+export const TransferSyntax$TransferSyntax$is_deflated = (value) =>
+  value.is_deflated;
+export const TransferSyntax$TransferSyntax$4 = (value) => value.is_deflated;
+export const TransferSyntax$TransferSyntax$is_encapsulated = (value) =>
+  value.is_encapsulated;
+export const TransferSyntax$TransferSyntax$5 = (value) => value.is_encapsulated;
 
 /**
  * The 'Implicit VR Little Endian' transfer syntax.

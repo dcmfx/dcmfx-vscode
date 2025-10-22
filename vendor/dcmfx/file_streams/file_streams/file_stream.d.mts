@@ -10,36 +10,73 @@ import type * as _ from "../gleam.d.mts";
 declare type IoDevice$ = unknown;
 
 declare class FileStream extends _.CustomType {
+  /** @deprecated */
   constructor(
     io_device: IoDevice$,
     encoding: $option.Option$<$text_encoding.TextEncoding$>
   );
-  
+  /** @deprecated */
   io_device: IoDevice$;
+  /** @deprecated */
   encoding: $option.Option$<$text_encoding.TextEncoding$>;
 }
 
 export type FileStream$ = FileStream;
 
 export class BeginningOfFile extends _.CustomType {
+  /** @deprecated */
   constructor(offset: number);
-  
+  /** @deprecated */
   offset: number;
 }
+export function FileStreamLocation$BeginningOfFile(
+  offset: number,
+): FileStreamLocation$;
+export function FileStreamLocation$isBeginningOfFile(
+  value: FileStreamLocation$,
+): boolean;
+export function FileStreamLocation$BeginningOfFile$0(value: FileStreamLocation$): number;
+export function FileStreamLocation$BeginningOfFile$offset(
+  value: FileStreamLocation$,
+): number;
 
 export class CurrentLocation extends _.CustomType {
+  /** @deprecated */
   constructor(offset: number);
-  
+  /** @deprecated */
   offset: number;
 }
+export function FileStreamLocation$CurrentLocation(
+  offset: number,
+): FileStreamLocation$;
+export function FileStreamLocation$isCurrentLocation(
+  value: FileStreamLocation$,
+): boolean;
+export function FileStreamLocation$CurrentLocation$0(value: FileStreamLocation$): number;
+export function FileStreamLocation$CurrentLocation$offset(
+  value: FileStreamLocation$,
+): number;
 
 export class EndOfFile extends _.CustomType {
+  /** @deprecated */
   constructor(offset: number);
-  
+  /** @deprecated */
   offset: number;
 }
+export function FileStreamLocation$EndOfFile(
+  offset: number,
+): FileStreamLocation$;
+export function FileStreamLocation$isEndOfFile(
+  value: FileStreamLocation$,
+): boolean;
+export function FileStreamLocation$EndOfFile$0(value: FileStreamLocation$): number;
+export function FileStreamLocation$EndOfFile$offset(
+  value: FileStreamLocation$,
+): number;
 
 export type FileStreamLocation$ = BeginningOfFile | CurrentLocation | EndOfFile;
+
+export function FileStreamLocation$offset(value: FileStreamLocation$): number;
 
 export function open(
   filename: string,
@@ -211,11 +248,11 @@ export function read_float64_be(stream: FileStream$): _.Result<
   $file_stream_error.FileStreamError$
 >;
 
-export function read_list<BWUF>(
+export function read_list<BWPA>(
   stream: FileStream$,
   item_read_fn: (x0: FileStream$) => _.Result<
-    BWUF,
+    BWPA,
     $file_stream_error.FileStreamError$
   >,
   item_count: number
-): _.Result<_.List<BWUF>, $file_stream_error.FileStreamError$>;
+): _.Result<_.List<BWPA>, $file_stream_error.FileStreamError$>;

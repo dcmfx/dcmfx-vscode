@@ -35,6 +35,10 @@ export class P10Error extends $CustomType {
     this[0] = $0;
   }
 }
+export const P10CustomTypeTransformError$P10Error = ($0) => new P10Error($0);
+export const P10CustomTypeTransformError$isP10Error = (value) =>
+  value instanceof P10Error;
+export const P10CustomTypeTransformError$P10Error$0 = (value) => value[0];
 
 /**
  * An error that occurred when creating the custom type from the gathered
@@ -46,6 +50,10 @@ export class DataError extends $CustomType {
     this[0] = $0;
   }
 }
+export const P10CustomTypeTransformError$DataError = ($0) => new DataError($0);
+export const P10CustomTypeTransformError$isDataError = (value) =>
+  value instanceof DataError;
+export const P10CustomTypeTransformError$DataError$0 = (value) => value[0];
 
 /**
  * Creates a new transform for converting a stream of DICOM P10 tokens to

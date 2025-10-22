@@ -18,6 +18,14 @@ export class TransferSyntaxNotSupported extends $CustomType {
     this.transfer_syntax_uid = transfer_syntax_uid;
   }
 }
+export const P10Error$TransferSyntaxNotSupported = (transfer_syntax_uid) =>
+  new TransferSyntaxNotSupported(transfer_syntax_uid);
+export const P10Error$isTransferSyntaxNotSupported = (value) =>
+  value instanceof TransferSyntaxNotSupported;
+export const P10Error$TransferSyntaxNotSupported$transfer_syntax_uid = (value) =>
+  value.transfer_syntax_uid;
+export const P10Error$TransferSyntaxNotSupported$0 = (value) =>
+  value.transfer_syntax_uid;
 
 /**
  * This error occurs when a DICOM P10 read context is supplied data that
@@ -34,6 +42,17 @@ export class SpecificCharacterSetInvalid extends $CustomType {
     this.details = details;
   }
 }
+export const P10Error$SpecificCharacterSetInvalid = (specific_character_set, details) =>
+  new SpecificCharacterSetInvalid(specific_character_set, details);
+export const P10Error$isSpecificCharacterSetInvalid = (value) =>
+  value instanceof SpecificCharacterSetInvalid;
+export const P10Error$SpecificCharacterSetInvalid$specific_character_set = (value) =>
+  value.specific_character_set;
+export const P10Error$SpecificCharacterSetInvalid$0 = (value) =>
+  value.specific_character_set;
+export const P10Error$SpecificCharacterSetInvalid$details = (value) =>
+  value.details;
+export const P10Error$SpecificCharacterSetInvalid$1 = (value) => value.details;
 
 /**
  * This error occurs when a DICOM P10 read context requires more data to be
@@ -45,6 +64,10 @@ export class DataRequired extends $CustomType {
     this.when = when;
   }
 }
+export const P10Error$DataRequired = (when) => new DataRequired(when);
+export const P10Error$isDataRequired = (value) => value instanceof DataRequired;
+export const P10Error$DataRequired$when = (value) => value.when;
+export const P10Error$DataRequired$0 = (value) => value.when;
 
 /**
  * This error occurs when a DICOM P10 read context reaches the end of its
@@ -59,8 +82,21 @@ export class DataEndedUnexpectedly extends $CustomType {
     this.offset = offset;
   }
 }
+export const P10Error$DataEndedUnexpectedly = (when, path, offset) =>
+  new DataEndedUnexpectedly(when, path, offset);
+export const P10Error$isDataEndedUnexpectedly = (value) =>
+  value instanceof DataEndedUnexpectedly;
+export const P10Error$DataEndedUnexpectedly$when = (value) => value.when;
+export const P10Error$DataEndedUnexpectedly$0 = (value) => value.when;
+export const P10Error$DataEndedUnexpectedly$path = (value) => value.path;
+export const P10Error$DataEndedUnexpectedly$1 = (value) => value.path;
+export const P10Error$DataEndedUnexpectedly$offset = (value) => value.offset;
+export const P10Error$DataEndedUnexpectedly$2 = (value) => value.offset;
 
 export class DicmPrefixNotPresent extends $CustomType {}
+export const P10Error$DicmPrefixNotPresent = () => new DicmPrefixNotPresent();
+export const P10Error$isDicmPrefixNotPresent = (value) =>
+  value instanceof DicmPrefixNotPresent;
 
 /**
  * This error occurs when a DICOM P10 read context is unable to read the next
@@ -76,6 +112,17 @@ export class DataInvalid extends $CustomType {
     this.offset = offset;
   }
 }
+export const P10Error$DataInvalid = (when, details, path, offset) =>
+  new DataInvalid(when, details, path, offset);
+export const P10Error$isDataInvalid = (value) => value instanceof DataInvalid;
+export const P10Error$DataInvalid$when = (value) => value.when;
+export const P10Error$DataInvalid$0 = (value) => value.when;
+export const P10Error$DataInvalid$details = (value) => value.details;
+export const P10Error$DataInvalid$1 = (value) => value.details;
+export const P10Error$DataInvalid$path = (value) => value.path;
+export const P10Error$DataInvalid$2 = (value) => value.path;
+export const P10Error$DataInvalid$offset = (value) => value.offset;
+export const P10Error$DataInvalid$3 = (value) => value.offset;
 
 /**
  * This error occurs when one of the configured maximums for a DICOM P10 read
@@ -90,6 +137,16 @@ export class MaximumExceeded extends $CustomType {
     this.offset = offset;
   }
 }
+export const P10Error$MaximumExceeded = (details, path, offset) =>
+  new MaximumExceeded(details, path, offset);
+export const P10Error$isMaximumExceeded = (value) =>
+  value instanceof MaximumExceeded;
+export const P10Error$MaximumExceeded$details = (value) => value.details;
+export const P10Error$MaximumExceeded$0 = (value) => value.details;
+export const P10Error$MaximumExceeded$path = (value) => value.path;
+export const P10Error$MaximumExceeded$1 = (value) => value.path;
+export const P10Error$MaximumExceeded$offset = (value) => value.offset;
+export const P10Error$MaximumExceeded$2 = (value) => value.offset;
 
 /**
  * This error occurs when a stream of `P10Token`s is being ingested and a
@@ -105,8 +162,21 @@ export class TokenStreamInvalid extends $CustomType {
     this.token = token;
   }
 }
+export const P10Error$TokenStreamInvalid = (when, details, token) =>
+  new TokenStreamInvalid(when, details, token);
+export const P10Error$isTokenStreamInvalid = (value) =>
+  value instanceof TokenStreamInvalid;
+export const P10Error$TokenStreamInvalid$when = (value) => value.when;
+export const P10Error$TokenStreamInvalid$0 = (value) => value.when;
+export const P10Error$TokenStreamInvalid$details = (value) => value.details;
+export const P10Error$TokenStreamInvalid$1 = (value) => value.details;
+export const P10Error$TokenStreamInvalid$token = (value) => value.token;
+export const P10Error$TokenStreamInvalid$2 = (value) => value.token;
 
 export class WriteAfterCompletion extends $CustomType {}
+export const P10Error$WriteAfterCompletion = () => new WriteAfterCompletion();
+export const P10Error$isWriteAfterCompletion = (value) =>
+  value instanceof WriteAfterCompletion;
 
 /**
  * This error occurs when there is an error with an underlying file stream.
@@ -118,6 +188,14 @@ export class FileStreamError extends $CustomType {
     this.error = error;
   }
 }
+export const P10Error$FileStreamError = (when, error) =>
+  new FileStreamError(when, error);
+export const P10Error$isFileStreamError = (value) =>
+  value instanceof FileStreamError;
+export const P10Error$FileStreamError$when = (value) => value.when;
+export const P10Error$FileStreamError$0 = (value) => value.when;
+export const P10Error$FileStreamError$error = (value) => value.error;
+export const P10Error$FileStreamError$1 = (value) => value.error;
 
 /**
  * A fallback/general-purpose error for cases not covered by the other error
@@ -130,6 +208,13 @@ export class OtherError extends $CustomType {
     this.details = details;
   }
 }
+export const P10Error$OtherError = (error_type, details) =>
+  new OtherError(error_type, details);
+export const P10Error$isOtherError = (value) => value instanceof OtherError;
+export const P10Error$OtherError$error_type = (value) => value.error_type;
+export const P10Error$OtherError$0 = (value) => value.error_type;
+export const P10Error$OtherError$details = (value) => value.details;
+export const P10Error$OtherError$1 = (value) => value.details;
 
 /**
  * Returns the name of the error as a human-readable string.

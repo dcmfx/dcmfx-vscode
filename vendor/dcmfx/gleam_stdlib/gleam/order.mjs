@@ -2,10 +2,16 @@
 import { CustomType as $CustomType, isEqual } from "../gleam.mjs";
 
 export class Lt extends $CustomType {}
+export const Order$Lt = () => new Lt();
+export const Order$isLt = (value) => value instanceof Lt;
 
 export class Eq extends $CustomType {}
+export const Order$Eq = () => new Eq();
+export const Order$isEq = (value) => value instanceof Eq;
 
 export class Gt extends $CustomType {}
+export const Order$Gt = () => new Gt();
+export const Order$isGt = (value) => value instanceof Gt;
 
 /**
  * Inverts an order, so less-than becomes greater-than and greater-than

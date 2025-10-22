@@ -19,24 +19,46 @@ import type * as $value_representation from "../dcmfx_core/value_representation.
 import type * as _ from "../gleam.d.mts";
 
 export class LookupResultDataElementValue extends _.CustomType {
+  /** @deprecated */
   constructor(argument$0: $data_element_value.DataElementValue$);
-  
+  /** @deprecated */
   0: $data_element_value.DataElementValue$;
 }
+export function DataSetLookupResult$LookupResultDataElementValue(
+  $0: $data_element_value.DataElementValue$,
+): DataSetLookupResult$;
+export function DataSetLookupResult$isLookupResultDataElementValue(
+  value: DataSetLookupResult$,
+): boolean;
+export function DataSetLookupResult$LookupResultDataElementValue$0(value: DataSetLookupResult$): $data_element_value.DataElementValue$;
 
 export class LookupResultDataSet extends _.CustomType {
+  /** @deprecated */
   constructor(
     argument$0: $dict.Dict$<
       $data_element_tag.DataElementTag$,
       $data_element_value.DataElementValue$
     >
   );
-  
+  /** @deprecated */
   0: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >;
 }
+export function DataSetLookupResult$LookupResultDataSet(
+  $0: $dict.Dict$<
+    $data_element_tag.DataElementTag$,
+    $data_element_value.DataElementValue$
+  >,
+): DataSetLookupResult$;
+export function DataSetLookupResult$isLookupResultDataSet(
+  value: DataSetLookupResult$,
+): boolean;
+export function DataSetLookupResult$LookupResultDataSet$0(value: DataSetLookupResult$): $dict.Dict$<
+  $data_element_tag.DataElementTag$,
+  $data_element_value.DataElementValue$
+>;
 
 export type DataSetLookupResult$ = LookupResultDataElementValue | LookupResultDataSet;
 
@@ -153,7 +175,7 @@ export function to_list(
   [$data_element_tag.DataElementTag$, $data_element_value.DataElementValue$]
 >;
 
-export function map<BVQQ>(
+export function map<BVLL>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
@@ -161,8 +183,8 @@ export function map<BVQQ>(
   callback: (
     x0: $data_element_tag.DataElementTag$,
     x1: $data_element_value.DataElementValue$
-  ) => BVQQ
-): _.List<BVQQ>;
+  ) => BVLL
+): _.List<BVLL>;
 
 export function map_values(
   data_set: $dict.Dict$<
@@ -192,44 +214,44 @@ export function filter(
   $data_element_value.DataElementValue$
 >;
 
-export function fold<BVQS>(
+export function fold<BVLN>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BVQS,
+  initial: BVLN,
   callback: (
-    x0: BVQS,
+    x0: BVLN,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => BVQS
-): BVQS;
+  ) => BVLN
+): BVLN;
 
-export function try_fold<BVQT, BVQU>(
+export function try_fold<BVLO, BVLP>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BVQT,
+  initial: BVLO,
   callback: (
-    x0: BVQT,
+    x0: BVLO,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => _.Result<BVQT, BVQU>
-): _.Result<BVQT, BVQU>;
+  ) => _.Result<BVLO, BVLP>
+): _.Result<BVLO, BVLP>;
 
-export function fold_until<BVQZ>(
+export function fold_until<BVLU>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
-  initial: BVQZ,
+  initial: BVLU,
   callback: (
-    x0: BVQZ,
+    x0: BVLU,
     x1: $data_element_tag.DataElementTag$,
     x2: $data_element_value.DataElementValue$
-  ) => $list.ContinueOrStop$<BVQZ>
-): BVQZ;
+  ) => $list.ContinueOrStop$<BVLU>
+): BVLU;
 
 export function partition(
   data_set: $dict.Dict$<
@@ -497,15 +519,15 @@ export function tag_name(
   tag: $data_element_tag.DataElementTag$
 ): string;
 
-export function to_lines<BVRB>(
+export function to_lines<BVLW>(
   data_set: $dict.Dict$<
     $data_element_tag.DataElementTag$,
     $data_element_value.DataElementValue$
   >,
   print_options: $data_set_print.DataSetPrintOptions$,
-  context: BVRB,
-  callback: (x0: BVRB, x1: string) => BVRB
-): BVRB;
+  context: BVLW,
+  callback: (x0: BVLW, x1: string) => BVLW
+): BVLW;
 
 export function print_with_options(
   data_set: $dict.Dict$<

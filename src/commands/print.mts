@@ -1,24 +1,26 @@
-import * as vscode from "vscode";
 import { Effect, pipe } from "effect";
 import type { Readable } from "stream";
-import * as gleam from "../../vendor/dcmfx/prelude.mjs";
-import { None } from "../../vendor/dcmfx/gleam_stdlib/gleam/option.mjs";
-import * as data_element_tag from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_element_tag.mjs";
-import * as dictionary from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/dictionary.mjs";
+import * as vscode from "vscode";
+import { DataElementTag$DataElementTag } from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_element_tag.mjs";
 import * as data_set from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set.mjs";
-import * as data_set_print from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set_print.mjs";
-import * as json_config from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/json_config.mjs";
+import { DataSetPrintOptions$DataSetPrintOptions } from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/data_set_print.mjs";
+import * as dictionary from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/dictionary.mjs";
+import * as transfer_syntax from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/transfer_syntax.mjs";
+import * as value_multiplicity from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/value_multiplicity.mjs";
+import * as value_representation from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/value_representation.mjs";
+import { DicomJsonConfig$DicomJsonConfig } from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/json_config.mjs";
 import * as json_error from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/json_error.mjs";
-import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
 import * as p10_json_transform from "../../vendor/dcmfx/dcmfx_json/dcmfx_json/transforms/p10_json_transform.mjs";
+import * as p10_error from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_error.mjs";
+import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
+import { P10ReadConfig$P10ReadConfig } from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read_config.mjs";
 import * as p10_token from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_token.mjs";
 import * as p10_print_transform from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/transforms/p10_print_transform.mjs";
-import * as p10_read from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read.mjs";
-import * as p10_read_config from "../../vendor/dcmfx/dcmfx_p10/dcmfx_p10/p10_read_config.mjs";
-import * as transfer_syntax from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/transfer_syntax.mjs";
-import * as value_representation from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/value_representation.mjs";
-import * as value_multiplicity from "../../vendor/dcmfx/dcmfx_core/dcmfx_core/value_multiplicity.mjs";
+import { None } from "../../vendor/dcmfx/gleam_stdlib/gleam/option.mjs";
+import { Result$isOk } from "../../vendor/dcmfx/prelude.mjs";
 import {
+  gleamBitArrayFromUint8Array,
+  gleamListToArray,
   gleamResultToEffect,
   gleamResultUnwrap,
   openReadStream,
@@ -109,7 +111,7 @@ function getPrintOptions() {
   const styled = false;
   const maxWidth = 1000;
 
-  return new data_set_print.DataSetPrintOptions(styled, maxWidth);
+  return DataSetPrintOptions$DataSetPrintOptions(styled, maxWidth);
 }
 
 /**
@@ -139,7 +141,7 @@ function* printDicom(
   // Construct DICOM P10 read context with a max token size of 1 MiB to keep
   // the read context's memory usage low while printing the DICOM
   const maxTokenSize = 1024 * 1024;
-  const readConfig = new p10_read_config.P10ReadConfig(
+  const readConfig = P10ReadConfig$P10ReadConfig(
     maxTokenSize,
     0xfffffffe,
     10_000,
@@ -157,7 +159,7 @@ function* printDicom(
   // human-readable DICOM data set
   const config = vscode.workspace.getConfiguration("dcmfx");
   const prettyPrint = config.get<boolean>("dicomJsonPrettyPrint") ?? true;
-  const jsonConfig = new json_config.DicomJsonConfig(true, prettyPrint);
+  const jsonConfig = DicomJsonConfig$DicomJsonConfig(true, prettyPrint);
   let p10JsonTransform = p10_json_transform.new$(jsonConfig);
 
   let output = "";
@@ -173,7 +175,7 @@ function* printDicom(
         Effect.gen(function* () {
           readContext = newReadContext;
 
-          for (const token of tokens.toArray()) {
+          for (const token of gleamListToArray(tokens)) {
             if (outputFormat === "dcmfx-print") {
               const [s, newPrintTransform] = p10_print_transform.add_token(
                 p10PrintTransform,
@@ -188,7 +190,7 @@ function* printDicom(
                   p10_json_transform.add_token(p10JsonTransform, token),
                 ),
                 Effect.mapError((e) =>
-                  json_error.serialize_error_to_lines(e, "").toArray(),
+                  gleamListToArray(json_error.serialize_error_to_lines(e, "")),
                 ),
               );
 
@@ -216,7 +218,7 @@ function* printDicom(
           } else {
             yield* Effect.fail([
               output,
-              p10_error.to_lines(error, "").toArray(),
+              gleamListToArray(p10_error.to_lines(error, "")),
             ]);
           }
         }),
@@ -272,7 +274,7 @@ export class DcmfxPrintHoverProvider implements vscode.HoverProvider {
 
     // Search prompt when hovering over the data element tag
     if (position.character >= indent && position.character < indent + 11) {
-      const tag = new data_element_tag.DataElementTag(
+      const tag = DataElementTag$DataElementTag(
         parseInt(group, 16),
         parseInt(element, 16),
       );
@@ -281,18 +283,17 @@ export class DcmfxPrintHoverProvider implements vscode.HoverProvider {
 
       // Look up the tag in the dictionary
       const dictionaryItem = dictionary.find(tag, new None());
-      if (dictionaryItem.isOk()) {
+      if (Result$isOk(dictionaryItem)) {
         const item = gleamResultUnwrap(dictionaryItem);
 
         itemDetails =
-          `### ${item.name}\n` +
+          `### ${dictionary.Item$Item$name(item)}\n` +
           [
             `- Tag: ${group},${element}`,
             `- Multiplicity: ${value_multiplicity.to_string(
-              item.multiplicity,
+              dictionary.Item$Item$multiplicity(item),
             )}`,
-            `- Supported VRs: ${item.vrs
-              .toArray()
+            `- Supported VRs: ${gleamListToArray(dictionary.Item$Item$vrs(item))
               .map(value_representation.to_string)
               .join(", ")}`,
           ].join("\n");
@@ -311,7 +312,7 @@ export class DcmfxPrintHoverProvider implements vscode.HoverProvider {
     if (position.character >= vrPos && position.character <= vrPos + 2) {
       // Convert to a full VR name
       const dcmfxVr = value_representation.from_bytes(
-        new gleam.BitArray(
+        gleamBitArrayFromUint8Array(
           new Uint8Array([vr.charCodeAt(0), vr.charCodeAt(1)]),
         ),
       );

@@ -6,4 +6,4 @@ export function println(string: string): undefined;
 
 export function println_error(string: string): undefined;
 
-export function debug<CNY>(term: CNY): CNY;
+export function debug<CKP>(term: CKP): CKP;

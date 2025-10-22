@@ -35,6 +35,16 @@ export class DecodeError extends $CustomType {
     this.path = path;
   }
 }
+export const DecodeError$DecodeError = (expected, found, path) =>
+  new DecodeError(expected, found, path);
+export const DecodeError$isDecodeError = (value) =>
+  value instanceof DecodeError;
+export const DecodeError$DecodeError$expected = (value) => value.expected;
+export const DecodeError$DecodeError$0 = (value) => value.expected;
+export const DecodeError$DecodeError$found = (value) => value.found;
+export const DecodeError$DecodeError$1 = (value) => value.found;
+export const DecodeError$DecodeError$path = (value) => value.path;
+export const DecodeError$DecodeError$2 = (value) => value.path;
 
 class Decoder extends $CustomType {
   constructor(function$) {

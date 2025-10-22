@@ -6,72 +6,182 @@ import * as $endian from "../dcmfx_core/internal/endian.mjs";
 import { Ok, Error, toList, CustomType as $CustomType, isEqual } from "../gleam.mjs";
 
 export class AgeString extends $CustomType {}
+export const ValueRepresentation$AgeString = () => new AgeString();
+export const ValueRepresentation$isAgeString = (value) =>
+  value instanceof AgeString;
 
 export class ApplicationEntity extends $CustomType {}
+export const ValueRepresentation$ApplicationEntity = () =>
+  new ApplicationEntity();
+export const ValueRepresentation$isApplicationEntity = (value) =>
+  value instanceof ApplicationEntity;
 
 export class AttributeTag extends $CustomType {}
+export const ValueRepresentation$AttributeTag = () => new AttributeTag();
+export const ValueRepresentation$isAttributeTag = (value) =>
+  value instanceof AttributeTag;
 
 export class CodeString extends $CustomType {}
+export const ValueRepresentation$CodeString = () => new CodeString();
+export const ValueRepresentation$isCodeString = (value) =>
+  value instanceof CodeString;
 
 export class Date extends $CustomType {}
+export const ValueRepresentation$Date = () => new Date();
+export const ValueRepresentation$isDate = (value) => value instanceof Date;
 
 export class DateTime extends $CustomType {}
+export const ValueRepresentation$DateTime = () => new DateTime();
+export const ValueRepresentation$isDateTime = (value) =>
+  value instanceof DateTime;
 
 export class DecimalString extends $CustomType {}
+export const ValueRepresentation$DecimalString = () => new DecimalString();
+export const ValueRepresentation$isDecimalString = (value) =>
+  value instanceof DecimalString;
 
 export class FloatingPointDouble extends $CustomType {}
+export const ValueRepresentation$FloatingPointDouble = () =>
+  new FloatingPointDouble();
+export const ValueRepresentation$isFloatingPointDouble = (value) =>
+  value instanceof FloatingPointDouble;
 
 export class FloatingPointSingle extends $CustomType {}
+export const ValueRepresentation$FloatingPointSingle = () =>
+  new FloatingPointSingle();
+export const ValueRepresentation$isFloatingPointSingle = (value) =>
+  value instanceof FloatingPointSingle;
 
 export class IntegerString extends $CustomType {}
+export const ValueRepresentation$IntegerString = () => new IntegerString();
+export const ValueRepresentation$isIntegerString = (value) =>
+  value instanceof IntegerString;
 
 export class LongString extends $CustomType {}
+export const ValueRepresentation$LongString = () => new LongString();
+export const ValueRepresentation$isLongString = (value) =>
+  value instanceof LongString;
 
 export class LongText extends $CustomType {}
+export const ValueRepresentation$LongText = () => new LongText();
+export const ValueRepresentation$isLongText = (value) =>
+  value instanceof LongText;
 
 export class OtherByteString extends $CustomType {}
+export const ValueRepresentation$OtherByteString = () => new OtherByteString();
+export const ValueRepresentation$isOtherByteString = (value) =>
+  value instanceof OtherByteString;
 
 export class OtherDoubleString extends $CustomType {}
+export const ValueRepresentation$OtherDoubleString = () =>
+  new OtherDoubleString();
+export const ValueRepresentation$isOtherDoubleString = (value) =>
+  value instanceof OtherDoubleString;
 
 export class OtherFloatString extends $CustomType {}
+export const ValueRepresentation$OtherFloatString = () =>
+  new OtherFloatString();
+export const ValueRepresentation$isOtherFloatString = (value) =>
+  value instanceof OtherFloatString;
 
 export class OtherLongString extends $CustomType {}
+export const ValueRepresentation$OtherLongString = () => new OtherLongString();
+export const ValueRepresentation$isOtherLongString = (value) =>
+  value instanceof OtherLongString;
 
 export class OtherVeryLongString extends $CustomType {}
+export const ValueRepresentation$OtherVeryLongString = () =>
+  new OtherVeryLongString();
+export const ValueRepresentation$isOtherVeryLongString = (value) =>
+  value instanceof OtherVeryLongString;
 
 export class OtherWordString extends $CustomType {}
+export const ValueRepresentation$OtherWordString = () => new OtherWordString();
+export const ValueRepresentation$isOtherWordString = (value) =>
+  value instanceof OtherWordString;
 
 export class PersonName extends $CustomType {}
+export const ValueRepresentation$PersonName = () => new PersonName();
+export const ValueRepresentation$isPersonName = (value) =>
+  value instanceof PersonName;
 
 export class Sequence extends $CustomType {}
+export const ValueRepresentation$Sequence = () => new Sequence();
+export const ValueRepresentation$isSequence = (value) =>
+  value instanceof Sequence;
 
 export class ShortString extends $CustomType {}
+export const ValueRepresentation$ShortString = () => new ShortString();
+export const ValueRepresentation$isShortString = (value) =>
+  value instanceof ShortString;
 
 export class ShortText extends $CustomType {}
+export const ValueRepresentation$ShortText = () => new ShortText();
+export const ValueRepresentation$isShortText = (value) =>
+  value instanceof ShortText;
 
 export class SignedLong extends $CustomType {}
+export const ValueRepresentation$SignedLong = () => new SignedLong();
+export const ValueRepresentation$isSignedLong = (value) =>
+  value instanceof SignedLong;
 
 export class SignedShort extends $CustomType {}
+export const ValueRepresentation$SignedShort = () => new SignedShort();
+export const ValueRepresentation$isSignedShort = (value) =>
+  value instanceof SignedShort;
 
 export class SignedVeryLong extends $CustomType {}
+export const ValueRepresentation$SignedVeryLong = () => new SignedVeryLong();
+export const ValueRepresentation$isSignedVeryLong = (value) =>
+  value instanceof SignedVeryLong;
 
 export class Time extends $CustomType {}
+export const ValueRepresentation$Time = () => new Time();
+export const ValueRepresentation$isTime = (value) => value instanceof Time;
 
 export class UniqueIdentifier extends $CustomType {}
+export const ValueRepresentation$UniqueIdentifier = () =>
+  new UniqueIdentifier();
+export const ValueRepresentation$isUniqueIdentifier = (value) =>
+  value instanceof UniqueIdentifier;
 
 export class UniversalResourceIdentifier extends $CustomType {}
+export const ValueRepresentation$UniversalResourceIdentifier = () =>
+  new UniversalResourceIdentifier();
+export const ValueRepresentation$isUniversalResourceIdentifier = (value) =>
+  value instanceof UniversalResourceIdentifier;
 
 export class Unknown extends $CustomType {}
+export const ValueRepresentation$Unknown = () => new Unknown();
+export const ValueRepresentation$isUnknown = (value) =>
+  value instanceof Unknown;
 
 export class UnlimitedCharacters extends $CustomType {}
+export const ValueRepresentation$UnlimitedCharacters = () =>
+  new UnlimitedCharacters();
+export const ValueRepresentation$isUnlimitedCharacters = (value) =>
+  value instanceof UnlimitedCharacters;
 
 export class UnlimitedText extends $CustomType {}
+export const ValueRepresentation$UnlimitedText = () => new UnlimitedText();
+export const ValueRepresentation$isUnlimitedText = (value) =>
+  value instanceof UnlimitedText;
 
 export class UnsignedLong extends $CustomType {}
+export const ValueRepresentation$UnsignedLong = () => new UnsignedLong();
+export const ValueRepresentation$isUnsignedLong = (value) =>
+  value instanceof UnsignedLong;
 
 export class UnsignedShort extends $CustomType {}
+export const ValueRepresentation$UnsignedShort = () => new UnsignedShort();
+export const ValueRepresentation$isUnsignedShort = (value) =>
+  value instanceof UnsignedShort;
 
 export class UnsignedVeryLong extends $CustomType {}
+export const ValueRepresentation$UnsignedVeryLong = () =>
+  new UnsignedVeryLong();
+export const ValueRepresentation$isUnsignedVeryLong = (value) =>
+  value instanceof UnsignedVeryLong;
 
 export class LengthRequirements extends $CustomType {
   constructor(bytes_max, bytes_multiple_of, string_characters_max) {
@@ -81,6 +191,22 @@ export class LengthRequirements extends $CustomType {
     this.string_characters_max = string_characters_max;
   }
 }
+export const LengthRequirements$LengthRequirements = (bytes_max, bytes_multiple_of, string_characters_max) =>
+  new LengthRequirements(bytes_max, bytes_multiple_of, string_characters_max);
+export const LengthRequirements$isLengthRequirements = (value) =>
+  value instanceof LengthRequirements;
+export const LengthRequirements$LengthRequirements$bytes_max = (value) =>
+  value.bytes_max;
+export const LengthRequirements$LengthRequirements$0 = (value) =>
+  value.bytes_max;
+export const LengthRequirements$LengthRequirements$bytes_multiple_of = (value) =>
+  value.bytes_multiple_of;
+export const LengthRequirements$LengthRequirements$1 = (value) =>
+  value.bytes_multiple_of;
+export const LengthRequirements$LengthRequirements$string_characters_max = (value) =>
+  value.string_characters_max;
+export const LengthRequirements$LengthRequirements$2 = (value) =>
+  value.string_characters_max;
 
 /**
  * Converts a value representation into its equivalent two-character string.

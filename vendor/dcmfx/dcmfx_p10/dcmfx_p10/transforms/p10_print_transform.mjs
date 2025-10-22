@@ -141,23 +141,25 @@ export function add_token(transform, token) {
     let _block;
     let $ = transform.last_data_element_private_creator_tag;
     let $1 = transform.private_creators;
-    if ($1 instanceof $Empty) {
-      _block = transform.private_creators;
-    } else if ($ instanceof Some) {
-      let private_creators = $1.head;
-      let rest = $1.tail;
-      let tag = $[0];
-      _block = listPrepend(
-        $data_set.insert(
-          private_creators,
-          tag,
-          $data_element_value.new_binary_unchecked(
-            new $value_representation.LongString(),
-            data,
+    if ($ instanceof Some) {
+      if ($1 instanceof $Empty) {
+        _block = transform.private_creators;
+      } else {
+        let tag = $[0];
+        let private_creators = $1.head;
+        let rest = $1.tail;
+        _block = listPrepend(
+          $data_set.insert(
+            private_creators,
+            tag,
+            $data_element_value.new_binary_unchecked(
+              new $value_representation.LongString(),
+              data,
+            ),
           ),
-        ),
-        rest,
-      );
+          rest,
+        );
+      }
     } else {
       _block = transform.private_creators;
     }

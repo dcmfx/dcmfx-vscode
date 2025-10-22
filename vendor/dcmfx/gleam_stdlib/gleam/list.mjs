@@ -23,6 +23,9 @@ export class Continue extends $CustomType {
     this[0] = $0;
   }
 }
+export const ContinueOrStop$Continue = ($0) => new Continue($0);
+export const ContinueOrStop$isContinue = (value) => value instanceof Continue;
+export const ContinueOrStop$Continue$0 = (value) => value[0];
 
 export class Stop extends $CustomType {
   constructor($0) {
@@ -30,6 +33,9 @@ export class Stop extends $CustomType {
     this[0] = $0;
   }
 }
+export const ContinueOrStop$Stop = ($0) => new Stop($0);
+export const ContinueOrStop$isStop = (value) => value instanceof Stop;
+export const ContinueOrStop$Stop$0 = (value) => value[0];
 
 class Ascending extends $CustomType {}
 
@@ -1256,15 +1262,15 @@ function zip_loop(loop$one, loop$other, loop$acc) {
     let one = loop$one;
     let other = loop$other;
     let acc = loop$acc;
-    if (other instanceof $Empty) {
+    if (one instanceof $Empty) {
       return reverse(acc);
-    } else if (one instanceof $Empty) {
+    } else if (other instanceof $Empty) {
       return reverse(acc);
     } else {
-      let first_other = other.head;
-      let rest_other = other.tail;
       let first_one = one.head;
       let rest_one = one.tail;
+      let first_other = other.head;
+      let rest_other = other.tail;
       loop$one = rest_one;
       loop$other = rest_other;
       loop$acc = listPrepend([first_one, first_other], acc);
@@ -1309,19 +1315,19 @@ function strict_zip_loop(loop$one, loop$other, loop$acc) {
     let one = loop$one;
     let other = loop$other;
     let acc = loop$acc;
-    if (other instanceof $Empty) {
-      if (one instanceof $Empty) {
+    if (one instanceof $Empty) {
+      if (other instanceof $Empty) {
         return new Ok(reverse(acc));
       } else {
         return new Error(undefined);
       }
-    } else if (one instanceof $Empty) {
+    } else if (other instanceof $Empty) {
       return new Error(undefined);
     } else {
-      let first_other = other.head;
-      let rest_other = other.tail;
       let first_one = one.head;
       let rest_one = one.tail;
+      let first_other = other.head;
+      let rest_other = other.tail;
       loop$one = rest_one;
       loop$other = rest_other;
       loop$acc = listPrepend([first_one, first_other], acc);

@@ -2,16 +2,20 @@ import type * as $option from "../../gleam_stdlib/gleam/option.d.mts";
 import type * as _ from "../gleam.d.mts";
 
 declare class PixelDataFrame extends _.CustomType {
+  /** @deprecated */
   constructor(
     frame_index: $option.Option$<number>,
     chunks: _.List<_.BitArray>,
     length_in_bits: number,
     bit_offset: number
   );
-  
+  /** @deprecated */
   frame_index: $option.Option$<number>;
+  /** @deprecated */
   chunks: _.List<_.BitArray>;
+  /** @deprecated */
   length_in_bits: number;
+  /** @deprecated */
   bit_offset: number;
 }
 
